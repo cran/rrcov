@@ -274,7 +274,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
             ans$mcd.wt[ok] <- rep(1, sum(ok == TRUE))
         }
         else {
-            mah <- mahalanobis(x, loc, mcd, tol)
+            mah <- mahalanobis(x, loc, mcd, tol.inv=tol)        # VT:: 01.09.2004 - bug in alpha=1 
+                                                                # (tol instead of tol.inv as parameter name)
             weights <- ifelse(mah < qchisq(0.975, p), 1, 0)
             ans <- cov.wt(x, wt = weights, cor)
             ans$cov <- sum(weights)/(sum(weights) - 1) * ans$cov    
@@ -756,19 +757,4 @@ correctiefactor.rew.s <- function(p, n, alpha)
     class(ans) <- "mcd"
     attr(ans, "call") <- sys.call()
     return(ans)
-}
-
-print.mcd <- function (x, digits = max(3, getOption("digits") - 3), ...)
-{
-    if(!is.null(cl <- x$call)) {
-        cat("Call:\n")
-        dput(cl)
-        cat("\n")
-    }
-    cat("\nLog(det): ", format(log(x$crit), digits = digits) ,"\n\n")
-    cat("Center:\n")
-    print.default(format(x$center, digits = digits), print.gap = 2, quote = FALSE)
-    cat("\nCovariance Matrix:\n")
-    print.default(format(x$cov, digits = digits), print.gap = 2, quote = FALSE)
-    invisible(x)
 }

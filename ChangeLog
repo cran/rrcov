@@ -1,3 +1,21 @@
+2004-09-16  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-5
+    * several errors in doc fixed (ltsPlot.Rd, covPlot.Rd, aircraft.Rd)
+	
+2004-09-16 Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-4 
+    * added Regression Diagnostic Plots - function ltsPlot()
+    * ...added Normal QQ Plot of the residuals
+    * ...added Standardized Residuals versus index plot
+    * ...added Standardized Residuals versus fitted values plot
+    * ...added Regression diagnostic plot
+    * ltsReg: the responce variable Y added to the result object
+    * covMcd: fixed a bug related to nsamp -> it was hard-coded = 500 in Fortran
+    * covMcd: fixed a bug - in case of alpha=1
+    * added S3 methods plot.mcd and plot.lts
+    * the S3 methods print.mcd and print.lts moved to separate R files
+    * added the stars data set (Hertzsprung-Russell diagram)
+
 2004-07-13  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-3 
     * improved documentation of the datasets

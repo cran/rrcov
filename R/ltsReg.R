@@ -492,6 +492,7 @@ ltsReg <- function (x, y,
         names(ans$residuals) <- rownames
         names(ans$lts.wt) <- rownames
         ans$X <- x
+        ans$Y <- y                  # VT:: 01.09.2004 - add y to the result object
         if (length(rownames)) 
             dimnames(ans$X)[[1]] <- rownames[ok]
         else {
@@ -516,20 +517,20 @@ ltsReg <- function (x, y,
     if (length(alpha)) {
         if (alpha > 1) 
             stop("alpha is greater than 1")
-        if (alpha == 1) {
+        if (alpha == 1) {                                   # alpha == 1 -----------------------
             z <- lsfit(x, y, intercept = FALSE)
             ans$raw.coefficients[2:p] <- z$coef[1:(p - 1)]
             ans$raw.coefficients[1] <- z$coef[p]
             ans$alpha <- alpha
-            ans$quan <- quan
+            ans$quan <- quan <- n           # VT:: 01.09.2004 - bug in alpha=1 
+                                            # (ans$quan was not set)
             names(ans$raw.coefficients)[2:p] <- xn[1:(p - 1)]
             names(ans$raw.coefficients)[1] <- xn[p]
             s0 <- sqrt((1/(n - p)) * sum(z$residuals^2))
             weights <- rep(NA, n)
-            if (abs(s0) < 1e-07) {
+            if(abs(s0) < 1e-07) {
                 fitted <- x %*% z$coef
-                weights <- ifelse(abs(z$residuals) <= 1e-07, 
-                  1, 0)
+                weights <- ifelse(abs(z$residuals) <= 1e-07, 1, 0)
                 ans$scale <- ans$raw.scale <- 0
                 ans$coefficients <- ans$raw.coefficients
             }
@@ -608,6 +609,7 @@ ltsReg <- function (x, y,
             names(ans$rsquared) <- yn
             names(ans$crit) <- yn
             ans$X <- x
+            ans$Y <- y          # VT:: 01.09.2004 - add y to the result object
             if (length(rownames)) 
                 dimnames(ans$X)[[1]] <- rownames[ok]
             else {
@@ -822,6 +824,7 @@ ltsReg <- function (x, y,
     names(ans$rsquared) <- yn
     names(ans$crit) <- yn
     ans$X <- x
+    ans$Y <- y          # VT:: 01.09.2004 - add y to the result object
     if (length(rownames)) 
         dimnames(ans$X)[[1]] <- rownames[ok]
     else {
@@ -837,19 +840,6 @@ ltsReg <- function (x, y,
     class(ans) <- "lts"
     attr(ans, "call") <- sys.call()
     return(ans)
-}
-
-print.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
-{
-    if(!is.null(cl <- x$call)) {
-        cat("Call:\n")
-        dput(cl)
-        cat("\n")
-    }
-    cat("Coefficients:\n")
-    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
-    cat("\nScale estimates", format(x$scale, digits = digits) ,"\n\n")
-    invisible(x)
 }
 
 #predict.lts <- function (object, newdata, na.action = na.pass, ...)

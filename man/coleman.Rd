@@ -6,7 +6,10 @@
 \title{ Coleman Data Set
  }
 \description{
-   Contains information on 20 Schools from the Mid-Atlantic and New England States, from Mosteller and Tukey (1977).
+   Contains information on 20 Schools from the Mid-Atlantic and New England States, 
+drawn from a population studied by Coleman et al. (1966). Mosteller and Tukey (1977) 
+analyze this sample consisting of measurements on six different variables, one of 
+which will be treated as a responce.
 }
 \usage{data(coleman)}
 \format{
@@ -27,7 +30,7 @@
 }
 \source{
  P. J. Rousseeuw and A. M. Leroy (1987) 
- \emph{Robust Regression and Outlier Detection.} Wiley, p.57. 
+ \emph{Robust Regression and Outlier Detection.} Wiley, p.79, table 2. 
 
 }
 \examples{

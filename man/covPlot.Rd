@@ -1,5 +1,6 @@
-\name{covPlot}
+\name{plot.mcd}
 \alias{covPlot}
+\alias{plot.mcd}
 \alias{ddplot}
 \alias{distplot}
 \alias{chi2qqplot}
@@ -21,28 +22,36 @@ The following plots are available:
  
 }
 \usage{
-covPlot(x, plotname = c("dd","distance","qqchi2","tolellipse"), classic=FALSE, mcd, cutoff, nid, tol.inv = 1e-7)
+
+    ## S3 method for class 'mcd':
+    plot.mcd(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), cutoff, id.n, tol.inv=1e-7, ...)
+    
+%    covPlot(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), mcd, cutoff, id.n, tol.inv = 1e-7)
+
 ddplot(x, ...)
 distplot(x, ...)
 chi2qqplot(x, ...)
 ellipse(x, ...)
+
 }
 
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{ a matrix or data frame. }
-  \item{plotname}{ Which plot to show? See Details for description of the options. Default is \code{plotname}="dd", i.e. Distance-Distance plot. }.
+  \item{x }{ a \code{mcd} object, typically result of \code{covMcd}. }
+  \item{which}{ Which plot to show? See Details for description of the options. Default is \code{which}="all". }.
   \item{classic}{ whether to plot the classical distances too. Default is \code{classic}=FALSE. }.
-  \item{mcd}{ An object of type mcd - its attributes center and cov will be used. }
+  \item{ask}{ logical; if 'TRUE', the user is \emph{ask}ed before each plot, see 'par(ask=.)'. 
+Default is \code{ask = which=="all" && dev.interactive()}.  }
   \item{cutoff}{ The cutoff value for the distances.  }
-  \item{nid}{ Number of observations to identify by a label. If not supplied, the number of observations with distance larger than \code{cutoff} is used.  }
+  \item{id.n}{ Number of observations to identify by a label. If not supplied, the number of observations with distance larger than \code{cutoff} is used.  }
   \item{tol.inv}{ tolerance to be used for computing the inverse see 'solve'. Default is \code{tol.inv = 10e-7}}
-  \item{...}{ arguments to \code{covPlot} other than \code{plotname}. }
+  \item{... }{ other parameters to be passed through to plotting functions. }
+
 }
 \details{
 
  This function produces several plots based on the robust and classical location and covariance matrix. 
-Which of them to select is specified by the attribute  \code{plotname}.
+Which of them to select is specified by the attribute  \code{which}.
 The possible options are: 
 
  \code{distance} - index plot of the robust distances;
@@ -86,9 +95,9 @@ be considered outliers.
 
 \examples{
 
-data(hbk)
-mcd <- covMcd(hbk.x)
-ddplot(hbk.x, mcd=mcd)
+data(brain)
+mcd <- covMcd(log(brain))
+plot(mcd)
 }
 \keyword{robust}
 \keyword{multivariate}

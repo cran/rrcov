@@ -21,7 +21,7 @@
 tolellipse <- function(x, 
                         mcd, 
                         cutoff, 
-                        nid,
+                        id.n,
                         classic=FALSE,
                         tol.inv=1e-07) {
 
@@ -112,10 +112,10 @@ tolellipse <- function(x,
     else
         par(mfrow = c(1, 1))
     
-    if(missing(nid))
-        nid <- length(which(rd>cutoff))          
+    if(missing(id.n))
+        id.n <- length(which(rd>cutoff))          
     ind <- sort(rd, index.return=TRUE)$ix
-    ind <- ind[(n-nid+1):n]
+    ind <- ind[(n-id.n+1):n]
 
 ##  1. Robust tollerance
 ##  define the plot, plot a box, plot the "good" points, 
