@@ -59,14 +59,16 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE){
     cat("========================================================\n")
 }
 
-dogen <- function(nrep=1, eps=0.4){
+dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
 
-    domcd <- function(x, nrep=1){ 
-        xtime <- system.time(dorep(x, nrep))[1]/nrep
-        cat(sprintf("%6d %3d %10.3f\n", dim(x)[1], dim(x)[2], xtime))
+    domcd <- function(x, nrep=1, MASS=FALSE){ 
+        gc()
+        xtime <- system.time(dorep(x, nrep, MASS))[1]/nrep
+        cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
         xtime   
     } 
 
+    set.seed(1234)
     library(MASS)
     library(rrcov)
     ap <- c(2, 5, 10, 20, 30)
@@ -81,7 +83,7 @@ dogen <- function(nrep=1, eps=0.4){
             n <- an[i]
             p <- ap[j]
             if(5*p <= n)
-                tottime <- tottime + domcd(gendata(n, p, eps), nrep)
+                tottime <- tottime + domcd(gendata(n, p, eps), nrep, MASS)
         } 
     }
     
@@ -89,10 +91,13 @@ dogen <- function(nrep=1, eps=0.4){
     cat("Total time: ", tottime*nrep, "\n")
 }
 
-dorep <- function(x, nrep=1){ 
+dorep <- function(x, nrep=1, MASS=FALSE){ 
 
     for(i in 1:nrep)
-        covMcd(x, print.it=FALSE)
+	if(MASS)
+            cov.mcd(x)
+        else
+            covMcd(x)
 } 
 
 #### gendata() ####
