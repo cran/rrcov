@@ -1,4 +1,4 @@
-ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, seed=0, qr.out=FALSE, yname=NULL, mcd=TRUE) 
+ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0) 
 {
 
     quan.f <- function(alpha, n, rk) {
@@ -626,11 +626,9 @@ ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, seed=0, qr.out=
     inbest <- matrix(10000, nrow = quan, ncol = 1)
     storage.mode(inbest) <- "integer"
     objfct <- 0
-    if (intercept) {
-        interc <- 1
-    }else {
-        interc <- 0
-    }
+
+    interc <- ifelse(intercept, 1, 0)
+    intadjust <- ifelse(adjust, 1, 0)
 
     storage.mode(interc) <- "integer"
     storage.mode(seed) <- "integer"
@@ -642,13 +640,14 @@ ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, seed=0, qr.out=
                 as.integer(nsamp), 
                 inbest = inbest, 
                 objfct = as.double(objfct), 
-                interc, 
+                as.integer(interc), 
+                as.integer(intadjust),
                 as.integer(nvad), 
                 datt,
                 seed,
                 PACKAGE="rrcov")
 
-    # vt:: lm.fit.qr === lm.fit(...,method=qr,...)
+    # vt:: lm.fit.qr == lm.fit(...,method=qr,...)
     #  cf <- lm.fit.qr(x[z$inbest, , drop = FALSE], y[z$inbest])$coef
     cf <- lm.fit(x[z$inbest, , drop = FALSE], y[z$inbest])$coef
     

@@ -1,33 +1,32 @@
 	subroutine rfltsreg(dat,n,nvar,nhalff,krep,inbest,objfct,
-     *   intercept,nvad,datt,iseed) 
+     *   intercept,intadjust, nvad,datt,iseed) 
 cc
 	implicit integer(i-n), double precision(a-h,o-z)
 cc
 	parameter (nvmax=50)
-cc
 	parameter (nmax=57000)
 cc
 	parameter (kmini=5)
 	parameter (nmini=300)
-cc
 	parameter (k1=2)
 	parameter (k2=2)
 	parameter (k3=100)
 cc
 	parameter (nvmax1=nvmax+1)
 	parameter (nvmax2=nvmax*nvmax)
-        parameter (nvm11=nvmax*(nvmax+1))
+	parameter (nvm11=nvmax*(nvmax+1))
 	parameter (nvm12=nvmax1*nvmax1)
 	parameter (km10=10*kmini)
 	parameter (nmaxi=nmini*kmini)
 C--VT   parameter (maxmini=int((3*nmini-1)/2)+1)
-        parameter (maxmini=450)
+	parameter (maxmini=450)
 cc
-        integer intercept,xrfnbreak,xrfncomb
-        double precision weights(nmax)
-        integer jmiss(nvmax1)
-        integer matz,seed,tottimes,step
-        integer pnsel
+	integer intercept,intadjust
+	integer xrfnbreak,xrfncomb
+	double precision weights(nmax)
+	integer jmiss(nvmax1)
+	integer matz,seed,tottimes,step
+	integer pnsel
 	integer flag(km10)
 	integer mini(kmini)
 	integer subdat(2,nmaxi)
@@ -37,31 +36,31 @@ cc
 	integer index2(nmax)
 	integer inbest(nhalff)
 	integer replow(51)
-        integer krep,n,nvar,nhalff,nvad
-        double precision objfct
-        double precision xmed(nvmax1)
-        double precision xmad(nvmax1)
-        double precision aw2(nmax),aw(nmax)
-        double precision a(nvmax1), da(nvmax1)
-        double precision h(nvmax,nvmax1),hvec(nvm11)
-        double precision c(nvmax,nvmax1)
-        double precision residu(nmax)
+	integer krep,n,nvar,nhalff,nvad
+	double precision objfct
+	double precision xmed(nvmax1)
+	double precision xmad(nvmax1)
+	double precision aw2(nmax),aw(nmax)
+	double precision a(nvmax1), da(nvmax1)
+	double precision h(nvmax,nvmax1),hvec(nvm11)
+	double precision c(nvmax,nvmax1)
+	double precision residu(nmax)
 	double precision cstock(10,nvmax2)
 	double precision mstock(10,nvmax)
 	double precision c1stock(km10,nvmax2)
 	double precision m1stock(km10,nvmax)
 	double precision mcdndex(10,2,kmini)
-        double precision dat(n,nvad)
-        double precision dath(nmaxi,nvmax1)
-        double precision y(nmax)
-        double precision datt(n,nvad)
+	double precision dat(n,nvad)
+	double precision dath(nmaxi,nvmax1)
+	double precision y(nmax)
+	double precision datt(n,nvad)
 	double precision sd(nvmax)
 	double precision means(nvmax)
 	double precision bmeans(nvmax)
 	double precision nmahad(nmax)
 	double precision ndist(nmax)
 	double precision faclts(11)
-        double precision am(nmax),am2(nmax),slutn(nmax)
+	double precision am(nmax),am2(nmax),slutn(nmax)
 	logical all,part,fine,final,xrfodd,more1,more2
 
 C--VT   double precision chimed(50)
@@ -93,26 +92,27 @@ cc
 cc
 CDDD	CALL INTPR('>>> Enter RFLTSREG ... nvar=',-1,nvar,1)
 
-        if(nvar.lt.5) then
-          eps=1.0D-12
-        else
-          if(nvar.ge.5.and.nvar.le.8) then
-            eps=1.0D-14
-          else
-            eps=1.0D-16
-          endif
-        endif
-        prec=1.0D-6
+	if(nvar.lt.5) then
+		eps=1.0D-12
+	else
+		if(nvar.ge.5.and.nvar.le.8) then
+			eps=1.0D-14
+		else
+			eps=1.0D-16
+		endif
+	endif
+	prec=1.0D-6
 
-cc        nhalff=int((n+nvar+1)/2)
-        jmin=(n/2)+1
-        jmax=max((3*n/4)+(nvar+1)/4,nhalff)
-        nquant=min(nint(real(((nhalff*1.0/n)-0.5)*40))+1,11)
-        factor=faclts(nquant)
-        jbreak=xrfnbreak(nhalff,n,nvar)
-        jdefaul=(n+nvar+1)/2
-        percen = (1.D0*nhalff)/(1.D0*n)
-        if(nvad.eq.1) goto 9000
+cc	nhalff=int((n+nvar+1)/2)
+
+	jmin=(n/2)+1
+	jmax=max((3*n/4)+(nvar+1)/4,nhalff)
+	nquant=min(nint(real(((nhalff*1.0/n)-0.5)*40))+1,11)
+	factor=faclts(nquant)
+	jbreak=xrfnbreak(nhalff,n,nvar)
+	jdefaul=(n+nvar+1)/2
+	percen = (1.D0*nhalff)/(1.D0*n)
+	if(nvad.eq.1) goto 9000
 cc
 CDDD	CALL INTPR('>>> Enter RFLTSREG ... iseed=',-1,iseed,1)
         seed=iseed
@@ -210,7 +210,6 @@ cc
           endif
         endif
 
-CDDD	CALL INTPR('>>> Start initialization ... nrep=',-1,nrep,1)
         seed=iseed
 cc
 
@@ -392,31 +391,34 @@ cc
  91       continue
         endif
         kount=0
- 
+
+CDDD	CALL INTPR('>>> MAIN LOOP BY GROUPS: NGROUP= ',-1,ngroup,1)
+
         do 1111 ii=1,ngroup
-CDDD	CALL INTPR('>>> NGROUP: ',-1,ngroup,1)
+CDDD	     CALL INTPR('>>> LOOPING BY GROUPS...II: ',-1,ii,1)
+          
           if(.not.fine) kount=0
           if(part .and. .not. fine) nn=mini(ii)
           do 101 i=1,nn
-            index2(i)=i
+              index2(i)=i
  101      continue
           if(part .and. .not. fine) then
-            jndex=0
-            do 103 j=1,minigr
-              if(subdat(2,j).eq.ii) then
-                jndex=jndex+1
-                subndex(jndex)=subdat(1,j)
-              endif
- 103        continue
-            do 105 j=1,mini(ii)
-              do 107 k=1,nvad
- 107           dath(j,k)=dat(subndex(j),k)
- 105        continue
+              jndex=0
+              do 103 j=1,minigr
+                  if(subdat(2,j).eq.ii) then
+                      jndex=jndex+1
+                      subndex(jndex)=subdat(1,j)
+                  endif
+ 103          continue
+              do 105 j=1,mini(ii)
+                  do 107 k=1,nvad
+ 107                  dath(j,k)=dat(subndex(j),k)
+ 105          continue
           endif
 cc
-CDDD    CALL INTPR('>>> NREP: ',-1,nrep,1)
-        do 1000 i=1,nrep
-CDDD    CALL INTPR('>>> NREP...I: ',-1,i,1)
+CDDD      CALL INTPR('>>> MAIN LOOP: NREP=',-1,nrep,1)
+          do 1000 i=1,nrep
+CDDD          CALL INTPR('>>> LOOPING...I: ',-1,i,1)
 
           pnsel=nsel
           tottimes=tottimes+1
@@ -424,148 +426,161 @@ CDDD    CALL INTPR('>>> NREP...I: ',-1,i,1)
           fckw1=0.D0
           step=0
  132      if((part.and..not.fine).or.(.not.part.and..not.final)) then
-            if(part) then
-              call xrfrangen(mini(ii),nsel,index1,seed)
-            else
-              if(all) then
-                call xrfgenpn(n,nsel,index1)
+              if(part) then
+                  call xrfrangen(mini(ii),nsel,index1,seed)
               else
-                call xrfrangen(n,nsel,index1,seed)
+                  if(all) then
+                      call xrfgenpn(n,nsel,index1)
+                  else
+                      call xrfrangen(n,nsel,index1,seed)
+                  endif
               endif
-            endif
           endif
+
  9550     continue
           if(.not.fine.and.part) then
-            do 121 j=1,pnsel
-              do 123 m=1,nvad
- 123            c(j,m)=dath(index1(j),m)
- 121        continue
+              do 121 j=1,pnsel
+                  do 123 m=1,nvad
+ 123                  c(j,m)=dath(index1(j),m)
+ 121          continue
           endif
           if(.not.part.and..not.final) then
-            do 122 j=1,pnsel
-              do 124 m=1,nvad
- 124            c(j,m)=dat(index1(j),m)
- 122        continue
+              do 122 j=1,pnsel
+                  do 124 m=1,nvad
+ 124                  c(j,m)=dat(index1(j),m)
+ 122          continue
           endif
           if((.not.part.and..not.final).or.(.not.fine.and.part)) then
-            if(nvar.gt.1) then
-              call rfequat(c,nvmax,nvmax1,hvec,nvm11,nvar,1,nerr)
-              if(nerr.ge.0) goto 126
-              jerd=jerd+1
-              if(.not.all.and.i.gt.2) goto 132
-              goto 1000
-            else
-              if(c(1,1).ne.0.D0) c(1,1)=c(1,2)/c(1,1)
-            endif
- 126        continue
-            do 136 jnc=1,nvar
- 136          a(jnc)=c(jnc,1)
+              if(nvar.gt.1) then
+                  call rfequat(c,nvmax,nvmax1,hvec,nvm11,nvar,1,nerr)
+                  if(nerr.ge.0) goto 126
+                  jerd=jerd+1
+                  if(.not.all.and.i.gt.2) goto 132
+                  goto 1000
+              else
+                  if(c(1,1).ne.0.D0) c(1,1)=c(1,2)/c(1,1)
+              endif
+
+ 126          continue
+ 
+              do 136 jnc=1,nvar
+ 136              a(jnc)=c(jnc,1)
           endif
           if (final) then
-            if(mstock(i,1).ne.1000000.D0) then
-              do 125 jj=1,nvar
-                a(jj)=mstock(i,jj)
- 125          continue
-            else
-              goto 1111
-            endif
+              if(mstock(i,1).ne.1000000.D0) then
+                  do 125 jj=1,nvar
+                      a(jj)=mstock(i,jj)
+ 125              continue
+              else
+                  goto 1111
+              endif
           endif
           if (fine.and..not.final) then
-            if(m1stock((ii-1)*10+i,1).ne.1000000.D0) then
-              do 131 jj=1,nvar
-                a(jj)=m1stock((ii-1)*10+i,jj)
- 131          continue
-            else
-              goto 1111
-            endif
-          endif
- 151      do 152 jnc=1,nn
-            residu(jnc)=0.D0
-            do 153 j=1,nvar
-              if(part.and..not.final) then
-                residu(jnc)=residu(jnc)+a(j)*dath(jnc,j)
+              if(m1stock((ii-1)*10+i,1).ne.1000000.D0) then
+                  do 131 jj=1,nvar
+                      a(jj)=m1stock((ii-1)*10+i,jj)
+ 131              continue
               else
-                residu(jnc)=residu(jnc)+a(j)*dat(jnc,j)
+                  goto 1111
               endif
- 153        continue
-            if(part.and..not.final) then
-              residu(jnc)=dath(jnc,nvad)-residu(jnc)
-            else
-              residu(jnc)=dat(jnc,nvad)-residu(jnc)
-            endif
-            aw(jnc)=residu(jnc)
+          endif
+            
+ 151      do 152 jnc=1,nn
+              residu(jnc)=0.D0
+              do 153 j=1,nvar
+                  if(part.and..not.final) then
+                      residu(jnc)=residu(jnc)+a(j)*dath(jnc,j)
+                  else
+                      residu(jnc)=residu(jnc)+a(j)*dat(jnc,j)
+                  endif
+ 153          continue
+              if(part.and..not.final) then
+                  residu(jnc)=dath(jnc,nvad)-residu(jnc)
+              else
+                  residu(jnc)=dat(jnc,nvad)-residu(jnc)
+              endif
+              aw(jnc)=residu(jnc)
  152      continue
+          
           more1=.false.
           more2=.false.
           nmore=200 
           nmore2=nmore/2
+
+          if(intadjust.eq.1) then
+
+CDDD		CALL INTPR('>>> INTERCEPT ADJUSTMENT 1',-1,i,1)
           if(intercept.eq.1.and.((.not.fine.and.part).or.
      *      .not.part.or.((nn-nhalf).le.nmore))) then
-            call xrfshsort(aw,nn)
-            call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
-     *        factor,nn-nhalf+1)
-            a(nvar)=a(nvar)+slutn(1)
-            do 154 jnc=1,nn
- 154          residu(jnc)=residu(jnc)-slutn(1)
-          else
-            if(intercept.eq.1) then
               call xrfshsort(aw,nn)
-              do 184 jj=1,nn
- 184             am2(jj)=abs(aw(jj))
-              dist2=xrffindq(am2,nn,nhalf,index1)
-              do 174, jj=1,nhalf
- 174            aw2(jj)=aw(index1(jj))
-              dist2=xrffindq(aw2,nhalf,1,index2) 
-              jnc=index1(index2(1))
-              if(jnc+nmore-nmore2+nhalf-1.gt.nn.or.jnc-nmore2.lt.1) then
-                call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
-     *          factor,nn-nhalf+1)
-                a(nvar)=a(nvar)+slutn(1)
-                do 169 jnc=1,nn
- 169              residu(jnc)=residu(jnc)-slutn(1)
-              else
- 555          do 178 jj=0,nhalf-1+nmore
- 178            aw2(jj+1)=aw(jnc-nmore2+jj) 
-              nlen=nmore+1
-              call xrfmcduni(aw2,nhalf+nmore,nhalf,slutn,bstd,am,am2,
-     *          factor,nlen)
-              if(nlen.eq.1.and..not.more1) then
-                if(.not.more2) then
-                  nmore=nmore2
-                  nmore2=nmore2+nmore2
-                  more1=.true.
-                  if(jnc-nmore2.ge.1) goto 555
-                endif
-              else
-                if(nlen.eq.(nmore+1).and..not.more2) then
-                  if(.not.more1) then
-                    nmore=nmore2
-                    nmore2=-nmore2
-                    more2=.true.
-                    if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 555
-                  endif
-                else
-                  if(nlen.eq.1.and.more1) then
-                    if(.not.more2) then
-                      nmore2=nmore2+100
-                      if(jnc-nmore2.ge.1) goto 555
-                    endif
-                  else
-                    if(nlen.eq.(nmore+1).and.more2) then
-                      if(.not.more1) then
-                        nmore2=nmore2+100
-                        if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 555
-                      endif
-                    endif
-                  endif
-                endif
-              endif
+              call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
+     *            factor,nn-nhalf+1)
               a(nvar)=a(nvar)+slutn(1)
-              do 170 jnc=1,nn
- 170            residu(jnc)=residu(jnc)-slutn(1)
+              do 154 jnc=1,nn
+ 154              residu(jnc)=residu(jnc)-slutn(1)
+          else
+              if(intercept.eq.1) then
+                  call xrfshsort(aw,nn)
+                  do 184 jj=1,nn
+ 184                  am2(jj)=abs(aw(jj))
+                  dist2=xrffindq(am2,nn,nhalf,index1)
+                  do 174, jj=1,nhalf
+ 174                  aw2(jj)=aw(index1(jj))
+                  dist2=xrffindq(aw2,nhalf,1,index2) 
+                  jnc=index1(index2(1))
+                  if(jnc+nmore-nmore2+nhalf-1.gt.nn.or.jnc-nmore2.lt.1) 
+     *                then
+                      call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
+     *                    factor,nn-nhalf+1)
+                      a(nvar)=a(nvar)+slutn(1)
+                      do 169 jnc=1,nn
+ 169                      residu(jnc)=residu(jnc)-slutn(1)
+                  else
+ 555                  do 178 jj=0,nhalf-1+nmore
+ 178                      aw2(jj+1)=aw(jnc-nmore2+jj) 
+                      nlen=nmore+1
+                      call xrfmcduni(aw2,nhalf+nmore,nhalf,slutn,
+     *          bstd,am,am2,factor,nlen)
+                      if(nlen.eq.1.and..not.more1) then
+                          if(.not.more2) then
+                              nmore=nmore2
+                              nmore2=nmore2+nmore2
+                              more1=.true.
+                              if(jnc-nmore2.ge.1) goto 555
+                          endif
+                      else
+                          if(nlen.eq.(nmore+1).and..not.more2) then
+                              if(.not.more1) then
+                                  nmore=nmore2
+                                  nmore2=-nmore2
+                                  more2=.true.
+                                  if(jnc+nmore-nmore2+nhalf-1.le.nn) 
+     *                                goto 555
+                              endif
+                          else
+                              if(nlen.eq.1.and.more1) then
+                                  if(.not.more2) then
+                                      nmore2=nmore2+100
+                                      if(jnc-nmore2.ge.1) goto 555
+                                  endif
+                              else
+                                  if(nlen.eq.(nmore+1).and.more2) then
+                                      if(.not.more1) then
+                                          nmore2=nmore2+100
+                            if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 555
+                                      endif
+                                  endif
+                              endif
+                          endif
+                      endif
+                      a(nvar)=a(nvar)+slutn(1)
+                      do 170 jnc=1,nn
+ 170                      residu(jnc)=residu(jnc)-slutn(1)
+                  endif
               endif
-            endif
           endif
+          endif
+          
           do 156 jnc=1,nn
  156        residu(jnc)=abs(residu(jnc))
           dist2=xrffindq(residu,nn,nhalf,index2)
@@ -606,74 +621,81 @@ CDDD    CALL INTPR('>>> NREP...I: ',-1,i,1)
           more2=.false.
           nmore=200 
           nmore2=nmore/2
+          
+          if(intadjust.eq.1) then
+
+CDDD		CALL INTPR('>>> INTERCEPT ADJUSTMENT 2',-1,step,1)
           if(intercept.eq.1.and.((.not.fine.and.part).or.
      *      .not.part.or.((nn-nhalf).le.nmore))) then
-            call xrfshsort(aw,nn)
-            call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
-     *        factor,nn-nhalf+1)
-            a(nvar)=a(nvar)+slutn(1)
-            do 179 jnc=1,nn
- 179          residu(jnc)=residu(jnc)-slutn(1)
-          else
-            if(intercept.eq.1) then
               call xrfshsort(aw,nn)
-              do 185 jj=1,nn
- 185            am2(jj)=abs(aw(jj))
-              dist2=xrffindq(am2,nn,nhalf,index1)
-              do 180, jj=1,nhalf
- 180            aw2(jj)=aw(index1(jj))
-              dist2=xrffindq(aw2,nhalf,1,index2) 
-              jnc=index1(index2(1))
-              if(jnc+nmore-nmore2+nhalf-1.gt.nn.or.jnc-nmore2.lt.1) then
-                call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
-     *          factor,nn-nhalf+1)
-                a(nvar)=a(nvar)+slutn(1)
-                do 168 jnc=1,nn
- 168              residu(jnc)=residu(jnc)-slutn(1)
-              else
- 666          do 181 jj=0,nhalf-1+nmore
- 181            aw2(jj+1)=aw(jnc-nmore2+jj) 
-              nlen=nmore+1
-              call xrfmcduni(aw2,nhalf+nmore,nhalf,slutn,bstd,am,am2,
-     *          factor,nlen)
-              if(nlen.eq.1.and..not.more1) then
-                if(.not.more2) then
-                  nmore=nmore2
-                  nmore2=nmore2+nmore2
-                  more1=.true.
-                  if(jnc-nmore2.ge.1) goto 666 
-                endif
-              else
-                if(nlen.eq.(nmore+1).and..not.more2) then
-                  if(.not.more1) then
-                    nmore=nmore2
-                    nmore2=-nmore2
-                    more2=.true.
-                    if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 666 
-                  endif
-                else
-                  if(nlen.eq.1.and.more1) then
-                    if(.not.more2) then
-                      nmore2=nmore2+100
-                      if(jnc-nmore2.ge.1) goto 666 
-                    endif
-                  else
-                    if(nlen.eq.(nmore+1).and.more2) then
-                      if(.not.more1) then
-                        nmore2=nmore2+100
-                        if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 666 
-                      endif
-                    endif
-                  endif
-                endif
-              endif
-
+              call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
+     *            factor,nn-nhalf+1)
               a(nvar)=a(nvar)+slutn(1)
-              do 182 jnc=1,nn
- 182            residu(jnc)=residu(jnc)-slutn(1)
+              do 179 jnc=1,nn
+ 179              residu(jnc)=residu(jnc)-slutn(1)
+          else
+              if(intercept.eq.1) then
+                  call xrfshsort(aw,nn)
+                  do 185 jj=1,nn
+ 185                  am2(jj)=abs(aw(jj))
+                  dist2=xrffindq(am2,nn,nhalf,index1)
+                  do 180, jj=1,nhalf
+ 180                  aw2(jj)=aw(index1(jj))
+                  dist2=xrffindq(aw2,nhalf,1,index2) 
+                  jnc=index1(index2(1))
+                  if(jnc+nmore-nmore2+nhalf-1.gt.nn.or.jnc-nmore2.lt.1)
+     *                then
+                      call xrfmcduni(aw,nn,nhalf,slutn,bstd,am,am2,
+     *                    factor,nn-nhalf+1)
+                      a(nvar)=a(nvar)+slutn(1)
+                      do 168 jnc=1,nn
+ 168                      residu(jnc)=residu(jnc)-slutn(1)
+                  else
+ 666                  do 181 jj=0,nhalf-1+nmore
+ 181                      aw2(jj+1)=aw(jnc-nmore2+jj) 
+                      nlen=nmore+1
+                      call xrfmcduni(aw2,nhalf+nmore,nhalf,slutn,bstd,
+     *                     am,am2,factor,nlen)
+                      if(nlen.eq.1.and..not.more1) then
+                          if(.not.more2) then
+                              nmore=nmore2
+                              nmore2=nmore2+nmore2
+                              more1=.true.
+                              if(jnc-nmore2.ge.1) goto 666 
+                          endif
+                      else
+                          if(nlen.eq.(nmore+1).and..not.more2) then
+                              if(.not.more1) then
+                                  nmore=nmore2
+                                  nmore2=-nmore2
+                                  more2=.true.
+                                  if(jnc+nmore-nmore2+nhalf-1.le.nn) 
+     *                                goto 666 
+                              endif
+                          else
+                              if(nlen.eq.1.and.more1) then
+                                  if(.not.more2) then
+                                      nmore2=nmore2+100
+                                      if(jnc-nmore2.ge.1) goto 666 
+                                  endif
+                              else
+                                  if(nlen.eq.(nmore+1).and.more2) then
+                                      if(.not.more1) then
+                                          nmore2=nmore2+100
+                            if(jnc+nmore-nmore2+nhalf-1.le.nn) goto 666 
+                                      endif
+                                  endif
+                              endif
+                          endif
+                      endif
+                      a(nvar)=a(nvar)+slutn(1)
+                      do 182 jnc=1,nn
+ 182                      residu(jnc)=residu(jnc)-slutn(1)
+                  endif
               endif
-            endif
           endif
+          endif
+          
           do 177 jnc=1,nn
  177        residu(jnc)=abs(residu(jnc))
             dist2=xrffindq(residu,nn,nhalf,index2)
@@ -1486,6 +1508,7 @@ cc
 ccccc
 ccccc
 	function xrfnbreak(nhalf,n,nvar)
+	integer xrfnbreak
 cc
 cc  Computes the breakdown value of the MCD estimator 
 cc

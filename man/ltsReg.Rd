@@ -6,7 +6,7 @@
 Carries out least trimmed squares (LTS) regression.
 }
 \usage{
-ltsReg(x, y, intercept=TRUE, alpha=NULL, nsamp=500, seed=0, qr.out=FALSE, yname=NULL, mcd=TRUE)
+ltsReg(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,10 +18,11 @@ ltsReg(x, y, intercept=TRUE, alpha=NULL, nsamp=500, seed=0, qr.out=FALSE, yname=
   In general, alpha must be a value between 0.5 and 1.
   }
   \item{nsamp}{ number of subsets used for initial estimates. Default is \code{nsamp = 500} }
-  \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
+  \item{adjust}{ whether to perform intercept adjustment at each step. This could be quite time consuming, therefore the default is \code{adjust = FALSE} }
+  \item{mcd}{ whether to compute robust distances using Fast-MCD.}
   \item{qr.out}{ whether to return the QR decomposition. Default is \code{qr.out = FALSE}}
   \item{yname}{ the name of the dependent variable. Default is \code{yname = NULL}}
-  \item{mcd}{ whether to compute robust distances using Fast-MCD.}
+  \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
 }
 \details{
  The LTS regression method minimizes the sum of the h smallest squared 

@@ -1,0 +1,7 @@
+2004-06-26  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-2
+    * fixed bug in Fortran: rfltsreg.f, xrfnbreak()
+    * Depends >= 1.8 (it was >= 1.9, because of the bug above)
+    * Parameter, controlling whether to perform intercept adjustment at each step added to ltsReg and its default value set to FALSE
+    
+ 
