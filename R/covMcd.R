@@ -434,7 +434,12 @@ correctiefactor.rew.s <- function(p, n, alpha)
         if(abs(scale - 0) < 1e-07) 
         {
             ans <- list()
-            ans$cov <- 0
+            # VT:: 22.12.04 - ans$cov must be a matrix. For example a subsequent 
+            #   call to determinant() will raise an error if it is a double.
+            #   The same for ans$raw.cov - see below
+            
+            # ans$cov <- 0
+            ans$cov <- matrix(0)
             names(ans$cov) <- dimn[[2]][1]
             ans$center <- center
             names(ans$center) <- dimn[[2]][1]
@@ -445,7 +450,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
                 quan, "of the observations are identical.")
             ans$alpha <- alpha
             ans$quan <- quan
-            ans$raw.cov <- 0
+            # ans$raw.cov <- 0
+            ans$raw.cov <- matrix(0)
             names(ans$raw.cov) <- dimn[[2]][1]
             ans$raw.center <- center
             names(ans$raw.center) <- dimn[[2]][1]

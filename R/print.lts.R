@@ -24,6 +24,6 @@ print.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
     }
     cat("Coefficients:\n")
     print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
-    cat("\nScale estimates", format(x$scale, digits = digits) ,"\n\n")
+    cat("\nScale estimate", format(x$scale, digits = digits) ,"\n\n")
     invisible(x)
 }

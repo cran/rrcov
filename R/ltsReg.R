@@ -508,8 +508,7 @@ ltsReg <- function (x, y,
     if (intercept) {
         dx <- dx + c(0, 1)
         xn <- c(xn, "Intercept")
-        x <- array(c(x, rep(1, n)), dx, dimnames = list(dn[[1]], 
-            xn))
+        x <- array(c(x, rep(1, n)), dx, dimnames = list(dn[[1]], xn))
     }
     p <- dx[2]
     if (n <= 2 * p) 
@@ -519,13 +518,23 @@ ltsReg <- function (x, y,
             stop("alpha is greater than 1")
         if (alpha == 1) {                                   # alpha == 1 -----------------------
             z <- lsfit(x, y, intercept = FALSE)
-            ans$raw.coefficients[2:p] <- z$coef[1:(p - 1)]
+            
+            # VT:: 26.12.2004 
+            # Reorder the coeficients,so that the intercept moves to the beginning of the array
+            # Skip this if p == 1 (i.e. p=1 and intercept=FALSE).
+            # Do the same for the names and for ans$coef - see below
+            if(p > 1)
+                ans$raw.coefficients[2:p] <- z$coef[1:(p - 1)]
             ans$raw.coefficients[1] <- z$coef[p]
+            
             ans$alpha <- alpha
             ans$quan <- quan <- n           # VT:: 01.09.2004 - bug in alpha=1 
                                             # (ans$quan was not set)
-            names(ans$raw.coefficients)[2:p] <- xn[1:(p - 1)]
+            # VT:: 26.12.2004 
+            if(p > 1)
+                names(ans$raw.coefficients)[2:p] <- xn[1:(p - 1)]
             names(ans$raw.coefficients)[1] <- xn[p]
+            
             s0 <- sqrt((1/(n - p)) * sum(z$residuals^2))
             weights <- rep(NA, n)
             if(abs(s0) < 1e-07) {
@@ -544,8 +553,12 @@ ltsReg <- function (x, y,
                 # 
                 weights <- as.vector(weights)
                 z <- lsfit(x, y, wt = weights, intercept = FALSE)
-                ans$coefficients[2:p] <- z$coef[1:(p - 1)]
+
+                # VT:: 26.12.2004 
+                if(p > 1)
+                    ans$coefficients[2:p] <- z$coef[1:(p - 1)]
                 ans$coefficients[1] <- z$coef[p]
+                
                 fitted <- x %*% z$coef
                 ans$scale <- sqrt(sum(weights * z$residuals^2)/(sum(weights) - 
                   1))
@@ -563,8 +576,12 @@ ltsReg <- function (x, y,
                   qnorm(0.9875), 1, 0)
                 ans$resid <- z$residuals/ans$scale
             }
-            names(ans$coefficients)[2:p] <- xn[1:(p - 1)]
+
+            # VT:: 26.12.2004 
+            if(p > 1)
+                names(ans$coefficients)[2:p] <- xn[1:(p - 1)]
             names(ans$coefficients)[1] <- xn[p]
+            
             ans$crit <- sum(z$residuals^2)
             if (intercept) {
                 s1 <- sum(z$residuals^2)
@@ -590,7 +607,7 @@ ltsReg <- function (x, y,
             ans$intercept <- intercept
             ans$method <- paste("Least Squares Regression.")
             if (abs(s0) < 1e-07) 
-                ans$method <- paste(ans$method, , "\nAn exact fit was found!")
+                ans$method <- paste(ans$method, "\nAn exact fit was found!")
             if (mcd) {
                 # vt:: changed name of the function
                 # mcd <- cov.mcd.default(X, print.it = FALSE, alpha = 1)
@@ -689,19 +706,23 @@ ltsReg <- function (x, y,
     fitted <- x %*% cf
     resid <- y - fitted
     coefs[piv] <- cf
-    ans$raw.coefficients[2:p] <- coefs[1:(p - 1)]
+
+    # VT:: 26.12.2004 
+    if(p > 1)
+        ans$raw.coefficients[2:p] <- coefs[1:(p - 1)]
     ans$raw.coefficients[1] <- coefs[p]
-    names(ans$raw.coefficients)[2:p] <- names(coefs)[1:(p - 1)]
+
+    if(p > 1)
+        names(ans$raw.coefficients)[2:p] <- names(coefs)[1:(p - 1)]
     names(ans$raw.coefficients)[1] <- names(coefs)[p]
+    
     ans$alpha <- alpha
     ans$quan <- quan
-    correct <- correctiefactor.s(p, intercept = intercept, n, 
-        alpha)
+    correct <- correctiefactor.s(p, intercept = intercept, n, alpha)
     s0 <- sqrt((1/quan) * sum(sort(resid^2, quan)[1:quan]))
     sh0 <- s0
-    s0 <- s0 * (1/sqrt(1 - ((2 * n)/(quan * (1/qnorm((quan + 
-        n)/(2 * n))))) * dnorm(1/(1/(qnorm((quan + n)/(2 * n))))))) * 
-        correct
+    s0 <- s0 * (1/sqrt(1 - ((2 * n)/(quan * (1/qnorm((quan + n)/
+        (2 * n))))) * dnorm(1/(1/(qnorm((quan + n)/(2 * n))))))) * correct
     weights <- rep(NA, n)
     if (abs(s0) < 1e-07) {
         weights <- ifelse(abs(resid) <= 1e-07, 1, 0)
@@ -720,8 +741,12 @@ ltsReg <- function (x, y,
         weights <- as.vector(weights)
         
         z1 <- lsfit(x, y, wt = weights, intercept = FALSE)
-        ans$coefficients[2:p] <- z1$coef[1:(p - 1)]
+
+        # VT:: 26.12.2004 
+        if(p > 1)
+            ans$coefficients[2:p] <- z1$coef[1:(p - 1)]
         ans$coefficients[1] <- z1$coef[p]
+        
         fitted <- x %*% z1$coef
         resid <- z1$residuals
         ans$scale <- sqrt(sum(weights * resid^2)/(sum(weights) - 
@@ -790,26 +815,29 @@ ltsReg <- function (x, y,
         sh <- sum(sort(y^2, quan)[1:quan])
         ans$rsquared <- 1 - (s1/sh)
     }
-    if (ans$rsquared > 1) {
+
+    # VT:: 03.11.04 - consider the case when sh=0 (i.e. rsquared=NaN or -Inf)
+    if(is.nan(ans$rsquared) || is.infinite(ans$rsquared)){
+        ans$rsquared <- 0
+    } else if (ans$rsquared > 1) {
         ans$rsquared <- 1
-    }
-    if (ans$rsquared < 0) {
+    } else if (ans$rsquared < 0) {
         ans$rsquared <- 0
     }
+
     attributes(resid) <- attributes(fitted) <- attributes(y)
     ans$residuals <- rep(NA, length(na.y))
     ans$residuals[ok] <- resid
     ans$intercept <- intercept
     ans$method <- paste("Least Trimmed Squares Robust Regression.")
-    if (abs(s0) < 1e-07) 
-        ans$method <- paste(ans$method, , "\nAn exact fit was found!")
+    if(abs(s0) < 1e-07) 
+        ans$method <- paste(ans$method, "\nAn exact fit was found!")
     if (mcd) {
 
 # vt:: changed name of the function
 #       mcd <- cov.mcd.default(X, alpha = alpha, print.it = FALSE)
         mcd <- covMcd(X, alpha = alpha, print.it = FALSE)
-        if (-(determinant(mcd$cov, log = TRUE)$modulus[1] - 0)/p > 
-            50) {
+        if(-(determinant(mcd$cov, log = TRUE)$modulus[1] - 0)/p > 50) {
             ans$RD[1] <- "singularity"
         }
         else {

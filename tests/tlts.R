@@ -1,3 +1,11 @@
+test_rsquared <- function(){
+    x1 <- c(2, 3, 4, 8, 12, 22, 28, 29, 33, 34, 38, 40, 41, 47, 48, 50, 51, 54, 56, 59) 
+    y1 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 3.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5) 
+    print(ltsReg(x1,y1,alpha=0.8))
+    print(ltsReg(y1,x1,alpha=0.8))
+    print(ltsReg(y1,x1,alpha=0.8, intercept=FALSE))
+}
+
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTLTS","MASS")){
 ##@bdescr
 ## Test function ltsReg() on the literature datasets: 
@@ -201,3 +209,4 @@ whatis<-function(x){
 
 library(rrcov)
 dodata()
+test_rsquared()
