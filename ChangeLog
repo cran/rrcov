@@ -1,7 +1,18 @@
+2004-12-26  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-6
+    * a bug in ltsReg (rsquared) fixed
+    * fixed CRLF line endings in FORTRAN sources
+    * fixed a problem in covMcd: in case of p=1 and cov=[0], the cov matrix was
+        a double instead of a matrix, which resulted in errors in subsequent
+        calls (e.g. determinant(mcd$cov) expects a matrix)
+    * fixed a problem in ltsReg when p==1 and Intercept==FALSE - the vectors of 
+        coefficients ans$coefficients and ans$raw.coefficients were of size 2
+    * error handling added in ltsReg in case of scale=0
+
 2004-09-16  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-5
     * several errors in doc fixed (ltsPlot.Rd, covPlot.Rd, aircraft.Rd)
-	
+    
 2004-09-16 Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-4 
     * added Regression Diagnostic Plots - function ltsPlot()

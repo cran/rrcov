@@ -124,6 +124,10 @@ indexplot <- function(r, scale, classic = FALSE, lab, id.n, ...){
 ##  observations with largest value of r. 
 ##  Use classic=FALSE/TRUE to choose the label of the vertical axes
 
+    # VT:: 26.12.2004
+    if(scale == 0)
+        stop("Index plot of standardized residuals is not avalable if scale = 0")
+
     mgp = c(2.5, 1, 0)  # set the margin line (in 'mex' units) for the:
                         # - axis title, 
                         # - axis labels and 
@@ -157,6 +161,10 @@ fitplot <- function(obj, classic = FALSE, lab, id.n, ...){
 ##  label the id.n observations with largest value of r. 
 ##  Use classic=FALSE/TRUE to choose the label of the vertical axes
 
+    # VT:: 26.12.2004
+    if(obj$scale == 0)
+        stop("Standardized residuals vs Fitted values plot is not avalable if scale = 0")
+
     mgp = c(2.5, 1, 0)  # set the margin line (in 'mex' units) for the:
                         # - axis title, 
                         # - axis labels and 
@@ -188,15 +196,19 @@ fitplot <- function(obj, classic = FALSE, lab, id.n, ...){
 
 
 rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
-##  Standardized residuals vs Fitted values plot:
-##  Plot the vector r (LTS or LS residuals) against 
-##  the corresponding fitted values. Identify by a 
-##  label the id.n observations with largest value of r. 
+##  Regression diagnostic plot:
+##  Plot the vector of the standardized residuals against 
+##  the robust distances of the predictor variables
+##  Identify by a label the id.n observations with largest value of r. 
 ##  Use classic=FALSE/TRUE to choose the label of the vertical axes
 
     p <- if(obj$intercept) length(obj$coef) - 1 else length(obj$coef)
     if(p <= 0)
         warning("Diagnostic plot is not available for univar\niate location and scale estimation")
+
+    # VT:: 26.12.2004
+    if(obj$scale <= 0)
+        stop("Regression Diagnostic plot is not avalable if scale = 0")
 
     if(is.null(obj$RD))
         stop("option mcd=F was set in ltsreg.")

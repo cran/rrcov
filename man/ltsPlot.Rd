@@ -41,7 +41,7 @@ The possible options are:
  
  \code{rfit} - plot of the standardized residuals versus fitted values;
  
- \code{tolellipse} - regression diagnostic plot.
+ \code{rdiag} - regression diagnostic plot.
 
  The regression diagnostic Plot, introduced by
 Rousseeuw and van Zomeren (1990), displays the standardized residuals versus robust distances. 
