@@ -5,7 +5,10 @@
 \docType{data}
 \title{ Phosphorus Content Data }
 \description{
-   This dataset investigates the effect from inorganic and organic Phosphorus in the soil upon the phosphorus content of the corn grown in this soil, from Prescott (1975).
+   This dataset investigates the effect from inorganic and organic Phosphorus 
+in the soil upon the phosphorus content of the corn grown in this soil, 
+from Prescott (1975).
+
 }
 \usage{data(phosphor)}
 \format{

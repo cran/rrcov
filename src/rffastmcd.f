@@ -408,7 +408,9 @@ cc
 	  if(n.le.replow(nsel)) then 
 	    nrep=rfncomb(nsel,n)
 	  else 
-            nrep=500
+C VT::02.09.2004 - remove the hardcoded 500 for nrep
+C            nrep=500
+            nrep=krep
 	    all=.false.
 	  endif
 	endif
@@ -1321,6 +1323,8 @@ C	CALL INTPR('BEST SUBSAMPLE (SORTED): ',-1,TEMP,NHALF)
         do 271,j=1,nvar
  271      means(j)=bmeans(j)*mad(j)+med(j)
         call rfcovcopy(means,initmean,nvar,1)
+
+C	CALL DBLEPR('CENTER: ',-1,initmean,nvar)
 cc
         do 9145 i=1,nvar
           do 9147 j=1,nvar

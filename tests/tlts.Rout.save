@@ -1,13 +1,14 @@
 
-R : Copyright 2003, The R Development Core Team
-Version 1.8.0  (2003-10-08)
+R : Copyright 2004, The R Foundation for Statistical Computing
+Version 1.9.0  (2004-04-12), ISBN 3-900051-00-3
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
 R is a collaborative project with many contributors.
-Type 'contributors()' for more information.
+Type 'contributors()' for more information and
+'citation()' on how to cite R in publications.
 
 Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for a HTML browser interface to help.
@@ -81,6 +82,7 @@ Type 'q()' to quit R.
 +         library(MASS)
 + 
 +     data(heart)
++     data(stars)
 +     data(phosphor)
 +     data(stackloss)
 +     data(coleman)
@@ -98,6 +100,7 @@ Type 'q()' to quit R.
 +     cat("Data Set               n   p  Half      obj         Time\n")
 +     cat("========================================================\n")
 +     dolts(heart.x,heart.y, data(heart), nrep)
++     dolts(stars.x,stars.y, data(stars), nrep)
 +     dolts(phosphor.x,phosphor.y, data(phosphor), nrep)
 +     dolts(stack.x,stack.loss, data(stackloss), nrep)
 +     dolts(coleman.x,coleman.y, data(coleman), nrep)
@@ -138,7 +141,7 @@ Type 'q()' to quit R.
 +         library(MASS)
 + 
 +     ap <- c(2, 3, 5, 10)
-+     an <- c(100, 500, 1000, 10000, 50000)
++     an <- c(100, 500, 1000, 10000, 20000, 30000, 50000)
 + 
 +     set.seed(0)
 + 
@@ -213,7 +216,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-3)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-5)
 > dodata()
 
 Call:  dodata() 
@@ -231,6 +234,19 @@ Intercept         X1         X2
   63.3528    -1.2265     0.6884  
 
 Scale estimates 1.525 
+
+--------------------------------------------------------
+stars                 47   1  25     1.880169
+Best subsample: 
+ [1]  2  4  6 10 13 15 17 19 21 22 25 27 28 29 33 35 36 38 39 41 42 43 44 45 46
+Outliers:  6 
+[1]  7  9 11 20 30 34
+-------------
+Coefficients:
+Intercept          X  
+   -8.500      3.046  
+
+Scale estimates 0.4562 
 
 --------------------------------------------------------
 phosphor              18   2  11     0.245377

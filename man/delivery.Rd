@@ -3,13 +3,13 @@
 \alias{delivery.x}
 \alias{delivery.y}
 \docType{data}
-\title{ Delivery Time Data, from Montgomery and Peck (1982)
+\title{ Delivery Time Data
 }
 \description{
-   Delivery Time Data, from Montgomery and Peck (1982)
+   Delivery Time Data, from Montgomery and Peck (1982).
 The aim is to explain the time required to service a vending 
-machine by means of the number of products stocked and the 
-distance walked by the route driver.
+machine (Y) by means of the number of products stocked (X1) and the 
+distance walked by the route driver (X2).
 }
 \usage{data(delivery)}
 \format{

@@ -66,6 +66,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
         library(MASS)
 
     data(heart)
+    data(stars)
     data(phosphor)
     data(stackloss)
     data(coleman)
@@ -83,6 +84,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
     cat("Data Set               n   p  Half      obj         Time\n")
     cat("========================================================\n")
     dolts(heart.x,heart.y, data(heart), nrep)
+    dolts(stars.x,stars.y, data(stars), nrep)
     dolts(phosphor.x,phosphor.y, data(phosphor), nrep)
     dolts(stack.x,stack.loss, data(stackloss), nrep)
     dolts(coleman.x,coleman.y, data(coleman), nrep)
@@ -123,7 +125,7 @@ dogen <- function(nrep=1, eps=0.4, method=c("FASTLTS","MASS")){
         library(MASS)
 
     ap <- c(2, 3, 5, 10)
-    an <- c(100, 500, 1000, 10000, 50000)
+    an <- c(100, 500, 1000, 10000, 20000, 30000, 50000)
 
     set.seed(0)
 

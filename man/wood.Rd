@@ -5,7 +5,12 @@
 \docType{data}
 \title{ Modified Wood Gravity Dataset }
 \description{
-   
+   The original data are from Draper and Smith (1966) and
+were used to determine the influence of anatomical factors on wood
+specific gravity, with five explanatory variables and an
+intercept. These data were contaminated by replacing a few
+observations with outliers.
+
 }
 \usage{data(wood)}
 \format{
@@ -19,13 +24,15 @@
     \item{Y}{Y}
   }
 
- For convenience, the data sets \code{wood.x}, a matrix with the first 5 (independent) variables of the data frame, and \code{wood.y}, the numeric vector giving the sixth (dependent) variable, are provided as well. 
+ For convenience, the data sets \code{wood.x}, a matrix with the first 5 (independent) 
+ variables of the data frame, and \code{wood.y}, the numeric vector giving the sixth 
+ (dependent) variable, are provided as well. 
 
 }
 %\Note{}
 \source{
  P. J. Rousseeuw and A. M. Leroy (1987) 
- \emph{Robust Regression and Outlier Detection.} Wiley. 
+ \emph{Robust Regression and Outlier Detection.} Wiley, p.243, table 8. 
  
 }
 \examples{
