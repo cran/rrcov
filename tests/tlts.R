@@ -1,7 +1,28 @@
-dodata <- function(nrep=1, time=FALSE, short=FALSE, MASS=FALSE){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTLTS","MASS")){
+##@bdescr
+## Test function ltsReg() on the literature datasets: 
+##
+## Call ltsReg() for all regression datasets available in rrcov and print:
+##  - execution time (if time == TRUE)
+##  - objective fucntion
+##  - best subsample found (if short == false)
+##  - outliers identified (with cutoff 0.975) (if short == false)
+##  - estimated coeficients and scale (if full == TRUE)
+## 
+##@edescr
+##
+##@in  nrep              : [integer] number of repetitions to use for estimating the 
+##                                   (average) execution time
+##@in  time              : [boolean] whether to evaluate the execution time
+##@in  short             : [boolean] whether to do short output (i.e. only the 
+##                                   objective function value). If short == FALSE,
+##                                   the best subsample and the identified outliers are 
+##                                   printed. See also the parameter full below
+##@in  full              : [boolean] whether to print the estimated coeficients and scale 
+##@in  method            : [character] select a method: one of (FASTLTS, MASS) 
 
-    dolts <- function(x, y, xname, nrep=1, time=FALSE, short=FALSE, MASS=FALSE){ 
-        if(MASS){
+    dolts <- function(x, y, xname, nrep=1){ 
+        if(method == "MASS"){
             lts <- ltsreg(x,y)
             quan <- as.integer((dim(x)[1] + (dim(x)[2] + 1) + 1)/2)   #default: (n+p+1)/2
         } else {
@@ -11,7 +32,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, MASS=FALSE){
 
         crit <- lts$crit
         if(time){
-            xtime <- system.time(dorep(x, y, nrep, MASS))[1]/nrep
+            xtime <- system.time(dorep(x, y, nrep, method))[1]/nrep
             xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
         }
         else{
@@ -30,64 +51,87 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, MASS=FALSE){
             cat("Outliers: ",nbad,"\n")
             if(nbad > 0)
                 print(ibad)
+            if(full){
+                cat("-------------\n")
+                print(lts)   
+            } 
+            cat("--------------------------------------------------------\n")
         }
     } 
 
     lname <- 20
     library(rrcov)
+    method <- match.arg(method)
+    if(method == "MASS")
+        library(MASS)
 
     data(heart)
     data(phosphor)
     data(stackloss)
     data(coleman)
     data(salinity)
+    data(aircraft)
+    data(delivery)
     data(wood)
 
     data(hbk)
 
+    tmp <- sys.call()
+    cat("\nCall: ", deparse(substitute(tmp)),"\n")
+    
+    cat("========================================================\n")
     cat("Data Set               n   p  Half      obj         Time\n")
     cat("========================================================\n")
-    dolts(heart.x,heart.y, data(heart), nrep, time, short, MASS)
-    dolts(phosphor.x,phosphor.y, data(phosphor), nrep, time, short, MASS)
-    dolts(stack.x,stack.loss, data(stackloss), nrep, time, short, MASS)
-    dolts(coleman.x,coleman.y, data(coleman), nrep, time, short, MASS)
-    dolts(salinity.x,salinity.y, data(salinity), nrep, time, short, MASS)
-    dolts(wood.x,wood.y, data(wood), nrep, time, short, MASS)
-    dolts(hbk.x,hbk.y, data(hbk), nrep, time, short, MASS)
+    dolts(heart.x,heart.y, data(heart), nrep)
+    dolts(phosphor.x,phosphor.y, data(phosphor), nrep)
+    dolts(stack.x,stack.loss, data(stackloss), nrep)
+    dolts(coleman.x,coleman.y, data(coleman), nrep)
+    dolts(salinity.x,salinity.y, data(salinity))
+    dolts(aircraft.x,aircraft.y, data(aircraft))
+    dolts(delivery.x,delivery.y, data(delivery))
+    dolts(wood.x,wood.y, data(wood), nrep)
+    dolts(hbk.x,hbk.y, data(hbk), nrep)
 
     cat("========================================================\n")
 }
 
-dorep <- function(x, y, nrep=1, MASS=FALSE){ 
+dorep <- function(x, y, nrep=1, method=c("FASTLTS","MASS")){ 
 
     # set mcd=FALSE - we want to time only the LTS algorithm
     for(i in 1:nrep)
-    if(MASS)
+    if(method == "MASS")
 #        ltsreg(x,y,control=list(psamp = NA, nsamp = "best", adjust = FALSE))
         ltsreg(x,y)
     else
         ltsReg(x, y, mcd = FALSE)
 } 
 
-dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
+dogen <- function(nrep=1, eps=0.4, method=c("FASTLTS","MASS")){
 
-    dolts <- function(x, y, nrep=1, MASS=FALSE){ 
+    dolts <- function(x, y, nrep=1){ 
         gc()
-        xtime <- system.time(dorep(x, y, nrep, MASS))[1]/nrep
+        xtime <- system.time(dorep(x, y, nrep, method))[1]/nrep
         n <- as.integer(dim(x)[1])
         p <- as.integer(dim(x)[2] + 1)
         cat(sprintf("%6d %3d %10.2f\n", n, p, xtime))
         xtime   
     } 
 
-    library(MASS)
     library(rrcov)
+    method <- match.arg(method)
+    if(method == "MASS")
+        library(MASS)
+
     ap <- c(2, 3, 5, 10)
     an <- c(100, 500, 1000, 10000, 50000)
 
     set.seed(0)
 
     tottime <- 0
+
+    tmp <- sys.call()
+    cat("\nCall: ", deparse(substitute(tmp)),"\n")
+    
     cat("     n   p       Time\n")
     cat("=====================\n")
     for(i in 1:length(an)) {
@@ -96,7 +140,7 @@ dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
             p <- ap[j]
             if(5*p <= n){
                 a <- gendata(n, p, eps)
-                tottime <- tottime + dolts(a$x,a$y, nrep, MASS)
+                tottime <- tottime + dolts(a$x,a$y, nrep)
             }
         } 
     }

@@ -1,5 +1,6 @@
 \name{covMcd}
 \alias{covMcd}
+\alias{print.mcd}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Robust location and scatter estimation with high breakdown point }
 \description{
@@ -103,7 +104,7 @@ approximate the minimum covariance determinant estimator.
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{}
+% \seealso{}
 \examples{
 
 data(hbk)

@@ -1,4 +1,32 @@
-ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0) 
+##  rrcov : Scalable Robust Estimators with High Breakdown Point
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 2 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+##
+##  I would like to thank Peter Rousseeuw and Katrien van Driessen for 
+##  providing the initial code of this function.
+
+
+ltsReg <- function (x, y, 
+                    intercept=TRUE, 
+                    alpha=NULL, 
+                    nsamp=500, 
+                    adjust=FALSE, 
+                    mcd=TRUE, 
+                    qr.out=FALSE, 
+                    yname=NULL, 
+                    seed=0) 
 {
 
     quan.f <- function(alpha, n, rk) {
@@ -243,8 +271,7 @@ ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, m
             stop(message = "y is not a numeric dataframe or vector.")
     }
     if ((!is.matrix(y) && !is.vector(y)) || is.data.frame(y)) {
-        if ((!is.data.frame(y) && !is.numeric(y)) || (!all(sapply(y, 
-            data.class) == "numeric"))) 
+        if ((!is.data.frame(y) && !is.numeric(y)) || (!all(sapply(y, data.class) == "numeric"))) 
             stop(message = "y is not a numeric dataframe or vector.")
     }
     
@@ -292,10 +319,15 @@ ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, m
                 stop(message = "x is not a numeric dataframe or matrix.")
         }
         if ((!is.matrix(x) && !is.vector(x)) || is.data.frame(x)) {
-            if ((!is.data.frame(x) && !is.numeric(x)) || (!all(sapply(x, 
-                data.class) == "numeric"))) 
+            if ((!is.data.frame(x) && !is.numeric(x)) || (!all(sapply(x, data.class) == "numeric"))) 
                 stop(message = "x is not a numeric dataframe or matrix.")
         }
+
+        #vt:: if the data is supplied as a data.frame, the following expressions results in an error
+        # as workaround convert the data.frame to a matrix
+        if(is.data.frame(x))
+            x <- as.matrix(x)
+    
         if (!is.matrix(x)) 
             x <- array(x, c(length(x), 1), list(names(x), deparse(substitute(x))))
         x <- as.matrix(x)
@@ -804,5 +836,30 @@ ltsReg <- function (x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, m
         ans$qr <- qrx
     class(ans) <- "lts"
     attr(ans, "call") <- sys.call()
-    ans
+    return(ans)
 }
+
+print.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
+{
+    if(!is.null(cl <- x$call)) {
+        cat("Call:\n")
+        dput(cl)
+        cat("\n")
+    }
+    cat("Coefficients:\n")
+    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
+    cat("\nScale estimates", format(x$scale, digits = digits) ,"\n\n")
+    invisible(x)
+}
+
+#predict.lts <- function (object, newdata, na.action = na.pass, ...)
+#{
+#    if (missing(newdata)) return(fitted(object))
+#    ## work hard to predict NA for rows with missing data
+#    Terms <- delete.response(terms(object))
+#    m <- model.frame(Terms, newdata, na.action = na.action,
+#                     xlev = object$xlevels)
+#    if(!is.null(cl <- attr(Terms, "dataClasses"))) .checkMFClasses(cl, m)
+#    X <- model.matrix(Terms, m, contrasts = object$contrasts)
+#    drop(X %*% object$coefficients)
+#} 

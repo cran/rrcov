@@ -11,9 +11,9 @@
 \format{
   A data frame with 18 observations on the following 3 variables.
   \describe{
-    \item{X1}{Inorganic Phosphorus }
-    \item{X2}{Organic Phosphorus }
-    \item{Y}{Plant Phosphorus }
+    \item{\code{X1}}{Inorganic Phosphorus }
+    \item{\code{X2}}{Organic Phosphorus }
+    \item{\code{Y}}{Plant Phosphorus }
   }
   
  For convenience, the data sets \code{phosphor.x}, a matrix with the first two (independent) variables of the data frame, and \code{phosphor.y}, the numeric vector giving the thirth (dependent) variable, are provided as well. 

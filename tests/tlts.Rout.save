@@ -1,23 +1,43 @@
 
-R : Copyright 2004, The R Foundation for Statistical Computing
-Version 1.9.0  (2004-04-12), ISBN 3-900051-00-3
+R : Copyright 2003, The R Development Core Team
+Version 1.8.0  (2003-10-08)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
 R is a collaborative project with many contributors.
-Type 'contributors()' for more information and
-'citation()' on how to cite R in publications.
+Type 'contributors()' for more information.
 
 Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for a HTML browser interface to help.
 Type 'q()' to quit R.
 
-> dodata <- function(nrep=1, time=FALSE, short=FALSE, MASS=FALSE){
+> dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTLTS","MASS")){
++ ##@bdescr
++ ## Test function ltsReg() on the literature datasets: 
++ ##
++ ## Call ltsReg() for all regression datasets available in rrcov and print:
++ ##  - execution time (if time == TRUE)
++ ##  - objective fucntion
++ ##  - best subsample found (if short == false)
++ ##  - outliers identified (with cutoff 0.975) (if short == false)
++ ##  - estimated coeficients and scale (if full == TRUE)
++ ## 
++ ##@edescr
++ ##
++ ##@in  nrep              : [integer] number of repetitions to use for estimating the 
++ ##                                   (average) execution time
++ ##@in  time              : [boolean] whether to evaluate the execution time
++ ##@in  short             : [boolean] whether to do short output (i.e. only the 
++ ##                                   objective function value). If short == FALSE,
++ ##                                   the best subsample and the identified outliers are 
++ ##                                   printed. See also the parameter full below
++ ##@in  full              : [boolean] whether to print the estimated coeficients and scale 
++ ##@in  method            : [character] select a method: one of (FASTLTS, MASS) 
 + 
-+     dolts <- function(x, y, xname, nrep=1, time=FALSE, short=FALSE, MASS=FALSE){ 
-+         if(MASS){
++     dolts <- function(x, y, xname, nrep=1){ 
++         if(method == "MASS"){
 +             lts <- ltsreg(x,y)
 +             quan <- as.integer((dim(x)[1] + (dim(x)[2] + 1) + 1)/2)   #default: (n+p+1)/2
 +         } else {
@@ -27,7 +47,7 @@ Type 'q()' to quit R.
 + 
 +         crit <- lts$crit
 +         if(time){
-+             xtime <- system.time(dorep(x, y, nrep, MASS))[1]/nrep
++             xtime <- system.time(dorep(x, y, nrep, method))[1]/nrep
 +             xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
 +         }
 +         else{
@@ -46,64 +66,87 @@ Type 'q()' to quit R.
 +             cat("Outliers: ",nbad,"\n")
 +             if(nbad > 0)
 +                 print(ibad)
++             if(full){
++                 cat("-------------\n")
++                 print(lts)   
++             } 
++             cat("--------------------------------------------------------\n")
 +         }
 +     } 
 + 
 +     lname <- 20
 +     library(rrcov)
++     method <- match.arg(method)
++     if(method == "MASS")
++         library(MASS)
 + 
 +     data(heart)
 +     data(phosphor)
 +     data(stackloss)
 +     data(coleman)
 +     data(salinity)
++     data(aircraft)
++     data(delivery)
 +     data(wood)
 + 
 +     data(hbk)
 + 
++     tmp <- sys.call()
++     cat("\nCall: ", deparse(substitute(tmp)),"\n")
++     
++     cat("========================================================\n")
 +     cat("Data Set               n   p  Half      obj         Time\n")
 +     cat("========================================================\n")
-+     dolts(heart.x,heart.y, data(heart), nrep, time, short, MASS)
-+     dolts(phosphor.x,phosphor.y, data(phosphor), nrep, time, short, MASS)
-+     dolts(stack.x,stack.loss, data(stackloss), nrep, time, short, MASS)
-+     dolts(coleman.x,coleman.y, data(coleman), nrep, time, short, MASS)
-+     dolts(salinity.x,salinity.y, data(salinity), nrep, time, short, MASS)
-+     dolts(wood.x,wood.y, data(wood), nrep, time, short, MASS)
-+     dolts(hbk.x,hbk.y, data(hbk), nrep, time, short, MASS)
++     dolts(heart.x,heart.y, data(heart), nrep)
++     dolts(phosphor.x,phosphor.y, data(phosphor), nrep)
++     dolts(stack.x,stack.loss, data(stackloss), nrep)
++     dolts(coleman.x,coleman.y, data(coleman), nrep)
++     dolts(salinity.x,salinity.y, data(salinity))
++     dolts(aircraft.x,aircraft.y, data(aircraft))
++     dolts(delivery.x,delivery.y, data(delivery))
++     dolts(wood.x,wood.y, data(wood), nrep)
++     dolts(hbk.x,hbk.y, data(hbk), nrep)
 + 
 +     cat("========================================================\n")
 + }
 > 
-> dorep <- function(x, y, nrep=1, MASS=FALSE){ 
+> dorep <- function(x, y, nrep=1, method=c("FASTLTS","MASS")){ 
 + 
 +     # set mcd=FALSE - we want to time only the LTS algorithm
 +     for(i in 1:nrep)
-+     if(MASS)
++     if(method == "MASS")
 + #        ltsreg(x,y,control=list(psamp = NA, nsamp = "best", adjust = FALSE))
 +         ltsreg(x,y)
 +     else
 +         ltsReg(x, y, mcd = FALSE)
 + } 
 > 
-> dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
+> dogen <- function(nrep=1, eps=0.4, method=c("FASTLTS","MASS")){
 + 
-+     dolts <- function(x, y, nrep=1, MASS=FALSE){ 
++     dolts <- function(x, y, nrep=1){ 
 +         gc()
-+         xtime <- system.time(dorep(x, y, nrep, MASS))[1]/nrep
++         xtime <- system.time(dorep(x, y, nrep, method))[1]/nrep
 +         n <- as.integer(dim(x)[1])
 +         p <- as.integer(dim(x)[2] + 1)
 +         cat(sprintf("%6d %3d %10.2f\n", n, p, xtime))
 +         xtime   
 +     } 
 + 
-+     library(MASS)
 +     library(rrcov)
++     method <- match.arg(method)
++     if(method == "MASS")
++         library(MASS)
++ 
 +     ap <- c(2, 3, 5, 10)
 +     an <- c(100, 500, 1000, 10000, 50000)
 + 
 +     set.seed(0)
 + 
 +     tottime <- 0
++ 
++     tmp <- sys.call()
++     cat("\nCall: ", deparse(substitute(tmp)),"\n")
++     
 +     cat("     n   p       Time\n")
 +     cat("=====================\n")
 +     for(i in 1:length(an)) {
@@ -112,7 +155,7 @@ Type 'q()' to quit R.
 +             p <- ap[j]
 +             if(5*p <= n){
 +                 a <- gendata(n, p, eps)
-+                 tottime <- tottime + dolts(a$x,a$y, nrep, MASS)
++                 tottime <- tottime + dolts(a$x,a$y, nrep)
 +             }
 +         } 
 +     }
@@ -170,8 +213,11 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-2)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-3)
 > dodata()
+
+Call:  dodata() 
+========================================================
 Data Set               n   p  Half      obj         Time
 ========================================================
 heart                 12   2   8     0.065810
@@ -179,36 +225,118 @@ Best subsample:
 [1]  1  2  4  5  6  7 11 12
 Outliers:  4 
 [1]  3  8  9 10
+-------------
+Coefficients:
+Intercept         X1         X2  
+  63.3528    -1.2265     0.6884  
+
+Scale estimates 1.525 
+
+--------------------------------------------------------
 phosphor              18   2  11     0.245377
 Best subsample: 
  [1]  1  2  3  4  6  7 11 12 14 15 18
 Outliers:  1 
 [1] 17
+-------------
+Coefficients:
+Intercept         X1         X2  
+ 60.91489    1.21103    0.08833  
+
+Scale estimates 13.54 
+
+--------------------------------------------------------
 stackloss             21   3  13     0.083378
 Best subsample: 
  [1]  5  6  7  8  9 10 11 12 15 16 17 18 19
 Outliers:  4 
 [1]  1  3  4 21
+-------------
+Coefficients:
+ Intercept    Air.Flow  Water.Temp  Acid.Conc.  
+ -37.65246     0.79769     0.57734    -0.06706  
+
+Scale estimates 1.922 
+
+--------------------------------------------------------
 coleman               20   5  13     0.019426
 Best subsample: 
  [1]  2  5  6  7  8  9 11 13 14 15 16 19 20
 Outliers:  2 
 [1]  3 18
+-------------
+Coefficients:
+Intercept         X1         X2         X3         X4         X5  
+ 29.75772   -1.69854    0.08512    0.66617    1.18400   -4.06675  
+
+Scale estimates 1.119 
+
+--------------------------------------------------------
 salinity              28   3  16     0.065610
 Best subsample: 
  [1]  2  3  4  6  7 12 14 15 17 18 19 20 21 22 26 27
 Outliers:  4 
 [1]  5 16 23 24
+-------------
+Coefficients:
+Intercept         X1         X2         X3  
+  38.0635     0.4429    -0.2065    -1.3734  
+
+Scale estimates 1.233 
+
+--------------------------------------------------------
+aircraft              23   4  14     0.298554
+Best subsample: 
+ [1]  1  5  6  7  8  9 10 11 13 14 15 17 20 23
+Outliers:  2 
+[1] 16 22
+-------------
+Coefficients:
+ Intercept          X1          X2          X3          X4  
+ 9.5007403  -3.0487969   1.2100330   0.0013810  -0.0005549  
+
+Scale estimates 5.693 
+
+--------------------------------------------------------
+delivery              25   2  14     0.112945
+Best subsample: 
+ [1]  2  5  6  7  8 10 12 13 14 15 17 21 22 25
+Outliers:  3 
+[1]  1  9 24
+-------------
+Coefficients:
+Intercept         X1         X2  
+  3.71959    1.40578    0.01625  
+
+Scale estimates 2.383 
+
+--------------------------------------------------------
 wood                  20   5  13     0.070258
 Best subsample: 
  [1]  2  3  9 10 11 12 13 14 15 16 17 18 20
 Outliers:  4 
 [1]  4  6  8 19
+-------------
+Coefficients:
+Intercept         V1         V2         V3         V4         V5  
+  0.37733    0.21738   -0.08501   -0.56430   -0.40033    0.60745  
+
+Scale estimates 0.01236 
+
+--------------------------------------------------------
 hbk                   75   3  40     3.724554
 Best subsample: 
  [1] 11 12 14 16 17 18 20 25 26 30 31 32 33 34 35 36 37 39 40 41 42 44 45 46 48
 [26] 50 55 56 58 59 60 61 63 64 66 67 69 71 72 74
 Outliers:  10 
  [1]  1  2  3  4  5  6  7  8  9 10
+-------------
+Coefficients:
+Intercept         X1         X2         X3  
+ -0.18046    0.08138    0.03990   -0.05167  
+
+Scale estimates 0.744 
+
+--------------------------------------------------------
 ========================================================
 > 
