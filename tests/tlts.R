@@ -1,16 +1,23 @@
-dodata <- function(nrep=1, time=FALSE, short=FALSE){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, MASS=FALSE){
 
-    dolts <- function(x, y, xname, nrep=1, time=FALSE, short=FALSE){ 
-        lts<-ltsReg(x, y)
+    dolts <- function(x, y, xname, nrep=1, time=FALSE, short=FALSE, MASS=FALSE){ 
+        if(MASS){
+            lts <- ltsreg(x,y)
+            quan <- as.integer((dim(x)[1] + (dim(x)[2] + 1) + 1)/2)   #default: (n+p+1)/2
+        } else {
+            lts <- ltsReg(x, y, mcd = FALSE)
+            quan <- as.integer(lts$quan)
+        }
+
         crit <- lts$crit
-        quan <- as.integer(lts$quan)
         if(time){
-            xtime <- system.time(dorep(x, nrep))[1]/nrep
+            xtime <- system.time(dorep(x, y, nrep, MASS))[1]/nrep
             xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
         }
         else{
             xres <- sprintf("%3d %3d %3d %12.6f\n", dim(x)[1], dim(x)[2], quan, crit)
         }
+        
         lpad<-lname-nchar(xname)
         cat(pad.right(xname,lpad), xres)
         if(!short){
@@ -40,13 +47,13 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE){
 
     cat("Data Set               n   p  Half      obj         Time\n")
     cat("========================================================\n")
-    dolts(heart.x,heart.y, data(heart), nrep, time, short)
-    dolts(phosphor.x,phosphor.y, data(phosphor), nrep, time, short)
-    dolts(stack.x,stack.loss, data(stackloss), nrep, time, short)
-    dolts(coleman.x,coleman.y, data(coleman), nrep, time, short)
-    dolts(salinity.x,salinity.y, data(salinity), nrep, time, short)
-    dolts(wood.x,wood.y, data(wood), nrep, time, short)
-    dolts(hbk.x,hbk.y, data(hbk), nrep, time, short)
+    dolts(heart.x,heart.y, data(heart), nrep, time, short, MASS)
+    dolts(phosphor.x,phosphor.y, data(phosphor), nrep, time, short, MASS)
+    dolts(stack.x,stack.loss, data(stackloss), nrep, time, short, MASS)
+    dolts(coleman.x,coleman.y, data(coleman), nrep, time, short, MASS)
+    dolts(salinity.x,salinity.y, data(salinity), nrep, time, short, MASS)
+    dolts(wood.x,wood.y, data(wood), nrep, time, short, MASS)
+    dolts(hbk.x,hbk.y, data(hbk), nrep, time, short, MASS)
 
     cat("========================================================\n")
 }
@@ -56,9 +63,10 @@ dorep <- function(x, y, nrep=1, MASS=FALSE){
     # set mcd=FALSE - we want to time only the LTS algorithm
     for(i in 1:nrep)
     if(MASS)
-            ltsreg(x,y)
-        else
-            ltsReg(x, y, mcd = FALSE)
+#        ltsreg(x,y,control=list(psamp = NA, nsamp = "best", adjust = FALSE))
+        ltsreg(x,y)
+    else
+        ltsReg(x, y, mcd = FALSE)
 } 
 
 dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
@@ -72,15 +80,12 @@ dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
         xtime   
     } 
 
-    set.seed(0)
-
     library(MASS)
     library(rrcov)
-#    ap <- c(2, 5, 10, 20, 30)
-#    an <- c(100, 500, 1000, 10000, 50000)
     ap <- c(2, 3, 5, 10)
     an <- c(100, 500, 1000, 10000, 50000)
 
+    set.seed(0)
 
     tottime <- 0
     cat("     n   p       Time\n")
