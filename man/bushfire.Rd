@@ -4,7 +4,9 @@
 \title{ Campbell Bushfire Data }
 \description{
 
-This data set was used by Campbell (1984) to locate bushfire scars. The dataset contains satelite measurements on five frequency bands, corresponding to each of 38 pixels.
+This data set was used by Campbell (1984) to locate bushfire scars. 
+The dataset contains satelite measurements on five frequency bands, 
+corresponding to each of 38 pixels.
 }
 \usage{data(bushfire)}
 \format{
@@ -19,8 +21,7 @@ Assosiation}, \bold{90} (1995) 330--341.
 
 }
 
-\seealso{
-}
+%\seealso{}
 \examples{
 data(bushfire)
 plot(bushfire)

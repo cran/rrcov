@@ -1,7 +1,17 @@
+2004-07-13  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-3 
+    * improved documentation of the datasets
+    * added datasets aircraft and delivery
+    * added Covariance Plots - function covPlot()
+    * ...added Distance Plot - function distplot()
+    * ...added Distance-Distance Plot - function ddplot()
+    * ...added Chisquare QQ-Plot - function chi2qqplot()
+    * ...added Tolerance Ellipse Plot - function tolellipse()
+    * added function print.lts (for ltsReg result); included in the test tlts.R
+    * added function print.mcd (for covMcd result); included in the test tmcd.R
+    
 2004-06-26  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-2
     * fixed bug in Fortran: rfltsreg.f, xrfnbreak()
     * Depends >= 1.8 (it was >= 1.9, because of the bug above)
-    * Parameter, controlling whether to perform intercept adjustment at each step added to ltsReg and its default value set to FALSE
-    
- 
+    * Parameter, controlling whether to perform intercept adjustment at each step added to ltsReg and its default value set to FALSE    

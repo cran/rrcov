@@ -12,12 +12,15 @@
 \format{
   A data frame with 12 observations on the following 3 variables.
   \describe{
-    \item{X1}{Patient's height in inches}
-    \item{X2}{Patient's weights in pounds}
-    \item{Y}{Catheter Length (in centimeters)}
+    \item{\code{X1}}{Patient's height in inches}
+    \item{\code{X2}}{Patient's weights in pounds}
+    \item{\code{Y}}{Catheter Length (in centimeters)}
   }
 
- For convenience, the data sets \code{heart.x}, a matrix with the first two (independent) variables of the data frame, and \code{heart.y}, the numeric vector giving the thirth (dependent) variable, are provided as well. 
+ For convenience, the data sets \code{heart.x}, a matrix 
+ with the first two (independent) variables of the data frame, 
+ and \code{heart.y}, the numeric vector giving the thirth (dependent) 
+ variable, are provided as well. 
 
 }
 %\Note{}

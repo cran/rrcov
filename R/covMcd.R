@@ -1,4 +1,28 @@
-covMcd <- function(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE)
+##  rrcov : Scalable Robust Estimators with High Breakdown Point
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 2 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+##
+##  I would like to thank Peter Rousseeuw and Katrien van Driessen for 
+##  providing the initial code of this function.
+
+covMcd <- function(x, 
+                   cor=FALSE, 
+                   alpha=1/2, 
+                   nsamp=500, 
+                   seed=0, 
+                   print.it=FALSE)
 {
     quan.f <- function(alpha, n, rk)
     {
@@ -176,18 +200,15 @@ correctiefactor.rew.s <- function(p, n, alpha)
     #...
 
     # vt:: tolerance to be used for computing the mahalanobis distances (default = 1e-7)
-    tol = 1e-8
+    tol = 1e-10
 
     if(is.vector(x) || (is.matrix(x) && !is.data.frame(x))) {
         if(!is.numeric(x))
-            stop(message = 
-                "x is not a numeric dataframe or matrix.")
+            stop(message = "x is not a numeric dataframe or matrix.")
     }
     if((!is.vector(x) && !is.matrix(x)) || is.data.frame(x)) {
-        if((!is.data.frame(x) && !is.numeric(x)) || (!all(sapply(x, 
-            data.class) == "numeric")))
-            stop(message = 
-                "x is not a numeric dataframe or matrix.")
+        if((!is.data.frame(x) && !is.numeric(x)) || (!all(sapply(x,data.class) == "numeric")))
+            stop(message = "x is not a numeric dataframe or matrix.")
     }
     
     #vt:: if the data is supplied as a data.frame, the following expressions results in an error
@@ -735,4 +756,19 @@ correctiefactor.rew.s <- function(p, n, alpha)
     class(ans) <- "mcd"
     attr(ans, "call") <- sys.call()
     return(ans)
+}
+
+print.mcd <- function (x, digits = max(3, getOption("digits") - 3), ...)
+{
+    if(!is.null(cl <- x$call)) {
+        cat("Call:\n")
+        dput(cl)
+        cat("\n")
+    }
+    cat("\nLog(det): ", format(log(x$crit), digits = digits) ,"\n\n")
+    cat("Center:\n")
+    print.default(format(x$center, digits = digits), print.gap = 2, quote = FALSE)
+    cat("\nCovariance Matrix:\n")
+    print.default(format(x$cov, digits = digits), print.gap = 2, quote = FALSE)
+    invisible(x)
 }

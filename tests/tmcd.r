@@ -1,11 +1,38 @@
-dodata <- function(nrep=1, time=FALSE, short=FALSE){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
+##@bdescr
+## Test the function covMcd() on the literature datasets: 
+##
+## Call covMcd() for all regression datasets available in rrcov and print:
+##  - execution time (if time == TRUE)
+##  - objective fucntion
+##  - best subsample found (if short == false)
+##  - outliers identified (with cutoff 0.975) (if short == false)
+##  - estimated center and covarinance matrix if full == TRUE)
+## 
+##@edescr
+##
+##@in  nrep              : [integer] number of repetitions to use for estimating the 
+##                                   (average) execution time
+##@in  time              : [boolean] whether to evaluate the execution time
+##@in  short             : [boolean] whether to do short output (i.e. only the 
+##                                   objective function value). If short == FALSE,
+##                                   the best subsample and the identified outliers are 
+##                                   printed. See also the parameter full below
+##@in  full              : [boolean] whether to print the estimated cente and covariance matrix 
+##@in  method            : [character] select a method: one of (FASTMCD, MASS) 
 
-    domcd <- function(x, xname, nrep=1, time=FALSE, short=FALSE){ 
-        mcd<-covMcd(x, print.it=FALSE)
-        quan <- mcd$quan
+    domcd <- function(x, xname, nrep=1){ 
+        if(method == "MASS"){
+            mcd<-cov.mcd(x)
+            quan <- as.integer((dim(x)[1] + (dim(x)[2] + 1) + 1)/2)   #default: (n+p+1)/2
+        }            
+        else{
+            mcd<-covMcd(x, print.it=FALSE)
+            quan <- as.integer(mcd$quan)
+        }
         crit <- log(mcd$crit)
         if(time){
-           xtime <- system.time(dorep(x, nrep))[1]/nrep
+           xtime <- system.time(dorep(x, nrep, method))[1]/nrep
             xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
         }
         else{
@@ -24,11 +51,20 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE){
             cat("Outliers: ",nbad,"\n")
             if(nbad > 0)
                 print(ibad)
+            if(full){
+                cat("-------------\n")
+                print(mcd)   
+            } 
+            cat("--------------------------------------------------------\n")
         }
     } 
 
     lname <- 20
     library(rrcov)
+    method <- match.arg(method)
+    if(method == "MASS")
+        library(MASS)
+
 
     data(heart)
     data(phosphor)
@@ -43,34 +79,41 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE){
     data(milk)
     data(bushfire)
 
+    tmp <- sys.call()
+    cat("\nCall: ", deparse(substitute(tmp)),"\n")
+
     cat("Data Set               n   p  Half LOG(obj)        Time\n")
     cat("========================================================\n")
-    domcd(heart.x,data(heart), nrep, time, short)
-    domcd(phosphor.x,data(phosphor), nrep, time, short)
-    domcd(stack.x,data(stackloss), nrep, time, short)
-    domcd(coleman.x,data(coleman), nrep, time, short)
-    domcd(salinity.x,data(salinity), nrep, time, short)
-    domcd(wood.x,data(wood), nrep, time, short)
-    domcd(hbk.x,data(hbk), nrep, time, short)
+    domcd(heart.x,data(heart), nrep)
+    domcd(phosphor.x,data(phosphor), nrep)
+    domcd(stack.x,data(stackloss), nrep)
+    domcd(coleman.x,data(coleman), nrep)
+    domcd(salinity.x,data(salinity), nrep)
+    domcd(wood.x,data(wood), nrep)
+    domcd(hbk.x,data(hbk), nrep)
 
-    domcd(brain,data(brain), nrep, time, short)
-    domcd(milk,data(milk), nrep, time, short)
-    domcd(bushfire,data(bushfire), nrep, time, short)
+    domcd(brain,data(brain), nrep)
+    domcd(milk,data(milk), nrep)
+    domcd(bushfire,data(bushfire), nrep)
     cat("========================================================\n")
 }
 
-dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
+dogen <- function(nrep=1, eps=0.4, method=c("FASTMCD", "MASS")){
 
-    domcd <- function(x, nrep=1, MASS=FALSE){ 
+    domcd <- function(x, nrep=1){ 
         gc()
-        xtime <- system.time(dorep(x, nrep, MASS))[1]/nrep
+        xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
         xtime   
     } 
 
     set.seed(1234)
-    library(MASS)
+
     library(rrcov)
+    method <- match.arg(method)
+    if(method == "MASS")
+        library(MASS)
+
     ap <- c(2, 5, 10, 20, 30)
     an <- c(100, 500, 1000, 10000, 50000)
 
@@ -83,7 +126,7 @@ dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
             n <- an[i]
             p <- ap[j]
             if(5*p <= n)
-                tottime <- tottime + domcd(gendata(n, p, eps), nrep, MASS)
+                tottime <- tottime + domcd(gendata(n, p, eps), nrep)
         } 
     }
     
@@ -91,13 +134,14 @@ dogen <- function(nrep=1, eps=0.4, MASS=FALSE){
     cat("Total time: ", tottime*nrep, "\n")
 }
 
-dorep <- function(x, nrep=1, MASS=FALSE){ 
+dorep <- function(x, nrep=1, method=c("FASTMCD","MASS")){ 
 
+    method <- match.arg(method)
     for(i in 1:nrep)
-	if(MASS)
-            cov.mcd(x)
-        else
-            covMcd(x)
+    if(method == "MASS")
+        cov.mcd(x)
+    else
+        covMcd(x)
 } 
 
 #### gendata() ####

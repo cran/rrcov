@@ -1,3 +1,25 @@
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc  rrcov : Scalable Robust Estimators with High Breakdown Point
+cc
+cc  This program is free software; you can redistribute it and/or modify
+cc  it under the terms of the GNU General Public License as published by
+cc  the Free Software Foundation; either version 2 of the License, or
+cc  (at your option) any later version.
+cc
+cc  This program is distributed in the hope that it will be useful,
+cc  but WITHOUT ANY WARRANTY; without even the implied warranty of
+cc  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+cc  GNU General Public License for more details.
+cc
+cc  You should have received a copy of the GNU General Public License
+cc  along with this program; if not, write to the Free Software
+cc  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+cc
+cc  I would like to thank Peter Rousseeuw and Katrien van Driessen for 
+cc  providing the initial code of this function.
+cc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
 	subroutine rfltsreg(dat,n,nvar,nhalff,krep,inbest,objfct,
      *   intercept,intadjust, nvad,datt,iseed) 
 cc

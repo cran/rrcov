@@ -13,10 +13,10 @@
 \format{
   A data frame with 28 observations on the following 4 variables.
   \describe{
-    \item{X1}{Lagged Salinity}
-    \item{X2}{Trend}
-    \item{X3}{Discharge}
-    \item{Y}{Salinity}
+    \item{\code{X1}}{Lagged Salinity}
+    \item{\code{X2}}{Trend}
+    \item{\code{X3}}{Discharge}
+    \item{\code{Y}}{Salinity}
   }
 
 For convenience, the data sets \code{salinity.x}, a matrix with the three (independent) variables of the data frame, and \code{salinity.y}, the numeric vector giving the fourth (dependent) variable, are provided as well. 

@@ -4,7 +4,15 @@
 \title{ Daudin's Milk Composition Data
  }
 \description{
- Daudin et. al. (1988) give 8 readings on the composition of 86 containers of milk. They speak about 85 observations, but this can be explained with the fact that observations 63 and 64 are identical (as noted by Rocke (1996). The data set was use for analysing the stability of principal component analysis by bootstrap method. In the same context, but using high breakdown point robust PCA, these data was analysed by V. Todorov et.al. (1994).
+ Daudin et. al. (1988) give 8 readings on the composition of 86 
+ containers of milk. They speak about 85 observations, but this 
+ can be explained with the fact that observations 63 and 64 are 
+ identical (as noted by Rocke (1996). The data set was used for 
+ analysing the stability of principal component analysis by the 
+ bootstrap method. In the same context, but using high breakdown 
+ point robust PCA, these data was analysed by Todorov et.al. (1994).
+Atkinson (1994) used these data for ilustration of the forward 
+search algorithm for identifying of multiple outliers.
 
  
 }
@@ -12,14 +20,14 @@
 \format{
   A data frame with 86 observations on the following 8 variables.
   \describe{
-    \item{V1}{density}
-    \item{V2}{fat content, grams/liter}
-    \item{V3}{protein content, grams/liter}
-    \item{V4}{casein content, grams/liter}
-    \item{V5}{cheese dry substance measured in the factory, grams/liter}
-    \item{V6}{cheese dry substance measured in the laboratory, grams/liter}
-    \item{V7}{milk dry substance, grams/liter}
-    \item{V8}{cheese product, grams/liter}
+    \item{\code{X1}}{density}
+    \item{\code{X2}}{fat content, grams/liter}
+    \item{\code{X3}}{protein content, grams/liter}
+    \item{\code{X4}}{casein content, grams/liter}
+    \item{\code{X5}}{cheese dry substance measured in the factory, grams/liter}
+    \item{\code{X6}}{cheese dry substance measured in the laboratory, grams/liter}
+    \item{\code{X7}}{milk dry substance, grams/liter}
+    \item{\code{X8}}{cheese product, grams/liter}
   }
 }
 \source{

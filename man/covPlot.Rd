@@ -1,0 +1,94 @@
+\name{covPlot}
+\alias{covPlot}
+\alias{ddplot}
+\alias{distplot}
+\alias{chi2qqplot}
+\alias{ellipse}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{ Robust Distance Plots }
+\description{
+ Shows the Mahalanobis distances based on robust and classical estimates 
+of the location and the covariance matrix in different plots. 
+The following plots are available:
+
+ - index plot of the robust and mahalanobis distances
+ 
+ - distance-distance plot
+ 
+ - Chisquare QQ-plot of the robust and mahalanobis distances
+ 
+ - plot of the tolerance ellipses (robust and classic)
+ 
+}
+\usage{
+covPlot(x, plotname = c("dd","distance","qqchi2","tolellipse"), classic=FALSE, mcd, cutoff, nid, tol.inv = 1e-7)
+ddplot(x, ...)
+distplot(x, ...)
+chi2qqplot(x, ...)
+ellipse(x, ...)
+}
+
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{x}{ a matrix or data frame. }
+  \item{plotname}{ Which plot to show? See Details for description of the options. Default is \code{plotname}="dd", i.e. Distance-Distance plot. }.
+  \item{classic}{ whether to plot the classical distances too. Default is \code{classic}=FALSE. }.
+  \item{mcd}{ An object of type mcd - its attributes center and cov will be used. }
+  \item{cutoff}{ The cutoff value for the distances.  }
+  \item{nid}{ Number of observations to identify by a label. If not supplied, the number of observations with distance larger than \code{cutoff} is used.  }
+  \item{tol.inv}{ tolerance to be used for computing the inverse see 'solve'. Default is \code{tol.inv = 10e-7}}
+  \item{...}{ arguments to \code{covPlot} other than \code{plotname}. }
+}
+\details{
+
+ This function produces several plots based on the robust and classical location and covariance matrix. 
+Which of them to select is specified by the attribute  \code{plotname}.
+The possible options are: 
+
+ \code{distance} - index plot of the robust distances;
+ 
+ \code{dd} - distance-distance plot;
+ 
+ \code{qqchi2} - a qq-plot of the robust distances versus the quantiles of the chi-squared distribution
+ 
+ \code{tolellipse} - a tolerance ellipse
+
+ The Distance-Distance Plot, introduced by
+Rousseeuw and van Zomeren (1990), displays the robust distances
+versus the classical Mahalanobis distances. The dashed line is the set of 
+points where the robust distance is equal to the classical distance.
+The horizontal and vertical lines are drawn at values equal to the cutoff
+which defaults to square root of the 97.5% quantile of a chi-squared 
+distribution with p degrees of freedom. Points beyond these lines can 
+be considered outliers.
+
+}
+
+}
+%\value{}
+\references{ 
+ 
+     P. J. Rousseeuw and van Zomeren, B. C. (1990). Unmasking
+    Multivariate Outliers and Leverage Points. \emph{Journal of the American
+    Statistical Association} \bold{85}, 633-639.
+    
+    P. J. Rousseeuw and K. van Driessen (1999) 
+    A fast algorithm for the minimum covariance determinant estimator. 
+    \emph{Technometrics} \bold{41}, 212--223.
+ 
+ }
+
+% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+\code{\link{tolellipse}} 
+}
+
+\examples{
+
+data(hbk)
+mcd <- covMcd(hbk.x)
+ddplot(hbk.x, mcd=mcd)
+}
+\keyword{robust}
+\keyword{multivariate}

@@ -1,5 +1,6 @@
 \name{ltsReg}
 \alias{ltsReg}
+\alias{print.lts}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Robust regression with high breakdown point }
 \description{
