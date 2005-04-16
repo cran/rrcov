@@ -274,7 +274,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
             ans$mcd.wt[ok] <- rep(1, sum(ok == TRUE))
         }
         else {
-            mah <- mahalanobis(x, loc, mcd, tol.inv=tol)        # VT:: 01.09.2004 - bug in alpha=1 
+                                                                # VT:: 16.04.2005 - change for 2.1.0 - use tol instead of tol.inv
+            mah <- mahalanobis(x, loc, mcd, tol=tol)            # VT:: 01.09.2004 - bug in alpha=1 
                                                                 # (tol instead of tol.inv as parameter name)
             weights <- ifelse(mah < qchisq(0.975, p), 1, 0)
             ans <- cov.wt(x, wt = weights, cor)
@@ -336,7 +337,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
                 if(length(dimn[[2]]))
                     names(ans$raw.center) <- dimn[[2]]
                 ans$crit <- exp(obj)
-                mah <- mahalanobis(x, ans$center, ans$cov, tol.inv=tol)
+                mah <- mahalanobis(x, ans$center, ans$cov, tol=tol)
             }
             ans$mcd.wt <- rep(NA, length(na.x))
             ans$mcd.wt[ok] <- ifelse(mah < qchisq(0.975, p), 1, 0)
@@ -422,7 +423,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
         dim(mcd$initcovariance) <- c(p, p)
         if(mcd$exactfit == 0) 
         {
-            mah <- mahalanobis(x, mcd$initmean, mcd$initcovariance, tol.inv = tol)
+            mah <- mahalanobis(x, mcd$initmean, mcd$initcovariance, tol = tol)
             mcd$weights <- ifelse(mah < qchisq(0.975, p), 1, 0)
         }
     }
@@ -707,7 +708,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
         dimnames(ans$raw.cov) <- list(dimn[[2]], dimn[[2]])
         ans$raw.center <- as.vector(mcd$initmean)
         ans$raw.weights <- weights
-        ans$raw.mah <- ans$mah <- mahalanobis(x,ans$raw.center,ans$raw.cov, tol.inv = tol)
+        ans$raw.mah <- ans$mah <- mahalanobis(x,ans$raw.center,ans$raw.cov, tol = tol)
         if(length(dimn[[2]]))
             names(ans$raw.center) <- dimn[[2]]
         ans$crit <- mcd$mcdestimate    
@@ -736,12 +737,12 @@ correctiefactor.rew.s <- function(p, n, alpha)
         ans$raw.cov <- mcd$initcovariance
         dimnames(ans$raw.cov) <- list(dimn[[2]], dimn[[2]])
         ans$raw.center <- as.vector(mcd$initmean)
-        ans$raw.mah <- mahalanobis(x,ans$raw.center,ans$raw.cov, tol.inv = tol)
+        ans$raw.mah <- mahalanobis(x,ans$raw.center,ans$raw.cov, tol = tol)
         ans$raw.weights <- weights
         if(length(dimn[[2]]))
             names(ans$raw.center) <- dimn[[2]]
         ans$crit <- mcd$mcdestimate    
-        mah <- mahalanobis(x, ans$center, ans$cov, tol.inv = tol)
+        mah <- mahalanobis(x, ans$center, ans$cov, tol = tol)
         ans$mah <- mah
         weights<- ifelse(mah< qchisq(0.975, p), 1, 0)
     }

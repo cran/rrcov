@@ -12,9 +12,9 @@ a regression diagnostic plot (standardized residuals versus robust distances of 
 }
 \usage{
     ## S3 method for class 'lts':
-    plot.lts(x, which = c("all","rqq","rindex","rfit","rdiag"), classic=FALSE, ask=(which=="all" && dev.interactive()), id.n=3, ...)
+    plot.lts(x, which = c("all","rqq","rindex","rfit","rdiag"), classic=FALSE, ask=(which=="all" && dev.interactive()), id.n, ...)
     
-%    ltsPlot(x, which = c("all","rqq","rindex","rfit","rdiag"), classic=FALSE, ask=(which=="all" && dev.interactive()), id.n=3, ...)
+%    ltsPlot(x, which = c("all","rqq","rindex","rfit","rdiag"), classic=FALSE, ask=(which=="all" && dev.interactive()), id.n, ...)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -25,7 +25,8 @@ a regression diagnostic plot (standardized residuals versus robust distances of 
   \item{classic }{ whether to plot the classical plots too. Default is \code{classic}=FALSE. }.
   \item{ask}{ logical; if 'TRUE', the user is \emph{ask}ed before each plot, see 'par(ask=.)'. 
 Default is \code{ask = which=="all" && dev.interactive()}.  }
-  \item{id.n }{ Number of observations to identify by a label starting with the most extreme. Default is \code{id.n} = 3.  }
+  \item{id.n }{ Number of observations to identify by a label starting with the most extreme. 
+Default is the number of identified outliers (can be different for the different plots - see Details).  }
   \item{... }{ other parameters to be passed through to plotting functions. }
   
 }
@@ -43,11 +44,28 @@ The possible options are:
  
  \code{rdiag} - regression diagnostic plot.
 
- The regression diagnostic Plot, introduced by
-Rousseeuw and van Zomeren (1990), displays the standardized residuals versus robust distances. 
-Following Rousseeuw and van Zomeren (1990), the horizontal dashed lines are located at +2.5 and -2.5 
-and the vertical line is located at the upper 0.975 percent point of the chi-squared distribution 
-with p degrees of freedom.
+ The normal quantile plot produces a normal Q-Q plot of the standardized residuals. 
+A line is drawn which passes through the first and third quantile. The id.n residuals, 
+with largest distances from this line are identified by labels (the observation number). 
+The default for id.n is the number of regression outliers (lts.wt==0).
+
+ In the Index plot and in the Fitted values plot the standardized residuals are 
+displayed against the observation number or the fitted value respectively. 
+A horizontal dashed line is drawn at 0 and two solid horizontal lines are 
+located at +2.5 and -2.5. The id.n residuals with largest absolute values are 
+identified by labels (the observation number). The default for id.n is the 
+number regression outliers (lts.wt==0).
+
+ The regression diagnostic plot, introduced by Rousseeuw and van
+Zomeren (1990), displays the standardized residuals versus robust
+distances. Following Rousseeuw and van Zomeren (1990), the
+horizontal dashed lines are located at +2.5 and -2.5  and the
+vertical line is located at the upper 0.975 percent point of the
+chi-squared distribution with p degrees of freedom. The id.n residuals 
+with largest absolute values and/or largest robust Mahalanobis distances are 
+identified by labels (the observation number). The default for id.n is the number of all outliers: 
+regression outliers (lts.wt==0) + leverage (bad and good) points (RD > 0.975 percent point of the
+chi-squared distribution with p degrees of freedom).
 
 }
 
