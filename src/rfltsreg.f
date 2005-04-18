@@ -25,7 +25,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cc
 	implicit integer(i-n), double precision(a-h,o-z)
 cc
-	parameter (nvmax=50)
+	parameter (nvmax=51)
 	parameter (nmax=57000)
 cc
 	parameter (kmini=5)
@@ -113,6 +113,8 @@ C     *  65.410,66.617,67.821,69.022,70.222,71.420/
 cc
 cc
 CDDD	CALL INTPR('>>> Enter RFLTSREG ... nvar=',-1,nvar,1)
+
+        nrep = krep
 
 	if(nvar.lt.5) then
 		eps=1.0D-12
@@ -227,7 +229,7 @@ cc
           if(n.le.replow(nsel)) then
             nrep=xrfncomb(nsel,n)
           else
-            nrep=500
+            nrep = krep
             all=.false.
           endif
         endif

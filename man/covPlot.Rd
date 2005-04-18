@@ -24,9 +24,9 @@ The following plots are available:
 \usage{
 
     ## S3 method for class 'mcd':
-    plot.mcd(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), cutoff, id.n, tol.inv=1e-7, ...)
+    plot.mcd(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), cutoff, id.n, tol=1e-7, ...)
     
-%    covPlot(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), mcd, cutoff, id.n, tol.inv = 1e-7)
+%    covPlot(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), mcd, cutoff, id.n, tol = 1e-7)
 
 ddplot(x, ...)
 distplot(x, ...)
@@ -44,7 +44,7 @@ ellipse(x, ...)
 Default is \code{ask = which=="all" && dev.interactive()}.  }
   \item{cutoff}{ The cutoff value for the distances.  }
   \item{id.n}{ Number of observations to identify by a label. If not supplied, the number of observations with distance larger than \code{cutoff} is used.  }
-  \item{tol.inv}{ tolerance to be used for computing the inverse see 'solve'. Default is \code{tol.inv = 10e-7}}
+  \item{tol}{ tolerance to be used for computing the inverse see 'solve'. Default is \code{tol = 10e-7}}
   \item{... }{ other parameters to be passed through to plotting functions. }
 
 }

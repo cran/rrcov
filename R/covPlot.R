@@ -24,11 +24,11 @@ plot.mcd <- function(x,
                    ask=(which=="all" && dev.interactive()),
                    cutoff, 
                    id.n,
-                   tol.inv = 1e-7, ...){
+                   tol = 1e-7, ...){        # VT:: 16.04.2005 - change for 2.1.0 - use tol instead of tol.inv
     if (!inherits(x, "mcd"))
         stop("Use only with 'mcd' objects") 
         
-    covPlot(x$X, which=which, classic=classic, ask=ask, cutoff=cutoff, mcd=x, id.n=id.n, tol.inv=tol.inv, ...)
+    covPlot(x$X, which=which, classic=classic, ask=ask, cutoff=cutoff, mcd=x, id.n=id.n, tol=tol, ...)
 }
 
 covPlot <- function(x, 
@@ -38,7 +38,7 @@ covPlot <- function(x,
                    mcd, 
                    cutoff, 
                    id.n,
-                   tol.inv = 1e-7, ...){
+                   tol = 1e-7, ...){
 
 ##@bdescr
 ##  Make plots based on the covariance structure of a data set:
@@ -78,10 +78,10 @@ covPlot <- function(x,
 ##@in  mcd               : [mcd object] An object of type mcd - its attributes 
 ##                                      center and cov will be used
 ##@in  cutoff            : [number] The cutoff value for the distances 
-##@in  id.n               : [number] number of observations to be identified with a label.
+##@in  id.n              : [number] number of observations to be identified with a label.
 ##                                  Defaults to the number of observations with distance
 ##                                  larger than cutoff 
-##@in  tol.inv           : [number] tolerance to be used for computing the inverse - see 'solve'.
+##@in  tol               : [number] tolerance to be used for computing the inverse - see 'solve'.
 ##                                  defaults to 1e-7 
 
 # NOTE: The default tolerance 1e-7, will not work for some example 
@@ -218,11 +218,11 @@ label <- function(x, y, id.n=3){
     if(length(mcd$center)  != p)
         stop(message = "Data set and provided center have different dimensions!")
 
-    md <- mahalanobis(x, apply(x,2,mean), var(x), tol.inv=tol.inv)
+    md <- mahalanobis(x, apply(x,2,mean), var(x), tol=tol)
     md <- sqrt(md)
 
     which <- match.arg(which)
-    rd <- mahalanobis(x, mcd$center, mcd$cov, tol.inv=tol.inv)
+    rd <- mahalanobis(x, mcd$center, mcd$cov, tol=tol)
     rd <- sqrt(rd)
 
     if(!classic || which == "dd")    
@@ -254,7 +254,7 @@ label <- function(x, y, id.n=3){
     }
 
     if(which == "all" || which == "tolellipse"){    
-       tolellipse(x, mcd=mcd, cutoff=cutoff, id.n=id.n, classic=classic, tol.inv=tol.inv)
+       tolellipse(x, mcd=mcd, cutoff=cutoff, id.n=id.n, classic=classic, tol=tol)
                                                 # qq-plot of the robust distances versus the 
                                                 # quantiles of the chi-squared distribution
     }

@@ -1,3 +1,13 @@
+2005-04-16  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-7
+    * ltsReg: fixed a bug related to nsamp -> it was hard-coded = 500 
+        in Fortran
+    * ltsPlot: default for id.n changed - instead of 3, now it is the 
+        number of identified outliers
+    * ltsPlot: help enhanced
+    * covMcd, covPlot, tolellipse: tol.inv parameter changed to tol, 
+        according the change in mahalanobis() in 2.1.0
+    
 2004-12-26  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-6
     * a bug in ltsReg (rsquared) fixed

@@ -265,7 +265,7 @@ ltsReg <- function (x, y,
         return(1/fp.alpha.n)
     }
     
-    
+#cat("++++++ Entering ltsReg() ...\n")    
     if (is.vector(y) || (is.matrix(y) && !is.data.frame(y))) {
         if (!is.numeric(y)) 
             stop(message = "y is not a numeric dataframe or vector.")
@@ -280,6 +280,7 @@ ltsReg <- function (x, y,
         stop(message = "y is not onedimensional.")
     
     if (missing(x)) {
+#cat("++++++ Prepare: x is missing...\n")    
         x <- rep(1, nrow(y))
         if (is.vector(x) || (is.matrix(x) && !is.data.frame(x))) {
             if (!is.numeric(x)) 
@@ -314,6 +315,8 @@ ltsReg <- function (x, y,
             stop("All observations have missing values!")
         n <- dx[1]
     }else {
+
+#cat("++++++ Prepare: x is present...\n")    
         if (is.vector(x) || (is.matrix(x) && !is.data.frame(x))) {
             if (!is.numeric(x)) 
                 stop(message = "x is not a numeric dataframe or matrix.")
@@ -360,6 +363,9 @@ ltsReg <- function (x, y,
         if (sum(apply(x, 2, constantcolom)) > 0) 
             stop("There is at least one constant column. Remove this column and set intercept=T")
     }
+
+#cat("++++++ Prepare: Ready.\n")    
+
     dn <- dimnames(x)
     xn <- dn[[2]]
     if (!length(xn)) 
@@ -369,7 +375,11 @@ ltsReg <- function (x, y,
     X <- x
     dimnames(X) <- list(NULL, xn)
     y <- as.vector(y)
+    
+    
     if (all(x == 1)) {
+
+#cat("++++++ A - all x == 1...\n")    
         if (length(alpha)) {
             if (alpha < 1/2) 
                 stop("alpha is out of range!")
@@ -502,8 +512,11 @@ ltsReg <- function (x, y,
         }
         class(ans) <- "lts"
         attr(ans, "call") <- sys.call()
+
+#cat("++++++ A - all x == 1...Ready and Return.\n")    
         return(ans)
     }
+
     ans <- list()
     if (intercept) {
         dx <- dx + c(0, 1)
@@ -517,6 +530,8 @@ ltsReg <- function (x, y,
         if (alpha > 1) 
             stop("alpha is greater than 1")
         if (alpha == 1) {                                   # alpha == 1 -----------------------
+
+#cat("++++++ B - alpha == 1...\n")    
             z <- lsfit(x, y, intercept = FALSE)
             
             # VT:: 26.12.2004 
@@ -537,6 +552,7 @@ ltsReg <- function (x, y,
             
             s0 <- sqrt((1/(n - p)) * sum(z$residuals^2))
             weights <- rep(NA, n)
+#cat("++++++ B - alpha == 1... - s0=",s0,"\n")    
             if(abs(s0) < 1e-07) {
                 fitted <- x %*% z$coef
                 weights <- ifelse(abs(z$residuals) <= 1e-07, 1, 0)
@@ -641,9 +657,13 @@ ltsReg <- function (x, y,
                 ans$qr <- z$qr
             class(ans) <- "lts"
             attr(ans, "call") <- sys.call()
+
+#cat("+++++ B - alpha == 1...Ready and return\n")    
             return(ans)
         }
     }
+    
+    
     coefs <- rep(NA, p)
     names(coefs) <- xn
     if(qr.out)
@@ -701,7 +721,6 @@ ltsReg <- function (x, y,
     # vt:: lm.fit.qr == lm.fit(...,method=qr,...)
     #  cf <- lm.fit.qr(x[z$inbest, , drop = FALSE], y[z$inbest])$coef
     cf <- lm.fit(x[z$inbest, , drop = FALSE], y[z$inbest])$coef
-    
     ans$best <- sort(as.vector(z$inbest))
     fitted <- x %*% cf
     resid <- y - fitted

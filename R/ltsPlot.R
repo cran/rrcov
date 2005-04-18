@@ -19,7 +19,7 @@ plot.lts <- function(x,
                    which=c("all", "rqq","rindex", "rfit", "rdiag"),
                    classic=FALSE,
                    ask=(which=="all" && dev.interactive()),
-                   id.n=3, ...){
+                   id.n, ...){
     if (!inherits(x, "lts"))
         stop("Use only with 'lts' objects") 
         
@@ -30,7 +30,7 @@ ltsPlot <- function(x,
                    which = c("all", "rqq","rindex", "rfit", "rdiag"),
                    classic = FALSE,
                    ask=FALSE,
-                   id.n=3, ...){
+                   id.n, ...){
 ##@bdescr
 ##  Make plots for model checking and outlier detection based on 
 ##      the LTS regression estimates:
@@ -51,7 +51,6 @@ ltsPlot <- function(x,
 ##@in  classic           : [logical] If true the classical plot will be displayed too
 ##                                   default is classic=FALSE 
 ##@in  id.n               : [number] number of observations to be identified with a label.
-##                                  Defaults to 3
 
 label <- function(x, y, ord, lab, id.n, ...)
 {
@@ -211,7 +210,7 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
         stop("Regression Diagnostic plot is not avalable if scale = 0")
 
     if(is.null(obj$RD))
-        stop("option mcd=F was set in ltsreg.")
+        stop("Regression Diagnostic plot is not avalable: option mcd=F was set in ltsReg().")
     if(obj$RD[1] == "singularity")
         stop("The MCD covariance matrix was singular.")
 
@@ -226,6 +225,13 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
     if(classic){
         xlab <- "Mahalanobis distance"
         ylab <- "Standardized LS residual"
+    }
+
+    # VT:: 18.01.20045
+    # set id.n to the number of all outliers: 
+    #  regression outliers (weight==0)+ leverage points (RD > cutoff)
+    if(missing(id.n)) {                                             
+        id.n <- length(unique(c(which(obj$RD > sqrt(qchisq(0.975, p))), which(obj$lts.wt == 0))))
     }
 
     quant <- max(c(sqrt(qchisq(0.975, p)), 2.5))
@@ -252,7 +258,11 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
     which <- match.arg(which)
     r <- residuals(x)
     n <- length(r) 
+
+    id.n.default <- TRUE        # if id.n is missing, it will be set to a default for
+                                # for each plot.
     if(!missing(id.n) && !is.null(id.n)){
+        id.n.default <-false
         id.n <- as.integer(id.n)
         if(id.n < 0 || id.n > n)
             stop("`id.n' must be in {1,..,",n,"}") 
@@ -282,21 +292,24 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
     } 
     
     if(which == "all" || which == "rqq"){    
-        myqqplot(x$residuals, id.n=id.n, ...)                                   # normal QQ-plot of the LTS residuals
+        nx <- if(id.n.default) length(which(x$lts.wt==0)) else id.n     # set id.n to the number of regression outliers (weight==0) 
+        myqqplot(x$residuals, id.n=nx, ...)                             # normal QQ-plot of the LTS residuals
         if(classic)
-            myqqplot(obj.cl$residuals, classic=TRUE, id.n=id.n, ...)            # normal QQ-plot of the LS residuals
+            myqqplot(obj.cl$residuals, classic=TRUE, id.n=nx, ...)      # normal QQ-plot of the LS residuals
     }
 
     if(which == "all" || which == "rindex"){    
-        indexplot(x$residuals, x$scale, id.n=id.n, ...)                       # index plot of the LTS residuals
+        nx <- if(id.n.default) length(which(x$lts.wt==0)) else id.n     # set id.n to the number of regression outliers (weight==0) 
+        indexplot(x$residuals, x$scale, id.n=nx, ...)                   # index plot of the LTS residuals
         if(classic)
-            indexplot(obj.cl$residuals, obj.cl$scale, classic=TRUE, id.n=id.n, ...)     # index plot of the LS residuals
+            indexplot(obj.cl$residuals, obj.cl$scale, classic=TRUE, id.n=nx, ...)     # index plot of the LS residuals
     }
 
     if(which == "all" || which == "rfit"){    
-        fitplot(x, id.n=id.n, ...)                       
+        nx <- if(id.n.default) length(which(x$lts.wt==0)) else id.n     # set id.n to the number of regression outliers (weight==0) 
+        fitplot(x, id.n=nx, ...)                       
         if(classic)
-            fitplot(obj.cl, classic=TRUE, id.n=id.n, ...)     
+            fitplot(obj.cl, classic=TRUE, id.n=nx, ...)     
     }
 
     if(which == "all" || which == "rdiag"){    

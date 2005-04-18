@@ -23,7 +23,7 @@ tolellipse <- function(x,
                         cutoff, 
                         id.n,
                         classic=FALSE,
-                        tol.inv=1e-07) {
+                        tol=1e-07) {            # VT:: 16.04.2005 - change for 2.1.0 - use tol instead of tol.inv
 
 ##@bdescr
 ## Tolerance Ellipse Plot: 
@@ -39,7 +39,7 @@ tolellipse <- function(x,
 ##                                      center and cov will be used
 ##@in  cutoff            : [number] Distance needed to flag data points outside the ellipse 
 ##@in  outflag           : [logical] Whether to print the labels of the outliers 
-##@in  tol.inv           : [number] tolerance to be used for computing the inverse see 'solve'.
+##@in  tol               : [number] tolerance to be used for computing the inverse see 'solve'.
 ##                                  defaults to 1e-7 
 
     
@@ -104,8 +104,8 @@ tolellipse <- function(x,
     x1 <- c(min(x[, 1], z1[, 1], z2[, 1]), max(x[,1],z1[,1], z2[,1]))
     y1 <- c(min(x[, 2], z1[, 2], z2[, 2]), max(x[,2],z1[,2], z2[,2]))
     
-    md <- sqrt(mahalanobis(x,apply(x,2,mean),cov(x), tol.inv=tol.inv))
-    rd <- sqrt(mahalanobis(x,mcd$center,mcd$cov, tol.inv=tol.inv))
+    md <- sqrt(mahalanobis(x,apply(x,2,mean),cov(x), tol=tol))
+    rd <- sqrt(mahalanobis(x,mcd$center,mcd$cov, tol=tol))
     
     if(classic)
         par(mfrow = c(1, 2))
