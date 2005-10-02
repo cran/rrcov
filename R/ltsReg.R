@@ -18,7 +18,49 @@
 ##  providing the initial code of this function.
 
 
-ltsReg <- function (x, y, 
+ltsReg <- function(x, ...) UseMethod("ltsReg")
+ 
+ltsReg.formula <- function(formula, data, ...,
+        model = TRUE, x.ret = FALSE, y.ret = FALSE)
+{
+#    method <- match.arg(method)
+
+    mf <- match.call(expand.dots = FALSE)
+    mf$method <- mf$contrasts <- mf$model <- mf$x.ret <- mf$y.ret <- mf$... <- NULL
+    mf[[1]] <- as.name("model.frame")
+    mf <- eval.parent(mf)
+    
+#    if (method == "model.frame") return(mf)
+
+    mt <- attr(mf, "terms")
+    y <- model.extract(mf, "response")
+    x <- model.matrix(mt, mf, contrasts)
+
+#   Check if there is an Intercept in the model - default. 
+#   A formula without intercept looks like this: Y~.-1
+#   If so, remove the column named Intercept and call ltsReg with intercept=TRUE.
+#   Otherwise call ltsReg with intercept=FALSE
+#
+    xint <- match("(Intercept)", colnames(x), nomatch = 0)
+    if(xint) x <- x[, -xint, drop = FALSE]
+
+    fit <- ltsReg(x, y, intercept = (xint > 0), ...)
+
+    fit$terms <- mt
+    fit$call <- match.call()
+    fit$contrasts <- attr(x, "contrasts")
+    fit$xlevels <- .getXlevels(mt, mf)
+    
+#    fit$na.action <- attr(mf, "na.action")
+
+    if(model) fit$model <- mf
+    if(x.ret) fit$x <- x
+    if(y.ret) fit$y <- y
+
+    fit
+}
+
+ltsReg.default <- function (x, y, 
                     intercept=TRUE, 
                     alpha=NULL, 
                     nsamp=500, 
@@ -26,7 +68,8 @@ ltsReg <- function (x, y,
                     mcd=TRUE, 
                     qr.out=FALSE, 
                     yname=NULL, 
-                    seed=0) 
+                    seed=0,
+                    ...) 
 {
 
     quan.f <- function(alpha, n, rk) {
@@ -482,8 +525,7 @@ ltsReg <- function (x, y,
             }
             ans$scale <- ans$scale * cdelta.rew * correct.rew
             quantiel <- qnorm(0.9875)
-            weights <- ifelse(abs(resid/ans$scale) <= quantiel, 
-                1, 0)
+            weights <- ifelse(abs(resid/ans$scale) <= quantiel, 1, 0)
         }
         ans$resid <- resid/ans$scale
         ans$rsquared <- 0
@@ -538,20 +580,24 @@ ltsReg <- function (x, y,
             # Reorder the coeficients,so that the intercept moves to the beginning of the array
             # Skip this if p == 1 (i.e. p=1 and intercept=FALSE).
             # Do the same for the names and for ans$coef - see below
-            if(p > 1)
+
+            if(p > 1 && intercept){
                 ans$raw.coefficients[2:p] <- z$coef[1:(p - 1)]
-            ans$raw.coefficients[1] <- z$coef[p]
-            
+                ans$raw.coefficients[1] <- z$coef[p]
+                names(ans$raw.coefficients)[2:p] <- xn[1:(p - 1)]
+                names(ans$raw.coefficients)[1] <- xn[p]
+            }else{
+                ans$raw.coefficients <- z$coef
+                names(ans$raw.coefficients) <- xn
+            }
+
             ans$alpha <- alpha
             ans$quan <- quan <- n           # VT:: 01.09.2004 - bug in alpha=1 
                                             # (ans$quan was not set)
-            # VT:: 26.12.2004 
-            if(p > 1)
-                names(ans$raw.coefficients)[2:p] <- xn[1:(p - 1)]
-            names(ans$raw.coefficients)[1] <- xn[p]
             
             s0 <- sqrt((1/(n - p)) * sum(z$residuals^2))
             weights <- rep(NA, n)
+
 #cat("++++++ B - alpha == 1... - s0=",s0,"\n")    
             if(abs(s0) < 1e-07) {
                 fitted <- x %*% z$coef
@@ -571,13 +617,15 @@ ltsReg <- function (x, y,
                 z <- lsfit(x, y, wt = weights, intercept = FALSE)
 
                 # VT:: 26.12.2004 
-                if(p > 1)
+                if(p > 1 && intercept){
                     ans$coefficients[2:p] <- z$coef[1:(p - 1)]
-                ans$coefficients[1] <- z$coef[p]
+                    ans$coefficients[1] <- z$coef[p]
+                }else{
+                    ans$coefficients <- z$coef
+                }
                 
                 fitted <- x %*% z$coef
-                ans$scale <- sqrt(sum(weights * z$residuals^2)/(sum(weights) - 
-                  1))
+                ans$scale <- sqrt(sum(weights * z$residuals^2)/(sum(weights) - 1))
                 if (sum(weights) == n) {
                   cdelta.rew <- 1
                 }
@@ -594,9 +642,12 @@ ltsReg <- function (x, y,
             }
 
             # VT:: 26.12.2004 
-            if(p > 1)
+            if(p > 1 && intercept){
                 names(ans$coefficients)[2:p] <- xn[1:(p - 1)]
-            names(ans$coefficients)[1] <- xn[p]
+                names(ans$coefficients)[1] <- xn[p]
+            }else{
+                names(ans$coefficients) <- xn
+            }
             
             ans$crit <- sum(z$residuals^2)
             if (intercept) {
@@ -727,13 +778,15 @@ ltsReg <- function (x, y,
     coefs[piv] <- cf
 
     # VT:: 26.12.2004 
-    if(p > 1)
+    if(p > 1 && intercept){
         ans$raw.coefficients[2:p] <- coefs[1:(p - 1)]
-    ans$raw.coefficients[1] <- coefs[p]
-
-    if(p > 1)
+        ans$raw.coefficients[1] <- coefs[p]
         names(ans$raw.coefficients)[2:p] <- names(coefs)[1:(p - 1)]
-    names(ans$raw.coefficients)[1] <- names(coefs)[p]
+        names(ans$raw.coefficients)[1] <- names(coefs)[p]
+    }else{
+        ans$raw.coefficients <- coefs
+        names(ans$raw.coefficients) <- names(coefs)
+    }
     
     ans$alpha <- alpha
     ans$quan <- quan
@@ -762,9 +815,12 @@ ltsReg <- function (x, y,
         z1 <- lsfit(x, y, wt = weights, intercept = FALSE)
 
         # VT:: 26.12.2004 
-        if(p > 1)
+        if(p > 1){
             ans$coefficients[2:p] <- z1$coef[1:(p - 1)]
-        ans$coefficients[1] <- z1$coef[p]
+            ans$coefficients[1] <- z1$coef[p]
+        }else{
+            ans$coefficients <- z1$coef
+        }
         
         fitted <- x %*% z1$coef
         resid <- z1$residuals
@@ -852,9 +908,6 @@ ltsReg <- function (x, y,
     if(abs(s0) < 1e-07) 
         ans$method <- paste(ans$method, "\nAn exact fit was found!")
     if (mcd) {
-
-# vt:: changed name of the function
-#       mcd <- cov.mcd.default(X, alpha = alpha, print.it = FALSE)
         mcd <- covMcd(X, alpha = alpha, print.it = FALSE)
         if(-(determinant(mcd$cov, log = TRUE)$modulus[1] - 0)/p > 50) {
             ans$RD[1] <- "singularity"
@@ -900,3 +953,135 @@ ltsReg <- function (x, y,
 #    X <- model.matrix(Terms, m, contrasts = object$contrasts)
 #    drop(X %*% object$coefficients)
 #} 
+
+summary.lts <- function (object, correlation = FALSE, ...)
+{
+    z <- object
+    r <- z$residuals
+    f <- z$fitted
+    w <- as.vector(z$lts.wt)
+    n <- sum(w)
+
+#    Qr <- qr(object$X)
+    Qr <- qr(t(t(object$X) %*% diag(as.vector(w))))
+    p <- Qr$rank
+    p1 <- 1:p
+
+    rdf <- n - p
+    
+    mss <-  if(z$intercept) {
+                m <- sum(w * f /sum(w))
+                sum(w * (f - m)^2)
+            } else 
+                sum(w * f^2)
+    rss <- sum(w * r^2)
+
+    r <- sqrt(w) * r
+    resvar <- rss/rdf
+
+    R <- chol2inv(Qr$qr[p1, p1, drop = FALSE])
+
+    # Reorder R, so that the intercept (if any) moves 
+    # to the beginning. Skip this if p == 1 or intercept=FALSE.
+        RR <- R
+        RR[2:p, 2:p] <- R[1:(p - 1), 1:(p-1)]
+        rr<-R[p,]
+        rr[2:p] <- R[p, 1:(p - 1)]
+        rr[1] <- R[p,p]
+        RR[1,] <- rr
+        RR[,1] <- rr
+        R <- RR
+    se <- sqrt(diag(R) * resvar)
+
+    est <- z$coefficients
+    tval <- est/se
+    
+    ans <- z[c("call", "terms")]
+    attr(ans, "call") <- attr(z,"call")
+    ans$residuals <- r
+    ans$coefficients <- cbind(est, se, tval, 2*pt(abs(tval), rdf, lower.tail = FALSE))
+    dimnames(ans$coefficients) <- list(names(z$coefficients),
+                                 c("Estimate", "Std. Error", "t value", "Pr(>|t|)"))
+    ans$sigma <- sqrt(resvar)
+    ans$df <- c(p, rdf, NCOL(Qr$qr))
+
+    df.int <- if(z$intercept) 1 else 0
+    if(p - df.int > 0) {
+        ans$r.squared <- mss/(mss + rss)
+        ans$adj.r.squared <- 1 - (1 - ans$r.squared) * ((n - df.int)/rdf)
+        ans$fstatistic <- c(value = (mss/(p - df.int))/resvar, numdf = p - df.int, dendf = rdf)
+    } else 
+        ans$r.squared <- ans$adj.r.squared <- 0
+
+    ans$cov.unscaled <- R
+    dimnames(ans$cov.unscaled) <- dimnames(ans$coefficients)[c(1,1)]
+
+    if (correlation) {
+        ans$correlation <- (R * resvar)/outer(se, se)
+        dimnames(ans$correlation) <- dimnames(ans$cov.unscaled)
+    }
+
+    class(ans) <- "summary.lts"
+    ans
+}
+
+print.summary.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
+{
+    cat("\nCall:\n")
+    xcall <- x$call
+    if(length(xcall) == 0)
+        xcall <- attr(x,"call")
+    cat(paste(deparse(xcall), sep="\n", collapse = "\n"), "\n\n", sep="")
+
+    resid <- x$residuals
+    df <- x$df
+    rdf <- df[2]
+    
+    if(rdf > 5) {
+        nam <- c("Min", "1Q", "Median", "3Q", "Max")
+        rq <-   if(length(dim(resid)) == 2)
+                    structure(apply(t(resid), 1, quantile), dimnames = list(nam, dimnames(resid)[[2]]))
+                else  
+                    structure(quantile(resid), names = nam)
+        print(rq, digits = digits, ...)
+    }
+    else if(rdf > 0) {
+        print(resid, digits = digits, ...)
+    } else { # rdf == 0 : perfect fit!
+        cat("ALL", df[1], "residuals are 0: no residual degrees of freedom!\n")
+    }
+
+    if (nsingular <- df[3] - df[1])
+        cat("\nCoefficients: (", nsingular,
+            " not defined because of singularities)\n", sep = "")
+    else 
+        cat("\nCoefficients:\n")
+    printCoefmat(x$coefficients, digits=digits, signif.stars=FALSE, na.print="NA", ...)
+    
+    cat("\nResidual standard error:",
+    format(signif(x$sigma, digits)), "on", rdf, "degrees of freedom\n")
+
+    if(!is.null(x$fstatistic)) {
+        cat("Multiple R-Squared:", formatC(x$r.squared, digits=digits))
+        cat(",\tAdjusted R-squared:",formatC(x$adj.r.squared,digits=digits),
+            "\nF-statistic:", formatC(x$fstatistic[1], digits=digits),
+            "on", x$fstatistic[2], "and",
+            x$fstatistic[3], "DF,  p-value:",
+            format.pval(pf(x$fstatistic[1], x$fstatistic[2],
+                           x$fstatistic[3], lower.tail = FALSE), digits=digits),
+        "\n")
+    }
+    
+    correl <- x$correlation
+    if(!is.null(correl)) {
+        p <- NCOL(correl)
+        if(p > 1) {
+            cat("\nCorrelation of Coefficients:\n")
+            correl <- format(round(correl, 2), nsmall = 2, digits = digits)
+            correl[!lower.tri(correl)] <- ""
+            print(correl[-1, -p, drop=FALSE], quote = FALSE)
+        }
+    }
+    cat("\n")
+    invisible(x)
+}

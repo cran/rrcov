@@ -1,5 +1,7 @@
 \name{ltsReg}
 \alias{ltsReg}
+\alias{ltsReg.default}
+\alias{ltsReg.formula}
 \alias{print.lts}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Robust regression with high breakdown point }
@@ -7,14 +9,21 @@
 Carries out least trimmed squares (LTS) regression.
 }
 \usage{
-ltsReg(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0)
+ltsReg(x, \dots)
+
+\method{ltsReg}{formula}(formula, data, \dots, model = TRUE, x.ret = FALSE, y.ret = FALSE)
+
+\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 
+  \item{formula}{ a formula of the form 'y ~ x1 + x2 + ...'. }
+  \item{data}{ data frame from which variables specified in 'formula' are to be taken. }
+  \item{model, x.ret, y.ret}{ logical. If 'TRUE' the model frame, the model matrix and the response are returned, respectively. }
   \item{x}{ a matrix or data frame containing the explanatory variables. }
   \item{y}{ the response: a vector of length the number of rows of 'x'. }.
-  \item{intercept}{ if true, a model with constant term will be itted; otherwise no constant term will be included. Default is \code{intercept = TRUE}  }
+  \item{intercept}{ if true, a model with constant term will be estimated; otherwise no constant term will be included. Default is \code{intercept = TRUE}  }
   \item{alpha}{ the percentage of squared residuals whose sum will be minimized. Its default value is 0.5. 
   In general, alpha must be a value between 0.5 and 1.
   }
@@ -24,6 +33,7 @@ ltsReg(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.o
   \item{qr.out}{ whether to return the QR decomposition. Default is \code{qr.out = FALSE}}
   \item{yname}{ the name of the dependent variable. Default is \code{yname = NULL}}
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
+  \item{\dots}{ arguments passed to or from other methods. } 
 }
 \details{
  The LTS regression method minimizes the sum of the h smallest squared 
@@ -31,9 +41,17 @@ residuals, where h must be at least half the number of observations. The
 default value of h is roughly 0.5n where n is the total number of observations, 
 but the user may choose any value between n/2 and n. The computations are performed 
 using the Fast LTS algorithm proposed by Rousseeuw and Van Driessen (1999).
+
+The formula interface has an implied intercept term.  This can be removed by using
+either \code{y ~ x - 1} or \code{y ~ 0 + x}.  See \code{\link{formula}} for more details.
 }
 \value{
-  An object of class '"lts"'. This is a list with components
+The function \code{ltsReg} returns an object of class \code{"lts"}. 
+The function \code{summary} is used to obtain and print a summary table of the results.  
+The generic accessor functions \code{coefficients}, \code{fitted.values} and \code{residuals}
+extract various useful features of the value returned by \code{ltsReg}.
+
+An object of class \code{lts} is a list containing at least the following components:
 
   \item{crit}{
     the value of the objective function of the LTS regression method, i.e. the sum of the h smallest squared raw residuals.
@@ -52,9 +70,6 @@ using the Fast LTS algorithm proposed by Rousseeuw and Van Driessen (1999).
   }
   \item{scale}{
     scale estimate of the reweighted residuals. 
-  }
-  \item{rsquared}{
-    robust version of R squared. 
   }
   \item{alpha}{ 
     same as the input parameter \code{alpha}.
@@ -85,6 +100,9 @@ using the Fast LTS algorithm proposed by Rousseeuw and Van Driessen (1999).
   \item{X}{
     the input data as a matrix.
   }
+  \item{Y}{
+    the response variable as a vector.
+  }
   
 }
 \references{ 
@@ -113,12 +131,20 @@ using the Fast LTS algorithm proposed by Rousseeuw and Van Driessen (1999).
 
 \seealso{
 \code{\link{covMcd}} 
+
+\code{\link{summary.lts}} for summaries.
+  
+The generic functions \code{\link{coef}}, \code{\link{residuals}}, \code{\link{fitted}}.
+
 }
 
 \examples{
 
 data(heart)
 ltsReg(heart.x, heart.y)
+
+data(stackloss)
+ltsReg(stack.loss ~ ., data = stackloss)
 
 }
 \keyword{robust}

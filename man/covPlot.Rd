@@ -20,13 +20,15 @@ The following plots are available:
  
  - plot of the tolerance ellipses (robust and classic)
  
+ - Scree plot - Eigenvalues comparison plot
+ 
 }
 \usage{
 
     ## S3 method for class 'mcd':
-    plot.mcd(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), cutoff, id.n, tol=1e-7, ...)
+    plot.mcd(x, which = c("all","dd","distance","qqchi2","tolellipse","screeplot"), classic=FALSE, ask=(which=="all" && dev.interactive()), cutoff, id.n, tol=1e-7, ...)
     
-%    covPlot(x, which = c("all","dd","distance","qqchi2","tolellipse"), classic=FALSE, ask=(which=="all" && dev.interactive()), mcd, cutoff, id.n, tol = 1e-7)
+%    covPlot(x, which = c("all","dd","distance","qqchi2","tolellipse","screeplot"), classic=FALSE, ask=(which=="all" && dev.interactive()), mcd, cutoff, id.n, tol = 1e-7)
 
 ddplot(x, ...)
 distplot(x, ...)
@@ -61,6 +63,8 @@ The possible options are:
  \code{qqchi2} - a qq-plot of the robust distances versus the quantiles of the chi-squared distribution
  
  \code{tolellipse} - a tolerance ellipse
+
+ \code{screeplot} - an eigenvalues comparison plot - screeplot
 
  The Distance-Distance Plot, introduced by
 Rousseeuw and van Zomeren (1990), displays the robust distances

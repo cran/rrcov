@@ -1,3 +1,10 @@
+2005-09-20  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-8
+    * ltsReg: added formula interface
+    * ltsReg: adde generic functions summary.lts and print.summary.lts
+    * ltsReg: fixed a problem with reordering of the coeficients even in case
+        without intercept
+    
 2005-04-16  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-7
     * ltsReg: fixed a bug related to nsamp -> it was hard-coded = 500 
