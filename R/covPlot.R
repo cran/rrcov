@@ -19,7 +19,7 @@
 ##
 
 plot.mcd <- function(x,
-                   which=c("all", "dd","distance","qqchi2","tolellipse"),
+                   which=c("all", "dd","distance","qqchi2","tolellipse","screeplot"),
                    classic=FALSE,
                    ask=(which=="all" && dev.interactive()),
                    cutoff, 
@@ -32,7 +32,7 @@ plot.mcd <- function(x,
 }
 
 covPlot <- function(x, 
-                   which=c("all", "dd","distance","qqchi2","tolellipse"),
+                   which=c("all", "dd","distance","qqchi2","tolellipse","screeplot"),
                    classic=FALSE,
                    ask=FALSE,
                    mcd, 
@@ -48,6 +48,7 @@ covPlot <- function(x,
 ##  qqchi2   -  a qq-plot of the robust distances versus the 
 ##              quantiles of the chi-squared distribution
 ##  tolellipse- a tolerance ellipse
+##  screeplot-  a screeplot of the eigenvalues ov the covariance matrix
 ##
 ## Distance Plot: 
 ## Draw a Distance-Distance Plot: Plots the robust distances
@@ -87,6 +88,29 @@ covPlot <- function(x,
 # NOTE: The default tolerance 1e-7, will not work for some example 
 #       data sets, like milk or aircraft
 
+myscreeplot <- function(x, mcd){
+
+    if(missing(mcd))
+        mcd <- covMcd(x);
+    erob <- eigen(mcd$cov,symmetric=TRUE,only.values=TRUE)$values
+    eclass <- eigen(var(x),symmetric=TRUE,only.values=TRUE)$values
+    
+    leg.txt <- c("Robust", "Classical")
+    leg.col <- c("green", "red")
+    leg.pch = c(1,24)
+    leg.lty = c("solid", "dotted")
+    
+    eall <- c(erob,eclass)
+    ylim <- c( min(eall), max(eall))
+
+    plot(erob, ylim=ylim, ylab="Eigenvalues", xlab="Index", type="n")
+    legend(3, ylim[2], leg.txt, pch = leg.pch, lty = leg.lty, col = leg.col)
+
+    lines(erob, type="o", pch = leg.pch[1], lty = leg.lty[1], col=leg.col[1])
+    lines(eclass, type="o", pch = leg.pch[2], lty = leg.lty[2], col=leg.col[2])
+
+    title(main="Scree plot")
+}
 
 mydistplot <- function(x, cutoff, classic = FALSE, id.n){
 ##  Index Plot:
@@ -253,11 +277,17 @@ label <- function(x, y, id.n=3){
                                                     # qq-plot of the mahalanobis distances
     }
 
-    if(which == "all" || which == "tolellipse"){    
-       tolellipse(x, mcd=mcd, cutoff=cutoff, id.n=id.n, classic=classic, tol=tol)
-                                                # qq-plot of the robust distances versus the 
-                                                # quantiles of the chi-squared distribution
+    if(which == "all" || which == "tolellipse"){
+        if(length(dim(x)) >= 2 && dim(x)[2] == 2)
+            tolellipse(x, mcd=mcd, cutoff=cutoff, id.n=id.n, classic=classic, tol=tol)
+        else
+            warning("Warning: For tolerance ellipses the dimension must be 2!")                                                
     }
+
+    if(which == "all" || which == "screeplot"){    
+       myscreeplot(x, mcd=mcd)
+    }
+
 }
 
 ddplot <- function(x,...){

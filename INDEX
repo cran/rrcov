@@ -15,5 +15,6 @@ plot.mcd                Robust Distance Plots
 salinity                Salinity Data
 stars                   Data for the Hertzsprung-Russell Diagram of
                         the star cluster CYG OB1
+summary.lts             Summary Method for LTS objects
 tolellipse              Tolerance Ellipse Plot
 wood                    Modified Wood Gravity Dataset
