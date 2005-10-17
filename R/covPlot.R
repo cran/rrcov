@@ -242,6 +242,9 @@ label <- function(x, y, id.n=3){
     if(length(mcd$center)  != p)
         stop(message = "Data set and provided center have different dimensions!")
 
+    if(mcd$crit == 0)
+        stop(message = "The covariance matrix is singular!")
+
     md <- mahalanobis(x, apply(x,2,mean), var(x), tol=tol)
     md <- sqrt(md)
 

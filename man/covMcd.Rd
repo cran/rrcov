@@ -8,17 +8,21 @@
      breakdown point using the Fast MCD (Minimum Covariance Determinant) Estimator.
 }
 \usage{
-covMcd(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE)
+covMcd(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE, control)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ a matrix or data frame. }
   \item{cor}{ should the returned result include a correlation matrix? Default is \code{cor = FALSE} }.
-  \item{alpha}{ The size of the subsets over which the determinant is
-minimized. Must be between the default = (n+p+1)/2 and n. Provide a fraction between .5 and 1, indicating the fraction of the data over which the determinant is minimized. }
+  \item{alpha}{ This parameter controls the size of the subsets over which the determinant is
+minimized, i.e. \code{alpha*n} observations are used for computing the determinant. Allowed values are between 0.5 and 1 and the default is 0.5. }
   \item{nsamp}{ number of subsets used for initial estimates. Default is \code{nsamp = 500}}
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
   \item{print.it}{ whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{control}{ a list with estimation options - same as these provided in the 
+  fucntion specification. If the control object is supplied, the parameters from it 
+  will be used. If parameters are passed also in the invocation statement, they will 
+  override the corresponding elements of the control object. }
 }
 \details{
   The minimum covariance determinant estimator of location and
@@ -53,10 +57,10 @@ approximate the minimum covariance determinant estimator.
     the best subset found and used for computing the raw estimates. The size of \code{best} is equal to \code{quan}.
   }
   \item{mah}{
-    mahalanobis distances of the observations using the final estimate of the location and scater.
+    mahalanobis distances of the observations using the final estimate of the location and scatter.
   }
   \item{mcd.wt}{
-    weights of the observations using the final estimate of the location and scater.
+    weights of the observations using the final estimate of the location and scatter.
   }
   \item{raw.center}{
     the raw (not reweighted) estimate of location.
@@ -65,10 +69,10 @@ approximate the minimum covariance determinant estimator.
     the raw (not reweighted) estimate of scatter.
   }
   \item{raw.mah}{
-    mahalanobis distances of the observations based on the raw estimate of the location and scater.
+    mahalanobis distances of the observations based on the raw estimate of the location and scatter.
   }
   \item{raw.weights}{
-    weights of the observations based on the raw estimate of the location and scater.
+    weights of the observations based on the raw estimate of the location and scatter.
   }
   \item{X}{
     the input data as a matrix.
@@ -109,6 +113,11 @@ approximate the minimum covariance determinant estimator.
 
 data(hbk)
 covMcd(hbk.x)
+
+# the following three statements are equivalent
+covMcd(hbk.x, alpha=0.75)
+covMcd(hbk.x, control = rrcov.control(alpha=0.75))
+covMcd(hbk.x, alpha = 0.75, control = rrcov.control(alpha=0.95))
 
 }
 \keyword{robust}

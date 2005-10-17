@@ -13,7 +13,7 @@ ltsReg(x, \dots)
 
 \method{ltsReg}{formula}(formula, data, \dots, model = TRUE, x.ret = FALSE, y.ret = FALSE)
 
-\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, \dots)
+\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, control, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,6 +33,10 @@ ltsReg(x, \dots)
   \item{qr.out}{ whether to return the QR decomposition. Default is \code{qr.out = FALSE}}
   \item{yname}{ the name of the dependent variable. Default is \code{yname = NULL}}
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
+  \item{control}{ a list with estimation options - same as these provided in the 
+  fucntion specification. If the control object is supplied, the parameters from it 
+  will be used. If parameters are passed also in the invocation statement, they will 
+  override the corresponding elements of the control object. }
   \item{\dots}{ arguments passed to or from other methods. } 
 }
 \details{

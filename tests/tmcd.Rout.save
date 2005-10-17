@@ -103,6 +103,9 @@ Type 'q()' to quit R.
 +     data(milk)
 +     data(bushfire)
 + 
++ #    data(x1000)
++ #    data(x5000)
++     
 +     tmp <- sys.call()
 +     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 + 
@@ -121,6 +124,8 @@ Type 'q()' to quit R.
 +     domcd(milk,data(milk), nrep)
 +     domcd(bushfire,data(bushfire), nrep)
 +     cat("========================================================\n")
++ #    domcd(x1000$X,data(x1000), nrep)
++ #    domcd(x5000$X,data(x5000), nrep)
 + }
 > 
 > dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
@@ -226,7 +231,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-8)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-9)
 > dodata()
 
 Call:  dodata() 
@@ -243,11 +248,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  5.679 
 
-Center:
+
+Robust Estimate of Location: 
    X1     X2  
 38.25  33.09  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1     X2   
 X1  173.1  332.8
 X2  332.8  726.1
@@ -264,11 +270,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  -8.031 
 
-Center:
+
+Robust Estimate of Location: 
     X      Y  
 4.409  4.949  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
    X        Y      
 X  0.01754  0.05234
 Y  0.05234  0.36434
@@ -285,11 +292,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  6.879 
 
-Center:
+
+Robust Estimate of Location: 
    X1     X2  
 13.35  38.80  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1     X2   
 X1  194.3  197.0
 X2  197.0  274.4
@@ -306,11 +314,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  5.473 
 
-Center:
+
+Robust Estimate of Location: 
   Air.Flow  Water.Temp  Acid.Conc.  
      59.50       20.83       87.33  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
             Air.Flow  Water.Temp  Acid.Conc.
 Air.Flow    13.75     12.78       12.54     
 Water.Temp  12.78     20.18       13.42     
@@ -328,11 +337,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  1.287 
 
-Center:
+
+Robust Estimate of Location: 
     X1      X2      X3      X4      X5  
  2.757  48.379   6.118  25.005   6.398  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1         X2         X3         X4         X5       
 X1     0.4125     2.9089    -0.4338     0.2466     0.1222
 X2     2.9089  2122.7550   538.2630    20.5270    56.1936
@@ -352,11 +362,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  1.326 
 
-Center:
+
+Robust Estimate of Location: 
     X1      X2      X3  
 10.083   2.783  22.778  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1      X2      X3    
 X1  14.503   1.400  -4.428
 X2   1.400   5.329  -2.002
@@ -374,11 +385,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  -36.27 
 
-Center:
+
+Robust Estimate of Location: 
     V1      V2      V3      V4      V5  
 0.5869  0.1222  0.5309  0.5382  0.8918  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     V1          V2          V3          V4          V5        
 V1   1.633e-02   3.063e-03   5.136e-03  -9.543e-04  -2.654e-03
 V2   3.063e-03   7.894e-04   2.067e-03  -8.467e-05   3.851e-05
@@ -399,11 +411,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  -1.048 
 
-Center:
+
+Robust Estimate of Location: 
    X1     X2     X3  
 1.538  1.780  1.687  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1       X2       X3     
 X1  1.68030  0.07533  0.17416
 X2  0.07533  1.71031  0.20890
@@ -421,11 +434,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  14.56 
 
-Center:
+
+Robust Estimate of Location: 
  body  brain  
 18.67  64.94  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
        body   brain
 body    2690   4562
 brain   4562  16346
@@ -443,11 +457,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  -28.93 
 
-Center:
+
+Robust Estimate of Location: 
      X1       X2       X3       X4       X5       X6       X7       X8  
   1.030   35.757   33.054   26.121   25.100   25.037  122.940   14.356  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     X1         X2         X3         X4         X5         X6         X7       
 X1  6.011e-07  1.147e-04  2.314e-04  2.214e-04  1.959e-04  1.839e-04  8.034e-04
 X2  1.147e-04  2.004e+00  2.813e-01  2.075e-01  1.299e-01  2.536e-01  1.643e+00
@@ -479,11 +494,12 @@ covMcd(x = x, print.it = FALSE)
 
 Log(det):  18.14 
 
-Center:
+
+Robust Estimate of Location: 
    V1     V2     V3     V4     V5  
 105.5  146.9  274.4  217.5  279.0  
 
-Covariance Matrix:
+Robust Estimate of Covariance: 
     V1       V2       V3       V4       V5     
 V1    593.7    459.4  -2903.2   -653.2   -532.8
 V2    459.4    405.4  -1930.2   -394.3   -333.3

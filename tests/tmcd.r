@@ -87,6 +87,9 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
     data(milk)
     data(bushfire)
 
+#    data(x1000)
+#    data(x5000)
+    
     tmp <- sys.call()
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 
@@ -105,6 +108,8 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
     domcd(milk,data(milk), nrep)
     domcd(bushfire,data(bushfire), nrep)
     cat("========================================================\n")
+#    domcd(x1000$X,data(x1000), nrep)
+#    domcd(x5000$X,data(x5000), nrep)
 }
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){

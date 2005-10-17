@@ -22,7 +22,8 @@ covMcd <- function(x,
                    alpha=1/2, 
                    nsamp=500, 
                    seed=0, 
-                   print.it=FALSE)
+                   print.it=FALSE,
+                   control)
 {
     quan.f <- function(alpha, n, rk)
     {
@@ -192,6 +193,23 @@ correctiefactor.rew.s <- function(p, n, alpha)
         return(1/fp.alpha.n)
     }
 
+#   Analize and validate the input parameters ...
+
+    # if a control object was supplied, take the option parameters from it,
+    # but if single parameters were passed (not defaults) they will override the
+    # control object.
+    if(!missing(control)){
+        defcontrol <- rrcov.control()      # default control
+        if(alpha == defcontrol$alpha)
+            alpha <- control$alpha
+        if(nsamp == defcontrol$nsamp)
+            nsamp <- control$nsamp
+        if(seed == defcontrol$seed)
+            seed <- control$seed
+        if(print.it == defcontrol$print.it)
+            print.it <- control$print.it
+    }
+
     # vt:: not necessary for R 1.8 and higher - the R function determinant() is used
     #
     # Determinant for square real matrix x. Adapted from det.Matrix in library(Matrix).
@@ -274,8 +292,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
             ans$mcd.wt[ok] <- rep(1, sum(ok == TRUE))
         }
         else {
-                                                                # VT:: 16.04.2005 - change for 2.1.0 - use tol instead of tol.inv
-            mah <- mahalanobis(x, loc, mcd, tol=tol)            # VT:: 01.09.2004 - bug in alpha=1 
+            mah <- mahalanobis(x, loc, mcd, tol=tol)        # VT:: 01.09.2004 - bug in alpha=1 
                                                                 # (tol instead of tol.inv as parameter name)
             weights <- ifelse(mah < qchisq(0.975, p), 1, 0)
             ans <- cov.wt(x, wt = weights, cor)
@@ -364,48 +381,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
         attr(ans, "call") <- sys.call()
         return(ans)
     }   #end alpha=1
-    
-    storage.mode(x) <- "double"
-    storage.mode(quan) <- "integer"
-    initcov <- matrix(0, nrow = p * p, ncol = 1)
-    adcov <- matrix(0, nrow = p * p, ncol = 1)
-    initmean <- matrix(0, nrow = p, ncol = 1)
-    inbest <- matrix(10000, nrow = quan, ncol = 1)
-    plane <- matrix(0, nrow = 5, ncol = p)
-    deter <- 0
-    weights <- matrix(0, nrow = n, ncol = 1)
-    fit <- 0
-    kount <- 0
-    storage.mode(n) <- "integer"
-    storage.mode(p) <- "integer"
-    storage.mode(nsamp) <- "integer"
-    storage.mode(initcov) <- "double"
-    storage.mode(adcov) <- "double"
-    storage.mode(initmean) <- "double"
-    storage.mode(inbest) <- "integer"
-    storage.mode(plane) <- "double"
-    storage.mode(deter) <- "double"
-    storage.mode(weights) <- "integer"
-    storage.mode(fit) <- "integer"
-    storage.mode(kount) <- "integer"
-    storage.mode(seed) <- "integer"
-    mcd <- .Fortran("rffastmcd",
-        x,
-        n,
-        p,
-        quan,
-        nsamp,
-        initcovariance = initcov,
-        initmean = initmean,
-        best=inbest,
-        mcdestimate = deter,
-        weights = weights,
-        exactfit = fit,
-        coeff = plane,
-        kount = kount,
-        adjustcov = adcov,
-        seed,
-        PACKAGE="rrcov")  
+
+    mcd <- .fastmcd(x, quan, nsamp, seed)    
     
     # Compute the consistency correction factor for the raw MCD (see calfa in croux and haesbroeck)
     qalpha <- qchisq(quan/n, p)
@@ -764,4 +741,163 @@ correctiefactor.rew.s <- function(p, n, alpha)
     class(ans) <- "mcd"
     attr(ans, "call") <- sys.call()
     return(ans)
+}
+
+.fastmcd <- function(x, quan, nsamp, seed){
+    dx <- dim(x)
+    n <- dx[1]
+    p <- dx[2]
+
+    deter <-  fit <- kount <- 0
+    cutoff <- qchisq(0.975,p)
+    chimed <- qchisq(0.5, p)
+    
+    storage.mode(x) <- "double"
+    storage.mode(n) <- "integer"
+    storage.mode(p) <- "integer"
+    storage.mode(quan) <- "integer"
+    storage.mode(nsamp) <- "integer"
+    storage.mode(seed) <- "integer"
+
+    storage.mode(deter) <- "double"
+    storage.mode(fit) <- "integer"
+    storage.mode(kount) <- "integer"
+    storage.mode(cutoff) <- "double"
+    storage.mode(chimed) <- "double"
+
+
+    initcov <- matrix(0, nrow = p * p, ncol = 1)
+    adcov <- matrix(0, nrow = p * p, ncol = 1)
+    initmean <- matrix(0, nrow = p, ncol = 1)
+    inbest <- matrix(10000, nrow = quan, ncol = 1)
+    plane <- matrix(0, nrow = 5, ncol = p)
+    weights <- matrix(0, nrow = n, ncol = 1)
+
+    storage.mode(initcov) <- "double"
+    storage.mode(adcov) <- "double"
+    storage.mode(initmean) <- "double"
+    storage.mode(inbest) <- "integer"
+    storage.mode(plane) <- "double"
+    storage.mode(weights) <- "integer"
+    
+#   Allocate temporary storage for the fortran implementation
+    temp <- matrix(0, nrow = n, ncol = 1)
+    index1 <- matrix(0, nrow = n, ncol = 1)
+    index2 <- matrix(0, nrow = n, ncol = 1)
+    nmahad <- matrix(0, nrow = n, ncol = 1)
+    ndist <- matrix(0, nrow = n, ncol = 1)
+    am <- matrix(0, nrow = n, ncol = 1)
+    am2 <- matrix(0, nrow = n, ncol = 1)
+    slutn <- matrix(0, nrow = n, ncol = 1)
+
+    med <- matrix(0, nrow = p, ncol = 1)
+    mad <- matrix(0, nrow = p, ncol = 1)
+    sd <- matrix(0, nrow = p, ncol = 1)
+    means <- matrix(0, nrow = p, ncol = 1)
+    bmeans <- matrix(0, nrow = p, ncol = 1)
+    w <- matrix(0, nrow = p, ncol = 1)
+    fv1 <- matrix(0, nrow = p, ncol = 1)
+    fv2 <- matrix(0, nrow = p, ncol = 1)
+
+    rec <- matrix(0, nrow = p+1, ncol = 1)
+    sscp1 <- matrix(0, nrow = (p+1)*(p+1), ncol = 1)
+    cova1 <- matrix(0, nrow = p*p, ncol = 1)
+    corr1 <- matrix(0, nrow = p*p, ncol = 1)
+    cinv1 <- matrix(0, nrow = p*p, ncol = 1)
+    cova2 <- matrix(0, nrow = p*p, ncol = 1)
+    cinv2 <- matrix(0, nrow = p*p, ncol = 1)
+    z <- matrix(0, nrow = p*p, ncol = 1)
+
+    kmini <- 5
+    nmini <- 300
+    km10 <- 10*kmini
+    nmaxi <- nmini*kmini
+    cstock <- matrix(0, nrow = 10*p*p, ncol = 1)    #(10,nvmax2)
+    mstock <- matrix(0, nrow = 10*p, ncol = 1)      #(10,nvmax)
+    c1stock <- matrix(0, nrow = km10*p*p, ncol = 1) #(km10,nvmax2)
+    m1stock <- matrix(0, nrow = km10*p, ncol = 1)   #(km10,nvmax)
+    dath <- matrix(0, nrow = nmaxi*p, ncol = 1)     #(nmaxi,nvmax) 
+    
+    storage.mode(temp) <- "integer"
+    storage.mode(index1) <- "integer"
+    storage.mode(index2) <- "integer"
+    storage.mode(nmahad) <- "double"
+    storage.mode(ndist) <- "double"
+    storage.mode(am) <- "double"
+    storage.mode(am2) <- "double"
+    storage.mode(slutn) <- "double"
+
+    storage.mode(med) <- "double"
+    storage.mode(mad) <- "double"
+    storage.mode(sd) <- "double"
+    storage.mode(means) <- "double"
+    storage.mode(bmeans) <- "double"
+    storage.mode(w) <- "double"
+    storage.mode(fv1) <- "double"
+    storage.mode(fv2) <- "double"
+
+    storage.mode(rec) <- "double"
+    storage.mode(sscp1) <- "double"
+    storage.mode(cova1) <- "double"
+    storage.mode(corr1) <- "double"
+    storage.mode(cinv1) <- "double"
+    storage.mode(cova2) <- "double"
+    storage.mode(cinv2) <- "double"
+    storage.mode(z) <- "double"
+
+    storage.mode(cstock) <- "double"
+    storage.mode(mstock) <- "double"
+    storage.mode(c1stock) <- "double"
+    storage.mode(m1stock) <- "double"
+    storage.mode(dath) <- "double"
+    
+    mcd <- .Fortran("rffastmcd",
+        x,
+        n,
+        p,
+        quan,
+        nsamp,
+        initcovariance = initcov,
+        initmean = initmean,
+        best=inbest,
+        mcdestimate = deter,
+        weights = weights,
+        exactfit = fit,
+        coeff = plane,
+        kount = kount,
+        adjustcov = adcov,
+        seed,
+        temp,
+        index1,
+        index2,
+        nmahad,
+        ndist,
+        am,
+        am2,
+        slutn,
+        med,
+        mad,
+        sd,
+        means,
+        bmeans,
+        w,
+        fv1,
+        fv2,
+        rec,
+        sscp1, 
+        cova1, 
+        corr1, 
+        cinv1, 
+        cova2, 
+        cinv2, 
+        z,
+        cstock, 
+        mstock, 
+        c1stock, 
+        m1stock, 
+        dath,
+        cutoff,
+        chimed,
+        PACKAGE="rrcov")  
+    mcd
 }

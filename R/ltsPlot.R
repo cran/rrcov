@@ -262,7 +262,7 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
     id.n.default <- TRUE        # if id.n is missing, it will be set to a default for
                                 # for each plot.
     if(!missing(id.n) && !is.null(id.n)){
-        id.n.default <-false
+        id.n.default <- FALSE
         id.n <- as.integer(id.n)
         if(id.n < 0 || id.n > n)
             stop("`id.n' must be in {1,..,",n,"}") 

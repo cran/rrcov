@@ -122,9 +122,23 @@ cc   well as the equation of the hyperplane.
 cc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+cc      VT::10.10.2005 - a DATA operator was used for computing the
+cc              median and the 0.975 quantile of the chisq distribution
+cc              with nvar degrees of freedom. Since now we have no
+cc              restriction on the number of variables, these will be
+cc              passed as parameters - cutoff and chimed
         subroutine rffastmcd(dat,n,nvar,nhalff,krep,initcov,initmean,
      *    inbest,det,weight,fit,plane,kount,adcov,
-     *    iseed)
+     *    iseed,
+     *    temp, index1, index2, nmahad, ndist, am, am2, slutn,
+     *    med, mad, sd, means, bmeans, w, fv1, fv2,
+     *    rec, sscp1, cova1, corr1, cinv1, cova2, cinv2, z,
+     *    cstock, mstock, c1stock, m1stock, dath,
+     *    cutoff, chimed)
+        
+        
+        
 cc
 	implicit integer(i-n), double precision(a-h,o-z)
 cc
@@ -135,11 +149,11 @@ cc
 cc  In order to use more than 50 variables, it suffices
 cc  to give a higher value to nvmax in the following line:
 cc
-	parameter (nvmax=50)
+C        parameter (nvmax=50)
 cc
 cc  The maximum value for n (= number of observations) is:
 cc
-	parameter (nmax=50000)
+C        parameter (nmax=50000)
 cc
 cc  When enlarging nmax you may need to reduce nvar, in order to stay
 cc  within your computer's memory size.
@@ -166,9 +180,9 @@ c	parameter (krep=500)
 cc
 cc  The following lines need not be modified.
 cc
-	parameter (nvmax1=nvmax+1)
-	parameter (nvmax2=nvmax*nvmax)
-	parameter (nvm12=nvmax1*nvmax1)
+C	parameter (nvmax1=nvmax+1)
+C	parameter (nvmax2=nvmax*nvmax)
+C	parameter (nvm12=nvmax1*nvmax1)
 	parameter (km10=10*kmini)
 	parameter (nmaxi=nmini*kmini)
 cc
@@ -178,70 +192,85 @@ cc
 	integer flag(km10)
 	integer mini(kmini)
 	integer subdat(2,nmaxi)
-	integer subndex(450)
-	integer temp(nmax)
-	integer index1(nmax)
-	integer index2(nmax)
-	integer inbest(nhalff)
-	integer replow(51)
-        integer fit
-        integer weight(n)
-        double precision med(nvmax)
-        double precision mad(nvmax)
-        double precision med1,med2
-	double precision cstock(10,nvmax2)
-	double precision mstock(10,nvmax)
-	double precision c1stock(km10,nvmax2)
-	double precision m1stock(km10,nvmax)
-        double precision plane(5,nvar)
 	double precision mcdndex(10,2,kmini)
-	double precision rec(nvmax1)
+        integer subndex(450)
+	integer replow
+        integer fit
+cc	double precision chi2(50)
+cc      double precision chimed(50)
+	double precision faclts(11)
+	double precision pivot,rfmahad,medi2 
+
+    	integer inbest(nhalff)
+        integer weight(n)
+        double precision plane(5,nvar)
 	double precision dat(n,nvar) 
-	double precision dath(nmaxi,nvmax) 
-	double precision sscp1(nvm12)
-	double precision sd(nvmax)
-	double precision cova1(nvmax2)
-	double precision corr1(nvmax2)
-	double precision cinv1(nvmax2)
-	double precision cova2(nvmax2)
-	double precision cinv2(nvmax2)
         double precision initcov(nvar*nvar)
         double precision adcov(nvar*nvar)
         double precision initmean(nvar)
-	double precision means(nvmax)
-	double precision bmeans(nvmax)
-	double precision nmahad(nmax)
-	double precision ndist(nmax)
-	double precision chi2(50)
-        double precision chimed(50)
-	double precision faclts(11)
-	double precision pivot,rfmahad,medi2 
-        double precision am(nmax),am2(nmax),slutn(nmax)
-        double precision w(nvmax),z(nvmax2),fv1(nvmax),fv2(nvmax)
+
+        double precision med1,med2
+    	integer temp(n)
+	integer index1(n)
+	integer index2(n)
+        double precision nmahad(n)
+	double precision ndist(n)
+        double precision am(n),am2(n),slutn(n)
+        
+        double precision med(nvar)
+        double precision mad(nvar)
+	double precision sd(nvar)
+	double precision means(nvar)
+	double precision bmeans(nvar)
+        double precision w(nvar),fv1(nvar),fv2(nvar)
+
+   	double precision rec(nvar+1)
+	double precision sscp1((nvar+1)*(nvar+1))
+	double precision cova1(nvar*nvar)
+	double precision corr1(nvar*nvar)
+	double precision cinv1(nvar*nvar)
+	double precision cova2(nvar*nvar)
+	double precision cinv2(nvar*nvar)
+	double precision z(nvar*nvar)
+
+
+        double precision cstock(10,nvar*nvar)
+	double precision mstock(10,nvar)
+	double precision c1stock(km10,nvar*nvar)
+	double precision m1stock(km10,nvar*nvar)
+	double precision dath(nmaxi,nvar) 
+        
         double precision percen
+       
 	logical all,part,fine,final,rfodd,class
 cc  Median of the chi-squared distribution:
-        data chimed/0.454937,1.38629,2.36597,3.35670,4.35146,
-     *  5.34812,6.34581,7.34412,8.34283,9.34182,10.34,11.34,12.34,
-     *  13.34,14.34,15.34,16.34,17.34,18.34,19.34,20.34,21.34,22.34,
-     *  23.34,24.34,25.34,26.34,27.34,28.34,29.34,30.34,31.34,32.34,
-     *  33.34,34.34,35.34,36.34,37.34,38.34,39.34,40.34,41.34,42.34,
-     *  43.34,44.34,45.34,46.34,47.33,48.33,49.33/
+cc        data chimed/0.454937,1.38629,2.36597,3.35670,4.35146,
+cc     *  5.34812,6.34581,7.34412,8.34283,9.34182,10.34,11.34,12.34,
+cc     *  13.34,14.34,15.34,16.34,17.34,18.34,19.34,20.34,21.34,22.34,
+cc     *  23.34,24.34,25.34,26.34,27.34,28.34,29.34,30.34,31.34,32.34,
+cc     *  33.34,34.34,35.34,36.34,37.34,38.34,39.34,40.34,41.34,42.34,
+cc     *  43.34,44.34,45.34,46.34,47.33,48.33,49.33/
 cc  The 0.975 quantile of the chi-squared distribution:
-	data chi2/5.02389,7.37776,9.34840,11.1433,12.8325,
-     *  14.4494,16.0128,17.5346,19.0228,20.4831,21.920,23.337,
-     *  24.736,26.119,27.488,28.845,30.191,31.526,32.852,34.170,
-     *  35.479,36.781,38.076,39.364,40.646,41.923,43.194,44.461,
-     *  45.722,46.979,48.232,49.481,50.725,51.966,53.203,54.437,
-     *  55.668,56.896,58.120,59.342,60.561,61.777,62.990,64.201,
-     *  65.410,66.617,67.821,69.022,70.222,71.420/
-	data replow/500,50,22,17,15,14,45*0/
+cc	data chi2/5.02389,7.37776,9.34840,11.1433,12.8325,
+cc     *  14.4494,16.0128,17.5346,19.0228,20.4831,21.920,23.337,
+cc     *  24.736,26.119,27.488,28.845,30.191,31.526,32.852,34.170,
+cc     *  35.479,36.781,38.076,39.364,40.646,41.923,43.194,44.461,
+cc     *  45.722,46.979,48.232,49.481,50.725,51.966,53.203,54.437,
+cc     *  55.668,56.896,58.120,59.342,60.561,61.777,62.990,64.201,
+cc     *  65.410,66.617,67.821,69.022,70.222,71.420/
         data faclts/2.6477,2.5092,2.3826,2.2662,2.1587,
      *  2.0589,1.9660,1.879,1.7973,1.7203,1.6473/ 
 cc
 cc
 
 C	CALL INTPR('Entering RFFASTMCD - KREP: ',-1,KREP,1)
+
+C       20.06.2005 - substitute the parameters nmax and nvmax
+        nmax = n
+        nvmax = nvar        
+        nvmax1=nvmax+1
+        nvmax2=nvmax*nvmax
+        nvm12=nvmax1*nvmax1
 	
 	nrep = krep
 	percen = (1.D0*nhalff)/(1.D0*n)
@@ -1336,9 +1365,15 @@ cc
           det=det*mad(j)*mad(j)
  9149   continue
 cc
-        call rfcovmult(cova1,nvar,nvar,medi2/chimed(nvar))
-        call rfcovmult(cova2,nvar,nvar,medi2/chimed(nvar)) 
-        call rfcovmult(cinv2,nvar,nvar,1.D0/(medi2/chimed(nvar))) 
+
+cc      VT::chimed is passed now as a parameter
+cc        call rfcovmult(cova1,nvar,nvar,medi2/chimed(nvar))
+cc        call rfcovmult(cova2,nvar,nvar,medi2/chimed(nvar)) 
+cc        call rfcovmult(cinv2,nvar,nvar,1.D0/(medi2/chimed(nvar))) 
+
+        call rfcovmult(cova1,nvar,nvar,medi2/chimed)
+        call rfcovmult(cova2,nvar,nvar,medi2/chimed) 
+        call rfcovmult(cinv2,nvar,nvar,1.D0/(medi2/chimed)) 
         call rfcovcopy(cova1,adcov,nvar,nvar)
 cc
 cc      The MCD location is in bmeans.
@@ -1350,7 +1385,10 @@ cc      and compare it to a cutoff value.
 cc
 	call rfcovinit(sscp1,nvar+1,nvar+1)
 	nin=0
-	cutoff=chi2(nvar)
+
+cc VT:: no need - the cutoff now is passed as a parameter
+cc	cutoff=chi2(nvar)
+        
 	do 280 i=1,n
 	  do 282 mm=1,nvar
  282      rec(mm)=dat(i,mm) 
@@ -1430,6 +1468,27 @@ cc
  5    continue
       return
       end
+ccccc
+ccccc
+      function replow(k)
+cc
+cc    Find out which combinations of n and p are
+cc    small enough in order to perform exaustive search
+cc    Returns the maximal n for a given p, for which
+cc    exhaustive search is to be done
+cc    
+cc    k is the number of variables (p)
+cc
+      integer replow, k
+      integer irep(6)
+      data irep/500,50,22,17,15,14/
+
+      iret=0
+      if(k.le.6) iret = irep(k)
+
+      replow = iret
+      return
+      end 
 ccccc
 ccccc
       function rfncomb(k,n)

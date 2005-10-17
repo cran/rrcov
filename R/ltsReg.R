@@ -69,6 +69,7 @@ ltsReg.default <- function (x, y,
                     qr.out=FALSE, 
                     yname=NULL, 
                     seed=0,
+                    control,
                     ...) 
 {
 
@@ -307,6 +308,26 @@ ltsReg.default <- function (x, y,
         }
         return(1/fp.alpha.n)
     }
+
+#   Analize and validate the input parameters ...
+
+    # if a control object was supplied, take the option parameters from it,
+    # but if single parameters were passed (not defaults) they will override the
+    # control object.
+    if(!missing(control)){
+        defcontrol <- rrcov.control()      # default control
+        if(length(alpha) == 0 && control$alpha != defcontrol$alpha)
+            alpha <- control$alpha
+        if(nsamp == defcontrol$nsamp)
+            nsamp <- control$nsamp
+        if(seed == defcontrol$seed)
+            seed <- control$seed
+#        if(print.it == defcontrol$print.it)
+#            print.it <- control$print.it
+        if(adjust == defcontrol$adjust)
+            adjust <- control$adjust
+    }
+
     
 #cat("++++++ Entering ltsReg() ...\n")    
     if (is.vector(y) || (is.matrix(y) && !is.data.frame(y))) {
@@ -434,46 +455,15 @@ ltsReg.default <- function (x, y,
             alpha <- 1/2
             quan <- quan.f(alpha, n, dx[2])
         }
-        storage.mode(quan) <- "integer"
-        initcov <- matrix(0, nrow = 1, ncol = 1)
-        initmean <- matrix(0, nrow = 1, ncol = 1)
-        inbest <- matrix(0, nrow = quan, ncol = 1)
-        weights <- matrix(0, nrow = n, ncol = 1)
-        coeff <- matrix(0, nrow = 5, ncol = 1)
-        adjustcov <- matrix(0, nrow = 1, ncol = 1)
-        storage.mode(initcov) <- "double"
-        storage.mode(initmean) <- "double"
-        storage.mode(inbest) <- "integer"
-        storage.mode(weights) <- "integer"
-        storage.mode(coeff) <- "double"
-        storage.mode(adjustcov) <- "double"
-        storage.mode(y) <- "double"
-        storage.mode(seed) <- "integer"
-        exactfit <- 0
+
         p <- 1
         xbest <- NULL
         if (alpha == 1) {
             scale <- sqrt(cov.wt(x)$cov)
             center <- as.vector(mean(x))
         }else {
-            sh <- .Fortran("rffastmcd", 
-                    as.matrix(y), 
-                    as.integer(n), 
-                    as.integer(p), 
-                    as.integer(quan), 
-                    nsamp = 0, 
-                    initcovariance = initcov, 
-                    initmean = initmean, 
-                    inbest = inbest, 
-                    mcdestimate = 0, 
-                    weights = weights, 
-                    as.integer(exactfit), 
-                    coeff = coeff, 
-                    kount = 0, 
-                    adjustcov = adjustcov,
-                    seed,
-                    PACKAGE="rrcov")
-
+            sh <- .fastmcd(as.matrix(y), as.integer(quan), nsamp = 0, seed)
+            
             y <- as.vector(y)
             center <- as.double(sh$initmean)
             qalpha <- qchisq(quan/n, 1)
@@ -737,37 +727,8 @@ ltsReg.default <- function (x, y,
             stop("alpha is out of range!")
         quan <- quan.f(alpha, n, rk)
     }
-    y <- as.matrix(y)
-    x1 <- matrix(0, ncol = p + 1, nrow = n)
-    x1 <- cbind(x, y)
-    x1 <- as.matrix(x1)
-    storage.mode(x1) <- "double"
-    datt <- matrix(0, ncol = p + 1, nrow = n)
-    storage.mode(datt) <- "double"
-    nvad <- p + 1
-    inbest <- matrix(10000, nrow = quan, ncol = 1)
-    storage.mode(inbest) <- "integer"
-    objfct <- 0
 
-    interc <- ifelse(intercept, 1, 0)
-    intadjust <- ifelse(adjust, 1, 0)
-
-    storage.mode(interc) <- "integer"
-    storage.mode(seed) <- "integer"
-    z <- .Fortran("rfltsreg", 
-                x1 = x1, 
-                as.integer(n), 
-                as.integer(p), 
-                as.integer(quan), 
-                as.integer(nsamp), 
-                inbest = inbest, 
-                objfct = as.double(objfct), 
-                as.integer(interc), 
-                as.integer(intadjust),
-                as.integer(nvad), 
-                datt,
-                seed,
-                PACKAGE="rrcov")
+    z <- .fastlts(x, y, quan, nsamp, intercept, adjust, seed)
 
     # vt:: lm.fit.qr == lm.fit(...,method=qr,...)
     #  cf <- lm.fit.qr(x[z$inbest, , drop = FALSE], y[z$inbest])$coef
@@ -848,39 +809,7 @@ ltsReg.default <- function (x, y,
     ans$lts.wt[ok] <- weights
     ans$crit <- z$objfct
     if (intercept) {
-        initcov <- matrix(0, nrow = 1, ncol = 1)
-        initmean <- matrix(0, nrow = 1, ncol = 1)
-        inbest <- matrix(0, nrow = quan, ncol = 1)
-        weights <- matrix(0, nrow = n, ncol = 1)
-        coeff <- matrix(0, nrow = 5, ncol = 1)
-        adjustcov <- matrix(0, nrow = 1, ncol = 1)
-        storage.mode(initcov) <- "double"
-        storage.mode(initmean) <- "double"
-        storage.mode(inbest) <- "integer"
-        storage.mode(weights) <- "integer"
-        storage.mode(coeff) <- "double"
-        storage.mode(adjustcov) <- "double"
-        storage.mode(y) <- "double"
-        storage.mode(seed) <- "integer"
-        exactfit <- 0
-        k <- 1
-        sh <- .Fortran("rffastmcd", 
-                    as.matrix(y), 
-                    as.integer(n), 
-                    as.integer(k), 
-                    as.integer(quan), 
-                    nsamp = 0, 
-                    initcovariance = initcov, 
-                    initmean = initmean, 
-                    inbest = inbest, 
-                    mcdestimate = 0, 
-                    weights = weights, 
-                    as.integer(exactfit), 
-                    coeff = coeff, 
-                    kount = 0, 
-                    adjustcov = adjustcov,
-                    seed,
-                    PACKAGE="rrcov")
+        sh <- .fastmcd(as.matrix(y), as.integer(quan), nsamp = 0, seed)        
         y <- as.vector(y)
         sh <- as.double(sh$adjustcov)
         ans$rsquared <- 1 - (sh0/sh)^2
@@ -1084,4 +1013,154 @@ print.summary.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
     }
     cat("\n")
     invisible(x)
+}
+
+.fastlts <- function(x, y, quan, nsamp, intercept, adjust, seed){
+    dx <- dim(x)
+    n <- dx[1]
+    p <- dx[2]
+
+    y <- as.matrix(y)
+    x1 <- matrix(0, ncol = p + 1, nrow = n)
+    x1 <- cbind(x, y)
+    x1 <- as.matrix(x1)
+
+    objfct <- 0
+    interc <- ifelse(intercept, 1, 0)
+    intadjust <- ifelse(adjust, 1, 0)
+   
+    storage.mode(x1) <- "double"
+    storage.mode(n) <- "integer"
+    storage.mode(p) <- "integer"
+    storage.mode(quan) <- "integer"
+    storage.mode(nsamp) <- "integer"
+    storage.mode(seed) <- "integer"
+    storage.mode(objfct) <- "double"
+    storage.mode(interc) <- "integer"
+    storage.mode(intadjust) <- "integer"
+
+    inbest <- matrix(10000, nrow = quan, ncol = 1)
+
+    storage.mode(inbest) <- "integer"
+
+    datt <- matrix(0, ncol = p + 1, nrow = n)
+    storage.mode(datt) <- "double"
+    nvad <- p + 1
+    storage.mode(nvad) <- "integer"
+    
+#   Allocate temporary storage for the fortran implementation
+
+    weights <- matrix(0, nrow = n, ncol = 1)
+    temp <- matrix(0, nrow = n, ncol = 1)
+    index1 <- matrix(0, nrow = n, ncol = 1)
+    index2 <- matrix(0, nrow = n, ncol = 1)
+    aw2 <- matrix(0, nrow = n, ncol = 1)
+    aw <- matrix(0, nrow = n, ncol = 1)
+    residu <- matrix(0, nrow = n, ncol = 1)
+    yy <- matrix(0, nrow = n, ncol = 1)
+    nmahad <- matrix(0, nrow = n, ncol = 1)
+    ndist <- matrix(0, nrow = n, ncol = 1)
+    am <- matrix(0, nrow = n, ncol = 1)
+    am2 <- matrix(0, nrow = n, ncol = 1)
+    slutn <- matrix(0, nrow = n, ncol = 1)
+
+    storage.mode(weights) <- "double"
+    storage.mode(temp) <- "integer"
+    storage.mode(index1) <- "integer"
+    storage.mode(index2) <- "integer"
+    storage.mode(aw2) <- "double"
+    storage.mode(aw) <- "double"
+    storage.mode(residu) <- "double"
+    storage.mode(yy) <- "double"
+    storage.mode(nmahad) <- "double"
+    storage.mode(ndist) <- "double"
+    storage.mode(am) <- "double"
+    storage.mode(am2) <- "double"
+    storage.mode(slutn) <- "double"
+
+    kmini <- 5
+    nmini <- 300
+    km10 <- 10*kmini
+    nmaxi <- nmini*kmini
+    
+#   integer jmiss(nvad)                 --> p+1
+    jmiss <- matrix(0, nrow = p+1, ncol = 1)
+    storage.mode(jmiss) <- "integer"
+#   double precision xmed(nvad)         --> p+1
+    xmed <- matrix(0, nrow = p+1, ncol = 1)
+    storage.mode(xmed) <- "double"
+#   double precision xmad(nvad)         p+1
+    xmad <- matrix(0, nrow = p+1, ncol = 1)
+    storage.mode(xmad) <- "double"
+#   double precision a(nvad)            p+1
+    a <- matrix(0, nrow = p+1, ncol = 1)
+    storage.mode(a) <- "double"
+
+#   double precision da(nvad)           p+1
+    da <- matrix(0, nrow = p+1, ncol = 1)
+    storage.mode(da) <- "double"
+#   double precision h(nvar,nvad)           p*(p+1)
+    h <- matrix(0, nrow = p*(p+1), ncol = 1)
+    storage.mode(h) <- "double"
+#   double precision hvec(nvar*nvad)        p*(p+1)
+    hvec <- matrix(0, nrow = p*(p+1), ncol = 1)
+    storage.mode(hvec) <- "double"
+#   double precision c(nvar,nvad)           p*(p+1)
+    c <- matrix(0, nrow = p*(p+1), ncol = 1)
+    storage.mode(c) <- "double"
+#   double precision cstock(10,nvar*nvar)   10*p*p
+    cstock <- matrix(0, nrow = 10*p*p, ncol = 1)
+    storage.mode(cstock) <- "double"
+#   double precision mstock(10,nvar)        10*p
+    mstock <- matrix(0, nrow = 10*p, ncol = 1)
+    storage.mode(mstock) <- "double"
+#   double precision c1stock(km10,nvar*nvar)    km10*p*p
+    c1stock <- matrix(0, nrow = km10*p*p, ncol = 1)
+    storage.mode(c1stock) <- "double"
+#    double precision m1stock(km10,nvar)         km10*p
+    m1stock <- matrix(0, nrow = km10*p, ncol = 1)
+    storage.mode(m1stock) <- "double"
+#    double precision dath(nmaxi,nvad)           nmaxi*(p+1)
+    dath <- matrix(0, nrow = nmaxi*(p+1), ncol = 1)
+    storage.mode(dath) <- "double"
+#   double precision sd(nvar)               p
+    sd <- matrix(0, nrow = p, ncol = 1)
+    storage.mode(sd) <- "double"
+#   double precision means(nvar)            p
+    means <- matrix(0, nrow = p, ncol = 1)
+    storage.mode(means) <- "double"
+#   double precision bmeans(nvar)           p
+    bmeans <- matrix(0, nrow = p, ncol = 1)
+    storage.mode(bmeans) <- "double"
+    
+    zlts <- .Fortran("rfltsreg", 
+            x1=x1, 
+            n, 
+            p, 
+            quan, 
+            nsamp, 
+            inbest = inbest, 
+            objfct = objfct, 
+            interc, 
+            intadjust,
+            nvad, 
+            datt,
+            seed,
+            weights,
+            temp,
+            index1,
+            index2,
+            aw2,
+            aw,
+            residu,
+            yy,
+            nmahad,
+            ndist,
+            am,
+            am2,
+            slutn,
+            jmiss,xmed,xmad,a,da,h,hvec,c,cstock,mstock,c1stock,
+            m1stock,dath,sd,means,bmeans,
+            PACKAGE="rrcov")
+    zlts
 }
