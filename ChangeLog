@@ -1,3 +1,15 @@
+2005-10-17  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-9
+    * minor corrections in the help of covMcd
+    * minor correction in ltsReg (false corrected to FALSE)
+    * covMcd - fixed the limitation on the number of variables <= 50
+    * ltsReg - fixed the limitation on the number of variables <= 50
+    * added function summary.mcd which prints (additionally to the output
+        of print.mcd) the correlation matrix (if requested), the eigenvalues
+        of the covariance or correlation matrix and the robust distances.
+    * added control object for the estimation options rrcov.control and
+        used in covMcd and ltsReg
+            
 2005-09-20  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-8
     * ltsReg: added formula interface

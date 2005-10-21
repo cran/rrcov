@@ -12,9 +12,11 @@ milk                    Daudin's Milk Composition Data
 phosphor                Phosphorus Content Data
 plot.lts                Robust Regression Diagnostic Plots
 plot.mcd                Robust Distance Plots
+rrcov.control           Control object for the estimation parameters
 salinity                Salinity Data
 stars                   Data for the Hertzsprung-Russell Diagram of
                         the star cluster CYG OB1
 summary.lts             Summary Method for LTS objects
+summary.mcd             Summary Method for MCD objects
 tolellipse              Tolerance Ellipse Plot
 wood                    Modified Wood Gravity Dataset

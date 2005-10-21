@@ -61,7 +61,8 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
                 print(ibad)
             if(full){
                 cat("-------------\n")
-                print(lts)   
+                print(lts)
+                print(summary(lts))
             } 
             cat("--------------------------------------------------------\n")
         }

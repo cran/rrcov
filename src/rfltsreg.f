@@ -21,12 +21,17 @@ cc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 	subroutine rfltsreg(dat,n,nvar,nhalff,krep,inbest,objfct,
-     *   intercept,intadjust, nvad,datt,iseed) 
+     *   intercept,intadjust,nvad,datt,iseed,
+     *   weights,temp,index1,index2,aw2,aw,residu,y,nmahad,ndist,
+     *   am,am2,slutn,
+     *   jmiss,xmed,xmad,a,da,h,hvec,c,cstock,mstock,c1stock,
+     *   m1stock,dath,sd,means,bmeans)
+     
 cc
 	implicit integer(i-n), double precision(a-h,o-z)
 cc
-	parameter (nvmax=51)
-	parameter (nmax=57000)
+ccc	parameter (nvmax=115)
+ccc	parameter (nmax=57000)
 cc
 	parameter (kmini=5)
 	parameter (nmini=300)
@@ -34,86 +39,89 @@ cc
 	parameter (k2=2)
 	parameter (k3=100)
 cc
-	parameter (nvmax1=nvmax+1)
-	parameter (nvmax2=nvmax*nvmax)
-	parameter (nvm11=nvmax*(nvmax+1))
-	parameter (nvm12=nvmax1*nvmax1)
+ccc	parameter (nvmax1=nvmax+1)
+ccc	parameter (nvmax2=nvmax*nvmax)
+ccc	parameter (nvm11=nvmax*(nvmax+1))
+
 	parameter (km10=10*kmini)
 	parameter (nmaxi=nmini*kmini)
 C--VT   parameter (maxmini=int((3*nmini-1)/2)+1)
 	parameter (maxmini=450)
 cc
-	integer intercept,intadjust
-	integer xrfnbreak,xrfncomb
-	double precision weights(nmax)
-	integer jmiss(nvmax1)
+	integer inbest(nhalff)
+	double precision dat(n,nvad)
+	double precision datt(n,nvad)
+
+        double precision weights(n)
+	integer temp(n)
+	integer index1(n)
+	integer index2(n)
+        double precision aw2(n),aw(n)
+	double precision residu(n)
+	double precision y(n)
+	double precision nmahad(n)
+	double precision ndist(n)
+	double precision am(n),am2(n),slutn(n)
+
 	integer matz,seed,tottimes,step
 	integer pnsel
-	integer flag(km10)
+        integer xreplow
+	integer krep,n,nvar,nhalff,nvad
+	double precision objfct
+	logical all,part,fine,final,xrfodd,more1,more2
+	integer intercept,intadjust
+	integer xrfnbreak,xrfncomb
+	
+        integer flag(km10)
 	integer mini(kmini)
 	integer subdat(2,nmaxi)
 	integer subndex(maxmini)
-	integer temp(nmax)
-	integer index1(nmax)
-	integer index2(nmax)
-	integer inbest(nhalff)
-	integer replow(51)
-	integer krep,n,nvar,nhalff,nvad
-	double precision objfct
-	double precision xmed(nvmax1)
-	double precision xmad(nvmax1)
-	double precision aw2(nmax),aw(nmax)
-	double precision a(nvmax1), da(nvmax1)
-	double precision h(nvmax,nvmax1),hvec(nvm11)
-	double precision c(nvmax,nvmax1)
-	double precision residu(nmax)
-	double precision cstock(10,nvmax2)
-	double precision mstock(10,nvmax)
-	double precision c1stock(km10,nvmax2)
-	double precision m1stock(km10,nvmax)
-	double precision mcdndex(10,2,kmini)
-	double precision dat(n,nvad)
-	double precision dath(nmaxi,nvmax1)
-	double precision y(nmax)
-	double precision datt(n,nvad)
-	double precision sd(nvmax)
-	double precision means(nvmax)
-	double precision bmeans(nvmax)
-	double precision nmahad(nmax)
-	double precision ndist(nmax)
 	double precision faclts(11)
-	double precision am(nmax),am2(nmax),slutn(nmax)
-	logical all,part,fine,final,xrfodd,more1,more2
+	double precision mcdndex(10,2,kmini)
 
-C--VT   double precision chimed(50)
-C--VT	double precision chi2(50)
-CC
-cc  Median of the chi-squared distribution:
-C--VT - not used
-C
-C        data chimed/0.454937,1.38629,2.36597,3.35670,4.35146,
-C     *  5.34812,6.34581,7.34412,8.34283,9.34182,10.34,11.34,12.34,
-C     *  13.34,14.34,15.34,16.34,17.34,18.34,19.34,20.34,21.34,22.34,
-C     *  23.34,24.34,25.34,26.34,27.34,28.34,29.34,30.34,31.34,32.34,
-C     *  33.34,34.34,35.34,36.34,37.34,38.34,39.34,40.34,41.34,42.34,
-C     *  43.34,44.34,45.34,46.34,47.33,48.33,49.33/
 
-cc  The 0.975 quantile of the chi-squared distribution:
-C	data chi2/5.02389,7.37776,9.34840,11.1433,12.8325,
-C     *  14.4494,16.0128,17.5346,19.0228,20.4831,21.920,23.337,
-C     *  24.736,26.119,27.488,28.845,30.191,31.526,32.852,34.170,
-C     *  35.479,36.781,38.076,39.364,40.646,41.923,43.194,44.461,
-C     *  45.722,46.979,48.232,49.481,50.725,51.966,53.203,54.437,
-C     *  55.668,56.896,58.120,59.342,60.561,61.777,62.990,64.201,
-C     *  65.410,66.617,67.821,69.022,70.222,71.420/
+ccc     integer jmiss(nvmax1)
+ccc	double precision xmed(nvmax1)
+ccc	double precision xmad(nvmax1)
+ccc	double precision a(nvmax1), da(nvmax1)
+ccc	double precision h(nvmax,nvmax1),hvec(nvm11)
+ccc	double precision c(nvmax,nvmax1)
+ccc	double precision cstock(10,nvmax2)
+ccc	double precision mstock(10,nvmax)
+ccc	double precision c1stock(km10,nvmax2)
+ccc	double precision m1stock(km10,nvmax)
+ccc	double precision dath(nmaxi,nvmax1)
+ccc	double precision sd(nvmax)
+ccc	double precision means(nvmax)
+ccc	double precision bmeans(nvmax)
 
-	data replow/500,50,22,17,15,14,45*0/
+        integer jmiss(nvad)
+	double precision xmed(nvad)
+	double precision xmad(nvad)
+	double precision a(nvad), da(nvad)
+	double precision h(nvar,nvad),hvec(nvar*nvad)
+	double precision c(nvar,nvad)
+	double precision cstock(10,nvar*nvar)
+	double precision mstock(10,nvar)
+	double precision c1stock(km10,nvar*nvar)
+	double precision m1stock(km10,nvar)
+	double precision dath(nmaxi,nvad)
+	double precision sd(nvar)
+	double precision means(nvar)
+	double precision bmeans(nvar)
+
         data faclts/2.6477,2.5092,2.3826,2.2662,2.1587,
      *  2.0589,1.9660,1.879,1.7973,1.7203,1.6473/ 
 cc
 cc
 CDDD	CALL INTPR('>>> Enter RFLTSREG ... nvar=',-1,nvar,1)
 
+CCCC    10.10.2005 - substitute the parameters nmax and nvmax
+        nmax = n
+        nvmax = nvar        
+        nvmax1 = nvmax+1
+        nvm11 = nvmax*(nvmax+1)
+        
         nrep = krep
 
 	if(nvar.lt.5) then
@@ -221,12 +229,13 @@ cc
           if(ngroup.gt.kmini) ngroup=kmini
           nrep=int((krep*1.D0)/ngroup)
           minigr=mini(1)+mini(2)+mini(3)+mini(4)+mini(5)
+cccc	CALL INTPR('>>> RFLTSREG ... minigr=',-1,iseed,1)
           call xrfrdraw(subdat,n,seed,minigr,mini,ngroup,kmini)
         else
           minigr=n
           nhalf=nhalff
           kstep=k1
-          if(n.le.replow(nsel)) then
+          if(n.le.xreplow(nsel)) then
             nrep=xrfncomb(nsel,n)
           else
             nrep = krep
@@ -291,6 +300,7 @@ CDDD	CALL INTPR('>>> Start initialization ... nrep=',-1,nrep,1)
         do 42,j=1,nhalff
           inbest(j)=0
  42     continue
+
         do 47,j=1,nvm11
  47       hvec(j)=0.D0
 
@@ -442,7 +452,7 @@ CDDD	     CALL INTPR('>>> LOOPING BY GROUPS...II: ',-1,ii,1)
 cc
 CDDD      CALL INTPR('>>> MAIN LOOP: NREP=',-1,nrep,1)
           do 1000 i=1,nrep
-CDDD          CALL INTPR('>>> LOOPING...I: ',-1,i,1)
+CDDD               CALL INTPR('>>> LOOPING...I: ',-1,i,1)
 
           pnsel=nsel
           tottimes=tottimes+1
@@ -1282,6 +1292,27 @@ ccccc
       end
 ccccc
 C--VT-- The following functions were added
+ccccc
+ccccc
+      function xreplow(k)
+cc
+cc    Find out which combinations of n and p are
+cc    small enough in order to perform exaustive search
+cc    Returns the maximal n for a given p, for which
+cc    exhaustive search is to be done
+cc    
+cc    k is the number of variables (p)
+cc
+      integer xreplow, k
+      integer irep(6)
+      data irep/500,50,22,17,15,14/
+
+      iret=0
+      if(k.le.6) iret = irep(k)
+
+      xreplow = iret
+      return
+      end 
 ccccc
 ccccc
       function xrfncomb(k,n)

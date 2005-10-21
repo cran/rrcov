@@ -1,6 +1,6 @@
 
-R : Copyright 2004, The R Foundation for Statistical Computing
-Version 2.0.0  (2004-10-04), ISBN 3-900051-07-0
+R : Copyright 2005, The R Foundation for Statistical Computing
+Version 2.1.1  (2005-06-20), ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -77,7 +77,8 @@ Type 'q()' to quit R.
 +                 print(ibad)
 +             if(full){
 +                 cat("-------------\n")
-+                 print(lts)   
++                 print(lts)
++                 print(summary(lts))
 +             } 
 +             cat("--------------------------------------------------------\n")
 +         }
@@ -224,7 +225,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-8)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-9)
 > dodata()
 
 Call:  dodata() 
@@ -243,6 +244,23 @@ Intercept         X1         X2
 
 Scale estimate 1.525 
 
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+ [1] -1.3927  0.1691  0.0000  0.4434 -0.3413  0.1655 -0.1148  0.0000  0.0000
+[10]  0.0000  0.6663  0.4045
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept 63.35284    4.02270  15.749 1.88e-05
+X1        -1.22650    0.14032  -8.741 0.000325
+X2         0.68835    0.05278  13.041 4.73e-05
+
+Residual standard error: 0.7654 on 5 degrees of freedom
+Multiple R-Squared: 0.9913,	Adjusted R-squared: 0.9879 
+F-statistic:   286 on 2 and 5 DF,  p-value: 6.992e-06 
+
 --------------------------------------------------------
 stars                 47   1  25     1.880169
 Best subsample: 
@@ -255,6 +273,22 @@ Intercept          X
    -8.500      3.046  
 
 Scale estimate 0.4562 
+
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+    Min      1Q  Median      3Q     Max 
+-0.7840 -0.2137  0.0000  0.2267  0.5916 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept  -8.5001     1.9263  -4.413 7.83e-05
+X           3.0462     0.4373   6.965 2.39e-08
+
+Residual standard error: 0.3407 on 39 degrees of freedom
+Multiple R-Squared: 0.5544,	Adjusted R-squared: 0.5429 
+F-statistic: 48.51 on 1 and 39 DF,  p-value: 2.392e-08 
 
 --------------------------------------------------------
 phosphor              18   2  11     0.245377
@@ -269,6 +303,23 @@ Intercept         X1         X2
 
 Scale estimate 13.54 
 
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+     Min       1Q   Median       3Q      Max 
+-30.2967  -3.5911  -0.6916   4.2514  17.1156 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept 60.91489   10.19950   5.972 3.41e-05
+X1         1.21103    0.35494   3.412  0.00421
+X2         0.08833    0.25742   0.343  0.73661
+
+Residual standard error: 12.69 on 14 degrees of freedom
+Multiple R-Squared: 0.5188,	Adjusted R-squared: 0.4501 
+F-statistic: 7.548 on 2 and 14 DF,  p-value: 0.005972 
+
 --------------------------------------------------------
 stackloss             21   3  13     0.083378
 Best subsample: 
@@ -281,6 +332,24 @@ Coefficients:
  -37.65246     0.79769     0.57734    -0.06706  
 
 Scale estimate 1.922 
+
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+    Min      1Q  Median      3Q     Max 
+-2.5065 -0.4236  0.0000  0.5764  1.9342 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+Intercept  -37.65246    4.73205  -7.957 2.37e-06
+Air.Flow     0.79769    0.06744  11.828 2.48e-08
+Water.Temp   0.57734    0.16597   3.479  0.00408
+Acid.Conc.  -0.06706    0.06160  -1.089  0.29611
+
+Residual standard error: 1.253 on 13 degrees of freedom
+Multiple R-Squared: 0.975,	Adjusted R-squared: 0.9692 
+F-statistic:   169 on 3 and 13 DF,  p-value: 1.159e-10 
 
 --------------------------------------------------------
 coleman               20   5  13     0.019426
@@ -295,6 +364,26 @@ Intercept         X1         X2         X3         X4         X5
 
 Scale estimate 1.119 
 
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+    Min      1Q  Median      3Q     Max 
+-1.2155 -0.3887  0.0000  0.3056  0.9845 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept 29.75772    5.53224   5.379 0.000166
+X1        -1.69854    0.46602  -3.645 0.003358
+X2         0.08512    0.02079   4.093 0.001490
+X3         0.66617    0.03824  17.423 6.94e-10
+X4         1.18400    0.16425   7.208 1.07e-05
+X5        -4.06675    0.84867  -4.792 0.000440
+
+Residual standard error: 0.7824 on 12 degrees of freedom
+Multiple R-Squared: 0.9883,	Adjusted R-squared: 0.9835 
+F-statistic: 203.2 on 5 and 12 DF,  p-value: 3.654e-11 
+
 --------------------------------------------------------
 salinity              28   3  16     0.065610
 Best subsample: 
@@ -307,6 +396,24 @@ Intercept         X1         X2         X3
   38.0635     0.4429    -0.2065    -1.3734  
 
 Scale estimate 1.233 
+
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+    Min      1Q  Median      3Q     Max 
+-2.4823 -0.3899  0.0000  0.3387  1.7013 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept 38.06346    5.17184   7.360 4.13e-07
+X1         0.44288    0.08604   5.147 4.90e-05
+X2        -0.20647    0.13748  -1.502    0.149
+X3        -1.37337    0.19465  -7.056 7.67e-07
+
+Residual standard error: 1.03 on 20 degrees of freedom
+Multiple R-Squared: 0.8989,	Adjusted R-squared: 0.8838 
+F-statistic:  59.3 on 3 and 20 DF,  p-value: 3.92e-10 
 
 --------------------------------------------------------
 aircraft              23   4  14     0.298554
@@ -321,6 +428,25 @@ Coefficients:
 
 Scale estimate 5.693 
 
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+   Min     1Q Median     3Q    Max 
+-6.669 -2.429  0.000  2.791  6.793 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+Intercept  9.5007403  5.5775325   1.703  0.10784
+X1        -3.0487969  0.9191472  -3.317  0.00436
+X2         1.2100330  0.6492298   1.864  0.08081
+X3         0.0013810  0.0003924   3.519  0.00285
+X4        -0.0005549  0.0003281  -1.691  0.11017
+
+Residual standard error: 4.349 on 16 degrees of freedom
+Multiple R-Squared: 0.8257,	Adjusted R-squared: 0.7822 
+F-statistic: 18.95 on 4 and 16 DF,  p-value: 6.467e-06 
+
 --------------------------------------------------------
 delivery              25   2  14     0.112945
 Best subsample: 
@@ -333,6 +459,23 @@ Intercept         X1         X2
   3.71959    1.40578    0.01625  
 
 Scale estimate 2.383 
+
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+     Min       1Q   Median       3Q      Max 
+-5.03209 -1.03055 -0.01243  0.34737  4.23711 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept 3.719594   0.910107   4.087 0.000628
+X1        1.405778   0.131281  10.708 1.73e-09
+X2        0.016252   0.003009   5.402 3.27e-05
+
+Residual standard error: 2.32 on 19 degrees of freedom
+Multiple R-Squared: 0.9624,	Adjusted R-squared: 0.9585 
+F-statistic: 243.3 on 2 and 19 DF,  p-value: 2.901e-14 
 
 --------------------------------------------------------
 wood                  20   5  13     0.070258
@@ -347,6 +490,26 @@ Intercept         V1         V2         V3         V4         V5
 
 Scale estimate 0.01236 
 
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+      Min        1Q    Median        3Q       Max 
+-0.009281 -0.001771  0.000000  0.001146  0.013004 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept  0.37733    0.05402   6.986 3.78e-05
+V1         0.21738    0.04212   5.162 0.000424
+V2        -0.08501    0.19771  -0.430 0.676341
+V3        -0.56430    0.04349 -12.975 1.40e-07
+V4        -0.40033    0.06544  -6.118 0.000113
+V5         0.60745    0.07858   7.730 1.59e-05
+
+Residual standard error: 0.007451 on 10 degrees of freedom
+Multiple R-Squared: 0.9583,	Adjusted R-squared: 0.9375 
+F-statistic:    46 on 5 and 10 DF,  p-value: 1.397e-06 
+
 --------------------------------------------------------
 hbk                   75   3  40     3.724554
 Best subsample: 
@@ -360,6 +523,24 @@ Intercept         X1         X2         X3
  -0.18046    0.08138    0.03990   -0.05167  
 
 Scale estimate 0.744 
+
+
+Call:
+ltsReg.default(x, y, mcd = FALSE)
+
+    Min      1Q  Median      3Q     Max 
+-0.9263 -0.3955  0.0000  0.3968  1.0106 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)
+Intercept -0.18046    0.10445  -1.728    0.089
+X1         0.08138    0.06667   1.221    0.227
+X2         0.03990    0.04048   0.986    0.328
+X3        -0.05167    0.03537  -1.461    0.149
+
+Residual standard error: 0.5572 on 61 degrees of freedom
+Multiple R-Squared: 0.04278,	Adjusted R-squared: -0.004292 
+F-statistic: 0.9088 on 3 and 61 DF,  p-value: 0.4421 
 
 --------------------------------------------------------
 ========================================================
