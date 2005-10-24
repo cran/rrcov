@@ -107,9 +107,9 @@ tolellipse <- function(x,
     md <- sqrt(mahalanobis(x,apply(x,2,mean),cov(x), tol=tol))
     rd <- sqrt(mahalanobis(x,mcd$center,mcd$cov, tol=tol))
     
-    if(classic)
-        par(mfrow = c(1, 2))
-    else
+#    if(classic)
+#        par(mfrow = c(1, 2))
+#    else
         par(mfrow = c(1, 1))
     
     if(missing(id.n))
@@ -127,20 +127,30 @@ tolellipse <- function(x,
     xrange <- xrange[2] - xrange[1]
     text(x[ind, 1] + xrange/50, x[ind, 2], ind)
 
-    points(z2[, 1], z2[, 2], type = "l")
-    title(main = "ROBUST TOLERANCE \n    ELLIPSE (97.5%)")
+    leg.txt <- c("robust", "classical")
+    leg.col <- c("red", "blue")
+    leg.lty <- c("solid","dashed")
+
+    points(z2[, 1], z2[, 2], type = "l", lty=leg.lty[1], col=leg.col[1])
+    title(main = "TOLERANCE ELLIPSE (97.5%)")
 
 ##  2. Classical tollerance
     if(classic){
-        plot(x[, 1], x[, 2], xlim = x1, ylim = y1, xlab = "", ylab = "", type = "p")
-        box()
-        
-        xrange <- par("usr")
-        xrange <- xrange[2] - xrange[1]
-        text(x[ind, 1] + xrange/50, x[ind, 2], ind)
-        
-        points(z1[, 1], z1[, 2], type = "l")
-        title(main = "CLASSICAL TOLERANCE \n    ELLIPSE (97.5%)")
+        points(z1[, 1], z1[, 2], type = "l", lty=leg.lty[2], col=leg.col[2])
+        legend("bottomright", leg.txt, lty = leg.lty, col = leg.col)
     }
+
+##  2. Classical tollerance
+#    if(classic){
+#        plot(x[, 1], x[, 2], xlim = x1, ylim = y1, xlab = "", ylab = "", type = "p")
+#        box()
+#       
+#        xrange <- par("usr")
+#        xrange <- xrange[2] - xrange[1]
+#        text(x[ind, 1] + xrange/50, x[ind, 2], ind)
+#        
+#        points(z1[, 1], z1[, 2], type = "l")
+#        title(main = "CLASSICAL TOLERANCE \n    ELLIPSE (97.5%)")
+#    }
     invisible()
 }

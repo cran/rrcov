@@ -1,3 +1,10 @@
+2005-10-24  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-10
+    * minor corrections in the help of covPlot
+    * fixed bug in covPlot in case of class=TRUE
+    * tolellipse - both robust and classical ellipse are superimposed
+    * added directory inst/bm containing benchmarks comparing covMcd and ltsReg
+        to the corresponding functions in MASS, S-PLUS and Matlab
 2005-10-17  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-9
     * minor corrections in the help of covMcd

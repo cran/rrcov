@@ -104,7 +104,7 @@ myscreeplot <- function(x, mcd){
     ylim <- c( min(eall), max(eall))
 
     plot(erob, ylim=ylim, ylab="Eigenvalues", xlab="Index", type="n")
-    legend(3, ylim[2], leg.txt, pch = leg.pch, lty = leg.lty, col = leg.col)
+    legend("topright", leg.txt, pch = leg.pch, lty = leg.lty, col = leg.col)
 
     lines(erob, type="o", pch = leg.pch[1], lty = leg.lty[1], col=leg.col[1])
     lines(eclass, type="o", pch = leg.pch[2], lty = leg.lty[2], col=leg.col[2])
@@ -252,10 +252,7 @@ label <- function(x, y, id.n=3){
     rd <- mahalanobis(x, mcd$center, mcd$cov, tol=tol)
     rd <- sqrt(rd)
 
-    if(!classic || which == "dd")    
-        par(mfrow=c(1,1), pty="m")
-    else
-        par(mfrow=c(1,2), pty="m")
+    par(mfrow=c(1,1), pty="m")
 
     if (ask) {
         op <- par(ask = TRUE)
@@ -263,16 +260,21 @@ label <- function(x, y, id.n=3){
     } 
 
     if(which == "all" || which == "distance"){    
+        if(classic)
+            par(mfrow=c(1,2), pty="m")
         mydistplot(rd, cutoff, id.n=id.n)                     # index plot of mahalanobis distances
         if(classic)
             mydistplot(md, cutoff, classic=TRUE, id.n=id.n)   # index plot of robust distances
     }
 
     if(which == "all" || which == "dd"){    
+        par(mfrow=c(1,1), pty="m")
         myddplot(md, rd, cutoff=cutoff, id.n=id.n)    # distance-distance plot
     }
 
     if(which == "all" || which == "qqchi2"){    
+        if(classic)
+            par(mfrow=c(1,2), pty="m")
         qqplot(rd, p, cutoff=cutoff, id.n=id.n)     # qq-plot of the robust distances versus the 
                                                     # quantiles of the chi-squared distribution
         if(classic)
@@ -281,6 +283,7 @@ label <- function(x, y, id.n=3){
     }
 
     if(which == "all" || which == "tolellipse"){
+        par(mfrow=c(1,1), pty="m")
         if(length(dim(x)) >= 2 && dim(x)[2] == 2)
             tolellipse(x, mcd=mcd, cutoff=cutoff, id.n=id.n, classic=classic, tol=tol)
         else
@@ -288,6 +291,7 @@ label <- function(x, y, id.n=3){
     }
 
     if(which == "all" || which == "screeplot"){    
+       par(mfrow=c(1,1), pty="m")
        myscreeplot(x, mcd=mcd)
     }
 
