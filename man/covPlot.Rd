@@ -71,7 +71,7 @@ Rousseeuw and van Zomeren (1990), displays the robust distances
 versus the classical Mahalanobis distances. The dashed line is the set of 
 points where the robust distance is equal to the classical distance.
 The horizontal and vertical lines are drawn at values equal to the cutoff
-which defaults to square root of the 97.5% quantile of a chi-squared 
+which defaults to square root of the 97.5\% quantile of a chi-squared 
 distribution with p degrees of freedom. Points beyond these lines can 
 be considered outliers.
 
