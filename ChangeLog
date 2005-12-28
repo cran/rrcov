@@ -1,3 +1,13 @@
+2006-02-06  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-11
+    * added more data sets from Rousseeuw & Leroy: telef, lactic, 
+        pension, pilot, cloud, education, airmay
+    * fixed codoc discrepancies in the data sets stars and wood
+    * ltsReg & covMcd - added options 'best' and 'exact' for nsamp
+    * ltsReg & covMcd - added parameter for controlling the small sample correction factors - use.correction
+    * rrcov.control - added parameter for controlling the small sample correction factors - use.correction
+    * ltsReg & covMcd - output of the consistency and the small sample correction factors
+    
 2005-10-24  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-10
     * minor corrections in the help of covPlot

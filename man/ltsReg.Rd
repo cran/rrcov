@@ -13,7 +13,7 @@ ltsReg(x, \dots)
 
 \method{ltsReg}{formula}(formula, data, \dots, model = TRUE, x.ret = FALSE, y.ret = FALSE)
 
-\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, control, \dots)
+\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, use.correction=TRUE, control, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,15 +24,22 @@ ltsReg(x, \dots)
   \item{x}{ a matrix or data frame containing the explanatory variables. }
   \item{y}{ the response: a vector of length the number of rows of 'x'. }.
   \item{intercept}{ if true, a model with constant term will be estimated; otherwise no constant term will be included. Default is \code{intercept = TRUE}  }
-  \item{alpha}{ the percentage of squared residuals whose sum will be minimized. Its default value is 0.5. 
-  In general, alpha must be a value between 0.5 and 1.
+  \item{alpha}{ 
+    the percentage of squared residuals whose sum will be minimized. Its default value is 0.5. 
+    In general, alpha must be a value between 0.5 and 1.
   }
-  \item{nsamp}{ number of subsets used for initial estimates. Default is \code{nsamp = 500} }
+  \item{nsamp}{ 
+    number of subsets used for initial estimates or \code{"best"} or \code{"exact"}. 
+    Default is \code{nsamp = 500}. 
+    If \code{nsamp="best"} exhaustive enumeration is done, as far as the number of trials do not exceed 5000.
+    If \code{nsamp="exact"} exhaustive enumeration will be attempted however many samples are needed. 
+    In this case a warning message will be displayed saying that the computation can take a very long time. }
   \item{adjust}{ whether to perform intercept adjustment at each step. This could be quite time consuming, therefore the default is \code{adjust = FALSE} }
   \item{mcd}{ whether to compute robust distances using Fast-MCD.}
   \item{qr.out}{ whether to return the QR decomposition. Default is \code{qr.out = FALSE}}
   \item{yname}{ the name of the dependent variable. Default is \code{yname = NULL}}
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
+  \item{use.correction}{ whether to use finite sample correction factors. Default is \code{use.correction=TRUE}}
   \item{control}{ a list with estimation options - same as these provided in the 
   fucntion specification. If the control object is supplied, the parameters from it 
   will be used. If parameters are passed also in the invocation statement, they will 
@@ -43,7 +50,13 @@ ltsReg(x, \dots)
  The LTS regression method minimizes the sum of the h smallest squared 
 residuals, where h must be at least half the number of observations. The 
 default value of h is roughly 0.5n where n is the total number of observations, 
-but the user may choose any value between n/2 and n. The computations are performed 
+but the user may choose any value between n/2 and n. 
+The LTS estimate of the error scale is given by the minimum of the objective 
+function multiplied by a consistency factor and a finite sample correction 
+factor - see Pison et.al. (2002) for details. The rescaling factors for the raw and final estimates are 
+returned also in the vectors \code{raw.cnp2} and \code{cnp2} of length 2 respectively.
+The finite sample corrections can be suppressed by setting \code{use.correction=FALSE}.
+The computations are performed 
 using the Fast LTS algorithm proposed by Rousseeuw and Van Driessen (1999).
 
 The formula interface has an implied intercept term.  This can be removed by using
@@ -84,6 +97,10 @@ An object of class \code{lts} is a list containing at least the following compon
   \item{intercept}{ 
     same as the input parameter \code{intercept}. 
   }  
+  \item{cnp2}{
+    a vector of length two containing the consistency correction factor and the 
+    finite sample correction factor of the final estimate of the error scale.
+  }
   \item{raw.coefficients}{
     vector of raw coefficient estimates (including the intercept,when intercept=TRUE).
   }
@@ -92,6 +109,10 @@ An object of class \code{lts} is a list containing at least the following compon
   }
   \item{raw.resid}{
     vector like y containing the raw residuals from the regression.
+  }
+  \item{raw.cnp2}{
+    a vector of length two containing the consistency correction factor and the 
+    finite sample correction factor of the raw estimate of the error scale.
   }
   \item{lts.wt}{
     vector like y containing weights that can be used in a weighted

@@ -8,32 +8,45 @@
      breakdown point using the Fast MCD (Minimum Covariance Determinant) Estimator.
 }
 \usage{
-covMcd(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE, control)
+covMcd(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE, use.correction=TRUE, control)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{ a matrix or data frame. }
   \item{cor}{ should the returned result include a correlation matrix? Default is \code{cor = FALSE} }.
-  \item{alpha}{ This parameter controls the size of the subsets over which the determinant is
-minimized, i.e. \code{alpha*n} observations are used for computing the determinant. Allowed values are between 0.5 and 1 and the default is 0.5. }
-  \item{nsamp}{ number of subsets used for initial estimates. Default is \code{nsamp = 500}}
+  \item{alpha}{ 
+    This parameter controls the size of the subsets over which the 
+    determinant is minimized, i.e. \code{alpha*n} observations are used 
+    for computing the determinant. Allowed values are between 0.5 and 1 and the default is 0.5. 
+  }
+  \item{nsamp}{ 
+    number of subsets used for initial estimates or \code{"best"} or \code{"exact"}. 
+    Default is \code{nsamp = 500}. 
+    If \code{nsamp="best"} exhaustive enumeration is done, as far as the number of trials do not exceed 5000.
+    If \code{nsamp="exact"} exhaustive enumeration will be attempted however many samples are needed. 
+    In this case a warning message will be displayed saying that the computation can take a very long time. 
+  }
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
   \item{print.it}{ whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{use.correction}{ whether to use finite sample correction factors. Default is \code{use.correction=TRUE}}
   \item{control}{ a list with estimation options - same as these provided in the 
   fucntion specification. If the control object is supplied, the parameters from it 
   will be used. If parameters are passed also in the invocation statement, they will 
   override the corresponding elements of the control object. }
 }
 \details{
-  The minimum covariance determinant estimator of location and
-scatter implemented in covMcd() is similar to the existing 
-R function cov.mcd() in MASS. The MCD method looks for the
-h(> n/2) observations (out of n) whose classical covariance 
+This function computes the minimum covariance determinant estimator of location and
+scatter. The MCD method looks for the h(> n/2) observations (out of n) whose classical covariance 
 matrix has the lowest possible determinant. The raw MCD estimate 
 of location is then the average of these h points, whereas the raw MCD 
 estimate of scatter is their covariance matrix, multiplied with a
-consistency factor. Based on these raw MCD estimates, a reweighting step is performed
+consistency factor and a finite sample correction factor. Both rescaling factors are 
+returned also in the vector \code{raw.cnp2} of length 2.
+Based on these raw MCD estimates, a reweighting step is performed
 which increases the finite-sample eficiency considerably - see Pison et.al. (2002). 
+The rescaling factors for the reweighted estimates are returned in the vector \code{cnp2} of length 2. 
+Details for the computation of the finite sample correction factors can be found in Pison et.al. (2002). 
+The finite sample corrections can be suppressed by setting \code{use.correction=FALSE}.
 The implementation in rrcov uses the Fast MCD algorithm of Rousseeuw and Van Driessen (1999) to
 approximate the minimum covariance determinant estimator. 
 
@@ -62,6 +75,10 @@ approximate the minimum covariance determinant estimator.
   \item{mcd.wt}{
     weights of the observations using the final estimate of the location and scatter.
   }
+  \item{cnp2}{
+    a vector of length two containing the consistency correction factor and the 
+    finite sample correction factor of the final estimate of the covariance matrix.
+  }
   \item{raw.center}{
     the raw (not reweighted) estimate of location.
   }
@@ -73,6 +90,10 @@ approximate the minimum covariance determinant estimator.
   }
   \item{raw.weights}{
     weights of the observations based on the raw estimate of the location and scatter.
+  }
+  \item{raw.cnp2}{
+    a vector of length two containing the consistency correction factor and the 
+    finite sample correction factor of the raw estimate of the covariance matrix.
   }
   \item{X}{
     the input data as a matrix.

@@ -69,6 +69,7 @@ ltsReg.default <- function (x, y,
                     qr.out=FALSE, 
                     yname=NULL, 
                     seed=0,
+                    use.correction = TRUE,
                     control,
                     ...) 
 {
@@ -324,10 +325,21 @@ ltsReg.default <- function (x, y,
             seed <- control$seed
 #        if(print.it == defcontrol$print.it)
 #            print.it <- control$print.it
+        if(use.correction == defcontrol$use.correction)
+            use.correction <- control$use.correction
         if(adjust == defcontrol$adjust)
             adjust <- control$adjust
     }
 
+    # vt::03.02.2006 - raw.cnp2 and cnp2 are vectors of size 2 and  will 
+    #   contain the correction factors (concistency and finite sample)
+    #   for the raw and reweighted estimates respectively. Set them initially to 1.
+    #   If use.correction is set to FALSE (default=TRUE), the finite sample correction
+    #   factor will bot be used (neither for the raw estimates nor for the reweighted)
+    raw.cnp2 <- rep(1,2)
+    cnp2 <- rep(1,2)
+    
+   
     
 #cat("++++++ Entering ltsReg() ...\n")    
     if (is.vector(y) || (is.matrix(y) && !is.data.frame(y))) {
@@ -468,11 +480,12 @@ ltsReg.default <- function (x, y,
             center <- as.double(sh$initmean)
             qalpha <- qchisq(quan/n, 1)
             calphainvers <- pgamma(qalpha/2, 1/2 + 1)/(quan/n)
-            calpha <- 1/calphainvers
-            correct <- correctiefactor.s(1, intercept = intercept, 
-                n, alpha)
-            scale <- sqrt(as.double(sh$initcovariance)) * sqrt(calpha) * 
-                correct
+            raw.cnp2[1] <- calpha <- 1/calphainvers
+            raw.cnp2[2] <- correct <- correctiefactor.s(1, intercept = intercept, n, alpha)
+            if(!use.correction)         # do not use finite sample correction factor
+                raw.cnp2[2] <- correct <- 1.0
+            
+            scale <- sqrt(as.double(sh$initcovariance)) * sqrt(calpha) * correct
             xbest <- sort(as.vector(sh$inbest))
         }
         resid <- y - center
@@ -493,12 +506,10 @@ ltsReg.default <- function (x, y,
             ans$raw.scale <- scale
             ans$raw.coefficients <- center
             quantiel <- qnorm(0.9875)
-            weights <- ifelse(abs(resid/scale) <= quantiel, 1, 
-                0)
+            weights <- ifelse(abs(resid/scale) <= quantiel,1,0)
             reweighting <- cov.wt(y, wt = weights)
             ans$coefficients <- reweighting$center
-            ans$scale <- sqrt(sum(weights)/(sum(weights) - 1) * 
-                reweighting$cov)
+            ans$scale <- sqrt(sum(weights)/(sum(weights) - 1) * reweighting$cov)
             resid <- y - ans$coefficients
             ans$crit <- sum(sort((y - center)^2, quan)[1:quan])
             if (sum(weights) == n) {
@@ -507,11 +518,11 @@ ltsReg.default <- function (x, y,
             }
             else {
                 qdelta.rew <- qchisq(sum(weights)/n, 1)
-                cdeltainvers.rew <- pgamma(qdelta.rew/2, 1/2 + 
-                  1)/(sum(weights)/n)
-                cdelta.rew <- sqrt(1/cdeltainvers.rew)
-                correct.rew <- correctiefactor.rew.s(1, intercept = intercept, 
-                  n, alpha)
+                cdeltainvers.rew <- pgamma(qdelta.rew/2, 1/2 + 1)/(sum(weights)/n)
+                cnp2[1] <- cdelta.rew <- sqrt(1/cdeltainvers.rew)
+                cnp2[2] <- correct.rew <- correctiefactor.rew.s(1, intercept = intercept, n, alpha)
+                if(!use.correction)         # do not use finite sample correction factor
+                    cnp2[2] <- correct.rew <- 1.0
             }
             ans$scale <- ans$scale * cdelta.rew * correct.rew
             quantiel <- qnorm(0.9875)
@@ -542,10 +553,10 @@ ltsReg.default <- function (x, y,
             dimnames(ans$X) <- list(NULL, NULL)
             dimnames(ans$X)[[1]] <- xx[ok]
         }
+        ans$raw.cnp2 <- raw.cnp2
+        ans$cnp2 <- cnp2
         class(ans) <- "lts"
         attr(ans, "call") <- sys.call()
-
-#cat("++++++ A - all x == 1...Ready and Return.\n")    
         return(ans)
     }
 
@@ -620,10 +631,9 @@ ltsReg.default <- function (x, y,
                   cdelta.rew <- 1
                 }
                 else {
-                  cdelta.rew <- (1/sqrt(1 - ((2 * n)/(sum(weights) * 
-                    (1/qnorm((sum(weights) + n)/(2 * n))))) * 
-                    dnorm(1/(1/(qnorm((sum(weights) + n)/(2 * 
-                      n)))))))
+                  cnp2[1] <- cdelta.rew <- (1/sqrt(1 - ((2 * n)/(sum(weights) * 
+                            (1/qnorm((sum(weights) + n)/(2 * n))))) * 
+                            dnorm(1/(1/(qnorm((sum(weights) + n)/(2*n)))))))
                 }
                 ans$scale <- ans$scale * cdelta.rew
                 weights <- ifelse(abs(z$residuals/ans$scale) <= 
@@ -696,10 +706,10 @@ ltsReg.default <- function (x, y,
             names(ans$fitted.values) <- rownames
             if (qr.out) 
                 ans$qr <- z$qr
+            ans$raw.cnp2 <- raw.cnp2
+            ans$cnp2 <- cnp2
             class(ans) <- "lts"
             attr(ans, "call") <- sys.call()
-
-#cat("+++++ B - alpha == 1...Ready and return\n")    
             return(ans)
         }
     }
@@ -751,7 +761,9 @@ ltsReg.default <- function (x, y,
     
     ans$alpha <- alpha
     ans$quan <- quan
-    correct <- correctiefactor.s(p, intercept = intercept, n, alpha)
+    raw.cnp2[2] <- correct <- correctiefactor.s(p, intercept = intercept, n, alpha)
+    if(!use.correction)         # do not use finite sample correction factor
+        raw.cnp2[2] <- correct <- 1.0
     s0 <- sqrt((1/quan) * sum(sort(resid^2, quan)[1:quan]))
     sh0 <- s0
     s0 <- s0 * (1/sqrt(1 - ((2 * n)/(quan * (1/qnorm((quan + n)/
@@ -792,11 +804,12 @@ ltsReg.default <- function (x, y,
             correct.rew <- 1
         }
         else {
-            cdelta.rew <- (1/sqrt(1 - ((2 * n)/(sum(weights) * 
+            cnp2[1] <- cdelta.rew <- (1/sqrt(1 - ((2 * n)/(sum(weights) * 
                 (1/qnorm((sum(weights) + n)/(2 * n))))) * dnorm(1/(1/(qnorm((sum(weights) + 
                 n)/(2 * n)))))))
-            correct.rew <- correctiefactor.rew.s(p, intercept = intercept, 
-                n, alpha)
+            cnp2[2] <- correct.rew <- correctiefactor.rew.s(p, intercept = intercept, n, alpha)
+            if(!use.correction)         # do not use finite sample correction factor
+                cnp2[2] <- correct.rew <- 1.0
         }
         ans$scale <- ans$scale * cdelta.rew * correct.rew
         ans$resid <- resid/ans$scale
@@ -866,6 +879,8 @@ ltsReg.default <- function (x, y,
     names(ans$fitted.values) <- rownames
     if (qr.out) 
         ans$qr <- qrx
+    ans$raw.cnp2 <- raw.cnp2
+    ans$cnp2 <- cnp2
     class(ans) <- "lts"
     attr(ans, "call") <- sys.call()
     return(ans)
@@ -1020,6 +1035,44 @@ print.summary.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
     n <- dx[1]
     p <- dx[2]
 
+#   parameters for partitioning
+    kmini <- 5
+    nmini <- 300
+    km10 <- 10*kmini
+    nmaxi <- nmini*kmini
+
+#   vt::03.02.2006 - added options "best" and "exact" for nsamp
+    if(!missing(nsamp)){
+        if(is.numeric(nsamp) && nsamp <= 0){
+            warning(message = paste("Invalid number of trials nsamp=",nsamp,"!Using default.\n"))
+            nsamp <- -1
+        }else if(nsamp == "exact" || nsamp == "best"){
+            myk <- p
+            if(n > 2*nmini-1){
+                warning(paste("Options 'best' and 'exact' not allowed for n greater then ",2*nmini-1," . \nUsing nsamp=",nsamp,"\n"))
+                nsamp <- -1
+            }else{
+                nall <- .ncomb(myk, n)
+                if(nall > 5000 && nsamp == "best"){
+                    nsamp <- 5000
+                    warning(paste("Maximum 5000 subsets allowed for option 'best'. \nComputing 5000 subsets of size ",myk," out of ",n,"\n"))
+                }else{
+                    nsamp <- 0  #all subsamples
+                    if(nall > 5000)
+                        cat(paste("Computing all ",nall," subsets of size ",myk," out of ",n, "\n This may take a very long time!\n"))
+                }
+            }
+        }
+        
+        if(!is.numeric(nsamp) || nsamp == -1){  # still not defined - set it to the default
+            defcontrol <- rrcov.control()       # default control
+            if(!is.numeric(nsamp))
+                warning(message = paste("Invalid number of trials nsamp=",nsamp,"!Using default nsamp=",defcontrol$nsamp,"\n"))
+            nsamp <- defcontrol$nsamp           # take the default nsamp
+        }
+    }
+
+
     y <- as.matrix(y)
     x1 <- matrix(0, ncol = p + 1, nrow = n)
     x1 <- cbind(x, y)
@@ -1078,11 +1131,6 @@ print.summary.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
     storage.mode(am2) <- "double"
     storage.mode(slutn) <- "double"
 
-    kmini <- 5
-    nmini <- 300
-    km10 <- 10*kmini
-    nmaxi <- nmini*kmini
-    
 #   integer jmiss(nvad)                 --> p+1
     jmiss <- matrix(0, nrow = p+1, ncol = 1)
     storage.mode(jmiss) <- "integer"

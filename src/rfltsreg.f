@@ -235,7 +235,9 @@ cccc	CALL INTPR('>>> RFLTSREG ... minigr=',-1,iseed,1)
           minigr=n
           nhalf=nhalff
           kstep=k1
-          if(n.le.xreplow(nsel)) then
+C VT::03.02.2006 - option 'nsamp=exact/best' - signaled by krep=0
+C         if(n.le.xreplow(nsel)) then
+          if(n.le.xreplow(nsel) .or. krep .eq. 0) then
             nrep=xrfncomb(nsel,n)
           else
             nrep = krep
@@ -1301,7 +1303,9 @@ cc    small enough in order to perform exaustive search
 cc    Returns the maximal n for a given p, for which
 cc    exhaustive search is to be done
 cc    
-cc    k is the number of variables (p)
+cc    k is the number of elements to select:
+cc      MCD:    k=p+1
+cc      LTS:    k=p
 cc
       integer xreplow, k
       integer irep(6)

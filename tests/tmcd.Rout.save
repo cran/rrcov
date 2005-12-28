@@ -231,7 +231,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-10)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-11)
 > dodata()
 
 Call:  dodata() 
@@ -387,16 +387,16 @@ Log(det):  -36.27
 
 
 Robust Estimate of Location: 
-    V1      V2      V3      V4      V5  
+    X1      X2      X3      X4      X5  
 0.5869  0.1222  0.5309  0.5382  0.8918  
 
 Robust Estimate of Covariance: 
-    V1          V2          V3          V4          V5        
-V1   1.633e-02   3.063e-03   5.136e-03  -9.543e-04  -2.654e-03
-V2   3.063e-03   7.894e-04   2.067e-03  -8.467e-05   3.851e-05
-V3   5.136e-03   2.067e-03   1.080e-02  -1.419e-03   5.739e-04
-V4  -9.543e-04  -8.467e-05  -1.419e-03   4.635e-03   2.977e-03
-V5  -2.654e-03   3.851e-05   5.739e-04   2.977e-03   4.506e-03
+    X1          X2          X3          X4          X5        
+X1   1.633e-02   3.063e-03   5.136e-03  -9.543e-04  -2.654e-03
+X2   3.063e-03   7.894e-04   2.067e-03  -8.467e-05   3.851e-05
+X3   5.136e-03   2.067e-03   1.080e-02  -1.419e-03   5.739e-04
+X4  -9.543e-04  -8.467e-05  -1.419e-03   4.635e-03   2.977e-03
+X5  -2.654e-03   3.851e-05   5.739e-04   2.977e-03   4.506e-03
 --------------------------------------------------------
 hbk                   75   3  39    -1.047858
 Best subsample: 

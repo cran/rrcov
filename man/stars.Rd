@@ -21,7 +21,7 @@ remaining stars are called giants (the points 11, 20, 30, 34).
 \format{
   A data frame with 47 observations on the following 2 variables.
   \describe{
-    \item{\code{X1}}{Logarithm of the effective temperature at the surface of the star (Te)}
+    \item{\code{X}}{Logarithm of the effective temperature at the surface of the star (Te)}
     \item{\code{Y}}{Logarithm of its light intencity (L/L0)}
   }
 
@@ -41,10 +41,10 @@ remaining stars are called giants (the points 11, 20, 30, 34).
 data(stars)
 plot(stars)
 covMcd(stars)
-lm.stars <- lm(stars.y ~ stars.x)
+lm.stars <- lm(Y~., data=stars)
 summary(lm.stars)
 plot(lm.stars)
-lts.stars<-ltsReg(stars.x, stars.y)
+lts.stars<-ltsReg(Y~., data=stars)
 plot(lts.stars)
 
 }

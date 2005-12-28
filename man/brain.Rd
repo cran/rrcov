@@ -20,7 +20,7 @@ human with relatively heavy brain.
     \item{\code{brain}}{brain weight in g}
   }
 }
-\Note{
+\note{
   This data set is also available in the package MASS under the name 'Animals', but the observations 25 (Brachiosaurus) and 26 (Rat) are swaped.
 }
 \source{

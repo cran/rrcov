@@ -28,7 +28,7 @@ distances computed by e.g. MCD - covMcd().
  For convenience, the data sets \code{hbk.x}, a matrix with the three (independent) variables of the data frame, and \code{hbk.y}, the numeric vector giving the fourth (dependent) variable, are provided as well. 
 
 }
-\Note{
+\note{
   This data set is also available in the package \code{wle} as 'artificial'
 }
 \source{
