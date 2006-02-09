@@ -39,6 +39,7 @@ observations with outliers.
 data(wood)
 plot(wood.x)
 covMcd(wood.x)
-summary(lm.wood <- lm(wood.y ~ wood.x))
+summary(lm.wood <- lm(Y~., data=wood))
+summary(lts.wood <- ltsReg(Y~., data=wood))
 }
 \keyword{datasets}

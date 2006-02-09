@@ -23,6 +23,7 @@ covMcd <- function(x,
                    nsamp=500, 
                    seed=0, 
                    print.it=FALSE,
+                   use.correction = TRUE,
                    control)
 {
     quan.f <- function(alpha, n, rk)
@@ -208,15 +209,15 @@ correctiefactor.rew.s <- function(p, n, alpha)
             seed <- control$seed
         if(print.it == defcontrol$print.it)
             print.it <- control$print.it
+        if(use.correction == defcontrol$use.correction)
+            use.correction <- control$use.correction
     }
 
-    # vt:: not necessary for R 1.8 and higher - the R function determinant() is used
-    #
-    # Determinant for square real matrix x. Adapted from det.Matrix in library(Matrix).
-    #
-    #    determinant <- function(x, logarithm = TRUE){
-    #...
-
+#   vt::03.02.2006 - added options "best" and "exact" for nsamp
+#       nsamp will be further analized in .fastmcd()
+    if(!missing(nsamp) && is.numeric(nsamp) && nsamp <= 0)
+        stop(message = paste("Invalid number of trials nsamp=",nsamp,"!"))
+           
     # vt:: tolerance to be used for computing the mahalanobis distances (default = 1e-7)
     tol = 1e-10
 
@@ -257,7 +258,15 @@ correctiefactor.rew.s <- function(p, n, alpha)
         stop("alpha is out of range")
     quan <- quan.f(alpha, n, p)
 
-    # Compute the classical estimates - alpha=1
+    # vt::03.02.2006 - raw.cnp2 and cnp2 are vectors of size 2 and  will 
+    #   contain the correction factors (concistency and finite sample)
+    #   for the raw and reweighted estimates respectively. Set them initially to 1.
+    #   If use.correction is set to FALSE (default=TRUE), the finite sample correction
+    #   factor will bot be used (neither for the raw estimates nor for the reweighted)
+    raw.cnp2 <- rep(1,2)
+    cnp2 <- rep(1,2)
+    
+# Compute the classical estimates - alpha=1
     if(alpha == 1) {
         mcd <- cov.wt(x)$cov
         loc <- as.vector(apply(x, 2, mean))
@@ -305,7 +314,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
                 qdelta.rew <- qchisq(sum(weights)/n, p)
                 cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 
                   1)/(sum(weights)/n)
-                cdelta.rew <- 1/cdeltainvers.rew
+                cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
             }
             ans$cov <- ans$cov * cdelta.rew
             ans$call <- match.call()
@@ -341,6 +350,9 @@ correctiefactor.rew.s <- function(p, n, alpha)
                 if(print.it) {
                   cat(ans$method, "\n")
                 }
+                
+                ans$raw.cnp2 <- raw.cnp2
+                ans$cnp2 <- cnp2
                 class(ans) <- "mcd"
                 attr(ans, "call") <- sys.call()
                 return(ans)
@@ -377,6 +389,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
         if(print.it) {
             cat(ans$method, "\n")
         }
+        ans$raw.cnp2 <- raw.cnp2
+        ans$cnp2 <- cnp2
         class(ans) <- "mcd"
         attr(ans, "call") <- sys.call()
         return(ans)
@@ -387,9 +401,11 @@ correctiefactor.rew.s <- function(p, n, alpha)
     # Compute the consistency correction factor for the raw MCD (see calfa in croux and haesbroeck)
     qalpha <- qchisq(quan/n, p)
     calphainvers <- pgamma(qalpha/2, p/2 + 1)/(quan/n)
-    calpha <- 1/calphainvers
-    correct <- correctiefactor.s(p, n, alpha)
-    
+    raw.cnp2[1] <- calpha <- 1/calphainvers
+    raw.cnp2[2] <- correct <- correctiefactor.s(p, n, alpha)
+    if(!use.correction)         # do not use finite sample correction factor
+        raw.cnp2[2] <- correct <- 1.0
+        
     if(p == 1) 
     {
         scale <- sqrt(calpha) * as.double(mcd$initcovariance) * sqrt(correct)
@@ -450,6 +466,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
                 dimnames(ans$X)[[1]] <- xx[ok]
             }
             
+            ans$raw.cnp2 <- raw.cnp2
+            ans$cnp2 <- cnp2
             class(ans) <- "mcd"
             attr(ans, "call") <- sys.call()
             return(ans)
@@ -470,8 +488,11 @@ correctiefactor.rew.s <- function(p, n, alpha)
         {
             qdelta.rew <- qchisq(sum(weights)/n, p)
             cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
-            cdelta.rew <- 1/cdeltainvers.rew
-            correct.rew <- correctiefactor.rew.s(p, n, alpha)
+            cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+            cnp2[2] <- correct.rew <- correctiefactor.rew.s(p, n, alpha)
+            if(!use.correction)         # do not use finite sample correction factor
+                cnp2[2] <- correct.rew <- 1.0
+            
         }
         ans$cov <- ans$cov * cdelta.rew * correct.rew
         ans$call <- match.call()
@@ -505,6 +526,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
             dimnames(ans$X) <- list(NULL, NULL)
             dimnames(ans$X)[[1]] <- xx[ok]
         }
+        ans$raw.cnp2 <- raw.cnp2
+        ans$cnp2 <- cnp2
         class(ans) <- "mcd"
         attr(ans, "call") <- sys.call()
         return(ans)
@@ -643,6 +666,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
         if(print.it) {
             cat(ans$method, "\n")
         }
+        ans$raw.cnp2 <- raw.cnp2
+        ans$cnp2 <- cnp2
         class(ans) <- "mcd"
         attr(ans, "call") <- sys.call()
         return(ans)
@@ -659,8 +684,10 @@ correctiefactor.rew.s <- function(p, n, alpha)
     else {
         qdelta.rew <- qchisq(sum(weights)/n, p)
         cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
-        cdelta.rew <- 1/cdeltainvers.rew
-        correct.rew <- correctiefactor.rew.s(p, n, alpha)
+        cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+        cnp2[2] <- correct.rew <- correctiefactor.rew.s(p, n, alpha)
+        if(!use.correction)         # do not use finite sample correction factor
+            cnp2[2] <- correct.rew <- 1.0
     }
 
     ans <- cov.wt(x, wt = weights, cor)
@@ -704,6 +731,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
         }
         if(print.it)
             cat(ans$method, "\n")
+        ans$raw.cnp2 <- raw.cnp2
+        ans$cnp2 <- cnp2
         class(ans) <- "mcd"
         attr(ans, "call") <- sys.call()
         return(ans)
@@ -738,6 +767,8 @@ correctiefactor.rew.s <- function(p, n, alpha)
     }
     if(print.it)
         cat(ans$method, "\n")
+    ans$raw.cnp2 <- raw.cnp2
+    ans$cnp2 <- cnp2
     class(ans) <- "mcd"
     attr(ans, "call") <- sys.call()
     return(ans)
@@ -747,6 +778,43 @@ correctiefactor.rew.s <- function(p, n, alpha)
     dx <- dim(x)
     n <- dx[1]
     p <- dx[2]
+
+#   parameters for partitioning
+    kmini <- 5
+    nmini <- 300
+    km10 <- 10*kmini
+    nmaxi <- nmini*kmini
+
+#   vt::03.02.2006 - added options "best" and "exact" for nsamp
+    if(!missing(nsamp)){
+        if(is.numeric(nsamp) && (nsamp < 0 || nsamp==0 && p > 1)){
+            warning(message = paste("Invalid number of trials nsamp=",nsamp,"!Using default.\n"))
+            nsamp <- -1
+        }else if(nsamp == "exact" || nsamp == "best"){
+            myk <- p
+            if(n > 2*nmini-1){
+                warning(paste("Options 'best' and 'exact' not allowed for n greater then ",2*nmini-1," . \nUsing nsamp=",nsamp,"\n"))
+                nsamp <- -1
+            }else{
+                nall <- .ncomb(myk, n)
+                if(nall > 5000 && nsamp == "best"){
+                    nsamp <- 5000
+                    warning(paste("Maximum 5000 subsets allowed for option 'best'. \nComputing 5000 subsets of size ",myk," out of ",n,"\n"))
+                }else{
+                    nsamp <- 0  #all subsamples
+                    if(nall > 5000)
+                        cat(paste("Computing all ",nall," subsets of size ",myk," out of ",n, "\n This may take a very long time!\n"))
+                }
+            }
+        }
+        
+        if(!is.numeric(nsamp) || nsamp == -1){  # still not defined - set it to the default
+            defcontrol <- rrcov.control()       # default control
+            if(!is.numeric(nsamp))
+                warning(message = paste("Invalid number of trials nsamp=",nsamp,"!Using default nsamp=",defcontrol$nsamp,"\n"))
+            nsamp <- defcontrol$nsamp           # take the default nsamp
+        }
+    }
 
     deter <-  fit <- kount <- 0
     cutoff <- qchisq(0.975,p)
@@ -808,10 +876,6 @@ correctiefactor.rew.s <- function(p, n, alpha)
     cinv2 <- matrix(0, nrow = p*p, ncol = 1)
     z <- matrix(0, nrow = p*p, ncol = 1)
 
-    kmini <- 5
-    nmini <- 300
-    km10 <- 10*kmini
-    nmaxi <- nmini*kmini
     cstock <- matrix(0, nrow = 10*p*p, ncol = 1)    #(10,nvmax2)
     mstock <- matrix(0, nrow = 10*p, ncol = 1)      #(10,nvmax)
     c1stock <- matrix(0, nrow = km10*p*p, ncol = 1) #(km10,nvmax2)
@@ -851,6 +915,7 @@ correctiefactor.rew.s <- function(p, n, alpha)
     storage.mode(m1stock) <- "double"
     storage.mode(dath) <- "double"
     
+   
     mcd <- .Fortran("rffastmcd",
         x,
         n,
@@ -900,4 +965,19 @@ correctiefactor.rew.s <- function(p, n, alpha)
         chimed,
         PACKAGE="rrcov")  
     mcd
+}
+
+.ncomb <- function(k,n){
+#   Computes the number of combinations of k elements out of n.
+
+    if(n < k || k <= 0)
+        return (0);
+        
+    comb <- 1.0
+    for(j in 1:k){
+        fact <- ((n - j + 1.0)/(k - j + 1.0))
+        comb <- comb * fact
+    }
+    
+    return (comb)
 }

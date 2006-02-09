@@ -1,22 +1,30 @@
 aircraft                Aircraft Data
+airmay                  Air Quality Data
 brain                   Brain and Body Weights for 28 Species
 bushfire                Campbell Bushfire Data
+cloud                   Cloud point of a Liquid
 coleman                 Coleman Data Set
 covMcd                  Robust location and scatter estimation with
                         high breakdown point
 delivery                Delivery Time Data
+education               Education Expenditure Data
 hbk                     Hawkins, Bradu, Kass's Artificial Data
 heart                   Heart Catherization Data
+lactic                  Calibration of an Instrument that Measures
+                        Lactic Acid Concentration in Blood
 ltsReg                  Robust regression with high breakdown point
 milk                    Daudin's Milk Composition Data
+pension                 Pension Funds
 phosphor                Phosphorus Content Data
+pilot                   Pilot-Plant Data
 plot.lts                Robust Regression Diagnostic Plots
 plot.mcd                Robust Distance Plots
 rrcov.control           Control object for the estimation parameters
 salinity                Salinity Data
-stars                   Data for the Hertzsprung-Russell Diagram of
-                        the star cluster CYG OB1
+stars                   Data for the Hertzsprung-Russell Diagram of the
+                        star cluster CYG OB1
 summary.lts             Summary Method for LTS objects
 summary.mcd             Summary Method for MCD objects
+telef                   Number of International Calls from Belgium
 tolellipse              Tolerance Ellipse Plot
 wood                    Modified Wood Gravity Dataset

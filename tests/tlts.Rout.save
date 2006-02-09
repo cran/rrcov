@@ -225,7 +225,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-10)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-11)
 > dodata()
 
 Call:  dodata() 
@@ -485,7 +485,7 @@ Outliers:  4
 [1]  4  6  8 19
 -------------
 Coefficients:
-Intercept         V1         V2         V3         V4         V5  
+Intercept         X1         X2         X3         X4         X5  
   0.37733    0.21738   -0.08501   -0.56430   -0.40033    0.60745  
 
 Scale estimate 0.01236 
@@ -500,11 +500,11 @@ ltsReg.default(x, y, mcd = FALSE)
 Coefficients:
           Estimate Std. Error t value Pr(>|t|)
 Intercept  0.37733    0.05402   6.986 3.78e-05
-V1         0.21738    0.04212   5.162 0.000424
-V2        -0.08501    0.19771  -0.430 0.676341
-V3        -0.56430    0.04349 -12.975 1.40e-07
-V4        -0.40033    0.06544  -6.118 0.000113
-V5         0.60745    0.07858   7.730 1.59e-05
+X1         0.21738    0.04212   5.162 0.000424
+X2        -0.08501    0.19771  -0.430 0.676341
+X3        -0.56430    0.04349 -12.975 1.40e-07
+X4        -0.40033    0.06544  -6.118 0.000113
+X5         0.60745    0.07858   7.730 1.59e-05
 
 Residual standard error: 0.007451 on 10 degrees of freedom
 Multiple R-Squared: 0.9583,	Adjusted R-squared: 0.9375 

@@ -434,7 +434,9 @@ cc
 	  minigr=n
           nhalf=nhalff
 	  kstep=k1
-	  if(n.le.replow(nsel)) then 
+C VT::03.02.2006 - option 'nsamp=exact/best' - signaled by krep=0
+C	  if(n.le.replow(nsel)) then 
+	  if(n.le.replow(nsel) .or. krep .eq. 0) then 
 	    nrep=rfncomb(nsel,n)
 	  else 
 C VT::02.09.2004 - remove the hardcoded 500 for nrep
@@ -1477,7 +1479,9 @@ cc    small enough in order to perform exaustive search
 cc    Returns the maximal n for a given p, for which
 cc    exhaustive search is to be done
 cc    
-cc    k is the number of variables (p)
+cc    k is the number of elements to select:
+cc      MCD:    k=p+1
+cc      LTS:    k=p
 cc
       integer replow, k
       integer irep(6)

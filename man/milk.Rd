@@ -36,7 +36,7 @@ Component Analysis Studied by the Bootstrap Method \emph{Statistics}
 \bold{19} 241-258.
 
 }
-\References{
+\references{
 Todorov, V., Neyko, N., Neytchev, P. (1994) Stability of High Breakdown
 Point Robust PCA in \textit{Short Communications, COMPSTAT`94}
 (Physica Verlag, Heidelberg, 1994).
