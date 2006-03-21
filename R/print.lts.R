@@ -22,8 +22,13 @@ print.lts <- function (x, digits = max(3, getOption("digits") - 3), ...)
         dput(cl)
         cat("\n")
     }
-    cat("Coefficients:\n")
-    print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
-    cat("\nScale estimate", format(x$scale, digits = digits) ,"\n\n")
+    if (length(coef(x))) {
+        cat("Coefficients:\n")
+        print.default(format(coef(x), digits = digits), print.gap = 2, quote = FALSE)
+        cat("\nScale estimate", format(x$scale, digits = digits) ,"\n\n")
+    }
+    else 
+        cat("No coefficients\n")
+
     invisible(x)
 }

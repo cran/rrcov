@@ -1,0 +1,33 @@
+useDynLib(rrcov)
+
+export(covMest,
+       covMcd,
+       ltsReg,
+       covPlot, 
+       ltsPlot,
+       rrcov.control,
+       tolellipse
+)
+
+##S3 generics
+S3method(ltsReg, default)
+S3method(ltsReg, formula)
+S3method(plot, lts)
+S3method(plot, mcd)
+
+S3method(print, lts)
+S3method(print, mcd)
+S3method(print, summary.lts)
+
+S3method(summary, lts)
+S3method(summary, mcd)
+
+## S4 generics
+export(
+)
+
+exportClasses(
+)
+
+exportMethods(
+)

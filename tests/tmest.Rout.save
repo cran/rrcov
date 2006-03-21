@@ -1,0 +1,393 @@
+
+R : Copyright 2005, The R Foundation for Statistical Computing
+Version 2.2.1  (2005-12-20 r36812)
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(rrcov)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-13)
+> library(MASS)
+> 
+> dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
++     ##@bdescr
++     ## Test the function covMest() on the literature datasets:
++     ##
++     ## Call covMest() for all regression datasets available in rrcov and print:
++     ##  - execution time (if time == TRUE)
++     ##  - The constants c and M
++     ##  - determinant of the covariance matrix
++     ##  - estimated center and covarinance matrix if full == TRUE)
++     ##
++     ##@edescr
++     ##
++     ##@in  nrep              : [integer] number of repetitions to use for estimating the
++     ##                                   (average) execution time
++     ##@in  time              : [boolean] whether to evaluate the execution time
++     ##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
++ 
++     domest <- function(x, xname, nrep = 1) {
++         n <- dim(x)[1]
++         p <- dim(x)[2]
++         mm <- covMest(x)
++         crit <- log(mm$crit)
++         c1 <- mm$c1
++         M <- mm$M
++ 
++         if(time) {
++             xtime <- system.time(dorep(x, nrep))[1]/nrep
++             xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f %10.3f\n",
++                             dim(x)[1], dim(x)[2], c1, M, crit, xtime)
++         }
++         else {
++             xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f\n", dim(x)[1], dim(x)[2], c1, M, crit)
++         }
++         lpad <- lname-nchar(xname)
++         cat(pad.right(xname,lpad), xres)
++ 
++         if(full) {
++             cat("-------------\n")
++             print(mm)
++             cat("----------------------------------------------------------------------\n")
++         }
++     }
++ 
++     lname <- 20
++  
++     data(heart)
++     data(stars)
++     data(phosphor)
++     data(stackloss)
++     data(coleman)
++     data(salinity)
++     data(wood)
++     data(hbk)
++ 
++     data(Animals, package = "MASS")
++     brain <- Animals[c(1:24, 26:25, 27:28),]
++     data(milk)
++     data(bushfire)
++ 
++     tmp <- sys.call()
++     cat("\nCall: ", deparse(substitute(tmp)),"\n")
++ 
++     cat("Data Set               n   p       c1        M     LOG(det)       Time\n")
++     cat("======================================================================\n")
++     domest(heart[, 1:2], data(heart), nrep)
++     domest(stars, data(stars), nrep)
++     domest(data.matrix(subset(phosphor, select = -Y)),
++           data(phosphor), nrep)
++     domest(stack.x, data(stackloss), nrep)
++     domest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
++     domest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
++     domest(data.matrix(subset(wood, select = -Y)), data(wood), nrep)
++     domest(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
++ 
++ 
++     domest(brain, "Animals", nrep)
++     domest(milk, data(milk), nrep)
++     domest(bushfire, data(bushfire), nrep)
++     cat("======================================================================\n")
++ }
+> 
+> #   generate contaminated data using the function gendata with different
+> #   number of outliers and check if the M-estimate breaks - i.e. the 
+> #   largest eigenvalue is larger than e.g. 5. 
+> #   For n=50 and p=10 and d=5 the M-estimate can break for number of 
+> #   outliers grater than 20.
+> dogen <- function(){
++     eig <- vector("numeric",26)
++     for(i in 0:25) {
++         gg <- gendata(eps=i)
++         mm <- covMest(gg$x, t0=gg$tgood, S0=gg$sgood, arp=0.001)
++         eig[i+1] <- ev <- eigen(mm$cov)$values[1]
++         # cat(i, ev, "\n")
++         
++         stopifnot(ev < 5 || i > 20)
++     }
++     # plot(0:25, eig, type="l", xlab="Number of outliers", ylab="Largest Eigenvalue")
++ }
+> 
+> #
+> # generate data 50x10 as multivariate normal N(0,I) and add
+> # eps % outliers by adding d=5.0 to each component.
+> #   - if eps <0 and eps <=0.5, the number of outliers is eps*n
+> #   - if eps >= 1, it is the number of outliers
+> # - use the center and cov of the good data as good start
+> # - use the center and the cov of all data as a bad start
+> #   If using a good  start, the M-estimate must iterate to 
+> #   the good solution: the largest eigenvalue is less then e.g. 5
+> #
+> gendata <- function(n=50, p=10, eps=0, d=5.0){
++ 
++     if(eps < 0 || eps > 0.5 && eps < 1.0 || eps > 0.5*n)
++         stop("eps is out of range")
++         
++     library(MASS)
++     
++     x <- mvrnorm(n, rep(0,p), diag(p))
++     bad <- vector("numeric")
++     nbad = if(eps < 1) eps*n else eps
++     if(nbad > 0){
++         bad <- sample(n, nbad)
++         x[bad,] <- x[bad,] + d
++     }
++     cov1 <- cov.wt(x)
++     cov2 <- if(nbad <= 0) cov1 else cov.wt(x[-bad,])
++     
++     list(x=x, bad=sort(bad), tgood=cov2$center, sgood=cov2$cov, tbad=cov1$center, sbad=cov1$cov)
++ }
+> 
+> pad.right <- function(z, pads)
++ {
++     ## Pads spaces to right of text
++     padding <- paste(rep(" ", pads), collapse = "")
++     paste(z, padding, sep = "")
++ }
+> 
+> 
+> ## -- now do it:
+> dodata()
+
+Call:  dodata() 
+Data Set               n   p       c1        M     LOG(det)       Time
+======================================================================
+heart                 12   2   0.9029   1.5448     7.116594
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  7.117 
+
+
+Robust Estimate of Location: 
+   X1     X2  
+39.76  35.71  
+
+Robust Estimate of Covariance: 
+    X1      X2    
+X1   38.03   76.78
+X2   76.78  187.41
+----------------------------------------------------------------------
+stars                 47   2   1.2041   1.2437    -5.994596
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  -5.995 
+
+
+Robust Estimate of Location: 
+    X      Y  
+4.418  4.951  
+
+Robust Estimate of Covariance: 
+   X        Y      
+X  0.01687  0.05874
+Y  0.05874  0.35229
+----------------------------------------------------------------------
+phosphor              18   2   1.1526   1.2951     8.867522
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  8.868 
+
+
+Robust Estimate of Location: 
+   X1     X2  
+15.38  39.11  
+
+Robust Estimate of Covariance: 
+    X1     X2   
+X1  169.5  212.5
+X2  212.5  308.4
+----------------------------------------------------------------------
+stackloss             21   3   0.5221   2.2734     7.241400
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  7.241 
+
+
+Robust Estimate of Location: 
+  Air.Flow  Water.Temp  Acid.Conc.  
+     59.50       20.83       87.33  
+
+Robust Estimate of Covariance: 
+            Air.Flow  Water.Temp  Acid.Conc.
+Air.Flow     9.344     8.689       8.525    
+Water.Temp   8.689    13.716       9.126    
+Acid.Conc.   8.525     9.126      34.536    
+----------------------------------------------------------------------
+coleman               20   5   0.0000   3.3272     3.097223
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  3.097 
+
+
+Robust Estimate of Location: 
+    X1      X2      X3      X4      X5  
+ 2.757  48.379   6.118  25.005   6.398  
+
+Robust Estimate of Covariance: 
+    X1         X2         X3         X4         X5       
+X1    0.18728    1.32070   -0.19696    0.11198    0.05548
+X2    1.32070  963.78507  244.38519    9.31980   25.51335
+X3   -0.19696  244.38519   88.65102    2.83418    7.49100
+X4    0.11198    9.31980    2.83418    0.58055    0.41059
+X5    0.05548   25.51335    7.49100    0.41059    0.77092
+----------------------------------------------------------------------
+salinity              28   3   0.6742   2.1212     3.875096
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  3.875 
+
+
+Robust Estimate of Location: 
+    X1      X2      X3  
+10.016   3.211  22.361  
+
+Robust Estimate of Covariance: 
+    X1       X2       X3     
+X1  15.3529   1.9895  -5.0752
+X2   1.9895   5.2096  -0.7687
+X3  -5.0752  -0.7687   2.3141
+----------------------------------------------------------------------
+wood                  20   5   0.0000   3.3272   -35.156305
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  -35.16 
+
+
+Robust Estimate of Location: 
+    X1      X2      X3      X4      X5  
+0.5869  0.1222  0.5309  0.5382  0.8918  
+
+Robust Estimate of Covariance: 
+    X1          X2          X3          X4          X5        
+X1   6.449e-03   1.210e-03   2.028e-03  -3.769e-04  -1.048e-03
+X2   1.210e-03   3.118e-04   8.164e-04  -3.344e-05   1.521e-05
+X3   2.028e-03   8.164e-04   4.266e-03  -5.605e-04   2.267e-04
+X4  -3.769e-04  -3.344e-05  -5.605e-04   1.831e-03   1.176e-03
+X5  -1.048e-03   1.521e-05   2.267e-04   1.176e-03   1.780e-03
+----------------------------------------------------------------------
+hbk                   75   3   0.7046   2.0909     1.432433
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  1.432 
+
+
+Robust Estimate of Location: 
+   X1     X2     X3  
+1.538  1.780  1.687  
+
+Robust Estimate of Covariance: 
+    X1       X2       X3     
+X1  1.64848  0.07391  0.17086
+X2  0.07391  1.67792  0.20494
+X3  0.17086  0.20494  1.55835
+----------------------------------------------------------------------
+Animals               28   2   1.2041   1.2437    18.194771
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  18.19 
+
+
+Robust Estimate of Location: 
+ body  brain  
+18.67  64.94  
+
+Robust Estimate of Covariance: 
+       body   brain
+body    4993   8466
+brain   8466  30334
+----------------------------------------------------------------------
+milk                  86   8   0.0000   3.9379   -25.111176
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  -25.11 
+
+
+Robust Estimate of Location: 
+     X1       X2       X3       X4       X5       X6       X7       X8  
+  1.030   35.891   33.069   26.128   25.119   25.048  123.120   14.397  
+
+Robust Estimate of Covariance: 
+    X1         X2         X3         X4         X5         X6         X7       
+X1  5.014e-07  1.015e-04  1.990e-04  1.897e-04  1.720e-04  1.640e-04  6.738e-04
+X2  1.015e-04  2.109e+00  3.335e-01  2.329e-01  1.609e-01  2.640e-01  1.963e+00
+X3  1.990e-04  3.335e-01  1.131e+00  8.302e-01  8.084e-01  7.827e-01  8.987e-01
+X4  1.897e-04  2.329e-01  8.302e-01  6.642e-01  6.246e-01  6.035e-01  7.024e-01
+X5  1.720e-04  1.609e-01  8.084e-01  6.246e-01  6.505e-01  6.006e-01  6.990e-01
+X6  1.640e-04  2.640e-01  7.827e-01  6.035e-01  6.006e-01  6.004e-01  7.020e-01
+X7  6.738e-04  1.963e+00  8.987e-01  7.024e-01  6.990e-01  7.020e-01  4.520e+00
+X8  7.198e-06  2.657e-01  1.953e-01  1.256e-01  1.066e-01  1.126e-01  4.220e-01
+    X8       
+X1  7.198e-06
+X2  2.657e-01
+X3  1.953e-01
+X4  1.256e-01
+X5  1.066e-01
+X6  1.126e-01
+X7  4.220e-01
+X8  1.681e-01
+----------------------------------------------------------------------
+bushfire              38   5   0.0000   3.3272    23.218805
+-------------
+Call:
+covMest(x = x)
+
+
+Log(det):  23.22 
+
+
+Robust Estimate of Location: 
+   V1     V2     V3     V4     V5  
+105.5  146.9  274.4  217.5  279.0  
+
+Robust Estimate of Covariance: 
+    V1       V2       V3       V4       V5     
+V1    795.6    615.7  -3890.7   -875.4   -714.0
+V2    615.7    543.3  -2586.8   -528.4   -446.7
+V3  -3890.7  -2586.8  22979.0   5645.8   4486.6
+V4   -875.4   -528.4   5645.8   1487.1   1161.5
+V5   -714.0   -446.7   4486.6   1161.5    914.8
+----------------------------------------------------------------------
+======================================================================
+> dogen()
+> #cat('Time elapsed: ', proc.time(),'\n') # for ``statistical reasons''
+> 

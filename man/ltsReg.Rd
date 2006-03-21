@@ -11,9 +11,12 @@ Carries out least trimmed squares (LTS) regression.
 \usage{
 ltsReg(x, \dots)
 
-\method{ltsReg}{formula}(formula, data, \dots, model = TRUE, x.ret = FALSE, y.ret = FALSE)
+\method{ltsReg}{formula}(formula, data, \dots, 
+        model = TRUE, x.ret = FALSE, y.ret = FALSE)
 
-\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, use.correction=TRUE, control, \dots)
+\method{ltsReg}{default}(x, y, intercept=TRUE, alpha=NULL, nsamp=500, 
+        adjust=FALSE, mcd=TRUE, qr.out=FALSE, yname=NULL, seed=0, 
+        use.correction=TRUE, control, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,13 +31,14 @@ ltsReg(x, \dots)
     the percentage of squared residuals whose sum will be minimized. Its default value is 0.5. 
     In general, alpha must be a value between 0.5 and 1.
   }
-  \item{nsamp}{ 
-    number of subsets used for initial estimates or \code{"best"} or \code{"exact"}. 
-    Default is \code{nsamp = 500}. 
-    If \code{nsamp="best"} exhaustive enumeration is done, as far as the number of trials do not exceed 5000.
-    If \code{nsamp="exact"} exhaustive enumeration will be attempted however many samples are needed. 
-    In this case a warning message will be displayed saying that the computation can take a very long time. }
-  \item{adjust}{ whether to perform intercept adjustment at each step. This could be quite time consuming, therefore the default is \code{adjust = FALSE} }
+  \item{nsamp}{ number of subsets used for initial estimates or \code{"best"} or \code{"exact"}. 
+    Default is \code{nsamp = 500}. If \code{nsamp="best"} exhaustive enumeration 
+    is done, as far as the number of trials do not exceed 5000. If \code{nsamp="exact"} 
+    exhaustive enumeration will be attempted however many samples are needed. 
+    In this case a warning message will be displayed saying that the 
+    computation can take a very long time. }
+  \item{adjust}{ whether to perform intercept adjustment at each step. 
+    This could be quite time consuming, therefore the default is \code{adjust = FALSE} }
   \item{mcd}{ whether to compute robust distances using Fast-MCD.}
   \item{qr.out}{ whether to return the QR decomposition. Default is \code{qr.out = FALSE}}
   \item{yname}{ the name of the dependent variable. Default is \code{yname = NULL}}

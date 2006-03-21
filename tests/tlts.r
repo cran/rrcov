@@ -1,3 +1,14 @@
+test_location <- function(){
+    Y <- c(2, 3, 4, 8, 12, 22, 28, 29, 33, 34, 38, 40, 41, 47, 48, 50, 51, 54, 56, 59) 
+    print(ltsReg(y=Y))
+    print(ltsReg(y=Y, intercept=TRUE))
+    print(ltsReg(y=Y, intercept=FALSE))
+    print(ltsReg(y=Y, alpha=1))
+    print(ltsReg(Y~1))
+    print(ltsReg(Y~1-1))
+    print(ltsReg(Y~1, alpha=1))
+}
+
 test_rsquared <- function(){
     x1 <- c(2, 3, 4, 8, 12, 22, 28, 29, 33, 34, 38, 40, 41, 47, 48, 50, 51, 54, 56, 59) 
     y1 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 3.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5) 
@@ -211,3 +222,4 @@ whatis<-function(x){
 library(rrcov)
 dodata()
 test_rsquared()
+test_location()
