@@ -20,9 +20,16 @@ rrcov.control <- function (alpha=1/2,
                             seed=0, 
                             print.it=FALSE,
                             use.correction=TRUE,
-                            adjust=FALSE
+                            adjust=FALSE,
+                            r = 0.45, 
+                            arp = 0.05, 
+                            eps=1e-3, 
+                            maxiter=120
                            )
 {
-    list(alpha=alpha, nsamp=nsamp, seed=seed, print.it=print.it, use.correction=use.correction, adjust=adjust)        
+    list(alpha=alpha, nsamp=nsamp, seed=seed, print.it=print.it, 
+        use.correction=use.correction, adjust=adjust,
+        r = r, arp = arp, eps=eps, maxiter=maxiter
+        )        
 
 }

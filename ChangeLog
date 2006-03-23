@@ -1,3 +1,12 @@
+2006-03-13  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-13
+    * defined package namespace
+    * added constrained M-estimates (Rocke (1994,1996))
+2006-02-10  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.2-12
+    * FIXED - .fastmcd and fastlts does not return everything
+    * fixed problems in ltsReg in case of location model Y~1 (or x 
+        is missing in ltsReg.default())
 2006-02-06  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-11
     * added more data sets from Rousseeuw & Leroy: telef, lactic, 

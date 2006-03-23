@@ -19,13 +19,11 @@ covMcd(x, cor=FALSE, alpha=1/2, nsamp=500, seed=0, print.it=FALSE, use.correctio
     determinant is minimized, i.e. \code{alpha*n} observations are used 
     for computing the determinant. Allowed values are between 0.5 and 1 and the default is 0.5. 
   }
-  \item{nsamp}{ 
-    number of subsets used for initial estimates or \code{"best"} or \code{"exact"}. 
-    Default is \code{nsamp = 500}. 
+  \item{nsamp}{number of subsets used for initial estimates or \code{"best"} 
+    or \code{"exact"}. Default is \code{nsamp = 500}. 
     If \code{nsamp="best"} exhaustive enumeration is done, as far as the number of trials do not exceed 5000.
     If \code{nsamp="exact"} exhaustive enumeration will be attempted however many samples are needed. 
-    In this case a warning message will be displayed saying that the computation can take a very long time. 
-  }
+    In this case a warning message will be displayed saying that the computation can take a very long time. }
   \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
   \item{print.it}{ whether to print intermediate results. Default is \code{print.it = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors. Default is \code{use.correction=TRUE}}

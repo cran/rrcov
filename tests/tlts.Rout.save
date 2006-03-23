@@ -1,6 +1,7 @@
 
 R : Copyright 2005, The R Foundation for Statistical Computing
-Version 2.1.1  (2005-06-20), ISBN 3-900051-07-0
+Version 2.2.1  (2005-12-20 r36812)
+ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -11,9 +12,20 @@ Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
 
 Type 'demo()' for some demos, 'help()' for on-line help, or
-'help.start()' for a HTML browser interface to help.
+'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+> test_location <- function(){
++     Y <- c(2, 3, 4, 8, 12, 22, 28, 29, 33, 34, 38, 40, 41, 47, 48, 50, 51, 54, 56, 59) 
++     print(ltsReg(y=Y))
++     print(ltsReg(y=Y, intercept=TRUE))
++     print(ltsReg(y=Y, intercept=FALSE))
++     print(ltsReg(y=Y, alpha=1))
++     print(ltsReg(Y~1))
++     print(ltsReg(Y~1-1))
++     print(ltsReg(Y~1, alpha=1))
++ }
+> 
 > test_rsquared <- function(){
 +     x1 <- c(2, 3, 4, 8, 12, 22, 28, 29, 33, 34, 38, 40, 41, 47, 48, 50, 51, 54, 56, 59) 
 +     y1 <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 3.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5) 
@@ -225,7 +237,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.2-11)
+Scalable Robust Estimators with High Breakdown Point (version 0.2-13)
 > dodata()
 
 Call:  dodata() 
@@ -238,6 +250,9 @@ Best subsample:
 Outliers:  4 
 [1]  3  8  9 10
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2  
   63.3528    -1.2265     0.6884  
@@ -246,7 +261,7 @@ Scale estimate 1.525
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
  [1] -1.3927  0.1691  0.0000  0.4434 -0.3413  0.1655 -0.1148  0.0000  0.0000
 [10]  0.0000  0.6663  0.4045
@@ -268,6 +283,9 @@ Best subsample:
 Outliers:  6 
 [1]  7  9 11 20 30 34
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept          X  
    -8.500      3.046  
@@ -276,7 +294,7 @@ Scale estimate 0.4562
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
     Min      1Q  Median      3Q     Max 
 -0.7840 -0.2137  0.0000  0.2267  0.5916 
@@ -297,6 +315,9 @@ Best subsample:
 Outliers:  1 
 [1] 17
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2  
  60.91489    1.21103    0.08833  
@@ -305,7 +326,7 @@ Scale estimate 13.54
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
      Min       1Q   Median       3Q      Max 
 -30.2967  -3.5911  -0.6916   4.2514  17.1156 
@@ -327,6 +348,9 @@ Best subsample:
 Outliers:  4 
 [1]  1  3  4 21
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
  Intercept    Air.Flow  Water.Temp  Acid.Conc.  
  -37.65246     0.79769     0.57734    -0.06706  
@@ -335,7 +359,7 @@ Scale estimate 1.922
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
     Min      1Q  Median      3Q     Max 
 -2.5065 -0.4236  0.0000  0.5764  1.9342 
@@ -358,6 +382,9 @@ Best subsample:
 Outliers:  2 
 [1]  3 18
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2         X3         X4         X5  
  29.75772   -1.69854    0.08512    0.66617    1.18400   -4.06675  
@@ -366,7 +393,7 @@ Scale estimate 1.119
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
     Min      1Q  Median      3Q     Max 
 -1.2155 -0.3887  0.0000  0.3056  0.9845 
@@ -391,6 +418,9 @@ Best subsample:
 Outliers:  4 
 [1]  5 16 23 24
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2         X3  
   38.0635     0.4429    -0.2065    -1.3734  
@@ -399,7 +429,7 @@ Scale estimate 1.233
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
     Min      1Q  Median      3Q     Max 
 -2.4823 -0.3899  0.0000  0.3387  1.7013 
@@ -422,6 +452,9 @@ Best subsample:
 Outliers:  2 
 [1] 16 22
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
  Intercept          X1          X2          X3          X4  
  9.5007403  -3.0487969   1.2100330   0.0013810  -0.0005549  
@@ -430,7 +463,7 @@ Scale estimate 5.693
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
    Min     1Q Median     3Q    Max 
 -6.669 -2.429  0.000  2.791  6.793 
@@ -454,6 +487,9 @@ Best subsample:
 Outliers:  3 
 [1]  1  9 24
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2  
   3.71959    1.40578    0.01625  
@@ -462,7 +498,7 @@ Scale estimate 2.383
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
      Min       1Q   Median       3Q      Max 
 -5.03209 -1.03055 -0.01243  0.34737  4.23711 
@@ -484,6 +520,9 @@ Best subsample:
 Outliers:  4 
 [1]  4  6  8 19
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2         X3         X4         X5  
   0.37733    0.21738   -0.08501   -0.56430   -0.40033    0.60745  
@@ -492,7 +531,7 @@ Scale estimate 0.01236
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
       Min        1Q    Median        3Q       Max 
 -0.009281 -0.001771  0.000000  0.001146  0.013004 
@@ -518,6 +557,9 @@ Best subsample:
 Outliers:  10 
  [1]  1  2  3  4  5  6  7  8  9 10
 -------------
+Call:
+ltsReg.default(x = x, y = y, mcd = FALSE)
+
 Coefficients:
 Intercept         X1         X2         X3  
  -0.18046    0.08138    0.03990   -0.05167  
@@ -526,7 +568,7 @@ Scale estimate 0.744
 
 
 Call:
-ltsReg.default(x, y, mcd = FALSE)
+ltsReg.default(x = x, y = y, mcd = FALSE)
 
     Min      1Q  Median      3Q     Max 
 -0.9263 -0.3955  0.0000  0.3968  1.0106 
@@ -545,11 +587,17 @@ F-statistic: 0.9088 on 3 and 61 DF,  p-value: 0.4421
 --------------------------------------------------------
 ========================================================
 > test_rsquared()
+Call:
+ltsReg.default(x = x1, y = y1, alpha = 0.8)
+
 Coefficients:
 Intercept         x1  
         1          0  
 
 Scale estimate 0 
+
+Call:
+ltsReg.default(x = y1, y = x1, alpha = 0.8)
 
 Coefficients:
 Intercept         y1  
@@ -557,10 +605,77 @@ Intercept         y1
 
 Scale estimate 18.04 
 
+Call:
+ltsReg.default(x = y1, y = x1, intercept = FALSE, alpha = 0.8)
+
 Coefficients:
    y1  
 31.44  
 
 Scale estimate 24.64 
+
+> test_location()
+Call:
+ltsReg.default(y = Y)
+
+Coefficients:
+    Y  
+44.62  
+
+Scale estimate 19.74 
+
+Call:
+ltsReg.default(y = Y, intercept = TRUE)
+
+Coefficients:
+    Y  
+44.62  
+
+Scale estimate 19.74 
+
+Call:
+ltsReg.default(y = Y, intercept = FALSE)
+
+Coefficients:
+    Y  
+44.62  
+
+Scale estimate 19.98 
+
+Call:
+ltsReg.default(y = Y, alpha = 1)
+
+Coefficients:
+    Y  
+32.95  
+
+Scale estimate 19.34 
+
+Call:
+ltsReg.formula(formula = Y ~ 1)
+
+Coefficients:
+    Y  
+44.62  
+
+Scale estimate 19.74 
+
+Call:
+ltsReg.formula(formula = Y ~ 1 - 1)
+
+Coefficients:
+    Y  
+44.62  
+
+Scale estimate 19.98 
+
+Call:
+ltsReg.formula(formula = Y ~ 1, alpha = 1)
+
+Coefficients:
+    Y  
+32.95  
+
+Scale estimate 19.34 
 
 > 

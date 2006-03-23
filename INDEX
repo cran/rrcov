@@ -6,6 +6,7 @@ cloud                   Cloud point of a Liquid
 coleman                 Coleman Data Set
 covMcd                  Robust location and scatter estimation with
                         high breakdown point
+covMest                 Constrained M-Estimates of Location and Scatter
 delivery                Delivery Time Data
 education               Education Expenditure Data
 hbk                     Hawkins, Bradu, Kass's Artificial Data
