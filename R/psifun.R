@@ -62,5 +62,5 @@ setMethod("iterM", "PsiFun", function(obj, x, t1, s, eps=1e-3, maxiter=20){
         crit <- max(abs(w1d-wt.old))/max(w1d)
         iter <- iter+1
     }
-    return(list(t1=t1, s=s))
+    return(list(t1=t1, s=s, iter=iter, wt=w1d, vt=w2d))
 })

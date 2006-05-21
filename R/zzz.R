@@ -1,5 +1,6 @@
 .onLoad <- function(lib, pkg) {
     require("methods")
+##    require("robustbase")
 
     where <- match(paste("package:", pkg, sep = ""), search())
     ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")

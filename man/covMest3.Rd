@@ -1,19 +1,22 @@
-\name{CovMest}
-\alias{CovMest}
+\name{covMest}
+\alias{covMest}
+%
 \title{Constrained M-Estimates of Location and Scatter}
 \concept{High breakdown point}
-\usage{
-    CovMest(x, r = 0.45, arp = 0.05, eps=1e-3, 
-        maxiter=120, control, t0, S0)
-}
 \description{
     Computes constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
     a High breakdown point initial estimate (Minimum Covariance Determinant - 
     \sQuote{Fast MCD})
 }
+\usage{
+covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3, 
+    maxiter=120, control, t0, S0)
+}
 \arguments{
   \item{x}{a matrix or data frame. }
+  \item{cor}{should the returned result include a correlation matrix?
+    Default is \code{cor = FALSE}}.
   \item{r}{ required breakdown point.  Allowed values are between 
     \code{(n - p)/(2 * n)} and 1 and the default is 0.45}
   \item{arp}{ asympthotic rejection point, i.e. the fraction of points 
@@ -59,7 +62,24 @@
     http://www.sfb475.uni-dortmund.de/dienst/de/content/struk-d/bereicha-d/tpa1softw-d.html)
 }
 \value{
-  An object of class \code{CovMest} which is a subclass of the virtual class \code{CovRobust}.
+  An object of class \code{"mest"} which is basically a \code{\link{list}} with
+  the following components. This class is "derived" from \code{"mcd"} so that
+  the same generic functions -  \code{print},  \code{plot},  \code{summary} - can
+  be used.
+  NOTE: this is going to change - in one of the next revisions \code{covMest} 
+  will return an S4 class \code{"mest"} which is derived (i.e. \code{contains}) 
+  form class \code{"cov"}.
+  
+  \item{center}{the final estimate of location.}
+  \item{cov}{the final estimate of scatter.}
+  \item{cor}{the estimate of the correlation matrix (only if
+    \code{cor = TRUE}).}
+  \item{mah}{mahalanobis distances of the observations using the 
+    M-estimate of the location and scatter.}
+  \item{X}{the input data as a matrix.}
+  \item{n.obs}{total number of observations.}
+  \item{method}{character string naming the method (M-Estimates).}
+  \item{call}{the call used (see \code{\link{match.call}}).}
 }
 \references{
     D.L.Woodruff and D.M.Rocke (1994) Computable robust estimation of multivariate location
@@ -71,30 +91,24 @@
     
     D.M.Rocke and D.L.Woodruff (1996) Identification of outliers in multivariate data \emph{Journal
     of the American Statistical Association}, \bold{91}, 1047--1061.
+    
 }
 \seealso{
-  \code{\link{covMcd}}, \code{\link{Cov}}, \code{\link{Cov-class}}, 
-  \code{\link{CovRobust-class}}, \code{\link{CovMest-class}}
+  \code{\link{covMcd}}
 }
 \examples{
-
-library(rrcov)
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
-CovMest(hbk.x)
+covMest(hbk.x)
 
-## the following four statements are equivalent
-c0 <- CovMest(hbk.x)
-c1 <- CovMest(hbk.x, r = 0.45)
-c2 <- CovMest(hbk.x, control = CovControlMest(r = 0.45))
-c3 <- CovMest(hbk.x, control = new("CovControlMest", r = 0.45))
-
+## the following three statements are equivalent
+c0 <- covMest(hbk.x)
+c1 <- covMest(hbk.x, r = 0.45)
+c2 <- covMest(hbk.x, control = rrcov.control(r = 0.45))
 ## direct specification overrides control one:
-c4 <- CovMest(hbk.x, r = 0.40,
-             control = CovControlMest(r = 0.25))
+c3 <- covMest(hbk.x, r = 0.45,
+             control = rrcov.control(r=0.25))
 c1
-summary(c1)
-plot(c1)
 }
 \keyword{robust}
 \keyword{multivariate}

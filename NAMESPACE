@@ -1,6 +1,10 @@
 useDynLib(rrcov)
+importFrom(stats4, plot, summary)
 
-export(covMest,
+export(Cov,
+       CovMest,
+       CovControlMest,
+       covMest,
        covMcd,
        ltsReg,
        covPlot, 
@@ -22,12 +26,45 @@ S3method(print, summary.lts)
 S3method(summary, lts)
 S3method(summary, mcd)
 
+## Workaround for the S3-S4 incompatibility
+## in R2.2.1
+export(plot.lts,
+       plot.mcd,
+       print.lts,
+       print.mcd,
+       summary.lts,
+       print.summary.lts,
+       summary.mcd)
+
 ## S4 generics
-export(
+export(isClassic,
+       getCenter,
+       getCov,
+       getCorr,
+       getData,
+       getDistance,
+       getEvals,
+       estimate
 )
 
-exportClasses(
+exportClasses(Cov,
+              CovRobust,
+              CovMest,
+              CovControl,
+              CovControlMest,
+              SummaryCov,
+              SummaryCovRobust
 )
 
-exportMethods(
+exportMethods(isClassic,
+              getCenter,
+              getCov,
+              getCorr,
+              getData,
+              getDistance,
+              getEvals,
+              plot,
+              show,
+              summary,
+              estimate
 )
