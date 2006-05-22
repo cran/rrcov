@@ -4,20 +4,42 @@ brain                   Brain and Body Weights for 28 Species
 bushfire                Campbell Bushfire Data
 cloud                   Cloud point of a Liquid
 coleman                 Coleman Data Set
+Cov                     Classical Estimates of Multivariate Location
+                        and Scatter
+Cov-class               Class "Cov" - a base class for estimates of
+                        multivariate location and scatter
+CovControl-class        Class "CovControl" is a VIRTUAL base control
+                        class
+CovControlMest          Constructor function for objects of class
+                        "CovControlMest"
+CovControlMest-class    Class 'CovControlMest' - contains control
+                        parameters for CovMest
 covMcd                  Robust location and scatter estimation with
                         high breakdown point
 covMest                 Constrained M-Estimates of Location and Scatter
+CovMest                 Constrained M-Estimates of Location and Scatter
+CovMest-class           Class "CovMest" - constrained M-estimates of
+                        multivariate location and scatter
+CovRobust-class         Class "CovRobust" - virtual base class for
+                        robust estimates of multivariate location and
+                        scatter
 delivery                Delivery Time Data
 education               Education Expenditure Data
+estimate-methods        Methods for Function estimate in Package
+                        'rr4cov'
+getCenter-methods       Accessor methods to the essential slots of Cov
+                        and its subclasses
 hbk                     Hawkins, Bradu, Kass's Artificial Data
 heart                   Heart Catherization Data
 lactic                  Calibration of an Instrument that Measures
                         Lactic Acid Concentration in Blood
 ltsReg                  Robust regression with high breakdown point
+maryo                   Marona and Yohai Artificial Data
 milk                    Daudin's Milk Composition Data
 pension                 Pension Funds
 phosphor                Phosphorus Content Data
 pilot                   Pilot-Plant Data
+plot-methods            Methods for Function 'plot' in Package 'rr4cov'
 plot.lts                Robust Regression Diagnostic Plots
 plot.mcd                Robust Distance Plots
 rrcov.control           Control object for the estimation parameters
@@ -26,6 +48,10 @@ stars                   Data for the Hertzsprung-Russell Diagram of the
                         star cluster CYG OB1
 summary.lts             Summary Method for LTS objects
 summary.mcd             Summary Method for MCD objects
+SummaryCov-class        Class "SummaryCov" - summary of "Cov" objects
+SummaryCovRobust-class
+                        Class "SummaryCovRobust" - summary of
+                        "CovRobust" objects
 telef                   Number of International Calls from Belgium
 tolellipse              Tolerance Ellipse Plot
 wood                    Modified Wood Gravity Dataset

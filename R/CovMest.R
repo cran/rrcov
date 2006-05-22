@@ -1,4 +1,4 @@
-covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0, S0)
+CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0, S0)
 {
 
     ## Analize and validate the input parameters ...
@@ -7,11 +7,11 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ## but if single parameters were passed (not defaults) they will override the
     ## control object.
     if(!missing(control)){
-        defcontrol <- rrcov.control()      # default control
-        if(r == defcontrol$r)       r <- control$r
-        if(arp == defcontrol$arp)   arp <- control$arp
-        if(eps == defcontrol$eps)   eps <- control$eps
-        if(maxiter == defcontrol$maxiter) maxiter <- control$maxiter
+        defcontrol <- new("CovControlMest")      # default control
+        if(r == defcontrol@r)       r <- control@r
+        if(arp == defcontrol@arp)   arp <- control@arp
+        if(eps == defcontrol@eps)   eps <- control@eps
+        if(maxiter == defcontrol@maxiter) maxiter <- control@maxiter
     }
 
     if(is.data.frame(x))
@@ -33,7 +33,8 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     if(n < 2 * p)
         stop("Need at least 2*(number of variables) observations ")
 
-    ans <- list(method = "M-Estimates", call = match.call())
+    call <- match.call()
+    method <- "M-Estimates"
 
     ## if not provided initial estimates, compute them as MCD 
     if(missing(t0) || missing(S0)){
@@ -48,26 +49,10 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     psix <- csolve(psix)
     mest <- iterM(psix, x, t0, S0, eps=1e-3, maxiter=20)
 
-    ## this was the version without OO
-    ##const <- csolve.bt(n, p, r, arp)
-    ##mest <- .iterM(x, t0, S0, const$c1, const$M, eps, maxiter)
-    
-    ans$n.obs <- n
-    ##ans$c1 <- const$c1
-    ##ans$M <- const$M
-    
-    ans$c1 <- psix@c1
-    ans$M <- psix@M
-    
-    ans$cov <- mest$s
-    ans$center <- mest$t1
-    ans$mah <- mahalanobis(x, mest$t1, mest$s)
-    ans$crit <- determinant(mest$s, log = FALSE)$modulus[1]
+    mah <- mahalanobis(x, mest$t1, mest$s)
+    crit <- determinant(mest$s, log = FALSE)$modulus[1]
 
-    class(ans) <- c("mest", "mcd")
-    attr(ans, "call") <- sys.call()
-    ans$method <- paste("M-Estimator.")
-    ans$X <- x
-
-    return(ans)
+    new("CovMest", call=call, cov=mest$s, center=mest$t1, n.obs=n, 
+        mah=mah, method=method, X=x, iter=mest$iter, crit=crit, 
+        wt=mest$wt, vt=mest$vt)
 }

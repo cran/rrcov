@@ -1,3 +1,12 @@
+2006-05-21  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-01
+    * NAMESPACE: add importFrom(stats4, plot, summary)
+    * add Marona and Yohai data set
+    * add Cov function and Cov-class
+    * add CovControl-class
+    * add CovControlMest function and CovControlMest-class
+    * add CovRobust-class
+    * add CovMest function and CovMest-class
 2006-03-13  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.2-13
     * defined package namespace

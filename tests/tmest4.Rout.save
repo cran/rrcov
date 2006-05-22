@@ -21,9 +21,9 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
 > 
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
 +     ##@bdescr
-+     ## Test the function covMest() on the literature datasets:
++     ## Test the function CovMest() on the literature datasets:
 +     ##
-+     ## Call covMest() for all regression datasets available in rrcov and print:
++     ## Call CovMest() for all regression datasets available in rrcov and print:
 +     ##  - execution time (if time == TRUE)
 +     ##  - The constants c and M
 +     ##  - determinant of the covariance matrix
@@ -39,18 +39,21 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
 +     domest <- function(x, xname, nrep = 1) {
 +         n <- dim(x)[1]
 +         p <- dim(x)[2]
-+         mm <- covMest(x)
-+         crit <- log(mm$crit)
-+         c1 <- mm$c1
-+         M <- mm$M
++         mm <- CovMest(x)
++         crit <- log(mm@crit)
++ ##        c1 <- mm@psi@c1
++ ##        M <- mm$psi@M
 + 
 +         if(time) {
 +             xtime <- system.time(dorep(x, nrep))[1]/nrep
-+             xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f %10.3f\n",
-+                             dim(x)[1], dim(x)[2], c1, M, crit, xtime)
++ ##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f %10.3f\n",
++ ##                            dim(x)[1], dim(x)[2], c1, M, crit, xtime)
++             xres <- sprintf("%3d %3d %12.6f %10.3f\n",
++                             dim(x)[1], dim(x)[2], crit, xtime)
 +         }
 +         else {
-+             xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f\n", dim(x)[1], dim(x)[2], c1, M, crit)
++ ##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f\n", dim(x)[1], dim(x)[2], c1, M, crit)
++             xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
 +         }
 +         lpad <- lname-nchar(xname)
 +         cat(pad.right(xname,lpad), xres)
@@ -109,8 +112,8 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
 +     eig <- vector("numeric",26)
 +     for(i in 0:25) {
 +         gg <- gendata(eps=i)
-+         mm <- covMest(gg$x, t0=gg$tgood, S0=gg$sgood, arp=0.001)
-+         eig[i+1] <- ev <- eigen(mm$cov)$values[1]
++         mm <- CovMest(gg$x, t0=gg$tgood, S0=gg$sgood, arp=0.001)
++         eig[i+1] <- ev <- getEvals(mm)[1]
 +         # cat(i, ev, "\n")
 +         
 +         stopifnot(ev < 5 || i > 20)
@@ -162,14 +165,11 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
 Call:  dodata() 
 Data Set               n   p       c1        M     LOG(det)       Time
 ======================================================================
-heart                 12   2   0.9029   1.5448     7.116594
+heart                 12   2     7.116594
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  7.117 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
    X1     X2  
@@ -180,14 +180,11 @@ Robust Estimate of Covariance:
 X1   38.03   76.78
 X2   76.78  187.41
 ----------------------------------------------------------------------
-stars                 47   2   1.2041   1.2437    -5.994596
+stars                 47   2    -5.994596
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  -5.995 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
     X      Y  
@@ -198,14 +195,11 @@ Robust Estimate of Covariance:
 X  0.01687  0.05874
 Y  0.05874  0.35229
 ----------------------------------------------------------------------
-phosphor              18   2   1.1526   1.2951     8.867522
+phosphor              18   2     8.867522
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  8.868 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
    X1     X2  
@@ -216,14 +210,11 @@ Robust Estimate of Covariance:
 X1  169.5  212.5
 X2  212.5  308.4
 ----------------------------------------------------------------------
-stackloss             21   3   0.5221   2.2734     7.241400
+stackloss             21   3     7.241400
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  7.241 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
   Air.Flow  Water.Temp  Acid.Conc.  
@@ -235,14 +226,11 @@ Air.Flow     9.344     8.689       8.525
 Water.Temp   8.689    13.716       9.126    
 Acid.Conc.   8.525     9.126      34.536    
 ----------------------------------------------------------------------
-coleman               20   5   0.0000   3.3272     3.097223
+coleman               20   5     3.097223
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  3.097 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
     X1      X2      X3      X4      X5  
@@ -256,14 +244,11 @@ X3   -0.19696  244.38519   88.65102    2.83418    7.49100
 X4    0.11198    9.31980    2.83418    0.58055    0.41059
 X5    0.05548   25.51335    7.49100    0.41059    0.77092
 ----------------------------------------------------------------------
-salinity              28   3   0.6742   2.1212     3.875096
+salinity              28   3     3.875096
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  3.875 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
     X1      X2      X3  
@@ -275,14 +260,11 @@ X1  15.3529   1.9895  -5.0752
 X2   1.9895   5.2096  -0.7687
 X3  -5.0752  -0.7687   2.3141
 ----------------------------------------------------------------------
-wood                  20   5   0.0000   3.3272   -35.156305
+wood                  20   5   -35.156305
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  -35.16 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
     X1      X2      X3      X4      X5  
@@ -296,14 +278,11 @@ X3   2.028e-03   8.164e-04   4.266e-03  -5.605e-04   2.267e-04
 X4  -3.769e-04  -3.344e-05  -5.605e-04   1.831e-03   1.176e-03
 X5  -1.048e-03   1.521e-05   2.267e-04   1.176e-03   1.780e-03
 ----------------------------------------------------------------------
-hbk                   75   3   0.7046   2.0909     1.432433
+hbk                   75   3     1.432433
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  1.432 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
    X1     X2     X3  
@@ -315,14 +294,11 @@ X1  1.64848  0.07391  0.17086
 X2  0.07391  1.67792  0.20494
 X3  0.17086  0.20494  1.55835
 ----------------------------------------------------------------------
-Animals               28   2   1.2041   1.2437    18.194771
+Animals               28   2    18.194771
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  18.19 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
  body  brain  
@@ -333,14 +309,11 @@ Robust Estimate of Covariance:
 body    4993   8466
 brain   8466  30334
 ----------------------------------------------------------------------
-milk                  86   8   0.0000   3.9379   -25.111176
+milk                  86   8   -25.111176
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  -25.11 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
      X1       X2       X3       X4       X5       X6       X7       X8  
@@ -366,14 +339,11 @@ X6  1.126e-01
 X7  4.220e-01
 X8  1.681e-01
 ----------------------------------------------------------------------
-bushfire              38   5   0.0000   3.3272    23.218805
+bushfire              38   5    23.218805
 -------------
+
 Call:
-covMest(x = x)
-
-
-Log(det):  23.22 
-
+CovMest(x = x)
 
 Robust Estimate of Location: 
    V1     V2     V3     V4     V5  
