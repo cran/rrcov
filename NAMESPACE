@@ -2,8 +2,12 @@ useDynLib(rrcov)
 importFrom(stats4, plot, summary)
 
 export(Cov,
+       CovMcd,
        CovMest,
+       CovOgk,
+       CovControlMcd,
        CovControlMest,
+       CovControlOgk,
        covMest,
        covMcd,
        ltsReg,
@@ -27,7 +31,7 @@ S3method(summary, lts)
 S3method(summary, mcd)
 
 ## Workaround for the S3-S4 incompatibility
-## in R2.2.1
+## in R 2.2.1
 export(plot.lts,
        plot.mcd,
        print.lts,
@@ -49,9 +53,13 @@ export(isClassic,
 
 exportClasses(Cov,
               CovRobust,
+              CovMcd,
               CovMest,
+              CovOgk,
               CovControl,
+              CovControlMcd,
               CovControlMest,
+              CovControlOgk,
               SummaryCov,
               SummaryCovRobust
 )

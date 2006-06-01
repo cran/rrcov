@@ -22,9 +22,10 @@
     the M-estimate. Defaults to \code{1e-3}}
   \item{maxiter}{ maximum number of iterations allowed in the computation of 
     the M-estimate. Defaults to 120}
-  \item{control}{ a list with estimation options - same as these provided in the
-    fucntion specification. If the control object is supplied, the parameters from it
-    will be used. If parameters are passed also in the invocation statement, they will
+  \item{control}{ a control object (S4) of class \code{\link{CovControlMest-class}} 
+    containing estimation options - same as these provided in the fucntion 
+    specification. If the control object is supplied, the parameters from it 
+    will be used. If parameters are passed also in the invocation statement, they will 
     override the corresponding elements of the control object.}
   \item{t0}{ optional initial high breakdown point estimates of the location. 
     If not supplied MCD will be used. }

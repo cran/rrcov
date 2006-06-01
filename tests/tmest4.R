@@ -1,23 +1,6 @@
 library(rrcov)
 library(MASS)
-
 dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
-    ##@bdescr
-    ## Test the function CovMest() on the literature datasets:
-    ##
-    ## Call CovMest() for all regression datasets available in rrcov and print:
-    ##  - execution time (if time == TRUE)
-    ##  - The constants c and M
-    ##  - determinant of the covariance matrix
-    ##  - estimated center and covarinance matrix if full == TRUE)
-    ##
-    ##@edescr
-    ##
-    ##@in  nrep              : [integer] number of repetitions to use for estimating the
-    ##                                   (average) execution time
-    ##@in  time              : [boolean] whether to evaluate the execution time
-    ##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
-
     domest <- function(x, xname, nrep = 1) {
         n <- dim(x)[1]
         p <- dim(x)[2]
@@ -26,25 +9,21 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
 ##        c1 <- mm@psi@c1
 ##        M <- mm$psi@M
 
-        if(time) {
-            xtime <- system.time(dorep(x, nrep))[1]/nrep
-##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f %10.3f\n",
-##                            dim(x)[1], dim(x)[2], c1, M, crit, xtime)
-            xres <- sprintf("%3d %3d %12.6f %10.3f\n",
-                            dim(x)[1], dim(x)[2], crit, xtime)
-        }
-        else {
-##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f\n", dim(x)[1], dim(x)[2], c1, M, crit)
-            xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
-        }
+        xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
         lpad <- lname-nchar(xname)
         cat(pad.right(xname,lpad), xres)
 
-        if(full) {
-            cat("-------------\n")
-            print(mm)
-            cat("----------------------------------------------------------------------\n")
-        }
+        dist <- getDistance(mm)
+        quantiel <- qchisq(0.975, p)
+        ibad <- which(dist >= quantiel)
+        names(ibad) <- NULL
+        nbad <- length(ibad)
+        cat("Outliers: ",nbad,"\n")
+        if(nbad > 0)
+            print(ibad)
+        cat("-------------\n")
+        show(mm)   
+        cat("--------------------------------------------------------\n")
     }
 
     lname <- 20

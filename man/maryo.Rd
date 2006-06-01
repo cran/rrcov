@@ -39,7 +39,7 @@ coordinate variables.
 data(maryo)
 getCorr(Cov(maryo))       ## the sample correlation is 0.81
 
-## Modify 10% of the data in the following way:
+## Modify 10%% of the data in the following way:
 ##  modify two points (out of 20) by interchanging the 
 ##  largest and smallest value of the first coordinate
 imin <- which(maryo[,1]==min(maryo[,1]))        # imin = 9

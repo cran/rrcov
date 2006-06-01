@@ -10,16 +10,31 @@ Cov-class               Class "Cov" - a base class for estimates of
                         multivariate location and scatter
 CovControl-class        Class "CovControl" is a VIRTUAL base control
                         class
+CovControlMcd           Constructor function for objects of class
+                        "CovControlMcd"
+CovControlMcd-class     Class 'CovControlMcd' - contains control
+                        parameters for CovMcd
 CovControlMest          Constructor function for objects of class
                         "CovControlMest"
 CovControlMest-class    Class 'CovControlMest' - contains control
-                        parameters for CovMest
+                        parameters for "CovMest"
+CovControlOgk           Constructor function for objects of class
+                        "CovControlOgk"
+CovControlOgk-class     Class 'CovControlOgk' - contains control
+                        parameters for CovOgk
 covMcd                  Robust location and scatter estimation with
                         high breakdown point
+CovMcd                  Robust Location and Scatter Estimation via MCD
+CovMcd-class            MCD Estimates of Multivariate Location and
+                        Scatter
 covMest                 Constrained M-Estimates of Location and Scatter
 CovMest                 Constrained M-Estimates of Location and Scatter
-CovMest-class           Class "CovMest" - constrained M-estimates of
-                        multivariate location and scatter
+CovMest-class           Constrained M-estimates of Multivariate
+                        Location and Scatter
+CovOgk                  Robust Location and Scatter Estimation -
+                        Ortogonalized Gnanadesikan-Kettenring (OGK)
+CovOgk-class            OGK Estimates of Multivariate Location and
+                        Scatter
 CovRobust-class         Class "CovRobust" - virtual base class for
                         robust estimates of multivariate location and
                         scatter

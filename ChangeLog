@@ -1,3 +1,9 @@
+2006-06-01  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-02
+    * add CovControlMcd function and CovControlMcd-class
+    * add CovMcd function and CovMcd-class
+    * add CovControlOgk function and CovControlOgk-class
+    * add CovOgk function and CovOgk-class
 2006-05-21  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-01
     * NAMESPACE: add importFrom(stats4, plot, summary)
