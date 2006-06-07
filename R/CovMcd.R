@@ -1,0 +1,50 @@
+CovMcd <- function(x, 
+                   alpha=1/2, 
+                   nsamp=500, 
+                   seed=0, 
+                   print.it=FALSE,
+                   use.correction = TRUE,
+                   control)
+{
+
+    ## Analize and validate the input parameters ...
+
+    ## if a control object was supplied, take the option parameters from it,
+    ## but if single parameters were passed (not defaults) they will override the
+    ## control object.
+    
+    if(!missing(control)){
+        defcontrol <- CovControlMcd()       # default control
+        if(alpha == defcontrol@alpha)       alpha <- control@alpha
+        if(nsamp == defcontrol@nsamp)       nsamp <- control@nsamp
+        if(seed == defcontrol@seed)         seed <- control@seed
+        if(print.it == defcontrol@print.it) print.it <- control@print.it
+        if(use.correction == defcontrol@use.correction) use.correction <- control@use.correction
+    }
+
+    ## prepare the call to covMcd() which will return an S3 object
+    
+    xcall <- match.call()
+    mcd <- covMcd(x=x, alpha=alpha, nsamp=nsamp, seed=seed, print.it=print.it, use.correction=use.correction)
+    ans <- new("CovMcd", 
+               call = xcall,
+               iter=nsamp,
+               crit=mcd$crit,
+               cov=mcd$cov,
+               center=mcd$center,
+               n.obs=mcd$n.obs,
+               mah = mcd$mah,
+               wt = mcd$mcd.wt,
+               X = mcd$X,
+               method=mcd$method,
+               best=mcd$best,
+               alpha=mcd$alpha,
+               quan=mcd$quan,
+               raw.cov = mcd$raw.cov,
+               raw.center = mcd$raw.center,
+               raw.mah = mcd$raw.mah,
+               raw.wt = mcd$raw.weights,
+               raw.cnp2 = mcd$raw.cnp2,
+               cnp2 = mcd$cnp2)
+    ans
+}

@@ -2,8 +2,9 @@
 \docType{class}
 \alias{CovControlMest-class}
 
-\title{Class 'CovControlMest' - contains control parameters for CovMest}
-\description{ This class extends the \code{CovControl} class 
+\title{Class 'CovControlMest' - contains control parameters for "CovMest"}
+\description{ 
+    This class extends the \code{CovControl} class 
     and contains the control parameters for CovMest}
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("CovControlMest", ...)} 
@@ -36,12 +37,10 @@ Class \code{"CovControl"}, directly.
 }
 
 }
-%\references{ ~put references to the literature/web site here ~ }
+%\references{ }
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
-%\note{ ~~further notes~~ }
-
-\seealso{
-}
+%\note{}
+%\seealso{}
 \examples{
     ## the following two statements are equivalent
     ctrl1 <- new("CovControlMest", r=0.4)

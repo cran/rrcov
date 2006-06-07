@@ -1,6 +1,6 @@
 
-R : Copyright 2005, The R Foundation for Statistical Computing
-Version 2.2.1  (2005-12-20 r36812)
+R : Copyright 2006, The R Foundation for Statistical Computing
+Version 2.3.0 (2006-04-24)
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -16,26 +16,9 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
+Scalable Robust Estimators with High Breakdown Point (version 0.3-02)
 > library(MASS)
-> 
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
-+     ##@bdescr
-+     ## Test the function CovMest() on the literature datasets:
-+     ##
-+     ## Call CovMest() for all regression datasets available in rrcov and print:
-+     ##  - execution time (if time == TRUE)
-+     ##  - The constants c and M
-+     ##  - determinant of the covariance matrix
-+     ##  - estimated center and covarinance matrix if full == TRUE)
-+     ##
-+     ##@edescr
-+     ##
-+     ##@in  nrep              : [integer] number of repetitions to use for estimating the
-+     ##                                   (average) execution time
-+     ##@in  time              : [boolean] whether to evaluate the execution time
-+     ##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
-+ 
 +     domest <- function(x, xname, nrep = 1) {
 +         n <- dim(x)[1]
 +         p <- dim(x)[2]
@@ -44,25 +27,21 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-01)
 + ##        c1 <- mm@psi@c1
 + ##        M <- mm$psi@M
 + 
-+         if(time) {
-+             xtime <- system.time(dorep(x, nrep))[1]/nrep
-+ ##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f %10.3f\n",
-+ ##                            dim(x)[1], dim(x)[2], c1, M, crit, xtime)
-+             xres <- sprintf("%3d %3d %12.6f %10.3f\n",
-+                             dim(x)[1], dim(x)[2], crit, xtime)
-+         }
-+         else {
-+ ##            xres <- sprintf("%3d %3d %8.4f %8.4f %12.6f\n", dim(x)[1], dim(x)[2], c1, M, crit)
-+             xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
-+         }
++         xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
 +         lpad <- lname-nchar(xname)
 +         cat(pad.right(xname,lpad), xres)
 + 
-+         if(full) {
-+             cat("-------------\n")
-+             print(mm)
-+             cat("----------------------------------------------------------------------\n")
-+         }
++         dist <- getDistance(mm)
++         quantiel <- qchisq(0.975, p)
++         ibad <- which(dist >= quantiel)
++         names(ibad) <- NULL
++         nbad <- length(ibad)
++         cat("Outliers: ",nbad,"\n")
++         if(nbad > 0)
++             print(ibad)
++         cat("-------------\n")
++         show(mm)   
++         cat("--------------------------------------------------------\n")
 +     }
 + 
 +     lname <- 20
@@ -166,6 +145,8 @@ Call:  dodata()
 Data Set               n   p       c1        M     LOG(det)       Time
 ======================================================================
 heart                 12   2     7.116594
+Outliers:  5 
+[1]  2  6  8 10 12
 -------------
 
 Call:
@@ -179,8 +160,10 @@ Robust Estimate of Covariance:
     X1      X2    
 X1   38.03   76.78
 X2   76.78  187.41
-----------------------------------------------------------------------
+--------------------------------------------------------
 stars                 47   2    -5.994596
+Outliers:  7 
+[1]  7  9 11 14 20 30 34
 -------------
 
 Call:
@@ -194,8 +177,10 @@ Robust Estimate of Covariance:
    X        Y      
 X  0.01687  0.05874
 Y  0.05874  0.35229
-----------------------------------------------------------------------
+--------------------------------------------------------
 phosphor              18   2     8.867522
+Outliers:  3 
+[1]  1  6 10
 -------------
 
 Call:
@@ -209,8 +194,10 @@ Robust Estimate of Covariance:
     X1     X2   
 X1  169.5  212.5
 X2  212.5  308.4
-----------------------------------------------------------------------
+--------------------------------------------------------
 stackloss             21   3     7.241400
+Outliers:  9 
+[1]  1  2  3 15 16 17 18 19 21
 -------------
 
 Call:
@@ -225,8 +212,10 @@ Robust Estimate of Covariance:
 Air.Flow     9.344     8.689       8.525    
 Water.Temp   8.689    13.716       9.126    
 Acid.Conc.   8.525     9.126      34.536    
-----------------------------------------------------------------------
+--------------------------------------------------------
 coleman               20   5     3.097223
+Outliers:  7 
+[1]  1  6  9 10 11 15 18
 -------------
 
 Call:
@@ -243,8 +232,10 @@ X2    1.32070  963.78507  244.38519    9.31980   25.51335
 X3   -0.19696  244.38519   88.65102    2.83418    7.49100
 X4    0.11198    9.31980    2.83418    0.58055    0.41059
 X5    0.05548   25.51335    7.49100    0.41059    0.77092
-----------------------------------------------------------------------
+--------------------------------------------------------
 salinity              28   3     3.875096
+Outliers:  9 
+[1]  3  5 10 11 15 16 17 23 24
 -------------
 
 Call:
@@ -259,8 +250,10 @@ Robust Estimate of Covariance:
 X1  15.3529   1.9895  -5.0752
 X2   1.9895   5.2096  -0.7687
 X3  -5.0752  -0.7687   2.3141
-----------------------------------------------------------------------
+--------------------------------------------------------
 wood                  20   5   -35.156305
+Outliers:  7 
+[1]  4  6  7  8 11 16 19
 -------------
 
 Call:
@@ -277,8 +270,10 @@ X2   1.210e-03   3.118e-04   8.164e-04  -3.344e-05   1.521e-05
 X3   2.028e-03   8.164e-04   4.266e-03  -5.605e-04   2.267e-04
 X4  -3.769e-04  -3.344e-05  -5.605e-04   1.831e-03   1.176e-03
 X5  -1.048e-03   1.521e-05   2.267e-04   1.176e-03   1.780e-03
-----------------------------------------------------------------------
+--------------------------------------------------------
 hbk                   75   3     1.432433
+Outliers:  14 
+ [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14
 -------------
 
 Call:
@@ -293,8 +288,10 @@ Robust Estimate of Covariance:
 X1  1.64848  0.07391  0.17086
 X2  0.07391  1.67792  0.20494
 X3  0.17086  0.20494  1.55835
-----------------------------------------------------------------------
+--------------------------------------------------------
 Animals               28   2    18.194771
+Outliers:  10 
+ [1]  2  6  7  9 12 14 15 16 25 28
 -------------
 
 Call:
@@ -308,8 +305,10 @@ Robust Estimate of Covariance:
        body   brain
 body    4993   8466
 brain   8466  30334
-----------------------------------------------------------------------
+--------------------------------------------------------
 milk                  86   8   -25.111176
+Outliers:  22 
+ [1]  1  2  3 11 12 13 14 15 16 17 18 20 27 28 41 44 47 70 73 74 75 77
 -------------
 
 Call:
@@ -338,8 +337,10 @@ X5  1.066e-01
 X6  1.126e-01
 X7  4.220e-01
 X8  1.681e-01
-----------------------------------------------------------------------
+--------------------------------------------------------
 bushfire              38   5    23.218805
+Outliers:  16 
+ [1]  7  8  9 10 11 12 29 30 31 32 33 34 35 36 37 38
 -------------
 
 Call:
@@ -356,7 +357,7 @@ V2    615.7    543.3  -2586.8   -528.4   -446.7
 V3  -3890.7  -2586.8  22979.0   5645.8   4486.6
 V4   -875.4   -528.4   5645.8   1487.1   1161.5
 V5   -714.0   -446.7   4486.6   1161.5    914.8
-----------------------------------------------------------------------
+--------------------------------------------------------
 ======================================================================
 > dogen()
 > #cat('Time elapsed: ', proc.time(),'\n') # for ``statistical reasons''

@@ -2,16 +2,17 @@
 \docType{class}
 \alias{CovMest-class}
 
-\title{Class "CovMest" - constrained M-estimates of multivariate location and scatter }
-\description{ This class, derived from the virtual class "CovRobust" accomodates
+\title{Constrained M-estimates of Multivariate Location and Scatter }
+\description{ 
+    This class, derived from the virtual class "CovRobust" accomodates
     constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
     a High breakdown point initial estimate (Minimum Covariance Determinant - 
     \sQuote{Fast MCD})}
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("CovMest", ...)},
-but the usual way of creating \code{CovMest} objects is a call to the function
-\code{CovMest} which serves as a constructor.
+    Objects can be created by calls of the form \code{new("CovMest", ...)},
+    but the usual way of creating \code{CovMest} objects is a call to the function
+    \code{CovMest} which serves as a constructor.
 
 }
 \section{Slots}{
@@ -25,7 +26,7 @@ but the usual way of creating \code{CovMest} objects is a call to the function
     \item{\code{vt}:}{Object of class \code{"vector"} - vector of weights (v)}
     \item{\code{crit}:}{Object of class \code{"numeric"} - the value of the objective function}
     \item{\code{call}:}{Object of class \code{"language"} - the call to \code{CovMest}}
-    \item{\code{method}:}{Object of class \code{"character"} - method used = \code{mest}}
+    \item{\code{method}:}{Object of class \code{"character"} - method used = \code{"M-Estimates"}}
     \item{\code{X}:}{Object of class \code{"Umatrix"} - the data matrix or NULL }
   }
 }

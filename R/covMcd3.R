@@ -325,7 +325,7 @@ covMcd <- function(x,
         ans$method <- paste("Univariate location and scale estimation.")
         ans$alpha <- alpha
         ans$quan <- quan
-        ans$raw.cov <- scale^2
+        ans$raw.cov <- matrix(scale^2, nrow=1, ncol=1)
         names(ans$raw.cov) <- dimn[[2]][1]
         ans$raw.center <- as.vector(center)
         names(ans$raw.center) <- dimn[[2]][1]

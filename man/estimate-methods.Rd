@@ -5,7 +5,7 @@
 \alias{estimate,CovControlMest-method}
 \title{ Methods for Function estimate in Package 'rr4cov'}
 \description{
-    Each concrete control class, like \code{CovControlMest}, \code{CovControlOkg}, 
+    Each concrete control class, like \code{CovControlMest}, \code{CovControlOgk}, 
     etc., should implement an \code{estimate} method which will call the correponding
     (constructor)-function and will return the obtained S4 class, derived from
     \code{CovRobust}.
@@ -23,7 +23,12 @@
 \section{Methods}{
 \describe{
 
-\item{obj = "CovControlMest"}{ Compute the constrained M-estimates by calling\code{CovMest} }
+\item{obj = "CovControlMcd"}{ Compute the MCD estimates of multivariate location and 
+    scatter by calling\code{CovMcd} }
+\item{obj = "CovControlMest"}{ Compute the constrained M-estimates of multivariate location and 
+    scatter by calling\code{CovMest} }
+\item{obj = "CovControlOgk"}{ Compute the Ortogonalized Gnanadesikan-Kettenring (OGK) estimates of multivariate location and 
+    scatter  by calling\code{CovOgk} }
 }}
 \keyword{classes}
 \keyword{robust}
