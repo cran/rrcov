@@ -1,6 +1,6 @@
 
-R : Copyright 2005, The R Foundation for Statistical Computing
-Version 2.2.1  (2005-12-20 r36812)
+R : Copyright 2006, The R Foundation for Statistical Computing
+Version 2.3.1 (2006-06-01)
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -237,7 +237,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-02)
+Scalable Robust Estimators with High Breakdown Point (version 0.3-03)
 > dodata()
 
 Call:  dodata() 
