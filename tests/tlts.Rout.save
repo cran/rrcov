@@ -237,7 +237,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-03)
+Scalable Robust Estimators with High Breakdown Point (version 0.3-04)
 > dodata()
 
 Call:  dodata() 

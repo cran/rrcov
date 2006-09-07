@@ -329,7 +329,7 @@ covMcd <- function(x,
         names(ans$raw.cov) <- dimn[[2]][1]
         ans$raw.center <- as.vector(center)
         names(ans$raw.center) <- dimn[[2]][1]
-        ans$crit <- 1/(quan - 1) * sum(sort((x - as.double(mcd$initmean))^2, quan)[1:quan])
+        ans$crit <- 1/(quan - 1) * sum(sort((x - as.double(mcd$initmean))^2, partial = quan)[1:quan])
         center <- ans$center
         scale <- as.vector(sqrt(ans$cov))
         ans$mcd.wt <- rep(NA, length(na.x))
