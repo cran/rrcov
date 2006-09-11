@@ -1,3 +1,10 @@
+2006-09-07  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-04
+    * name the partiel= argument of the sort function in covMcd3.R - 
+    *   necessary for the coming R 2.4.0
+2006-07-08  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-03
+    * Remove CRLF line endings of the files *.Rout.save in rrcov/tests directory
 2006-06-01  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-02
     * add CovControlMcd function and CovControlMcd-class
