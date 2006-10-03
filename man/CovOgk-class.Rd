@@ -30,9 +30,9 @@
         used = \code{"Orthogonalized Gnanadesikan-Kettenring Estimator"}}
 
     \item{\code{raw.cov}:}{Object of class \code{"matrix"} the raw 
-        (not reweighted) estimate of location }
+        (not reweighted) estimate of covariance matrix }
     \item{\code{raw.center}:}{Object of class \code{"vector"} - the raw 
-        (not reweighted) estimate of scatter}
+        (not reweighted) estimate of the location vector}
     \item{\code{raw.mah}:}{Object of class \code{"Uvector"} - mahalanobis 
         distances of the observations based on the raw estimate of the 
         location and scatter }

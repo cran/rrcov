@@ -42,10 +42,12 @@ delivery                Delivery Time Data
 education               Education Expenditure Data
 estimate-methods        Methods for Function estimate in Package
                         'rr4cov'
+fish                    Fish Catch Data Set
 getCenter-methods       Accessor methods to the essential slots of Cov
                         and its subclasses
 hbk                     Hawkins, Bradu, Kass's Artificial Data
 heart                   Heart Catherization Data
+hemophilia              Hemophilia Data
 lactic                  Calibration of an Instrument that Measures
                         Lactic Acid Concentration in Blood
 ltsReg                  Robust regression with high breakdown point

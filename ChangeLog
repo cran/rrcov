@@ -1,6 +1,12 @@
+2006-12-21  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-05
+    * fixed a bug in ltsReg (in the QQ-plot were plotted the residuals  instead
+    *   of the standardized reisuals)
+    * added dataset 'Fish Catch Data'
+    * added dataset 'Hemophilia'
 2006-09-07  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-04
-    * name the partiel= argument of the sort function in covMcd3.R - 
+    * name the partial= argument of the sort function in covMcd3.R - 
     *   necessary for the coming R 2.4.0
 2006-07-08  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-03
