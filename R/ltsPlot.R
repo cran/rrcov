@@ -227,7 +227,7 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
         ylab <- "Standardized LS residual"
     }
 
-    # VT:: 18.01.20045
+    # VT:: 18.01.2005
     # set id.n to the number of all outliers: 
     #  regression outliers (weight==0)+ leverage points (RD > cutoff)
     if(missing(id.n)) {                                             
@@ -293,9 +293,13 @@ rdiag <- function(obj, classic = FALSE, lab, id.n, ...){
     
     if(which == "all" || which == "rqq"){    
         nx <- if(id.n.default) length(which(x$lts.wt==0)) else id.n     # set id.n to the number of regression outliers (weight==0) 
-        myqqplot(x$residuals, id.n=nx, ...)                             # normal QQ-plot of the LTS residuals
+        
+        ##  VT::20.12.2006 - the standardized residuals are in x$resid
+        ##   - no change for the other plot functions - the residuals will be standardized
+        ##          inside indexplot(), fitplot(), etc
+        myqqplot(x$resid, id.n=nx, ...)                                 # normal QQ-plot of the LTS residuals
         if(classic)
-            myqqplot(obj.cl$residuals, classic=TRUE, id.n=nx, ...)      # normal QQ-plot of the LS residuals
+            myqqplot(obj.cl$resid, classic=TRUE, id.n=nx, ...)          # normal QQ-plot of the LS residuals
     }
 
     if(which == "all" || which == "rindex"){    
