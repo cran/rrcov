@@ -21,7 +21,14 @@ print.mcd <- function (x, digits = max(3, getOption("digits") - 3), ...)
         dput(cl)
         cat("\n")
     }
-    cat("\nLog(det): ", format(log(x$crit), digits = digits) ,"\n\n")
+    
+    xx <- NA
+    if(!is.null(x$crit))
+        xx <- format(log(x$crit), digits = digits)
+    else if (!is.null(x$raw.objective))
+        xx <- format(log(x$raw.objective), digits = digits)
+    
+    cat("\nLog(det): ", xx ,"\n\n")
     cat("\nRobust Estimate of Location: \n")
     print.default(format(x$center, digits = digits), print.gap = 2, quote = FALSE)
     cat("\nRobust Estimate of Covariance: \n")

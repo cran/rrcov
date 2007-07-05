@@ -3,7 +3,7 @@
 \alias{estimate}
 \alias{estimate-methods}
 \alias{estimate,CovControlMest-method}
-\title{ Methods for Function estimate in Package 'rr4cov'}
+\title{ Methods for Function estimate in Package 'rrcov'}
 \description{
     Each concrete control class, like \code{CovControlMest}, \code{CovControlOgk}, 
     etc., should implement an \code{estimate} method which will call the correponding

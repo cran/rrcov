@@ -32,7 +32,7 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
     ##  but if single parameters were passed (not defaults) they will override the
     ##  control object.
     ## The functions 'mrob()' and 'vrob()' can be supplied only via the control 
-    ##  object. If no control object i spassed these function will be taken 
+    ##  object. If no control object is passed these function will be taken 
     ##  from the default one
     
     defcontrol <- CovControlOgk()           # default control

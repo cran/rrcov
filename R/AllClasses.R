@@ -117,7 +117,7 @@ setClass("CovControlMest", representation(r="numeric",
 ##  variables x1 and x2. 
 ## Use the estimate defined by Gnanadesikan and Kettenring (1972):
 ##     cov(X,Y)=1/4 * (sigma(X+Y)^2 - sigma(X-Y)^2)
-##  where sigma is a obust univariate scale.
+##  where sigma is a robust univariate scale.
 ##  As sigma is used the tau scale estimate defined above - mrobTau()
 ##
 .vrobGK <- function(x1, x2, ...)

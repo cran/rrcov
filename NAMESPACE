@@ -14,7 +14,8 @@ export(Cov,
        covPlot, 
        ltsPlot,
        rrcov.control,
-       tolellipse
+       tolellipse,
+       T2.test
 )
 
 ##S3 generics
@@ -29,6 +30,9 @@ S3method(print, summary.lts)
 
 S3method(summary, lts)
 S3method(summary, mcd)
+
+S3method(T2.test, default)
+S3method(T2.test, formula)
 
 ## Workaround for the S3-S4 incompatibility
 ## in R 2.2.1

@@ -43,6 +43,7 @@ Cov <- function(x, unbiased = TRUE)
 ##
 
 setMethod("isClassic", "Cov", function(obj) TRUE)
+setMethod("isSingular", "Cov", function(obj) .isSingular(getCov(obj)))
 setMethod("isClassic", "SummaryCov", function(obj) TRUE)
 
 
@@ -126,7 +127,7 @@ setMethod("show", "SummaryCov", function(object){
 
 setMethod("plot", "Cov", function(x, y="missing", 
                                 which=c("all", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
-                                ask = (which=="all" && dev.interactive()),
+                                ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
                                 id.n,
                                 tol = 1e-7, ...)
@@ -150,9 +151,9 @@ setMethod("plot", "Cov", function(x, y="missing",
     if(length(getCenter(x))  != p)
         stop( "Data set and provided center have different dimensions!")
 
-    ## FIXME - check for singularity of the cov matrix
-    ## if(mcd$crit == 0)
-    ##     stop( "The covariance matrix is singular!")
+    ## Check for singularity of the cov matrix
+    if(isSingular(x))
+        stop("The covariance matrix is singular!")
 
     if(missing(cutoff))
         cutoff <- sqrt(qchisq(0.975, p))

@@ -49,6 +49,10 @@ covMcd <- function(x,
                    control)
 {
 
+    ## no need of this parameter - used only for test and comparisons. if set to FALSE
+    ##  no simulated correction factors will be used
+    use.simulation = TRUE
+
     ## Analize and validate the input parameters ...
 
     ## if a control object was supplied, take the option parameters from it,
@@ -113,7 +117,7 @@ covMcd <- function(x,
     ##   contain the correction factors (concistency and finite sample)
     ##   for the raw and reweighted estimates respectively. Set them initially to 1.
     ##   If use.correction is set to FALSE (default=TRUE), the finite sample correction
-    ##   factor will bot be used (neither for the raw estimates nor for the reweighted)
+    ##   factor will not be used (neither for the raw estimates nor for the reweighted)
     raw.cnp2 <- rep(1,2)
     cnp2 <- rep(1,2)
     
@@ -158,10 +162,13 @@ covMcd <- function(x,
             if(sum(weights) == n)
                 cdelta.rew <- 1
             else {
-                qdelta.rew <- qchisq(sum(weights)/n, p)
-                cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 
-                  1)/(sum(weights)/n)
-                cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+                ## VT::19.3.2007 - replace this code used several times by a function MCDcons(p, alpha)
+                ## - for the reweighted cov use 'sum(weights)/n' instead of alpha
+                ##
+                ### qdelta.rew <- qchisq(sum(weights)/n, p)
+                ### cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
+                ### cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+                cnp2[1] <- cdelta.rew <- MCDcons(p, sum(weights)/n)
             }
             ans$cov <- ans$cov * cdelta.rew
             ans$call <- match.call()
@@ -245,10 +252,12 @@ covMcd <- function(x,
     
     ## Compute the consistency correction factor for the raw MCD 
     ##  (see calfa in Croux and Haesbroeck)
-    qalpha <- qchisq(quan/n, p)
-    calphainvers <- pgamma(qalpha/2, p/2 + 1)/(quan/n)
-    raw.cnp2[1] <- calpha <- 1/calphainvers
-    raw.cnp2[2] <- correct <- MCDcnp2(p, n, alpha)
+    ## VT::19.3.2007 
+    ###    qalpha <- qchisq(quan/n, p)
+    ###    calphainvers <- pgamma(qalpha/2, p/2 + 1)/(quan/n)
+    ###    raw.cnp2[1] <- calpha <- 1/calphainvers
+    raw.cnp2[1] <- calpha <- MCDcons(p, quan/n)
+    raw.cnp2[2] <- correct <- MCDcnp2(p, n, alpha, use.simulation)
     if(!use.correction)         # do not use finite sample correction factor
         raw.cnp2[2] <- correct <- 1.0
         
@@ -312,13 +321,16 @@ covMcd <- function(x,
             correct.rew <- 1
         }
         else {
-            qdelta.rew <- qchisq(sum(weights)/n, p)
-            cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
-            cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
-            cnp2[2] <- correct.rew <- MCDcnp2.rew(p, n, alpha)
+            ## VT::19.3.2007 - replace this code used several times by a function MCDcons(p, alpha)
+            ## - for the reweighted cov use 'sum(weights)/n' instead of alpha
+            ##
+            ### qdelta.rew <- qchisq(sum(weights)/n, p)
+            ### cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
+            ### cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+            cnp2[1] <- cdelta.rew <- MCDcons(p, sum(weights)/n)
+            cnp2[2] <- correct.rew <- MCDcnp2.rew(p, n, alpha, use.simulation)
             if(!use.correction)         # do not use finite sample correction factor
                 cnp2[2] <- correct.rew <- 1.0
-            
         }
         ans$cov <- ans$cov * cdelta.rew * correct.rew
         ans$call <- match.call()
@@ -507,10 +519,14 @@ covMcd <- function(x,
         correct.rew <- 1
     }
     else {
-        qdelta.rew <- qchisq(sum(weights)/n, p)
-        cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
-        cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
-        cnp2[2] <- correct.rew <- MCDcnp2.rew(p, n, alpha)
+        ## VT::19.3.2007 - replace this code used several times by a function MCDcons(p, alpha)
+        ## - for the reweighted cov use 'sum(weights)/n' instead of alpha
+        ##
+        ### qdelta.rew <- qchisq(sum(weights)/n, p)
+        ### cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(weights)/n)
+        ### cnp2[1] <- cdelta.rew <- 1/cdeltainvers.rew
+        cnp2[1] <- cdelta.rew <- MCDcons(p, sum(weights)/n)
+        cnp2[2] <- correct.rew <- MCDcnp2.rew(p, n, alpha, use.simulation)
         if(!use.correction)         # do not use finite sample correction factor
             cnp2[2] <- correct.rew <- 1.0
     }
@@ -569,8 +585,21 @@ covMcd <- function(x,
 }
 
 ### --- Namespace hidden (but parsed once and for all) : -------------
+MCDcons <- function(p, alpha){
+    ## VT::19.3.2007 - replace the code used several times by a function MCDcons(p, alpha)
+    ##
+    ## Compute the consistency correction factor for the MCD estimate
+    ##  (see calfa in Croux and Haesbroeck)
+    ##  - alpha = h/n = quan/n
+    ##  - use the same function for the reweighted estimates, 
+    ##      but instead of 'alpha' call with 'sum(weights)/n'
+    
+    qalpha <- qchisq(alpha, p)
+    calphainvers <- pgamma(qalpha/2, p/2 + 1)/alpha
+    1/calphainvers
+}
 
-MCDcnp2 <- function(p, n, alpha)
+MCDcnp2 <- function(p, n, alpha, use.simulation)
 {
     if(p > 2) {
         ##                              "alfaq"            "betaq"    "qwaarden"
@@ -599,6 +628,12 @@ MCDcnp2 <- function(p, n, alpha)
         fp.875.n <- 1 - exp(-0.351584646688712) / n^1.01646567502486
     }
     }
+    
+    ## VT:18.04.2007 - use simulated correction factors for several p and n: 
+    ## p in [1, 20] n in [2*p, ...]
+    fp.x <- MCDcnp2sim(p, n)
+    if(fp.x > 0 & use.simulation)
+        fp.500.n <- 1/fp.x
 
     stopifnot(0.5 <= alpha, alpha <= 1)
     if(alpha <= 0.875)
@@ -609,7 +644,7 @@ MCDcnp2 <- function(p, n, alpha)
     return(1/fp.alpha.n)
 } ## end{ MCDcnp2 }
 
-MCDcnp2.rew <- function(p, n, alpha)
+MCDcnp2.rew <- function(p, n, alpha, use.simulation)
 {
     if(p > 2) {
         ##                              "alfaq"            "betaq"    "qwaarden"
@@ -638,6 +673,12 @@ MCDcnp2.rew <- function(p, n, alpha)
         fp.875.n <- 1 - exp( -0.66046776772861) / n^ 0.88939595831888
     }
     }
+
+    ## VT:18.04.2007 - use simulated correction factors for several p and n: 
+    ## p in [1, 20] n in [2*p, ...]
+    fp.x <- MCDcnp2sim.rew(p, n)
+    if(fp.x > 0 & use.simulation)
+        fp.500.n <- 1/fp.x
 
     stopifnot(0.5 <= alpha, alpha <= 1)
     if(alpha <= 0.875)
@@ -849,4 +890,52 @@ MCDcnp2.rew <- function(p, n, alpha)
             coeff = mcd$coef,
             kount = mcd$kount,
             adjustcov = mcd$adjustcov))
+}
+
+##
+## VT:18.04.2007 - use simulated correction factors for several p and n and alpha=0.5. 
+##  p in [1, 20] n in [2*p, ...]
+##  see the modifications in MCDcnp2() and MCDcnp2.rew
+##
+##  VT::11.05.2007 - reduce the usage of the simulated correction factors to only those that 
+##  are definitvely wrong (negative or very large). This is done by: 
+##      a) reducing p.max
+##      b) reducing n.max
+##  NB: In general, "wrong" are the factors for the reweighted matrix, but whenever a simulated
+##      value for the reweighted is used, the corresponding simulated must be used for the raw too.
+##
+MCDcnp2sim.p.min <- 1
+MCDcnp2sim.p.max <- 9      # was 20 
+MCDcnp2sim.ncol  <- 20     # This is the number of column in the matrices
+##                 p=    1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
+MCDcnp2sim.n.min    <- c(1,  4,  6,  8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40)
+MCDcnp2sim.n.max   <- c( 2,  6, 10, 13, 16, 18, 20, 20, 20, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60)
+##MCDcnp2sim.n.max <- c(22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60)     ## these are the right (simulated) values for n.max
+MCDcnp2sim.mat <- matrix(c(1, 3.075819, 1.515999, 2.156169, 1.480742, 1.765485, 1.460206, 1.603707, 1.427429, 1.504712, 1.334528, 1.48297,  1.355308, 1.383867, 1.319241, 1.36065,  1.307467, 1.365596, 1.255259, 1.352741, 1.239381, 3.15342, 1.799889, 2.258497, 1.688312, 1.906779, 1.548203, 1.724785, 1.500873, 1.573442, 1.417137, 1.540805, 1.395945, 1.472596, 1.394247, 1.377487, 1.337394, 1.369354, 1.333378, 1.3181, 1.313813, 1.315528, 2.12777, 2.718898, 1.993509, 2.220433, 1.820585, 1.97782, 1.672455, 1.770151, 1.587478, 1.685352, 1.539295, 1.584536, 1.499487, 1.50702, 1.41952, 1.449058, 1.393042, 1.432999, 1.369964, 1.400997, 1.333824, 2.950549, 2.145387, 2.382224, 1.927077, 2.032489, 1.8371, 1.877833, 1.710891, 1.756053, 1.620778, 1.657761, 1.558978, 1.56257, 1.508633, 1.534406, 1.46709, 1.468734, 1.432529, 1.455283, 1.386975, 1.417532, 2.229573, 2.494447, 2.016117, 2.190061, 1.877996, 1.978964, 1.767284, 1.836948, 1.677372, 1.743316, 1.616383, 1.655964, 1.55484, 1.594831, 1.502185, 1.543723, 1.467005, 1.491123, 1.44402, 1.446915, 1.401578, 2.580264, 2.109121, 2.240741, 1.944719, 2.043397, 1.821808, 1.89725, 1.748788, 1.786988, 1.659333, 1.697012, 1.610622, 1.616503, 1.538529, 1.562024, 1.499964, 1.529344, 1.474519, 1.483264, 1.441552, 1.434448, 2.165233, 2.320281, 2.007836, 2.086471, 1.884052, 1.950563, 1.76926, 1.843328, 1.708941, 1.741039, 1.627206, 1.644755, 1.580563, 1.593402, 1.527312, 1.568418, 1.501462, 1.502542, 1.464583, 1.467921, 1.431141, 2.340443, 2.048262, 2.161097, 1.926082, 1.995422, 1.81446, 1.853165, 1.738533, 1.784456, 1.679444, 1.696463, 1.612931, 1.629483, 1.548186, 1.580026, 1.52198, 1.531111, 1.482914, 1.484824, 1.442726, 1.447838, 2.093386, 2.185793, 1.948989, 2.02804, 1.867137, 1.907732, 1.771923, 1.800413, 1.691612, 1.720603, 1.642705, 1.649769, 1.589028, 1.598955, 1.539759, 1.55096, 1.503965, 1.50703, 1.471349, 1.469791, 1.436959, 2.218315, 1.997369, 2.041128, 1.887059, 1.928524, 1.79626, 1.827538, 1.716748, 1.735696, 1.658329, 1.664211, 1.599286, 1.611511, 1.553925, 1.562637, 1.516805, 1.529894, 1.476064, 1.482474, 1.453253, 1.458467, 2.0247, 2.07899, 1.921976, 1.949376, 1.824629, 1.851671, 1.744713, 1.765647, 1.683525, 1.685592, 1.625113, 1.624961, 1.571921, 1.581223, 1.535257, 1.537464, 1.497165, 1.504879, 1.468682, 1.469319, 1.448344, 2.092315, 1.941412, 1.969843, 1.844093, 1.866133, 1.766145, 1.783829, 1.703613, 1.709714, 1.646078, 1.654264, 1.594523, 1.598488, 1.545105, 1.555356, 1.514627, 1.521353, 1.483958, 1.487677, 1.449191, 1.459721, 1.958987, 1.985144, 1.87739, 1.879643, 1.786823, 1.799642, 1.720015, 1.724688, 1.663539, 1.662997, 1.609267, 1.615124, 1.56746, 1.562026, 1.520586, 1.52503, 1.493008, 1.502496, 1.471983, 1.468546, 1.435064, 1.994706, 1.880348, 1.894254, 1.805827, 1.815965, 1.744296, 1.743389, 1.665481, 1.681644, 1.624466, 1.626109, 1.584028, 1.5818, 1.54376, 1.547237, 1.504878, 1.515087, 1.479032, 1.47936, 1.450758, 1.45073, 1.892685, 1.91087, 1.825301, 1.827176, 1.745363, 1.746115, 1.693373, 1.701692, 1.648247, 1.637112, 1.594648, 1.592013, 1.554849, 1.55013, 1.522186, 1.520901, 1.492606, 1.493072, 1.460868, 1.46733, 1.440956, 1.92771, 1.835696, 1.841979, 1.775991, 1.766092, 1.703807, 1.708791, 1.654985, 1.655917, 1.602388, 1.611867, 1.570765, 1.573368, 1.53419, 1.529033, 1.506767, 1.503596, 1.481126, 1.471806, 1.444917, 1.451682, 1.850262, 1.855034, 1.778997, 1.789995, 1.718871, 1.717326, 1.667357, 1.666291, 1.619743, 1.631475, 1.582624, 1.58766, 1.546302, 1.545063, 1.512222, 1.517888, 1.489127, 1.487271, 1.466722, 1.463618, 1.444137, 1.8709, 1.794033, 1.80121, 1.736376, 1.740201, 1.673776, 1.682541, 1.638153, 1.642294, 1.604417, 1.597721, 1.559534, 1.559108, 1.533942, 1.529348, 1.499517, 1.501586, 1.473147, 1.473031, 1.457615, 1.452348, 1.805753, 1.812952, 1.746549, 1.747222, 1.696924, 1.694957, 1.652157, 1.650568, 1.607807, 1.613666, 1.577295, 1.570712, 1.543704, 1.538272, 1.515369, 1.517113, 1.487451, 1.491593, 1.464514, 1.464658, 1.439359, 1.823222, 1.758781, 1.767358, 1.70872, 1.712926, 1.666956, 1.667838, 1.62077, 1.621445, 1.592891, 1.58549, 1.55603, 1.559042, 1.521501, 1.523342, 1.499913, 1.501937, 1.473359, 1.472522, 1.452613, 1.452448), 
+                         ncol = MCDcnp2sim.ncol)    
+##                 p=     1  2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
+MCDcnp2sim.n.min.rew <- c(1, 4,  6,  8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40)
+MCDcnp2sim.n.max.rew <- c(2, 6, 10, 13, 16, 18, 20, 20, 20, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60)
+##MCDcnp2sim.n.max.rew <- c(22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60) ## these are the right (simulated) values for n.max
+MCDcnp2sim.mat.rew <- matrix(c(1, 0.984724, 0.970109, 0.978037, 0.979202, 0.982933, 1.001461, 1.026651, 0.981233, 1.011895, 1.017499, 0.964323, 1.026574, 1.006594, 0.980194, 1.009828, 0.998083, 0.966173, 1.009942, 0.99916, 1.021521, 2.216302, 1.418526, 1.635601, 1.31402, 1.33975, 1.251798, 1.210917, 1.133114, 1.150666, 1.138732, 1.096822, 1.076489, 1.058343, 1.045746, 1.036743, 1.008929, 1.049537, 1.028148, 1.027297, 1.020578, 1.00074, 1.73511, 2.06681, 1.545905, 1.659655, 1.456835, 1.47809, 1.331966, 1.334229, 1.231218, 1.220443, 1.198143, 1.193965, 1.142156, 1.146231, 1.124661, 1.112719, 1.089973, 1.070606, 1.082681, 1.061243, 1.053191, 2.388892, 1.847626, 1.96998, 1.630723, 1.701272, 1.521008, 1.553057, 1.382168, 1.414555, 1.326982, 1.321403, 1.265207, 1.264856, 1.200418, 1.21152, 1.17531, 1.168536, 1.140586, 1.14457, 1.111392, 1.112031, 1.968153, 2.168931, 1.784373, 1.894409, 1.667912, 1.693007, 1.545176, 1.582428, 1.45319, 1.480559, 1.371611, 1.358541, 1.330235, 1.30264, 1.257518, 1.244156, 1.221907, 1.22455, 1.178965, 1.177855, 1.166319, 2.275891, 1.866587, 2.014249, 1.750567, 1.829363, 1.650019, 1.689043, 1.562539, 1.561359, 1.473378, 1.488554, 1.411097, 1.416527, 1.35117, 1.361044, 1.30205, 1.299037, 1.250265, 1.260083, 1.218665, 1.236027, 1.95771, 2.074066, 1.847385, 1.905408, 1.71393, 1.768425, 1.63908, 1.67234, 1.564992, 1.562337, 1.49229, 1.499573, 1.420813, 1.424067, 1.383947, 1.378726, 1.33062, 1.330071, 1.279404, 1.295302, 1.263947, 2.164121, 1.871024, 1.979485, 1.782417, 1.84489, 1.706023, 1.734857, 1.622782, 1.634869, 1.55196, 1.554423, 1.482325, 1.509195, 1.440726, 1.436328, 1.386335, 1.396277, 1.347939, 1.346732, 1.310242, 1.309371, 1.938822, 2.050409, 1.834863, 1.882536, 1.737494, 1.761608, 1.65742, 1.687579, 1.591863, 1.60158, 1.520982, 1.535234, 1.470649, 1.486485, 1.42892, 1.435574, 1.384132, 1.382329, 1.343281, 1.346581, 1.315111, 2.063894, 1.880094, 1.907246, 1.78278, 1.806648, 1.6952, 1.720922, 1.63084, 1.635274, 1.565423, 1.56171, 1.512015, 1.4986, 1.463903, 1.456588, 1.422856, 1.407325, 1.376724, 1.373923, 1.346464, 1.34259, 1.898389, 1.950406, 1.812053, 1.849175, 1.72649, 1.737651, 1.646719, 1.655112, 1.587601, 1.597894, 1.539877, 1.53329, 1.495054, 1.490548, 1.445249, 1.446037, 1.410272, 1.412274, 1.375797, 1.369604, 1.341232, 1.992488, 1.830452, 1.857314, 1.758686, 1.763822, 1.683215, 1.679543, 1.619269, 1.608512, 1.565, 1.562282, 1.498869, 1.51325, 1.470912, 1.464654, 1.427573, 1.439301, 1.402308, 1.391006, 1.37074, 1.367573, 1.855502, 1.891242, 1.77513, 1.790618, 1.706443, 1.713098, 1.642896, 1.636577, 1.580366, 1.581752, 1.542937, 1.531668, 1.487894, 1.492039, 1.460304, 1.449762, 1.4219, 1.420953, 1.390137, 1.388677, 1.360506, 1.908277, 1.802091, 1.806128, 1.723757, 1.727249, 1.659883, 1.670056, 1.605209, 1.611481, 1.558846, 1.551762, 1.512951, 1.511515, 1.468948, 1.476073, 1.441508, 1.434997, 1.412687, 1.406782, 1.380452, 1.375924, 1.811415, 1.822311, 1.740544, 1.739355, 1.68127, 1.685342, 1.620281, 1.622572, 1.579611, 1.570103, 1.529881, 1.530097, 1.490041, 1.4947, 1.457329, 1.456344, 1.423363, 1.428653, 1.399988, 1.390069, 1.376594, 1.837723, 1.76039, 1.771031, 1.697404, 1.690915, 1.634409, 1.63713, 1.589594, 1.586521, 1.552974, 1.545571, 1.505923, 1.512794, 1.477833, 1.477821, 1.444241, 1.44452, 1.419258, 1.421297, 1.394924, 1.389393, 1.779716, 1.781271, 1.706031, 1.71224, 1.655099, 1.654284, 1.608878, 1.605955, 1.565683, 1.565938, 1.523594, 1.531235, 1.492749, 1.486786, 1.457635, 1.461416, 1.432472, 1.430164, 1.404441, 1.400021, 1.378273, 1.798932, 1.735577, 1.727031, 1.671049, 1.677601, 1.624427, 1.617626, 1.579533, 1.579987, 1.544635, 1.538715, 1.504538, 1.50726, 1.477163, 1.477084, 1.450861, 1.444496, 1.428416, 1.422813, 1.400185, 1.39552, 1.750193, 1.752145, 1.690365, 1.692051, 1.642391, 1.63858, 1.600144, 1.596401, 1.558305, 1.555932, 1.525968, 1.522984, 1.491563, 1.492554, 1.467575, 1.45786, 1.437545, 1.430893, 1.413983, 1.409386, 1.391943, 1.762922, 1.701346, 1.704996, 1.6556, 1.655548, 1.611964, 1.615219, 1.569103, 1.571079, 1.540617, 1.541602, 1.503791, 1.50195, 1.478069, 1.47678, 1.452458, 1.451732, 1.429144, 1.426547, 1.40363, 1.402647), 
+                         ncol = MCDcnp2sim.ncol)    
+
+MCDcnp2sim <- function(p, n){
+    ret <- 0
+    pind <- p - MCDcnp2sim.p.min + 1
+    if(p >= MCDcnp2sim.p.min && p <=  MCDcnp2sim.p.max && n >= MCDcnp2sim.n.min[pind] && n <= MCDcnp2sim.n.max[pind]){
+        nind <- n - MCDcnp2sim.n.min[pind] + 1
+        ret <- MCDcnp2sim.mat[nind, pind]
+    }
+    ret
+}
+
+MCDcnp2sim.rew <- function(p, n){
+    ret <- 0
+    pind <- p - MCDcnp2sim.p.min + 1
+    if(p >= MCDcnp2sim.p.min && p <=  MCDcnp2sim.p.max && n >= MCDcnp2sim.n.min.rew[pind] && n <= MCDcnp2sim.n.max.rew[pind]){
+        nind <- n - MCDcnp2sim.n.min.rew[pind] + 1
+        ret <- MCDcnp2sim.mat.rew[nind, pind]
+    }
+    ret
 }

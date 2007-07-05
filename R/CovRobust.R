@@ -43,7 +43,7 @@ setMethod("show", "SummaryCovRobust", function(object){
 setMethod("plot", "CovRobust", function(x, y="missing", 
                                 which=c("all", "dd", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
                                 classic= FALSE,
-                                ask = (which=="all" && dev.interactive()),
+                                ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
                                 id.n,
                                 tol = 1e-7, ...)
@@ -67,9 +67,9 @@ setMethod("plot", "CovRobust", function(x, y="missing",
     if(length(getCenter(x))  != p)
         stop( "Data set and provided center have different dimensions!")
 
-    ## FIXME - check for singularity of the cov matrix
-    ## if(mcd$crit == 0)
-    ##     stop( "The covariance matrix is singular!")
+    ## Check for singularity of the cov matrix
+    if(isSingular(x))
+        stop("The covariance matrix is singular!")
 
     if(missing(cutoff))
         cutoff <- sqrt(qchisq(0.975, p))
@@ -81,25 +81,28 @@ setMethod("plot", "CovRobust", function(x, y="missing",
     }
 
     ccov <- Cov(data)
-    md <- sqrt(getDistance(ccov))
-    rd <- sqrt(getDistance(x))
+    md <- rd <- NULL
+    if(!isSingular(ccov))
+        md <- sqrt(getDistance(ccov))
+    if(!isSingular(x))
+        rd <- sqrt(getDistance(x))
     
     which <- match.arg(which)
-
     op <- if (ask) par(ask = TRUE) else list()
     on.exit(par(op))
-
-    if(which == "all" || which == "dd") {
+    
+    ## distance-distance plot: here we need both robust and mahalanobis distances
+    if((which == "all" || which == "dd") && !is.null(md) && !is.null(rd)) {
         .myddplot(md, rd, cutoff=cutoff, id.n=id.n) # distance-distance plot
     }
 
     ## index plot of mahalanobis distances
-    if(which == "all" || which == "distance") {
-        if(classic) {
+    if((which == "all" || which == "distance")  && !is.null(rd)) {
+        if(classic && !is.null(md)) {
             opr <- if(prod(par("mfrow")) == 1) par(mfrow=c(1,2), pty="m") else list()
         }
         .mydistplot(rd, cutoff, id.n=id.n) # index plot of robust distances
-        if(classic) {
+        if(classic && !is.null(md)) {
             .mydistplot(md, cutoff, classic=TRUE, id.n=id.n) # index plot of mahalanobis distances
             par(opr)
         }
@@ -107,13 +110,13 @@ setMethod("plot", "CovRobust", function(x, y="missing",
 
     ## qq-plot of the mahalanobis distances versus the
     ## quantiles of the chi-squared distribution
-    if(which == "all" || which == "qqchi2") {
-        if(classic) {
+    if((which == "all" || which == "qqchi2")  && !is.null(rd)) {
+        if(classic && !is.null(md)) {
             opr <- if(prod(par("mfrow")) == 1) par(mfrow=c(1,2), pty="m") else list()
         }
         .qqplot(rd, p, cutoff=cutoff, id.n=id.n) # qq-plot of the robust distances versus the
                                                  # quantiles of the chi-squared distribution
-        if(classic) {
+        if(classic && !is.null(md)) {
             .qqplot(md, p, cutoff=cutoff, classic=TRUE, id.n=id.n)
                                                  # qq-plot of the mahalanobis distances
             par(opr)
@@ -122,10 +125,12 @@ setMethod("plot", "CovRobust", function(x, y="missing",
 
     if(which == "all" || which == "tolEllipsePlot") {
         if(length(dim(data)) >= 2 && dim(data)[2] == 2){
-            if(classic)
-                .tolellipse(rcov=x, ccov = ccov, cutoff=cutoff, id.n=id.n, tol=tol)
-            else
-                .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol)
+            if(!is.null(rd)){
+                if(classic &&  !is.null(md))
+                    .tolellipse(rcov=x, ccov = ccov, cutoff=cutoff, id.n=id.n, tol=tol)
+                else
+                    .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol)
+            }
         }
         else
             warning("Warning: For tolerance ellipses the dimension must be 2!")             
@@ -137,4 +142,4 @@ setMethod("plot", "CovRobust", function(x, y="missing",
         else
             .myscreeplot(rcov=x)
     }
-}) ## end { plot("Cov") }
+}) ## end { plot("CovRobust") }
