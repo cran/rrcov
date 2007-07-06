@@ -1,7 +1,10 @@
 aircraft                Aircraft Data
 airmay                  Air Quality Data
+Appalachia              Annual maximum streamflow in central Appalachia
 brain                   Brain and Body Weights for 28 Species
 bushfire                Campbell Bushfire Data
+Cascades                Annual precipitation totals for the North
+                        Cascades region
 cloud                   Cloud point of a Liquid
 coleman                 Coleman Data Set
 Cov                     Classical Estimates of Multivariate Location
@@ -41,7 +44,7 @@ CovRobust-class         Class "CovRobust" - virtual base class for
 delivery                Delivery Time Data
 education               Education Expenditure Data
 estimate-methods        Methods for Function estimate in Package
-                        'rr4cov'
+                        'rrcov'
 fish                    Fish Catch Data Set
 getCenter-methods       Accessor methods to the essential slots of Cov
                         and its subclasses
@@ -50,13 +53,15 @@ heart                   Heart Catherization Data
 hemophilia              Hemophilia Data
 lactic                  Calibration of an Instrument that Measures
                         Lactic Acid Concentration in Blood
+lmom32                  Hosking and Wallis Data Set, Table 3.2
+lmom33                  Hosking and Wallis Data Set, Table 3.3
 ltsReg                  Robust regression with high breakdown point
 maryo                   Marona and Yohai Artificial Data
 milk                    Daudin's Milk Composition Data
 pension                 Pension Funds
 phosphor                Phosphorus Content Data
 pilot                   Pilot-Plant Data
-plot-methods            Methods for Function 'plot' in Package 'rr4cov'
+plot-methods            Methods for Function 'plot' in Package 'rrcov'
 plot.lts                Robust Regression Diagnostic Plots
 plot.mcd                Robust Distance Plots
 rrcov.control           Control object for the estimation parameters
@@ -69,6 +74,7 @@ SummaryCov-class        Class "SummaryCov" - summary of "Cov" objects
 SummaryCovRobust-class
                         Class "SummaryCovRobust" - summary of
                         "CovRobust" objects
+T2.test                 Robust Hotelling T2 test
 telef                   Number of International Calls from Belgium
 tolellipse              Tolerance Ellipse Plot
 wood                    Modified Wood Gravity Dataset

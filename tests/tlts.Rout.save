@@ -1,5 +1,5 @@
 
-R version 2.4.0 (2006-10-03)
+R version 2.4.1 (2006-12-18)
 Copyright (C) 2006 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -237,7 +237,7 @@ Type 'q()' to quit R.
 + }
 > 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-05)
+Scalable Robust Estimators with High Breakdown Point (version 0.3-06)
 > dodata()
 
 Call:  dodata() 

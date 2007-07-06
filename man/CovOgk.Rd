@@ -77,6 +77,23 @@ c3 <- CovOgk(hbk.x, beta=0.95,
              control = CovControlOgk(beta=0.99))
 c1
 
+
+x<-matrix(c(1,2,3,7,1,2,3,7), ncol=2)
+##  CovOgk(x)   - this would fail because the two columns of x are exactly collinear.
+##              In order to fix it, redefine the default 'vrob' function for example
+##              in the following way and pass it as a parameter in the control
+##              object.
+cc <- CovOgk(x, control=new("CovControlOgk", 
+                            vrob=function(x1, x2, ...)
+                            {
+                                r <- rrcov:::.vrobGK(x1, x2, ...)
+                                if(is.na(r))
+                                    r <- 0
+                                r
+                            })
+)
+cc
+
 }
 \keyword{robust}
 \keyword{multivariate}

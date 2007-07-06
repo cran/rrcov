@@ -4,7 +4,7 @@
 \alias{plot-methods}
 \alias{plot,Cov-method}
 \alias{plot,CovRobust-method}
-\title{Methods for Function 'plot' in Package 'rr4cov'}
+\title{Methods for Function 'plot' in Package 'rrcov'}
 \description{
  Shows the Mahalanobis distances based on robust and/or classical estimates 
 of the location and the covariance matrix in different plots. 

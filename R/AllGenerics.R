@@ -12,6 +12,7 @@ setGeneric("csolve", function(obj) standardGeneric("csolve"))
 setGeneric("iterM", function(obj, x, t1, s, eps, maxiter) standardGeneric("iterM")) 
 
 setGeneric("isClassic", function(obj) standardGeneric("isClassic")) 
+setGeneric("isSingular", function(obj) standardGeneric("isSingular")) 
 
 setGeneric("getCenter", function(obj) standardGeneric("getCenter")) 
 setGeneric("getCov", function(obj) standardGeneric("getCov")) 

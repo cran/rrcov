@@ -1,4 +1,4 @@
-## Interbnal class defining a default legend parameters to be used 
+## Internal class defining a default legend parameters to be used 
 ##  in plots with both robust and classical lines in the same panel
 ##  (e.g. scree plot, tolerance ellipses)
 setClass(".Legend", representation( leg = "logical",        # whether to draw a legend
