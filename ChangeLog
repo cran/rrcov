@@ -1,8 +1,14 @@
+2007-09-20  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-07
+
+    * Added classical and robust Wilks Lambda test - R/Wilks.test.R and
+    * man/Wilks.test.RD
+
 2007-07-05  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-06
 
     * Added one- and two-sample T2 Hotelling test and one-sample 
-    * robust T2 Hotelling test (willems et al 2002) - R/T2.test.R and
+    * robust T2 Hotelling test (Willems et al. 2002) - R/T2.test.R and
     * man/T2.test.RD
     
     * R/covMcd.R: usage of simulated finite sample correction factors fixed:

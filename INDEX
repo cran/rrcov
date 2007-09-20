@@ -77,4 +77,6 @@ SummaryCovRobust-class
 T2.test                 Robust Hotelling T2 test
 telef                   Number of International Calls from Belgium
 tolellipse              Tolerance Ellipse Plot
+Wilks.test              Classical and Robust One-way MANOVA: Wilks
+                        Lambda
 wood                    Modified Wood Gravity Dataset
