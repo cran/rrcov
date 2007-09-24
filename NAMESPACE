@@ -15,7 +15,8 @@ export(Cov,
        ltsPlot,
        rrcov.control,
        tolellipse,
-       T2.test
+       T2.test,
+       Wilks.test
 )
 
 ##S3 generics
@@ -33,6 +34,11 @@ S3method(summary, mcd)
 
 S3method(T2.test, default)
 S3method(T2.test, formula)
+
+S3method(Wilks.test, default)
+S3method(Wilks.test, formula)
+S3method(Wilks.test, data.frame)
+S3method(Wilks.test, matrix)
 
 ## Workaround for the S3-S4 incompatibility
 ## in R 2.2.1

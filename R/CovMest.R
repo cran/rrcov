@@ -1,4 +1,4 @@
-CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0, S0)
+CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0, S0, initcontrol)
 {
 
     ## Analize and validate the input parameters ...
@@ -38,9 +38,12 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
 
     ## if not provided initial estimates, compute them as MCD 
     if(missing(t0) || missing(S0)){
-        mcd <- covMcd(x)
-        t0 <- mcd$raw.center
-        S0 <- mcd$raw.cov
+        if(missing(initcontrol))
+            init <- covMcd(x)
+        else
+            init <- estimate(initcontrol)
+        t0 <- init$raw.center
+        S0 <- init$raw.cov
     }
 
     ## calculate the constants M and c 

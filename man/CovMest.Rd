@@ -4,13 +4,14 @@
 \concept{High breakdown point}
 \usage{
     CovMest(x, r = 0.45, arp = 0.05, eps=1e-3, 
-        maxiter=120, control, t0, S0)
+        maxiter=120, control, t0, S0, initcontrol)
 }
 \description{
     Computes constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
-    a High breakdown point initial estimate (Minimum Covariance Determinant - 
-    \sQuote{Fast MCD})
+    a High breakdown point initial estimate as defined by Rocke (1996). 
+    The default initial estimate is the Minimum Covariance Determinant 
+    estimate computed by the \sQuote{Fast MCD} algorithm.
 }
 \arguments{
   \item{x}{a matrix or data frame. }
@@ -31,6 +32,9 @@
     If not supplied MCD will be used. }
   \item{S0}{ optional initial high breakdown point estimates of the 
     scatter. If not supplied MCD will be used. }
+  \item{initcontrol}{ optional control object - of class CovControl - specifing the 
+    initial high breakdown point estimates of location and scatter. If not supplied 
+    MCD will be used. }
 }
 \details{
   Rocke (1996) has shown that the S-estimates of multivariate location and scatter
