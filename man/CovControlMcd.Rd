@@ -7,7 +7,7 @@
   containing the control parameters for \code{CovMcd}
 }
 \usage{
-CovControlMcd(alpha = 0.5, nsamp = 500, seed = 0, print.it = FALSE, use.correction = TRUE)
+CovControlMcd(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE, use.correction = TRUE)
 }
 
 \arguments{
@@ -22,9 +22,9 @@ CovControlMcd(alpha = 0.5, nsamp = 500, seed = 0, print.it = FALSE, use.correcti
     exhaustive enumeration will be attempted however many samples are
     needed.  In this case a warning message will be displayed saying
     that the computation can take a very long time.}
-  \item{seed}{starting value for random generator. Default is \code{seed = 0}}
+  \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   %% MM (FIXME): change this to 'trace'  (as in other S functions):
-  \item{print.it}{whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors. 
     Default is \code{use.correction=TRUE}}
 }

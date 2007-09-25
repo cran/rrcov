@@ -40,27 +40,33 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
 ##@in  full              : [boolean] whether to print the estimated coeficients and scale 
 ##@in  method            : [character] select a method: one of (FASTLTS, MASS) 
 
-    dolts <- function(x, y, xname, nrep=1){ 
+    dolts <- function(form, dname, dataset, nrep=1){ 
+        if(missing(dataset)) {
+            data(list = dname)
+            dataset <- get(dname)
+        } else if(missing(dname))
+            dname <- deparse(substitute(dataset))
+        environment(form) <- environment() ## !?!
+        x <- model.matrix(form, model.frame(form, data = dataset))
+        dx <- dim(x) - 0:1 # not counting intercept
+
         if(method == "MASS"){
-            lts <- ltsreg(x,y)
-            quan <- as.integer((dim(x)[1] + (dim(x)[2] + 1) + 1)/2)   #default: (n+p+1)/2
+            lts <- MASS::lqs(form, data = dataset, method = "lts")
+            quan <- (dx[1] + (dx[2] + 1) + 1)/2 #default: (n+p+1)/2
         } else {
-            lts <- ltsReg(x, y, mcd = FALSE)
-            quan <- as.integer(lts$quan)
+            lts <- ltsReg(form, data = dataset, mcd = FALSE)
+            quan <- lts$quan
         }
 
-        crit <- lts$crit
-        if(time){
-            xtime <- system.time(dorep(x, y, nrep, method))[1]/nrep
-            xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
+        xres <- sprintf("%*s %3d %3d %3d %12.6f",
+                        lname, dname, dx[1], dx[2], as.integer(quan), lts$crit)
+        if(time) {
+            xtime <- system.time(repLTS(form, data = dataset, nrep, method))[1]
+            xres <- sprintf("%s %10.1f", xres, 1000 * xtime / nrep)
         }
-        else{
-            xres <- sprintf("%3d %3d %3d %12.6f\n", dim(x)[1], dim(x)[2], quan, crit)
-        }
-        
-        lpad<-lname-nchar(xname)
-        cat(pad.right(xname,lpad), xres)
-        if(!short){
+        cat(xres, "\n")
+
+        if(!short) {
             cat("Best subsample: \n")
             print(lts$best)
 
@@ -70,14 +76,17 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
             cat("Outliers: ",nbad,"\n")
             if(nbad > 0)
                 print(ibad)
-            if(full){
+            if(full) {
                 cat("-------------\n")
                 print(lts)
                 print(summary(lts))
-            } 
+            }
             cat("--------------------------------------------------------\n")
         }
     } 
+
+    options(digits = 5)
+    set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
     library(rrcov)
@@ -86,7 +95,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
         library(MASS)
 
     data(heart)
-    data(stars)
+    data(starsCYG)
     data(phosphor)
     data(stackloss)
     data(coleman)
@@ -94,7 +103,6 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
     data(aircraft)
     data(delivery)
     data(wood)
-
     data(hbk)
 
     tmp <- sys.call()
@@ -103,16 +111,16 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTL
     cat("========================================================\n")
     cat("Data Set               n   p  Half      obj         Time\n")
     cat("========================================================\n")
-    dolts(heart.x,heart.y, data(heart), nrep)
-    dolts(stars.x,stars.y, data(stars), nrep)
-    dolts(phosphor.x,phosphor.y, data(phosphor), nrep)
-    dolts(stack.x,stack.loss, data(stackloss), nrep)
-    dolts(coleman.x,coleman.y, data(coleman), nrep)
-    dolts(salinity.x,salinity.y, data(salinity))
-    dolts(aircraft.x,aircraft.y, data(aircraft))
-    dolts(delivery.x,delivery.y, data(delivery))
-    dolts(wood.x,wood.y, data(wood), nrep)
-    dolts(hbk.x,hbk.y, data(hbk), nrep)
+    dolts(clength ~ . , "heart", nrep = nrep)
+    dolts(log.light ~ log.Te , "starsCYG", nrep = nrep)
+    dolts(plant ~ . , "phosphor", nrep = nrep)
+    dolts(stack.loss ~ . , "stackloss", nrep = nrep)
+    dolts(Y ~ . , "coleman", nrep = nrep)
+    dolts(Y ~ . , "salinity")
+    dolts(Y ~ . , "aircraft")
+    dolts(delTime ~ . , "delivery")
+    dolts(y ~ . , "wood", nrep = nrep)
+    dolts(Y ~ . , "hbk", nrep = nrep)
 
     cat("========================================================\n")
 }

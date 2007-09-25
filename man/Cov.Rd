@@ -21,14 +21,10 @@
 \details{
   
 }
-\note{
-}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \value{
   An object of class \code{"Cov"}.   
-}
-\references{
 }
 \seealso{
   \code{\link{Cov-class}}

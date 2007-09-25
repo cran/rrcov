@@ -8,7 +8,7 @@
      Determinant) estimator.
 }
 \usage{
-CovMcd(x, alpha = 1/2, nsamp = 500, seed = 0, print.it = FALSE, use.correction = TRUE, control)
+CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction = TRUE, control)
 }
 \arguments{
   \item{x}{a matrix or data frame. }
@@ -23,9 +23,8 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = 0, print.it = FALSE, use.correction =
     exhaustive enumeration will be attempted however many samples are
     needed.  In this case a warning message will be displayed saying
     that the computation can take a very long time.}
-  \item{seed}{starting value for random generator. Default is \code{seed = 0}}
-  %% MM (FIXME): change this to 'trace'  (as in other S functions):
-  \item{print.it}{whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{seed}{starting value for random generator. Default is \code{seed = FALSE}}
+  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors. 
     Default is \code{use.correction=TRUE}}
   \item{control}{ a control object (S4) of class \code{\link{CovControlMcd-class}} 
@@ -38,9 +37,9 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = 0, print.it = FALSE, use.correction =
   This function computes the minimum covariance determinant estimator 
   of location and scatter and returns an S4 object of class 
   \code{\link{CovMcd-class}} containing the estimates. 
-  The implementation of the function is similar to the existing is 
-  similar to the existing \R function \code{\link{covMcd}()} which 
-  returns an S3 object.  The MCD method looks for the \eqn{h (> n/2)} 
+  The implementation of the function is similar to the existing \R function 
+  \code{\link[robustbase]{covMcd}()} which returns an S3 object.  
+  The MCD method looks for the \eqn{h (> n/2)} 
   observations (out of \eqn{n}) whose classical
   covariance matrix has the lowest possible determinant.  The raw MCD
   estimate of location is then the average of these \eqn{h} points,
@@ -76,9 +75,8 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = 0, print.it = FALSE, use.correction =
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }
 \note{ 
-    The function \code{\link{covMcd}()} on which \code{CovMcd} is based 
+    The function \code{\link[robustbase]{covMcd}()} on which \code{CovMcd} is based 
     is deprecated i.e. is going to be made obsolete in future versions.
-% ~Make other sections like Warning with \section{Warning }{....} ~
 }
 \seealso{
   \code{\link[MASS]{cov.mcd}} from package \pkg{MASS}

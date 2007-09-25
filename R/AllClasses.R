@@ -12,6 +12,7 @@ setClass("PsiBwt", representation(M = "numeric"),
 ##  mahalanobis/robust distances
 setClassUnion("Uvector", c("vector", "NULL"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
+setClassUnion("Ulist", c("list", "NULL"))
 
 ## This is a virtual base class for control objects. Each robust
 ##  method like CovMest, CovOgk, etc. will derive a subclass with
@@ -25,6 +26,7 @@ setClass("Cov", representation(call = "language",
                               n.obs = "numeric",
                               mah = "Uvector",
                               method = "character",
+                              singularity = "Ulist",
                               X = "Umatrix")) 
 
 setClass("SummaryCov", representation(covobj = "Cov",
@@ -63,13 +65,13 @@ setClass("CovOgk", representation(raw.cov = "matrix",
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp="numeric",
-                                          seed="numeric",
-                                          print.it="logical",
+                                          seed="Uvector",
+                                          trace="logical",
                                           use.correction="logical"),
                            prototype = list(alpha=0.5,
                                           nsamp=500,
                                           seed=0,
-                                          print.it=FALSE,
+                                          trace=FALSE,
                                           use.correction=TRUE),
                            contains="CovControl"
 ) 
@@ -135,3 +137,27 @@ setClass("CovControlOgk", representation(niter="numeric",
                                             vrob=rrcov:::.vrobGK),
                            contains="CovControl"
 ) 
+
+###################### ROBPCA ####################################
+setClass("Pca", representation(call = "language",
+                              center = "vector",
+                              loadings = "matrix",
+                              eigenvalues = "vector",
+                              scores = "matrix",
+                              k = "numeric",
+                              sd = "Uvector",
+                              od = "Uvector",
+                              cutoff.sd = "numeric",
+                              cutoff.od = "numeric",
+                              flag = "Uvector",
+                              n.obs = "numeric",
+                              "VIRTUAL")) 
+
+setClass("PcaClassic", contains="Pca") 
+
+setClass("PcaRobust", representation("VIRTUAL"),
+                    contains="Pca") 
+
+setClass("Robpca", representation(alpha = "numeric",
+                                  quan = "numeric"),
+                    contains="PcaRobust") 

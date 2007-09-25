@@ -65,10 +65,10 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
             ESTIMATE = t(as.matrix(xbar))
             rownames(ESTIMATE) <- "mean x-vector"
         }else if(method == "mcd"){
-            mcd <- covMcd(x, print.it=FALSE, alpha=0.75)
-            xbar <- mcd$center
+            mcd <- CovMcd(x, trace=FALSE, alpha=0.75)
+            xbar <- getCenter(mcd)
             xdiff <- xbar - mu
-            V <- mcd$cov
+            V <- getCov(mcd)
 
             xdq <- .getApprox(p, n)
             d <- xdq$d

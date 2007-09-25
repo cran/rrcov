@@ -1,3 +1,22 @@
+2007-09-28  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-01
+
+    * Removed covMcd, ltsReg and all datasets which were already moved to 
+    * package robustbase. Now package robustbase is required and these
+    * functions are used from there. This could cause some minor 
+    * incompatibilities because of changed parameters in covMcd(), like: 
+    *   - trace=FALSE instead of print.it=FALSE
+    *   - seed=NULL instead of seed=0
+    *   - changed structure and names of datasets 
+
+2007-09-24  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.3-08
+
+    * Added ROBPCA - Robust Principal Component Analysis - with an
+    *   S4 object model R/Pca.R, R/PcaClassic,  R/Robpca and
+    *   man/Pca-class.RD, man/PcaRobust-class.Rd, man/PcaClassic-class.RD
+    *   man/Robpca-class.RD, man/PcaClassic.RD, man/Robpca.RD
+
 2007-09-20  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-07
 

@@ -1,6 +1,6 @@
 
-R version 2.4.1 (2006-12-18)
-Copyright (C) 2006 The R Foundation for Statistical Computing
+R version 2.5.1 (2007-06-27)
+Copyright (C) 2007 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -16,7 +16,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
+Loading required package: robustbase
+Scalable Robust Estimators with High Breakdown Point (version 0.4-01)
 > dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 +     domcd <- function(x, xname, nrep=1){
 +         n <- dim(x)[1]
@@ -47,7 +48,7 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
 +     method <- match.arg(method)
 + 
 +     data(heart)
-+     data(stars)
++     data(starsCYG)
 +     data(phosphor)
 +     data(stackloss)
 +     data(coleman)
@@ -56,33 +57,29 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
 + 
 +     data(hbk)
 + 
-+     data(brain)
++     data(Animals, package = "MASS")
++     brain <- Animals[c(1:24, 26:25, 27:28),]
 +     data(milk)
 +     data(bushfire)
 + 
-+ #    data(x1000)
-+ #    data(x5000)
-+     
 +     tmp <- sys.call()
 +     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 + 
 +     cat("Data Set               n   p  Half LOG(obj)        Time\n")
 +     cat("========================================================\n")
-+     domcd(heart.x,data(heart), nrep)
-+     domcd(stars,data(stars), nrep)
-+     domcd(phosphor.x,data(phosphor), nrep)
++     domcd(heart[, 1:2], data(heart), nrep)
++     domcd(starsCYG,data(starsCYG), nrep)
++     domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
 +     domcd(stack.x,data(stackloss), nrep)
-+     domcd(coleman.x,data(coleman), nrep)
-+     domcd(salinity.x,data(salinity), nrep)
-+     domcd(wood.x,data(wood), nrep)
-+     domcd(hbk.x,data(hbk), nrep)
++     domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
++     domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
++     domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
++     domcd(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 + 
-+     domcd(brain,data(brain), nrep)
-+     domcd(milk,data(milk), nrep)
-+     domcd(bushfire,data(bushfire), nrep)
++     domcd(brain, "Animals", nrep)
++     domcd(milk, data(milk), nrep)
++     domcd(bushfire, data(bushfire), nrep)
 +     cat("========================================================\n")
-+ #    domcd(x1000$X,data(x1000), nrep)
-+ #    domcd(x5000$X,data(x5000), nrep)
 + }
 > 
 > pad.right <- function(z, pads)
@@ -104,32 +101,34 @@ Outliers:  5
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-   X1     X2  
-39.76  35.71  
+height  weight  
+ 39.76   35.71  
 
 Robust Estimate of Covariance: 
-    X1     X2   
-X1  15.88  32.07
-X2  32.07  78.28
+        height  weight
+height  15.88   32.07 
+weight  32.07   78.28 
 --------------------------------------------------------
-stars                 47   2
+starsCYG              47   2
 Outliers:  7 
 [1]  7  9 11 14 20 30 34
 -------------
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-    X      Y  
-4.413  4.934  
+   log.Te  log.light  
+    4.413      4.934  
 
 Robust Estimate of Covariance: 
-   X        Y      
-X  0.01122  0.03755
-Y  0.03755  0.23499
+           log.Te   log.light
+log.Te     0.01122  0.03755  
+log.light  0.03755  0.23499  
 --------------------------------------------------------
 phosphor              18   2
 Outliers:  2 
@@ -138,15 +137,16 @@ Outliers:  2
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-   X1     X2  
-13.31  40.00  
+  inorg  organic  
+  13.31    40.00  
 
 Robust Estimate of Covariance: 
-    X1      X2    
-X1   92.82   93.24
-X2   93.24  152.63
+         inorg   organic
+inorg     92.82   93.24 
+organic   93.24  152.62 
 --------------------------------------------------------
 stackloss             21   3
 Outliers:  2 
@@ -155,6 +155,7 @@ Outliers:  2
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
   Air.Flow  Water.Temp  Acid.Conc.  
@@ -173,18 +174,19 @@ Outliers:  3
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-    X1      X2      X3      X4      X5  
- 2.723  43.202   2.912  25.010   6.290  
+  salaryP   fatherWc    sstatus  teacherSc  motherLev  
+    2.723     43.202      2.912     25.010      6.290  
 
 Robust Estimate of Covariance: 
-    X1         X2         X3         X4         X5       
-X1    0.12867    2.80048    0.92026    0.15118    0.06413
-X2    2.80048  678.72549  227.36415    9.30826   16.15102
-X3    0.92026  227.36415  101.39094    3.38013    5.63283
-X4    0.15118    9.30826    3.38013    0.57112    0.27701
-X5    0.06413   16.15102    5.63283    0.27701    0.44801
+           salaryP    fatherWc   sstatus    teacherSc  motherLev
+salaryP      0.12867    2.80048    0.92026    0.15118    0.06413
+fatherWc     2.80048  678.72549  227.36415    9.30826   16.15102
+sstatus      0.92026  227.36415  101.39094    3.38013    5.63283
+teacherSc    0.15118    9.30826    3.38013    0.57112    0.27701
+motherLev    0.06413   16.15102    5.63283    0.27701    0.44801
 --------------------------------------------------------
 salinity              28   3
 Outliers:  3 
@@ -193,6 +195,7 @@ Outliers:  3
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
    X1     X2     X3  
@@ -210,18 +213,19 @@ Outliers:  0
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-    X1      X2      X3      X4      X5  
+    x1      x2      x3      x4      x5  
 0.5508  0.1330  0.5087  0.5112  0.9069  
 
 Robust Estimate of Covariance: 
-    X1          X2          X3          X4          X5        
-X1   0.0078774  -0.0002767   0.0034220   0.0025563  -0.0027250
-X2  -0.0002767   0.0004644  -0.0003344  -0.0007968   0.0005818
-X3   0.0034220  -0.0003344   0.0039759   0.0014998  -0.0016071
-X4   0.0025563  -0.0007968   0.0014998   0.0037489  -0.0007524
-X5  -0.0027250   0.0005818  -0.0016071  -0.0007524   0.0026191
+    x1          x2          x3          x4          x5        
+x1   0.0078774  -0.0002767   0.0034220   0.0025563  -0.0027250
+x2  -0.0002767   0.0004644  -0.0003344  -0.0007968   0.0005818
+x3   0.0034220  -0.0003344   0.0039759   0.0014998  -0.0016071
+x4   0.0025563  -0.0007968   0.0014998   0.0037489  -0.0007524
+x5  -0.0027250   0.0005818  -0.0016071  -0.0007524   0.0026191
 --------------------------------------------------------
 hbk                   75   3
 Outliers:  14 
@@ -230,6 +234,7 @@ Outliers:  14
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
    X1     X2     X3  
@@ -241,13 +246,14 @@ X1  1.11350  0.04992  0.11541
 X2  0.04992  1.13338  0.13843
 X3  0.11541  0.13843  1.05261
 --------------------------------------------------------
-brain                 28   2
+Animals               28   2
 Outliers:  12 
  [1]  2  6  7  9 12 14 15 16 17 24 25 28
 -------------
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
   body   brain  
@@ -265,6 +271,7 @@ Outliers:  22
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
      X1       X2       X3       X4       X5       X6       X7       X8  
@@ -297,6 +304,7 @@ Outliers:  17
 
 Call:
 CovOgk(x = x)
+-> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
    V1     V2     V3     V4     V5  

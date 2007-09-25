@@ -28,7 +28,8 @@
     \item{\code{call}:}{Object of class \code{"language"} - the call to \code{CovOgk}}
     \item{\code{method}:}{Object of class \code{"character"} - method 
         used = \code{"Orthogonalized Gnanadesikan-Kettenring Estimator"}}
-
+    \item{\code{singularity}:}{a list with singularity information for the 
+        ocvariance matrix (or \code{NULL} of not singular)}
     \item{\code{raw.cov}:}{Object of class \code{"matrix"} the raw 
         (not reweighted) estimate of covariance matrix }
     \item{\code{raw.center}:}{Object of class \code{"vector"} - the raw 

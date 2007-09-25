@@ -86,6 +86,9 @@ setMethod("getDistance", "Cov", function(obj){
 setMethod("show", "Cov", function(object){
     cat("\nCall:\n")
     print(object@call)
+    cat("-> Method: ", object@method, "\n")
+    if(is.list(object@singularity))
+        cat(strwrap(robustbase:::singularityMsg(object@singularity, object@n.obs)), sep ="\n")
     
     digits = max(3, getOption("digits") - 3)
     cat("\nEstimate of Location: \n")
@@ -192,3 +195,61 @@ setMethod("plot", "Cov", function(x, y="missing",
         .myscreeplot(ccov=x)
     }
 }) ## end { plot("Cov") }
+
+singularityMsg <- function(singList, n.obs)
+{
+    stopifnot(is.list(singList))
+    switch(singList$kind,
+       "classical" = {
+           "The classical covariance matrix is singular."
+       },
+       "reweighted.MCD" = {
+           "The reweighted MCD scatter matrix is singular."
+       },
+       "identicalObs" = {
+           sprintf("Initial scale 0 because more than 'h' (=%d) observations are identical.",
+               singList$q)
+       },
+       "on.hyperplane" = {
+           stopifnot(c("p", "count", "coeff") %in% names(singList))
+
+           obsMsg <- function(m, n)
+           paste("There are", m,
+             "observations (in the entire dataset of",
+             n, "obs.) lying on the")
+           with(singList,
+                    c(switch(exactCode,
+                             ## exactfit == 1 :
+                             "The covariance matrix of the data is singular.",
+                             ## exactfit == 2 :
+                             c("The covariance matrix has become singular during",
+                               "the iterations of the MCD algorithm.")),
+
+                      if(p == 2) {
+                          paste(obsMsg(count, n.obs), "line with equation ",
+                                signif(coeff[1], digits= 5), "(x_i1-m_1) +",
+                                signif(coeff[2], digits= 5), "(x_i2-m_2) = 0",
+                                "with (m_1,m_2) the mean of these observations.")
+                      }
+                      else if(p == 3) {
+                          paste(obsMsg(count, n.obs), "plane with equation ",
+                                signif(coeff[1], digits= 5), "(x_i1-m_1) +",
+                                signif(coeff[2], digits= 5), "(x_i2-m_2) +",
+                                signif(coeff[3], digits= 5), "(x_i3-m_3) = 0",
+                                "with (m_1,m_2) the mean of these observations."
+                                )
+                      }
+                      else { ##  p > 3 -----------
+                          con <- textConnection("astring", "w")
+                          dput(zapsmall(coeff), con)
+                          close(con)
+                          paste(obsMsg(count, n.obs), "hyperplane with equation ",
+                                "a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p) = 0",
+                                " with (m_1,...,m_p) the mean of these observations",
+                                " and coefficients a_i from the vector   a <- ", astring)
+                      }))
+       },
+       ## Otherwise
+       stop("illegal 'singularity$kind'")
+       ) ## end{switch}
+}

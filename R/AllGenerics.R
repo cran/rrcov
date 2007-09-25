@@ -14,7 +14,8 @@ setGeneric("iterM", function(obj, x, t1, s, eps, maxiter) standardGeneric("iterM
 setGeneric("isClassic", function(obj) standardGeneric("isClassic")) 
 setGeneric("isSingular", function(obj) standardGeneric("isSingular")) 
 
-setGeneric("getCenter", function(obj) standardGeneric("getCenter")) 
+if(!isGeneric("getCenter"))
+    setGeneric("getCenter", function(obj) standardGeneric("getCenter")) 
 setGeneric("getCov", function(obj) standardGeneric("getCov")) 
 setGeneric("getCorr", function(obj) standardGeneric("getCorr")) 
 setGeneric("getData", function(obj) standardGeneric("getData")) 
@@ -22,3 +23,22 @@ setGeneric("getDistance", function(obj) standardGeneric("getDistance"))
 setGeneric("getEvals", function(obj) standardGeneric("getEvals")) 
 
 setGeneric("estimate", function(obj, x, ...) standardGeneric("estimate")) 
+
+if(!isGeneric("predict"))
+    setGeneric("predict", function(object, ...) standardGeneric("predict")) 
+
+if(!isGeneric("getQuan"))
+    setGeneric("getQuan", function(obj) standardGeneric("getQuan"))         # returns the number of observations used 
+                                                                            # in the comptation of the PCA (n for classic)
+if(!isGeneric("getLoadings"))
+    setGeneric("getLoadings", function(obj) standardGeneric("getLoadings")) 
+if(!isGeneric("getEigenvalues"))
+    setGeneric("getEigenvalues", function(obj) standardGeneric("getEigenvalues")) 
+if(!isGeneric("getSdev"))
+    setGeneric("getSdev", function(obj) standardGeneric("getSdev")) 
+if(!isGeneric("getScores"))
+    setGeneric("getScores", function(obj) standardGeneric("getScores")) 
+if(!isGeneric("getPrcomp"))
+    setGeneric("getPrcomp", function(obj) standardGeneric("getPrcomp"))     # return a prcomp() compatible object to use the 
+                                                                            # available standard plots (i.e. S3 compatible obj.
+                                                                            # with sdev, scale, scores, rotation
