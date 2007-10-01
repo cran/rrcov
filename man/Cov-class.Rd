@@ -26,12 +26,15 @@
 }
 \section{Slots}{
     \describe{
-    \item{\code{call}:}{Object of class \code{"language"} ~~ }
+    \item{\code{call}:}{Object of class \code{"language"} }
     \item{\code{cov}:}{covariance matrix}
     \item{\code{center}:}{location}
     \item{\code{n.obs}:}{number of observations used for the computation of the estimates}
     \item{\code{mah}:}{mahalanobis distances}
-    \item{\code{method}:}{a character string describing the method used to compute the estimate: "Classic"}
+    \item{\code{method}:}{a character string describing the method used to 
+        compute the estimate: "Classic"}
+    \item{\code{singularity}:}{a list with singularity information for the 
+        ocvariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
 }
@@ -50,12 +53,7 @@
     \item{summary}{\code{signature(object = "Cov")}: calculate summary information }
      }
 }
-\references{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
-\note{}
-
-\seealso{
-}
 \examples{
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])

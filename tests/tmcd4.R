@@ -1,3 +1,24 @@
+## Test the exact fit property of CovMcd
+doexact <- function(){
+    exact <-function(){    
+        n1 <- 45
+        p <- 2
+        x1 <- matrix(rnorm(p*n1),nrow=n1, ncol=p)
+        x1[,p] <- x1[,p] + 3
+##       library(MASS)
+##       x1 <- mvrnorm(n=n1, mu=c(0,3), Sigma=diag(1,nrow=p))
+        
+        n2 <- 55
+        m1 <- 0
+        m2 <- 3
+        x2 <- cbind(rnorm(n2),rep(m2,n2))
+        x<-rbind(x1,x2)
+        colnames(x) <- c("X1","X2")
+        x
+    }
+    print(CovMcd(exact()))
+}
+
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 ##@bdescr
 ## Test the function covMcd() on the literature datasets: 
@@ -29,7 +50,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
             quan <- as.integer(floor((n + p + 1)/2))   #default: floor((n+p+1)/2)
         }            
         else{
-            mcd<-CovMcd(x, print.it=FALSE)
+            mcd<-CovMcd(x, trace=FALSE)
             quan <- as.integer(mcd@quan)
         }
         
@@ -66,6 +87,9 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         }
     } 
 
+    options(digits = 5)
+    set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
+
     lname <- 20
     library(rrcov)
     method <- match.arg(method)
@@ -74,7 +98,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
 
     data(heart)
-    data(stars)
+    data(starsCYG)
     data(phosphor)
     data(stackloss)
     data(coleman)
@@ -83,33 +107,29 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
     data(hbk)
 
-    data(brain)
+    data(Animals, package = "MASS")
+    brain <- Animals[c(1:24, 26:25, 27:28),]
     data(milk)
     data(bushfire)
 
-#    data(x1000)
-#    data(x5000)
-    
     tmp <- sys.call()
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 
     cat("Data Set               n   p  Half LOG(obj)        Time\n")
     cat("========================================================\n")
-    domcd(heart.x,data(heart), nrep)
-    domcd(stars,data(stars), nrep)
-    domcd(phosphor.x,data(phosphor), nrep)
-    domcd(stack.x,data(stackloss), nrep)
-    domcd(coleman.x,data(coleman), nrep)
-    domcd(salinity.x,data(salinity), nrep)
-    domcd(wood.x,data(wood), nrep)
-    domcd(hbk.x,data(hbk), nrep)
+    domcd(heart[, 1:2], data(heart), nrep)
+    domcd(starsCYG, data(starsCYG), nrep)
+    domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
+    domcd(stack.x, data(stackloss), nrep)
+    domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
+    domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
+    domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+    domcd(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
 
-    domcd(brain,data(brain), nrep)
-    domcd(milk,data(milk), nrep)
-    domcd(bushfire,data(bushfire), nrep)
+    domcd(brain, "Animals", nrep)
+    domcd(milk, data(milk), nrep)
+    domcd(bushfire, data(bushfire), nrep)
     cat("========================================================\n")
-#    domcd(x1000$X,data(x1000), nrep)
-#    domcd(x5000$X,data(x5000), nrep)
 }
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
@@ -216,3 +236,4 @@ whatis<-function(x){
 
 library(rrcov)
 dodata()
+doexact()

@@ -1,8 +1,8 @@
 CovMcd <- function(x, 
                    alpha=1/2, 
                    nsamp=500, 
-                   seed=0, 
-                   print.it=FALSE,
+                   seed=NULL, 
+                   trace=FALSE,
                    use.correction = TRUE,
                    control)
 {
@@ -17,15 +17,15 @@ CovMcd <- function(x,
         defcontrol <- CovControlMcd()       # default control
         if(alpha == defcontrol@alpha)       alpha <- control@alpha
         if(nsamp == defcontrol@nsamp)       nsamp <- control@nsamp
-        if(seed == defcontrol@seed)         seed <- control@seed
-        if(print.it == defcontrol@print.it) print.it <- control@print.it
+        if(is.null(seed) || seed == defcontrol@seed)         seed <- control@seed
+        if(trace == defcontrol@trace)       trace <- control@trace
         if(use.correction == defcontrol@use.correction) use.correction <- control@use.correction
     }
 
     ## prepare the call to covMcd() which will return an S3 object
     
     xcall <- match.call()
-    mcd <- covMcd(x=x, alpha=alpha, nsamp=nsamp, seed=seed, print.it=print.it, use.correction=use.correction)
+    mcd <- covMcd(x=x, alpha=alpha, nsamp=nsamp, seed=seed, trace=trace, use.correction=use.correction)
     ans <- new("CovMcd", 
                call = xcall,
                iter=nsamp,
@@ -45,6 +45,7 @@ CovMcd <- function(x,
                raw.mah = mcd$raw.mah,
                raw.wt = mcd$raw.weights,
                raw.cnp2 = mcd$raw.cnp2,
-               cnp2 = mcd$cnp2)
+               cnp2 = mcd$cnp2,
+               singularity = mcd$singularity)
     ans
 }

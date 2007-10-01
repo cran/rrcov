@@ -8,10 +8,10 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ## control object.
     if(!missing(control)){
         defcontrol <- rrcov.control()      # default control
-        if(r == defcontrol$r)       r <- control$r
-        if(arp == defcontrol$arp)   arp <- control$arp
-        if(eps == defcontrol$eps)   eps <- control$eps
-        if(maxiter == defcontrol$maxiter) maxiter <- control$maxiter
+#        if(r == defcontrol$r)       r <- control$r
+#        if(arp == defcontrol$arp)   arp <- control$arp
+#        if(eps == defcontrol$eps)   eps <- control$eps
+#        if(maxiter == defcontrol$maxiter) maxiter <- control$maxiter
     }
 
     if(is.data.frame(x))

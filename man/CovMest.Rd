@@ -46,7 +46,7 @@
   instead a constrained M-estimate. In order to make the smooth estimators 
   to work, a reasonable starting point is necessary, which will lead reliably to a 
   good solution of the estimator. In \code{covMest} the MCD computed by 
-  \code{\link{covMcd}} is used, but the user has the possibility to give her own 
+  \code{\link[robustbase]{covMcd}} is used, but the user has the possibility to give her own 
   initial estimates.
   
 }
@@ -78,7 +78,7 @@
     of the American Statistical Association}, \bold{91}, 1047--1061.
 }
 \seealso{
-  \code{\link{covMcd}}, \code{\link{Cov}}, \code{\link{Cov-class}}, 
+  \code{\link[robustbase]{covMcd}}, \code{\link{Cov}}, \code{\link{Cov-class}}, 
   \code{\link{CovRobust-class}}, \code{\link{CovMest-class}}
 }
 \examples{

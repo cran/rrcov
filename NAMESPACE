@@ -9,29 +9,13 @@ export(Cov,
        CovControlMest,
        CovControlOgk,
        covMest,
-       covMcd,
-       ltsReg,
-       covPlot, 
-       ltsPlot,
-       rrcov.control,
-       tolellipse,
        T2.test,
-       Wilks.test
+       Wilks.test,
+       PcaClassic,
+       Robpca
 )
 
 ##S3 generics
-S3method(ltsReg, default)
-S3method(ltsReg, formula)
-S3method(plot, lts)
-S3method(plot, mcd)
-
-S3method(print, lts)
-S3method(print, mcd)
-S3method(print, summary.lts)
-
-S3method(summary, lts)
-S3method(summary, mcd)
-
 S3method(T2.test, default)
 S3method(T2.test, formula)
 
@@ -40,15 +24,10 @@ S3method(Wilks.test, formula)
 S3method(Wilks.test, data.frame)
 S3method(Wilks.test, matrix)
 
-## Workaround for the S3-S4 incompatibility
-## in R 2.2.1
-export(plot.lts,
-       plot.mcd,
-       print.lts,
-       print.mcd,
-       summary.lts,
-       print.summary.lts,
-       summary.mcd)
+S3method(PcaClassic, default)
+S3method(PcaClassic, formula)
+S3method(Robpca, default)
+S3method(Robpca, formula)
 
 ## S4 generics
 export(isClassic,
@@ -58,7 +37,14 @@ export(isClassic,
        getData,
        getDistance,
        getEvals,
-       estimate
+       estimate,
+       getQuan,
+       getLoadings,
+       getEigenvalues,
+       getSdev,
+       getScores,
+       getPrcomp
+       
 )
 
 exportClasses(Cov,
@@ -71,7 +57,12 @@ exportClasses(Cov,
               CovControlMest,
               CovControlOgk,
               SummaryCov,
-              SummaryCovRobust
+              SummaryCovRobust,
+              Pca,
+              PcaClassic,
+              PcaRobust,
+              Robpca
+              
 )
 
 exportMethods(isClassic,
@@ -84,5 +75,13 @@ exportMethods(isClassic,
               plot,
               show,
               summary,
-              estimate
+              estimate,
+              getQuan,
+              getLoadings,
+              getEigenvalues,
+              getSdev,
+              getScores,
+              getPrcomp,
+              print
+              
 )

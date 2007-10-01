@@ -44,7 +44,7 @@ covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3,
   instead a constrained M-estimate. In order to make the smooth estimators 
   to work, a reasonable starting point is necessary, which will lead reliably to a 
   good solution of the estimator. In \code{covMest} the MCD computed by 
-  \code{\link{covMcd}} is used, but the user has the possibility to give her own 
+  \code{\link[robustbase]{covMcd}} is used, but the user has the possibility to give her own 
   initial estimates.
   
 }
@@ -94,7 +94,7 @@ covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3,
     
 }
 \seealso{
-  \code{\link{covMcd}}
+  \code{\link[robustbase]{covMcd}}
 }
 \examples{
 data(hbk)

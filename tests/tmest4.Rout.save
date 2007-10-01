@@ -1,6 +1,6 @@
 
-R version 2.4.1 (2006-12-18)
-Copyright (C) 2006 The R Foundation for Statistical Computing
+R version 2.5.1 (2007-06-27)
+Copyright (C) 2007 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -16,7 +16,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > library(rrcov)
-Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
+Loading required package: robustbase
+Scalable Robust Estimators with High Breakdown Point (version 0.4-01)
 > library(MASS)
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
 +     domest <- function(x, xname, nrep = 1) {
@@ -44,10 +45,13 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
 +         cat("--------------------------------------------------------\n")
 +     }
 + 
++     options(digits = 5)
++     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
++ 
 +     lname <- 20
 +  
 +     data(heart)
-+     data(stars)
++     data(starsCYG)
 +     data(phosphor)
 +     data(stackloss)
 +     data(coleman)
@@ -66,13 +70,12 @@ Scalable Robust Estimators with High Breakdown Point (version 0.3-07)
 +     cat("Data Set               n   p       c1        M     LOG(det)       Time\n")
 +     cat("======================================================================\n")
 +     domest(heart[, 1:2], data(heart), nrep)
-+     domest(stars, data(stars), nrep)
-+     domest(data.matrix(subset(phosphor, select = -Y)),
-+           data(phosphor), nrep)
++     domest(starsCYG, data(starsCYG), nrep)
++     domest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
 +     domest(stack.x, data(stackloss), nrep)
 +     domest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
 +     domest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
-+     domest(data.matrix(subset(wood, select = -Y)), data(wood), nrep)
++     domest(data.matrix(subset(wood, select = -y)), data(wood), nrep)
 +     domest(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 + 
 + 
@@ -151,32 +154,34 @@ Outliers:  5
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-   X1     X2  
-39.76  35.71  
+height  weight  
+  39.8    35.7  
 
 Robust Estimate of Covariance: 
-    X1      X2    
-X1   38.03   76.78
-X2   76.78  187.41
+        height  weight
+height   38.0    76.8 
+weight   76.8   187.4 
 --------------------------------------------------------
-stars                 47   2    -5.994596
+starsCYG              47   2    -5.994596
 Outliers:  7 
 [1]  7  9 11 14 20 30 34
 -------------
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-    X      Y  
-4.418  4.951  
+   log.Te  log.light  
+     4.42       4.95  
 
 Robust Estimate of Covariance: 
-   X        Y      
-X  0.01687  0.05874
-Y  0.05874  0.35229
+           log.Te  log.light
+log.Te     0.0169  0.0587   
+log.light  0.0587  0.3523   
 --------------------------------------------------------
 phosphor              18   2     8.867522
 Outliers:  3 
@@ -185,15 +190,16 @@ Outliers:  3
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-   X1     X2  
-15.38  39.11  
+  inorg  organic  
+   15.4     39.1  
 
 Robust Estimate of Covariance: 
-    X1     X2   
-X1  169.5  212.5
-X2  212.5  308.4
+         inorg  organic
+inorg    169    213    
+organic  213    308    
 --------------------------------------------------------
 stackloss             21   3     7.241400
 Outliers:  9 
@@ -202,16 +208,17 @@ Outliers:  9
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
   Air.Flow  Water.Temp  Acid.Conc.  
-     59.50       20.83       87.33  
+      59.5        20.8        87.3  
 
 Robust Estimate of Covariance: 
             Air.Flow  Water.Temp  Acid.Conc.
-Air.Flow     9.344     8.689       8.525    
-Water.Temp   8.689    13.716       9.126    
-Acid.Conc.   8.525     9.126      34.536    
+Air.Flow     9.34      8.69        8.52     
+Water.Temp   8.69     13.72        9.13     
+Acid.Conc.   8.52      9.13       34.54     
 --------------------------------------------------------
 coleman               20   5     3.097223
 Outliers:  7 
@@ -220,18 +227,19 @@ Outliers:  7
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-    X1      X2      X3      X4      X5  
- 2.757  48.379   6.118  25.005   6.398  
+  salaryP   fatherWc    sstatus  teacherSc  motherLev  
+     2.76      48.38       6.12      25.00       6.40  
 
 Robust Estimate of Covariance: 
-    X1         X2         X3         X4         X5       
-X1    0.18728    1.32070   -0.19696    0.11198    0.05548
-X2    1.32070  963.78507  244.38519    9.31980   25.51335
-X3   -0.19696  244.38519   88.65102    2.83418    7.49100
-X4    0.11198    9.31980    2.83418    0.58055    0.41059
-X5    0.05548   25.51335    7.49100    0.41059    0.77092
+           salaryP   fatherWc  sstatus   teacherSc  motherLev
+salaryP      0.1873    1.3207   -0.1970    0.1120     0.0555 
+fatherWc     1.3207  963.7851  244.3852    9.3198    25.5134 
+sstatus     -0.1970  244.3852   88.6510    2.8342     7.4910 
+teacherSc    0.1120    9.3198    2.8342    0.5806     0.4106 
+motherLev    0.0555   25.5134    7.4910    0.4106     0.7709 
 --------------------------------------------------------
 salinity              28   3     3.875096
 Outliers:  9 
@@ -240,16 +248,17 @@ Outliers:  9
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-    X1      X2      X3  
-10.016   3.211  22.361  
+   X1     X2     X3  
+10.02   3.21  22.36  
 
 Robust Estimate of Covariance: 
-    X1       X2       X3     
-X1  15.3529   1.9895  -5.0752
-X2   1.9895   5.2096  -0.7687
-X3  -5.0752  -0.7687   2.3141
+    X1      X2      X3    
+X1  15.353   1.990  -5.075
+X2   1.990   5.210  -0.769
+X3  -5.075  -0.769   2.314
 --------------------------------------------------------
 wood                  20   5   -35.156305
 Outliers:  7 
@@ -258,18 +267,19 @@ Outliers:  7
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-    X1      X2      X3      X4      X5  
-0.5869  0.1222  0.5309  0.5382  0.8918  
+   x1     x2     x3     x4     x5  
+0.587  0.122  0.531  0.538  0.892  
 
 Robust Estimate of Covariance: 
-    X1          X2          X3          X4          X5        
-X1   6.449e-03   1.210e-03   2.028e-03  -3.769e-04  -1.048e-03
-X2   1.210e-03   3.118e-04   8.164e-04  -3.344e-05   1.521e-05
-X3   2.028e-03   8.164e-04   4.266e-03  -5.605e-04   2.267e-04
-X4  -3.769e-04  -3.344e-05  -5.605e-04   1.831e-03   1.176e-03
-X5  -1.048e-03   1.521e-05   2.267e-04   1.176e-03   1.780e-03
+    x1         x2         x3         x4         x5       
+x1   6.45e-03   1.21e-03   2.03e-03  -3.77e-04  -1.05e-03
+x2   1.21e-03   3.12e-04   8.16e-04  -3.34e-05   1.52e-05
+x3   2.03e-03   8.16e-04   4.27e-03  -5.60e-04   2.27e-04
+x4  -3.77e-04  -3.34e-05  -5.60e-04   1.83e-03   1.18e-03
+x5  -1.05e-03   1.52e-05   2.27e-04   1.18e-03   1.78e-03
 --------------------------------------------------------
 hbk                   75   3     1.432433
 Outliers:  14 
@@ -278,16 +288,17 @@ Outliers:  14
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-   X1     X2     X3  
-1.538  1.780  1.687  
+  X1    X2    X3  
+1.54  1.78  1.69  
 
 Robust Estimate of Covariance: 
-    X1       X2       X3     
-X1  1.64848  0.07391  0.17086
-X2  0.07391  1.67792  0.20494
-X3  0.17086  0.20494  1.55835
+    X1      X2      X3    
+X1  1.6485  0.0739  0.1709
+X2  0.0739  1.6779  0.2049
+X3  0.1709  0.2049  1.5583
 --------------------------------------------------------
 Animals               28   2    18.194771
 Outliers:  10 
@@ -296,47 +307,49 @@ Outliers:  10
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
  body  brain  
-18.67  64.94  
+ 18.7   64.9  
 
 Robust Estimate of Covariance: 
        body   brain
 body    4993   8466
 brain   8466  30334
 --------------------------------------------------------
-milk                  86   8   -25.111176
-Outliers:  22 
- [1]  1  2  3 11 12 13 14 15 16 17 18 20 27 28 41 44 47 70 73 74 75 77
+milk                  86   8   -25.097402
+Outliers:  20 
+ [1]  1  2  3 11 12 13 14 15 16 17 18 20 27 41 44 47 70 74 75 77
 -------------
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-     X1       X2       X3       X4       X5       X6       X7       X8  
-  1.030   35.891   33.069   26.128   25.119   25.048  123.120   14.397  
+    X1      X2      X3      X4      X5      X6      X7      X8  
+  1.03   35.87   33.05   26.12   25.10   25.03  123.15   14.39  
 
 Robust Estimate of Covariance: 
-    X1         X2         X3         X4         X5         X6         X7       
-X1  5.014e-07  1.015e-04  1.990e-04  1.897e-04  1.720e-04  1.640e-04  6.738e-04
-X2  1.015e-04  2.109e+00  3.335e-01  2.329e-01  1.609e-01  2.640e-01  1.963e+00
-X3  1.990e-04  3.335e-01  1.131e+00  8.302e-01  8.084e-01  7.827e-01  8.987e-01
-X4  1.897e-04  2.329e-01  8.302e-01  6.642e-01  6.246e-01  6.035e-01  7.024e-01
-X5  1.720e-04  1.609e-01  8.084e-01  6.246e-01  6.505e-01  6.006e-01  6.990e-01
-X6  1.640e-04  2.640e-01  7.827e-01  6.035e-01  6.006e-01  6.004e-01  7.020e-01
-X7  6.738e-04  1.963e+00  8.987e-01  7.024e-01  6.990e-01  7.020e-01  4.520e+00
-X8  7.198e-06  2.657e-01  1.953e-01  1.256e-01  1.066e-01  1.126e-01  4.220e-01
-    X8       
-X1  7.198e-06
-X2  2.657e-01
-X3  1.953e-01
-X4  1.256e-01
-X5  1.066e-01
-X6  1.126e-01
-X7  4.220e-01
-X8  1.681e-01
+    X1        X2        X3        X4        X5        X6        X7      
+X1  4.25e-07  1.26e-04  1.55e-04  1.50e-04  1.34e-04  1.16e-04  5.92e-04
+X2  1.26e-04  2.10e+00  3.58e-01  2.54e-01  1.83e-01  2.91e-01  1.99e+00
+X3  1.55e-04  3.58e-01  1.18e+00  8.65e-01  8.59e-01  8.37e-01  8.74e-01
+X4  1.50e-04  2.54e-01  8.65e-01  6.88e-01  6.61e-01  6.42e-01  6.77e-01
+X5  1.34e-04  1.83e-01  8.59e-01  6.61e-01  7.02e-01  6.57e-01  6.81e-01
+X6  1.16e-04  2.91e-01  8.37e-01  6.42e-01  6.57e-01  6.61e-01  6.76e-01
+X7  5.92e-04  1.99e+00  8.74e-01  6.77e-01  6.81e-01  6.76e-01  4.43e+00
+X8  1.48e-05  2.63e-01  2.07e-01  1.36e-01  1.18e-01  1.26e-01  4.32e-01
+    X8      
+X1  1.48e-05
+X2  2.63e-01
+X3  2.07e-01
+X4  1.36e-01
+X5  1.18e-01
+X6  1.26e-01
+X7  4.32e-01
+X8  1.68e-01
 --------------------------------------------------------
 bushfire              38   5    23.218805
 Outliers:  16 
@@ -345,18 +358,19 @@ Outliers:  16
 
 Call:
 CovMest(x = x)
+-> Method:  M-Estimates 
 
 Robust Estimate of Location: 
-   V1     V2     V3     V4     V5  
-105.5  146.9  274.4  217.5  279.0  
+ V1   V2   V3   V4   V5  
+105  147  274  218  279  
 
 Robust Estimate of Covariance: 
-    V1       V2       V3       V4       V5     
-V1    795.6    615.7  -3890.7   -875.4   -714.0
-V2    615.7    543.3  -2586.8   -528.4   -446.7
-V3  -3890.7  -2586.8  22979.0   5645.8   4486.6
-V4   -875.4   -528.4   5645.8   1487.1   1161.5
-V5   -714.0   -446.7   4486.6   1161.5    914.8
+    V1     V2     V3     V4     V5   
+V1    796    616  -3891   -875   -714
+V2    616    543  -2587   -528   -447
+V3  -3891  -2587  22979   5646   4487
+V4   -875   -528   5646   1487   1162
+V5   -714   -447   4487   1162    915
 --------------------------------------------------------
 ======================================================================
 > dogen()

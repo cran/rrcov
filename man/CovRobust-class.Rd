@@ -24,6 +24,8 @@ The derived classes can override these methods and can define new ones.}
     \item{\code{corr}:}{whether the correlation matrix was computed}
     \item{\code{mah}:}{robust distances}
     \item{\code{method}:}{a character string describing the method used to compute the estimate.}
+    \item{\code{singularity}:}{a list with singularity information for the 
+        ocvariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
 }

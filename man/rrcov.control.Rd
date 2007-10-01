@@ -7,8 +7,8 @@
      Useful for passing the estimation options as parameters to the estimation functions
 }
 \usage{
-rrcov.control(alpha=1/2, nsamp=500, seed=0, 
-    print.it=FALSE, use.correction=TRUE, adjust=FALSE,
+rrcov.control(alpha=1/2, nsamp=500, seed=NULL, 
+    trace=FALSE, use.correction=TRUE, adjust=FALSE,
     r = 0.45, arp = 0.05, eps=1e-3, maxiter=120)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,8 +24,8 @@ rrcov.control(alpha=1/2, nsamp=500, seed=0,
     exhaustive enumeration will be attempted however many samples 
     are needed. In this case a warning message will be displayed 
     saying that the computation can take a very long time. }
-  \item{seed}{ starting value for random generator. Default is \code{seed = 0}}
-  \item{print.it}{ whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{seed}{ starting value for random generator. Default is \code{seed = NULL}}
+  \item{trace}{ whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors. Default is \code{use.correction=TRUE}}
   \item{adjust}{ whether to perform intercept adjustment at each step. This could be quite 
 time consuming, therefore the default is \code{adjust = FALSE} }
@@ -49,13 +49,14 @@ For details about the estimation options see the corresponding estimation functi
 
 % \seealso{}
 \examples{
-
+data(Animals, package = "MASS")
+brain <- Animals[c(1:24, 26:25, 27:28),]
 data(hbk)
-data(brain)
-ctrl <- rrcov.control(alpha=0.75, print.it=TRUE)
-covMcd(hbk.x, control = ctrl)
-covMcd(log(brain), control = ctrl)
+hbk.x <- data.matrix(hbk[, 1:3])
 
+ctrl <- rrcov.control(alpha=0.75, trace=TRUE)
+covMcd(hbk.x,      control = ctrl)
+covMcd(log(brain), control = ctrl)
 }
 \keyword{robust}
 \keyword{multivariate}

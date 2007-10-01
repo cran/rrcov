@@ -44,10 +44,13 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
         }
     }
 
+    options(digits = 5)
+    set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
+
     lname <- 20
  
     data(heart)
-    data(stars)
+    data(starsCYG)
     data(phosphor)
     data(stackloss)
     data(coleman)
@@ -66,15 +69,13 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
     cat("Data Set               n   p       c1        M     LOG(det)       Time\n")
     cat("======================================================================\n")
     domest(heart[, 1:2], data(heart), nrep)
-    domest(stars, data(stars), nrep)
-    domest(data.matrix(subset(phosphor, select = -Y)),
-          data(phosphor), nrep)
+    domest(starsCYG, data(starsCYG), nrep)
+    domest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
     domest(stack.x, data(stackloss), nrep)
     domest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
     domest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
-    domest(data.matrix(subset(wood, select = -Y)), data(wood), nrep)
+    domest(data.matrix(subset(wood, select = -y)), data(wood), nrep)
     domest(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
-
 
     domest(brain, "Animals", nrep)
     domest(milk, data(milk), nrep)

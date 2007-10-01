@@ -50,8 +50,8 @@ maryo1[imax,1] <- maryo[imin,1]
 
 ##  The sample correlation becomes 0.05
 plot(maryo1)
-getCorr(Cov(maryo1))             ## the sample correlation becomes 0.05
-cov2cor(covMcd(maryo1)$cov)      ## the (reweighted) MCD correlation is 0.79
+getCorr(Cov(maryo1))         ## the sample correlation becomes 0.05
+getCorr(CovMcd(maryo1))      ## the (reweighted) MCD correlation is 0.79
 
 }
 \keyword{datasets}

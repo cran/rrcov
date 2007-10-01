@@ -1,13 +1,13 @@
 CovControlMcd <- function (alpha=0.5,
                            nsamp=500,
-                           seed=0,
-                           print.it=FALSE,
+                           seed=NULL,
+                           trace=FALSE,
                            use.correction=TRUE)
 {
     new("CovControlMcd", alpha = alpha, 
                          nsamp = nsamp, 
                          seed = seed, 
-                         print.it = print.it, 
+                         trace = trace, 
                          use.correction = use.correction)
 }
 

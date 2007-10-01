@@ -27,7 +27,7 @@ or by calling the constructor-function \code{CovControlMcd}.
     that the computation can take a very long time.}
   \item{\code{seed}:}{starting value for random generator. Default is \code{seed = 0}}
   %% MM (FIXME): change this to 'trace'  (as in other S functions):
-  \item{\code{print.it}:}{whether to print intermediate results. Default is \code{print.it = FALSE}}
+  \item{\code{trace}:}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{\code{use.correction}:}{ whether to use finite sample correction factors. 
     Default is \code{use.correction=TRUE}}
   }

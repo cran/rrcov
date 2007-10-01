@@ -6,7 +6,10 @@ setMethod("isClassic", "SummaryCovRobust", function(obj) FALSE)
 setMethod("show", "CovRobust", function(object){
     cat("\nCall:\n")
     print(object@call)
-    
+    cat("-> Method: ", object@method, "\n")
+    if(is.list(object@singularity))
+        cat(strwrap(robustbase:::singularityMsg(object@singularity, object@n.obs)), sep ="\n")
+
     digits = max(3, getOption("digits") - 3)
     cat("\nRobust Estimate of Location: \n")
     print.default(format(getCenter(object), digits = digits), print.gap = 2, quote = FALSE)

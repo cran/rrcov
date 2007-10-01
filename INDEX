@@ -1,12 +1,6 @@
-aircraft                Aircraft Data
-airmay                  Air Quality Data
 Appalachia              Annual maximum streamflow in central Appalachia
-brain                   Brain and Body Weights for 28 Species
-bushfire                Campbell Bushfire Data
 Cascades                Annual precipitation totals for the North
                         Cascades region
-cloud                   Cloud point of a Liquid
-coleman                 Coleman Data Set
 Cov                     Classical Estimates of Multivariate Location
                         and Scatter
 Cov-class               Class "Cov" - a base class for estimates of
@@ -25,8 +19,6 @@ CovControlOgk           Constructor function for objects of class
                         "CovControlOgk"
 CovControlOgk-class     Class 'CovControlOgk' - contains control
                         parameters for CovOgk
-covMcd                  Robust location and scatter estimation with
-                        high breakdown point
 CovMcd                  Robust Location and Scatter Estimation via MCD
 CovMcd-class            MCD Estimates of Multivariate Location and
                         Scatter
@@ -41,42 +33,34 @@ CovOgk-class            OGK Estimates of Multivariate Location and
 CovRobust-class         Class "CovRobust" - virtual base class for
                         robust estimates of multivariate location and
                         scatter
-delivery                Delivery Time Data
-education               Education Expenditure Data
 estimate-methods        Methods for Function estimate in Package
                         'rrcov'
 fish                    Fish Catch Data Set
 getCenter-methods       Accessor methods to the essential slots of Cov
                         and its subclasses
-hbk                     Hawkins, Bradu, Kass's Artificial Data
-heart                   Heart Catherization Data
+getLoadings-methods     Accessor methods to the essential slots of Pca
+                        and its subclasses
 hemophilia              Hemophilia Data
-lactic                  Calibration of an Instrument that Measures
-                        Lactic Acid Concentration in Blood
 lmom32                  Hosking and Wallis Data Set, Table 3.2
 lmom33                  Hosking and Wallis Data Set, Table 3.3
-ltsReg                  Robust regression with high breakdown point
 maryo                   Marona and Yohai Artificial Data
-milk                    Daudin's Milk Composition Data
-pension                 Pension Funds
-phosphor                Phosphorus Content Data
-pilot                   Pilot-Plant Data
+Pca-class               Class "Pca" - virtual base class for all
+                        classic and robust PCA classes
+PcaClassic              Principal Components Analysis
+PcaClassic-class        Class "PcaClassic" - Principal Components
+                        Analysis
+PcaRobust-class         Class "PcaRobust" virtual base class for all
+                        robust PCA classes
 plot-methods            Methods for Function 'plot' in Package 'rrcov'
-plot.lts                Robust Regression Diagnostic Plots
-plot.mcd                Robust Distance Plots
+Robpca                  ROBPCA - ROBust method for Principal Components
+                        Analysis
+Robpca-class            Class "Robpca" - ROBust method for Principal
+                        Components Analysis
 rrcov.control           Control object for the estimation parameters
-salinity                Salinity Data
-stars                   Data for the Hertzsprung-Russell Diagram of the
-                        star cluster CYG OB1
-summary.lts             Summary Method for LTS objects
-summary.mcd             Summary Method for MCD objects
 SummaryCov-class        Class "SummaryCov" - summary of "Cov" objects
 SummaryCovRobust-class
                         Class "SummaryCovRobust" - summary of
                         "CovRobust" objects
 T2.test                 Robust Hotelling T2 test
-telef                   Number of International Calls from Belgium
-tolellipse              Tolerance Ellipse Plot
 Wilks.test              Classical and Robust One-way MANOVA: Wilks
                         Lambda
-wood                    Modified Wood Gravity Dataset
