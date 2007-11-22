@@ -82,4 +82,3 @@ repmat <- function(a, n, m) {
         a <- t(a)
     kronecker(matrix(1,n,m), a)
 }
-

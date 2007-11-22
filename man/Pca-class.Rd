@@ -10,6 +10,12 @@
 \alias{plot,Pca-method}
 \alias{print,Pca-method}
 \alias{show,Pca-method}
+\alias{predict,Pca-method}
+\alias{predict}
+\alias{screeplot,Pca-method}
+\alias{screeplot}
+\alias{biplot,Pca-method}
+\alias{biplot}
 
 \title{Class "Pca" - virtual base class for all classic and robust PCA classes 
 }
@@ -64,7 +70,20 @@ Component Analisys methods
     \item{print}{\code{signature(x = "Pca")}: prints the results. The difference to the show()
         method is that additional parametesr ar epossible.}
     \item{show}{\code{signature(object = "Pca")}: prints the results }
-     }
+    \item{predict}{\code{signature(object = "Pca")}: calculates prediction using the results in 
+        \code{object}. An optional data frame or matrix in which to look for variables with which 
+        to predict. If omitted, the scores are used. If the original fit used a formula or 
+        a data frame or a matrix with column names, newdata must contain columns with the 
+        same names. Otherwise it must contain the same number of columns, 
+        to be used in the same order.  See also \code{\link{predict.prcomp}} and 
+        \code{\link{predict.princomp}}}
+    \item{screeplot}{\code{signature(x = "Pca")}: plots the variances against the 
+        number of the principal component. See also \code{\link{plot.prcomp}} and 
+        \code{\link{plot.princomp}}}
+    \item{biplot}{\code{signature(x = "Pca")}: Plot a biplot, i.e. represent both 
+        the observations and variables of a matrix of multivariate data on the same 
+        plot. See also \code{\link{biplot.princomp}}}
+  }
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }
 \seealso{

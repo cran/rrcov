@@ -1,18 +1,21 @@
 useDynLib(rrcov)
 importFrom(stats4, plot, summary)
 
-export(Cov,
+export(CovClassic,
+       Cov,
        CovMcd,
        CovMest,
        CovOgk,
+       CovMve,
        CovControlMcd,
        CovControlMest,
        CovControlOgk,
+       CovControlMve,
        covMest,
        T2.test,
        Wilks.test,
        PcaClassic,
-       Robpca
+       PcaHubert
 )
 
 ##S3 generics
@@ -26,8 +29,8 @@ S3method(Wilks.test, matrix)
 
 S3method(PcaClassic, default)
 S3method(PcaClassic, formula)
-S3method(Robpca, default)
-S3method(Robpca, formula)
+S3method(PcaHubert, default)
+S3method(PcaHubert, formula)
 
 ## S4 generics
 export(isClassic,
@@ -44,24 +47,26 @@ export(isClassic,
        getSdev,
        getScores,
        getPrcomp
-       
 )
 
 exportClasses(Cov,
+              CovClassic,
               CovRobust,
               CovMcd,
               CovMest,
               CovOgk,
+              CovMve,
               CovControl,
               CovControlMcd,
               CovControlMest,
               CovControlOgk,
+              CovControlMve,
               SummaryCov,
               SummaryCovRobust,
               Pca,
               PcaClassic,
               PcaRobust,
-              Robpca
+              PcaHubert
               
 )
 
@@ -82,6 +87,9 @@ exportMethods(isClassic,
               getSdev,
               getScores,
               getPrcomp,
-              print
+              print,
+              predict,
+              screeplot,
+              biplot
               
 )

@@ -1,16 +1,16 @@
-\name{CovControlMcd-class}
+\name{CovControlMve-class}
 \docType{class}
-\alias{CovControlMcd-class}
-\alias{estimate,CovControlMcd-method}
+\alias{CovControlMve-class}
+\alias{estimate,CovControlMve-method}
 
-\title{Class 'CovControlMcd' - contains control parameters for CovMcd }
+\title{Class 'CovControlMve' - contains control parameters for CovMve }
 \description{ 
     This class extends the \code{CovControl} class 
-    and contains the control parameters for \code{"CovMcd"}
+    and contains the control parameters for \code{"CovMve"}
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("CovControlMcd", ...)} 
-or by calling the constructor-function \code{CovControlMcd}.
+Objects can be created by calls of the form \code{new("CovControlMve", ...)} 
+or by calling the constructor-function \code{CovControlMve}.
 }
 \section{Slots}{
      \describe{
@@ -26,8 +26,6 @@ or by calling the constructor-function \code{CovControlMcd}.
     needed.  In this case a warning message will be displayed saying
     that the computation can take a very long time.}
   \item{\code{seed}:}{starting value for random generator. Default is \code{seed = NULL}}
-  \item{\code{use.correction}:}{ whether to use finite sample correction factors. 
-    Default is \code{use.correction=TRUE}}
   }
 }
 \section{Extends}{
@@ -35,9 +33,9 @@ Class \code{"CovControl"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{estimate}{\code{signature(obj = "CovControlMcd")}: the generic
+    \item{estimate}{\code{signature(obj = "CovControlMve")}: the generic
     function \code{estimate} allowes the different methods for robust estimation to be
-    used polymorphically -  this function will call \code{CovMcd} passing it the control
+    used polymorphically -  this function will call \code{CovMve} passing it the control
     object and will return the obtained \code{CovRobust} object}
 }}
 %\references{ }
@@ -46,11 +44,11 @@ Class \code{"CovControl"}, directly.
 %\seealso{}
 \examples{
     ## the following two statements are equivalent
-    ctrl1 <- new("CovControlMcd", alpha=0.75)
-    ctrl2 <- CovControlMcd(alpha=0.75)
+    ctrl1 <- new("CovControlMve", alpha=0.75)
+    ctrl2 <- CovControlMve(alpha=0.75)
 
     data(hbk)
-    CovMcd(hbk, control=ctrl1)
+    CovMve(hbk, control=ctrl1)
 }
 \keyword{classes}
 \keyword{robust}

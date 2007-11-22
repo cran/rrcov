@@ -83,7 +83,7 @@ setMethod("plot", "CovRobust", function(x, y="missing",
             stop(sQuote("id.n")," must be in {1,..,",n,"}")
     }
 
-    ccov <- Cov(data)
+    ccov <- CovClassic(data)
     md <- rd <- NULL
     if(!isSingular(ccov))
         md <- sqrt(getDistance(ccov))
@@ -101,12 +101,17 @@ setMethod("plot", "CovRobust", function(x, y="missing",
 
     ## index plot of mahalanobis distances
     if((which == "all" || which == "distance")  && !is.null(rd)) {
+        ylim <- NULL
         if(classic && !is.null(md)) {
             opr <- if(prod(par("mfrow")) == 1) par(mfrow=c(1,2), pty="m") else list()
+            
+            ##VT::10.11.2007 - set same scale on both plots
+            ylim <- c(min(rd,md), max(md,rd))
         }
-        .mydistplot(rd, cutoff, id.n=id.n) # index plot of robust distances
+
+        .mydistplot(rd, cutoff, id.n=id.n, ylim=ylim)                   # index plot of robust distances
         if(classic && !is.null(md)) {
-            .mydistplot(md, cutoff, classic=TRUE, id.n=id.n) # index plot of mahalanobis distances
+            .mydistplot(md, cutoff, classic=TRUE, id.n=id.n, ylim=ylim) # index plot of mahalanobis distances
             par(opr)
         }
     }

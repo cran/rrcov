@@ -8,6 +8,7 @@
 \alias{getData,Cov-method}
 \alias{getDistance,Cov-method}
 \alias{getEvals,Cov-method}
+\alias{isClassic,method}
 \alias{isClassic,Cov-method}
 \alias{show,Cov-method}
 \alias{summary,Cov-method}
@@ -47,7 +48,8 @@
     \item{getDistance}{\code{signature(obj = "Cov")}: distances }
     \item{getEvals}{\code{signature(obj = "Cov")}: Computes and returns
         the eigenvalues of the covariance matrix }
-    \item{isClassic}{\code{signature(obj = "Cov")}: returns TRUE, since this is a 'classic' object }
+    \item{isClassic}{\code{signature(obj = "Cov")}: returns TRUE by default. If necessary, the robust
+            classes will override }
     \item{plot}{\code{signature(x = "Cov")}: plot the object }
     \item{show}{\code{signature(object = "Cov")}: display the object }
     \item{summary}{\code{signature(object = "Cov")}: calculate summary information }
@@ -55,12 +57,7 @@
 }
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 \examples{
-data(hbk)
-hbk.x <- data.matrix(hbk[, 1:3])
-cv <- Cov(hbk.x)
-cv
-summary(cv)
-plot(cv)
+showClass("Cov")
 }
 \keyword{classes}
 \keyword{robust}

@@ -1,13 +1,13 @@
-##setGeneric("Robpca", function(x, ...) standardGeneric("Robpca")) 
-##setMethod("Robpca", "formula", Robpca.formula) 
-##setMethod("Robpca", "ANY", Robpca.default) 
+##setGeneric("PcaHubert", function(x, ...) standardGeneric("PcaHubert")) 
+##setMethod("PcaHubert", "formula", PcaHubert.formula) 
+##setMethod("PcaHubert", "ANY", PcaHubert.default) 
 
-setMethod("getQuan", "Robpca", function(obj) obj@quan)
+setMethod("getQuan", "PcaHubert", function(obj) obj@quan)
 
 ##  The S3 version
-Robpca <- function (x, ...) UseMethod("Robpca")
+PcaHubert <- function (x, ...) UseMethod("PcaHubert")
 
-Robpca.formula <- function (formula, data = NULL, subset, na.action, ...)
+PcaHubert.formula <- function (formula, data = NULL, subset, na.action, ...)
 {
     cl <- match.call()
 
@@ -28,10 +28,10 @@ Robpca.formula <- function (formula, data = NULL, subset, na.action, ...)
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
     
-    res <- Robpca.default(x, ...)
+    res <- PcaHubert.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
-    cl[[1]] <- as.name("Robpca")
+    cl[[1]] <- as.name("PcaHubert")
     res@call <- cl
 
 #    if (!is.null(na.act)) {
@@ -43,7 +43,7 @@ Robpca.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-Robpca.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, ...)
+PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, ...)
 {
 ## k    -   Number of principal components to compute. If \code{k} is missing, 
 ##              or \code{k = 0}, the algorithm itself will determine the number of 
@@ -68,10 +68,10 @@ Robpca.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, .
 
 ##  Example:
 ##  data(hbk)
-##  pca <- Robpca(hbk)
+##  pca <- PcaHubert(hbk)
 
 ##
-## The value returned by 'Robpca' is an S4 object containing the following slots:
+## The value returned by 'PcaHubert' is an S4 object containing the following slots:
 ## 
 ## loadings     -   Robust loadings (eigenvectors)
 ## eigenvalues  -   Robust eigenvalues       
@@ -201,7 +201,7 @@ Robpca.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, .
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
                
-        res <- new("Robpca",call=cl, 
+        res <- new("PcaHubert",call=cl, 
                             loadings=loadings, 
                             eigenvalues=eigenvalues, 
                             center=center, 
@@ -341,7 +341,7 @@ Robpca.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, .
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
         dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
 
-        res <- new("Robpca",call=cl, 
+        res <- new("PcaHubert",call=cl, 
                             loadings=loadings, 
                             eigenvalues=eigenvalues, 
                             center=center, 
@@ -353,7 +353,7 @@ Robpca.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, .
         
     }
 
-    cl[[1]] <- as.name("Robpca")
+    cl[[1]] <- as.name("PcaHubert")
     res@call <- cl
     
     ## Compute distances and flags
@@ -478,27 +478,3 @@ unimcd <- function(y, quan){
     }
     return(out)
 }
-
-predict.robpca <- function(object, newdata, ...)
-{
-    if (missing(newdata)) {
-        if(!is.null(object$scores)) return(object$scores)
-        else stop("no scores are available")
-    }
-    
-    if(length(dim(newdata)) != 2)
-        stop("'newdata' must be a matrix or data frame")
-    p <- NCOL(object$loadings)
-    nm <- rownames(object$loadings)
-    if(!is.null(nm)) {
-        if(!all(nm %in% colnames(newdata)))
-            stop("'newdata' does not have named columns matching one or more of the original columns")
-        newdata <- newdata[, nm, drop = FALSE]
-    } else {
-        if(NCOL(newdata) != p)
-            stop("'newdata' does not have the correct number of columns")
-    }
-
-    ## next line does as.matrix
-    scale(newdata, object$center, FALSE) %*% object$loadings
-} 

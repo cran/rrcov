@@ -1,8 +1,8 @@
-\name{Robpca-class}
+\name{PcaHubert-class}
 \docType{class}
-\alias{Robpca-class}
-\alias{getQuan,Robpca-method}
-\title{Class "Robpca" - ROBust method for Principal Components Analysis }
+\alias{PcaHubert-class}
+\alias{getQuan,PcaHubert-method}
+\title{Class "PcaHubert" - ROBust method for Principal Components Analysis }
 \description{ The ROBPCA algorithm was proposed by Hubert et al (2005) and stays for
     'ROBust method for Principal Components Analysis'. It is resistant to 
     outliers in the data. The robust loadings are computed using 
@@ -10,9 +10,9 @@
     can be applied to both low and high-dimensional data sets. In low 
     dimensions, the MCD method is applied.}
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("Robpca", ...)} but the 
-    usual way of creating \code{Robpca} objects is a call to the function
-    \code{Robpca} which serves as a constructor.
+Objects can be created by calls of the form \code{new("PcaHubert", ...)} but the 
+    usual way of creating \code{PcaHubert} objects is a call to the function
+    \code{PcaHubert} which serves as a constructor.
 }
 \section{Slots}{
      \describe{
@@ -47,7 +47,7 @@ Class \code{"\linkS4class{Pca}"}, by class "PcaRobust", distance 2.
 }
 \section{Methods}{
   \describe{
-    \item{getQuan}{\code{signature(obj = "Robpca")}: Returns the quantile 
+    \item{getQuan}{\code{signature(obj = "PcaHubert")}: Returns the quantile 
     used throughout the algorithm }
      }
 }
@@ -57,7 +57,7 @@ Class \code{"\linkS4class{Pca}"}, by class "PcaRobust", distance 2.
 }
 
 \examples{
-showClass("Robpca")
+showClass("PcaHubert")
 }
 \keyword{robust}
 \keyword{multivariate}

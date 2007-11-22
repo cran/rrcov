@@ -26,7 +26,13 @@ setGeneric("estimate", function(obj, x, ...) standardGeneric("estimate"))
 
 if(!isGeneric("predict"))
     setGeneric("predict", function(object, ...) standardGeneric("predict")) 
-
+    
+if(!isGeneric("screeplot"))
+    setGeneric("screeplot", function(x, ...) standardGeneric("screeplot")) 
+    
+if(!isGeneric("biplot"))
+    setGeneric("biplot", function(x, ...) standardGeneric("biplot")) 
+    
 if(!isGeneric("getQuan"))
     setGeneric("getQuan", function(obj) standardGeneric("getQuan"))         # returns the number of observations used 
                                                                             # in the comptation of the PCA (n for classic)

@@ -30,7 +30,7 @@ isClassic(obj)
 }
 
 \description{
-    Accessor methods to the slots of objects of class\code{Cov} and its subclasses}
+    Accessor methods to the slots of objects of class\code{Cov} and its subclasses
 }
 \section{Methods}{
 \describe{

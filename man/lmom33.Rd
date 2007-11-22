@@ -50,7 +50,7 @@ site are regarded as a point in three dimensional space.
     plot(mcd, which="dist", class=TRUE)
     plot(mcd, which="dd", class=TRUE)
     sqrt(getDistance(mcd))
-    cc <- Cov(lmom33)
+    cc <- CovClassic(lmom33)
     sqrt(getDistance(cc))
 }
 \keyword{datasets}

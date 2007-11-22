@@ -16,7 +16,7 @@ Classical and Robust One-way MANOVA: Wilks Lambda
 \method{Wilks.test}{formula}(formula, data, \dots, subset, na.action)
 
 \method{Wilks.test}{default}(x, grouping, method=c("c", "mcd", "rank"), 
-    xd=NULL, xq=NULL, nrep=3000, trace=TRUE, \dots)
+    xd=NULL, xq=NULL, nrep=3000, trace=FALSE, \dots)
 
 \method{Wilks.test}{data.frame}(x, \dots)
 

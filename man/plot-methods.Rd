@@ -2,7 +2,7 @@
 \docType{methods}
 \concept{High breakdown point}
 \alias{plot-methods}
-\alias{plot,Cov-method}
+\alias{plot,CovClassic-method}
 \alias{plot,CovRobust-method}
 \title{Methods for Function 'plot' in Package 'rrcov'}
 \description{
@@ -23,7 +23,7 @@ The following plots are available:
 }
 
 \usage{
-\S4method{plot}{Cov}(x, which = c("all","distance","qqchi2","tolellipse","screeplot"), 
+\S4method{plot}{CovClassic}(x, which = c("all","distance","qqchi2","tolellipse","screeplot"), 
         ask=(which=="all" && dev.interactive()), 
         cutoff, id.n, tol=1e-7, \dots)
 \S4method{plot}{CovRobust}(x, which = c("all","dd","distance","qqchi2","tolellipse","screeplot"), 
@@ -50,7 +50,7 @@ Default is \code{ask = which=="all" && dev.interactive()}.  }
 \examples{
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
-cv <- Cov(hbk.x)
+cv <- CovClassic(hbk.x)
 plot(cv)
 rcv <- CovMest(hbk.x)
 plot(rcv)

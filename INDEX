@@ -1,9 +1,11 @@
 Appalachia              Annual maximum streamflow in central Appalachia
 Cascades                Annual precipitation totals for the North
                         Cascades region
-Cov                     Classical Estimates of Multivariate Location
-                        and Scatter
 Cov-class               Class "Cov" - a base class for estimates of
+                        multivariate location and scatter
+CovClassic              Classical Estimates of Multivariate Location
+                        and Scatter
+CovClassic-class        Class "CovClassic" - classical estimates of
                         multivariate location and scatter
 CovControl-class        Class "CovControl" is a VIRTUAL base control
                         class
@@ -15,6 +17,10 @@ CovControlMest          Constructor function for objects of class
                         "CovControlMest"
 CovControlMest-class    Class 'CovControlMest' - contains control
                         parameters for "CovMest"
+CovControlMve           Constructor function for objects of class
+                        "CovControlMve"
+CovControlMve-class     Class 'CovControlMve' - contains control
+                        parameters for CovMve
 CovControlOgk           Constructor function for objects of class
                         "CovControlOgk"
 CovControlOgk-class     Class 'CovControlOgk' - contains control
@@ -26,6 +32,9 @@ covMest                 Constrained M-Estimates of Location and Scatter
 CovMest                 Constrained M-Estimates of Location and Scatter
 CovMest-class           Constrained M-estimates of Multivariate
                         Location and Scatter
+CovMve                  Robust Location and Scatter Estimation via MVE
+CovMve-class            MVE Estimates of Multivariate Location and
+                        Scatter
 CovOgk                  Robust Location and Scatter Estimation -
                         Ortogonalized Gnanadesikan-Kettenring (OGK)
 CovOgk-class            OGK Estimates of Multivariate Location and
@@ -49,13 +58,13 @@ Pca-class               Class "Pca" - virtual base class for all
 PcaClassic              Principal Components Analysis
 PcaClassic-class        Class "PcaClassic" - Principal Components
                         Analysis
+PcaHubert               ROBPCA - ROBust method for Principal Components
+                        Analysis
+PcaHubert-class         Class "PcaHubert" - ROBust method for Principal
+                        Components Analysis
 PcaRobust-class         Class "PcaRobust" virtual base class for all
                         robust PCA classes
 plot-methods            Methods for Function 'plot' in Package 'rrcov'
-Robpca                  ROBPCA - ROBust method for Principal Components
-                        Analysis
-Robpca-class            Class "Robpca" - ROBust method for Principal
-                        Components Analysis
 rrcov.control           Control object for the estimation parameters
 SummaryCov-class        Class "SummaryCov" - summary of "Cov" objects
 SummaryCovRobust-class
