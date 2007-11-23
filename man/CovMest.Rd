@@ -78,7 +78,7 @@
     of the American Statistical Association}, \bold{91}, 1047--1061.
 }
 \seealso{
-  \code{\link[robustbase]{covMcd}}, \code{\link{Cov}}, \code{\link{Cov-class}}, 
+  \code{\link[robustbase]{covMcd}}, \code{\link{Cov-class}}, 
   \code{\link{CovRobust-class}}, \code{\link{CovMest-class}}
 }
 \examples{

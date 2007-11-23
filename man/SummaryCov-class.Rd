@@ -39,10 +39,6 @@ meant for printing by 'show'.
   \code{\link{Cov-class}}
 }
 \examples{
-data(hbk)
-hbk.x <- data.matrix(hbk[, 1:3])
-cv <- Cov(hbk.x)
-cv
-summary(cv)
+showClass("Cov")
 }
 \keyword{classes}

@@ -44,7 +44,7 @@ The derived classes can override these methods and can define new ones.}
 %\note{}
 
 \seealso{
-  \code{\link{Cov}}, \code{\link{Cov-class}}, \code{\link{CovMest-class}}
+  \code{\link{Cov-class}}, \code{\link{CovMcd-class}}, \code{\link{CovMest-class}}, \code{\link{CovOgk-class}}
 }
 \examples{
      data(hbk)

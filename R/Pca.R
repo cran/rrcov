@@ -7,7 +7,7 @@ setMethod("getPrcomp", "Pca", function(obj) {
     ret <- list(sdev=sqrt(obj@eigenvalues), 
          rotation=obj@loadings, 
          center=obj@center,
-         scale=1,
+         scale=FALSE,
          x=obj@scores)
     class(ret) <- "prcomp"
     ret
@@ -18,6 +18,15 @@ setMethod("getPrcomp", "Pca", function(obj) {
 ##
 setMethod("show", "Pca", function(object) myPcaPrint(object))
 setMethod("print", "Pca", function(x, ...) myPcaPrint(x, ...))
+setMethod("predict", "Pca", function(object, ...){
+    stats:::predict.prcomp(getPrcomp(object), ...)
+})
+setMethod("screeplot", "Pca", function(x, ...){
+    stats:::screeplot.default(getPrcomp(x), ...)
+})
+setMethod("biplot", "Pca", function(x, ...){
+    stats:::biplot.prcomp(getPrcomp(x), ...)
+})
 
 ##  The __outlier map__ (diagnostic plot, distance-distance plot) 
 ##  visualizes the observations by plotting their orthogonal 
@@ -65,7 +74,6 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     }
     invisible(x)
 }
-
 
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
@@ -190,7 +198,7 @@ pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title="ROBPCA") {
 }
 
 ## Distance plot, plots score distances against index
-pca.distplot <- function(obj, id.n=3, title="ROBPCA") {   
+pca.distplot <- function(obj, id.n=3, title="Robust PCA") {   
     ymax <- max(max(obj@sd), obj@cutoff.sd) 
     plot(obj@sd, xlab="Index", ylab="Score distance", ylim=c(0,ymax), type="p")
     abline(h=obj@cutoff.sd)

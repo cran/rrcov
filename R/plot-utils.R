@@ -69,7 +69,11 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
     title(main="Distance-Distance Plot")
 }
 
-.mydistplot <- function(x, cutoff, classic = FALSE, id.n) {
+.mydistplot <- function(x, cutoff, classic = FALSE, id.n, ylim=NULL) {
+    ## VT::10.11.2007 - change "Squared Robust distance" to "Robust distance"
+    ## VT::10.11.2007 - Add parameter ylim to make possible robust and 
+    ##  classical plot to use the same y-scale
+
     ##  Index Plot:
     ##  Plot the vector x (robust or mahalanobis distances) against
     ##  the observation indexes. Identify by a label the id.n
@@ -81,11 +85,13 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
     n <- length(x)
     if(missing(id.n))
         id.n <- length(which(x>cutoff))
+
     if(classic)
-        ylab="Square Root of Mahalanobis distance"
+        ylab="Mahalanobis distance"
     else
-        ylab="Square Root of Robust distance"
-    plot(x, ylab=ylab, xlab="Index", type="p")
+        ylab="Robust distance"
+
+    plot(x, ylab=ylab, xlab="Index", type="p", ylim=ylim)
     .label(1:n, x, id.n)
     abline(h=cutoff)
 
@@ -123,8 +129,10 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
         ylab="Mahalanobis distance"
     else
         ylab="Robust distance"
-
-    plot(qq, x, xlab="Square root of the quantiles of the chi-squared distribution", ylab=ylab, type="p")
+    
+    ## xlab <- "Square root of the quantiles of the chi-squared distribution"
+    xlab <- eval(substitute(expression(paste("Sqrt of the quantiles of the ", chi^2, " distribution"))))
+    plot(qq, x, xlab=xlab, ylab=ylab, type="p")
     if(id.n > 0) {
         ind <- (n-id.n+1):n
         xrange <- par("usr")
@@ -132,7 +140,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
         text(qq[ind] + xrange/50, x[ind], ix[ind])
     }
     abline(0, 1, lty=2)
-    title(main="Chisquare QQ-Plot")
+    title(main=eval(substitute(expression(paste(chi^2, " QQ-Plot")))))
 }
 
 .label <- function(x, y, id.n=3) {

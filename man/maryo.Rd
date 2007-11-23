@@ -37,7 +37,7 @@ coordinate variables.
 \examples{
 
 data(maryo)
-getCorr(Cov(maryo))       ## the sample correlation is 0.81
+getCorr(CovClassic(maryo))          ## the sample correlation is 0.81
 
 ## Modify 10%% of the data in the following way:
 ##  modify two points (out of 20) by interchanging the 
@@ -50,7 +50,7 @@ maryo1[imax,1] <- maryo[imin,1]
 
 ##  The sample correlation becomes 0.05
 plot(maryo1)
-getCorr(Cov(maryo1))         ## the sample correlation becomes 0.05
+getCorr(CovClassic(maryo1))         ## the sample correlation becomes 0.05
 getCorr(CovMcd(maryo1))      ## the (reweighted) MCD correlation is 0.79
 
 }

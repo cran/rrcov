@@ -47,6 +47,7 @@
    \code{\link{CovMest}}, \code{\link{Cov-class}}, \code{\link{CovRobust-class}}
 }
 \examples{
+showClass("CovMest")
 }
 \keyword{classes}
 \keyword{robust}

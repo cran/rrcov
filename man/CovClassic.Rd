@@ -1,15 +1,15 @@
-\name{Cov}
+\name{CovClassic}
+\alias{CovClassic}
 \alias{Cov}
 \title{Classical Estimates of Multivariate Location and Scatter}
 \concept{High breakdown point}
 \description{
     Computes the classical estimates of multivariate location and scatter. 
-    Returns an S4 class \code{\link{Cov}} with the estimated \code{center}, 
+    Returns an S4 class \code{CovClassic} with the estimated \code{center}, 
     \code{cov}, Mahalanobis distances and weights based on these distances. 
-    The class \code{Cov} is used as a base class for the classes representing 
-    the different robust estimators.
 }
 \usage{
+    CovClassic(x, unbiased=TRUE)
     Cov(x, unbiased=TRUE)
 }
 \arguments{
@@ -24,15 +24,15 @@
 \author{Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \value{
-  An object of class \code{"Cov"}.   
+  An object of class \code{"CovClassic"}.   
 }
 \seealso{
-  \code{\link{Cov-class}}
+  \code{\link{Cov-class}}, \code{\link{CovClassic-class}}
 }
 \examples{
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
-cv <- Cov(hbk.x)
+cv <- CovClassic(hbk.x)
 cv
 summary(cv)
 plot(cv)

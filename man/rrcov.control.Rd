@@ -7,7 +7,7 @@
      Useful for passing the estimation options as parameters to the estimation functions
 }
 \usage{
-rrcov.control(alpha=1/2, nsamp=500, seed=NULL, 
+rrcov.control(alpha=1/2, nsamp=500, seed=NULL, tolSolve=10e-14,
     trace=FALSE, use.correction=TRUE, adjust=FALSE,
     r = 0.45, arp = 0.05, eps=1e-3, maxiter=120)
 }
@@ -25,6 +25,9 @@ rrcov.control(alpha=1/2, nsamp=500, seed=NULL,
     are needed. In this case a warning message will be displayed 
     saying that the computation can take a very long time. }
   \item{seed}{ starting value for random generator. Default is \code{seed = NULL}}
+  \item{tolSolve}{numeric tolerance to be used for inversion
+    (\code{\link{solve}}) of the covariance matrix in
+    \code{\link{mahalanobis}}.}
   \item{trace}{ whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors. Default is \code{use.correction=TRUE}}
   \item{adjust}{ whether to perform intercept adjustment at each step. This could be quite 

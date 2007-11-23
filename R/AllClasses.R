@@ -18,7 +18,9 @@ setClassUnion("Ulist", c("list", "NULL"))
 ##  method like CovMest, CovOgk, etc. will derive a subclass with
 ##  the necessary control parameters, e.g. CovControlMest will
 ##  contain the control parameters for CovMest.
-setClass("CovControl", representation = "VIRTUAL") 
+setClass("CovControl", representation(trace="logical",
+                                      tolSolve="numeric",
+                                      "VIRTUAL"))
 
 setClass("Cov", representation(call = "language",
                               cov = "matrix",
@@ -27,10 +29,13 @@ setClass("Cov", representation(call = "language",
                               mah = "Uvector",
                               method = "character",
                               singularity = "Ulist",
-                              X = "Umatrix")) 
+                              X = "Umatrix",
+                              "VIRTUAL")) 
 
 setClass("SummaryCov", representation(covobj = "Cov",
                               evals = "vector")) 
+
+setClass("CovClassic", contains="Cov") 
 
 setClass("CovRobust", representation(iter="numeric",
                                      crit="numeric",
@@ -61,20 +66,27 @@ setClass("CovOgk", representation(raw.cov = "matrix",
                                   raw.wt = "Uvector"),
                     contains="CovRobust") 
 
+setClass("CovMve", representation(alpha = "numeric",
+                                  quan = "numeric",
+                                  best = "Uvector",
+                                  raw.cov = "matrix",
+                                  raw.center = "vector",
+                                  raw.mah = "Uvector",
+                                  raw.wt = "Uvector"),
+                    contains="CovRobust") 
 
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp="numeric",
                                           seed="Uvector",
-                                          trace="logical",
                                           use.correction="logical"),
                            prototype = list(alpha=0.5,
                                           nsamp=500,
                                           seed=0,
                                           trace=FALSE,
+                                          tolSolve=10e-14,
                                           use.correction=TRUE),
-                           contains="CovControl"
-) 
+                           contains="CovControl") 
                     
 ## Control parameters for CovMest
 setClass("CovControlMest", representation(r="numeric",
@@ -84,7 +96,9 @@ setClass("CovControlMest", representation(r="numeric",
                            prototype = list(r=0.45,
                                             arp=0.05,
                                             eps=1e-3,
-                                            maxiter=120),
+                                            maxiter=120,
+                                            trace=FALSE,
+                                            tolSolve=10e-14),
                            contains="CovControl"
 ) 
 
@@ -134,11 +148,23 @@ setClass("CovControlOgk", representation(niter="numeric",
                            prototype = list(niter=2,
                                             beta=0.90,
                                             mrob=rrcov:::.mrobTau,
-                                            vrob=rrcov:::.vrobGK),
+                                            vrob=rrcov:::.vrobGK,
+                                            trace=FALSE,
+                                            tolSolve=10e-14),
                            contains="CovControl"
 ) 
+## Control parameters for CovMve
+setClass("CovControlMve", representation(alpha="numeric",
+                                          nsamp="numeric",
+                                          seed="Uvector"),
+                           prototype = list(alpha=0.5,
+                                          nsamp=500,
+                                          seed=0,
+                                          trace=FALSE,
+                                          tolSolve=10e-14),
+                           contains="CovControl") 
 
-###################### ROBPCA ####################################
+###################### ROBPCAPcaHubert ####################################
 setClass("Pca", representation(call = "language",
                               center = "vector",
                               loadings = "matrix",
@@ -158,6 +184,6 @@ setClass("PcaClassic", contains="Pca")
 setClass("PcaRobust", representation("VIRTUAL"),
                     contains="Pca") 
 
-setClass("Robpca", representation(alpha = "numeric",
+setClass("PcaHubert", representation(alpha = "numeric",
                                   quan = "numeric"),
                     contains="PcaRobust") 

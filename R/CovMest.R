@@ -39,18 +39,18 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
     ## if not provided initial estimates, compute them as MCD 
     if(missing(t0) || missing(S0)){
         if(missing(initcontrol))
-            init <- covMcd(x)
+            init <- CovMve(x)
         else
             init <- estimate(initcontrol)
-        t0 <- init$raw.center
-        S0 <- init$raw.cov
+        t0 <- init@raw.center
+        S0 <- init@raw.cov
     }
 
     ## calculate the constants M and c 
     ## for the translated biweight function
     psix <- new("PsiBwt", n=n, p=p, r=r, alpha=arp)
     psix <- csolve(psix)
-    mest <- iterM(psix, x, t0, S0, eps=1e-3, maxiter=20)
+    mest <- iterM(psix, x, t0, S0, eps=1e-3, maxiter=maxiter)
 
     mah <- mahalanobis(x, mest$t1, mest$s)
     crit <- determinant(mest$s, log = FALSE)$modulus[1]

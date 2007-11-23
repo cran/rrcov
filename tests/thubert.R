@@ -1,7 +1,7 @@
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca", "mcd")){
-## Test the function Robpca() on the literature datasets: 
+## Test the function PcaHubert() on the literature datasets: 
 ##
-## Call Robpca() for all regression datasets available in 
+## Call PcaHubert() for all regression datasets available in 
 ##  robustbase/rrcov and print:
 ##  - execution time (if time == TRUE)
 ##  - loadings
@@ -14,9 +14,9 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
         n <- dim(x)[1]
         p <- dim(x)[2]
         if(method == "mcd")
-            pca <- Robpca(x)
+            pca <- PcaHubert(x)
         else
-            pca <- Robpca(x, mcd=FALSE)
+            pca <- PcaHubert(x, mcd=FALSE)
         
         e1 <- getEigenvalues(pca)[1]
         e2 <- getEigenvalues(pca)[2]
@@ -40,7 +40,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
                 cat("-------------\n")
                 show(pca)   
             } 
-            cat("--------------------------------------------------------\n")
+            cat("----------------------------------------------------------\n")
         }
     } 
 
@@ -71,8 +71,8 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
     tmp <- sys.call()
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 
-    cat("Data Set               n   p  Half LOG(obj)        Time\n")
-    cat("========================================================\n")
+    cat("Data Set               n   p   k           e1           e2\n")
+    cat("==========================================================\n")
     dopca(heart[, 1:2], data(heart), nrep)
     dopca(starsCYG, data(starsCYG), nrep)
     dopca(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
@@ -85,7 +85,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
     dopca(brain, "Animals", nrep)
     dopca(milk, data(milk), nrep)
     dopca(bushfire, data(bushfire), nrep)
-    cat("========================================================\n")
+    cat("==========================================================\n")
 }
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
@@ -129,7 +129,7 @@ dorep <- function(x, nrep=1, method=c("robpca")){
 
     method <- match.arg(method)
     for(i in 1:nrep)
-        Robpca(x)
+        PcaHubert(x)
 } 
 
 #### gendata() ####

@@ -1,3 +1,25 @@
+2007-11-10  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-03
+    * R/plot-utils.R - "Squared Robust distance" changed to "Robust distance",
+    *   added ylim parameter so that two parallel distance plots 
+    *   (robust and classic) will have the same scale
+    * man/getCenter-methods.Rd - there was an 'unmatched right brace' in line 34 - 
+    *   shown as 'Note' in "R CMD install" but not in "R CMD check"
+    * R/CovRobust.R - method 'plot' - make robust and classic distance 
+    *   plot same scale
+    * Added function Cov() as an alias to CovClassic() for compatibility with 
+    *   previous versions
+    * Function and class Robpca changed to PcaHubert - Robpca was too general
+    * Added methods predict, screeplot and biplot for Pca
+    
+2007-10-24  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-02
+    * Fixed the OO-hierarchy for robust location and scatter: now
+    *   Cov is a VIRTUAL class and CovClassic added for representing
+    *   the classic estimates 
+    
+    * CovMve added, to be used as initial solution for CovMest
+
 2007-09-28  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-01
 

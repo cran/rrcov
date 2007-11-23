@@ -40,3 +40,17 @@ CovControlOgk <- function (niter=2,
 setMethod("estimate", "CovControlOgk", function(obj, x, ...) 
     CovOgk(x, control = obj, ...)
 )
+CovControlMve <- function (alpha=0.5,
+                           nsamp=500,
+                           seed=NULL,
+                           trace=FALSE)
+{
+    new("CovControlMve", alpha = alpha, 
+                         nsamp = nsamp, 
+                         seed = seed, 
+                         trace = trace)
+}
+
+setMethod("estimate", "CovControlMve", function(obj, x, ...) 
+    CovMve(x, control = obj, ...)
+)

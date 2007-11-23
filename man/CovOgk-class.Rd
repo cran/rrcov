@@ -51,9 +51,10 @@ No methods defined with class "CovOgk" in the signature.
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
-%\note{}
 \seealso{ \code{\link{CovMcd-class}}, \code{\link{CovMest-class}} }
-%\examples{}
+\examples{
+showClass("CovOgk")
+}
 \keyword{classes}
 \keyword{robust}
 \keyword{multivariate}

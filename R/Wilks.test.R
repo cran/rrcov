@@ -77,7 +77,7 @@ Wilks.test.default <- function(x,
                             method=c("c", "mcd", "rank"), 
                             xd=NULL, xq=NULL, 
                             nrep=3000, 
-                            trace=TRUE, ...){
+                            trace=FALSE, ...){
 
     alpha <- 0.5
     approximation <- "Bartlett"
@@ -87,7 +87,22 @@ Wilks.test.default <- function(x,
 ##    approximation <- match.arg(approximation)
     dname <- deparse(substitute(x))
     
-    x <- as.matrix(x)
+    if(is.data.frame(x))
+        x <- data.matrix(x)
+    else if (!is.matrix(x))
+        x <- matrix(x, length(x), 1,
+            dimnames = list(names(x), deparse(substitute(x))))
+
+    ## drop all rows with missing values (!!) :
+    na.x <- !is.finite(x %*% rep(1, ncol(x)))
+    ok <- !na.x
+    x <- x[ok, , drop = FALSE]
+    dx <- dim(x)
+    if(!length(dx))
+        stop("All observations have missing values!")
+    
+    grouping <- grouping[ok]
+    
     n <- nrow(x)
     p <- ncol(x)
 
@@ -163,7 +178,7 @@ Wilks.test.default <- function(x,
 
 covMWcd <-function(x, grouping, alpha=0.75){
 
-    ## compute group means pool the observations and compute the common 
+    ## compute group means, pool the observations and compute the common 
     ##  covariance matrix
     covMWcd.B <- function(){
         group.means <- matrix(0, ng, p)
@@ -205,10 +220,10 @@ simulateChi2 <- function(nrep=3000, nk, p, trace=FALSE, alpha=0.75){
     if(missing(nk))
         stop("The number and size of groups must be provided!")
     if(missing (p))        
-        stop("The dimensipn 'p' must be provided")
+        stop("The dimensipon 'p' must be provided")
     
     if(trace)
-        cat("\nFind approximate F distribution...\n")
+        cat("\nFind approximate distribution...\n")
 
     ptm <- proc.time()
 
@@ -259,6 +274,56 @@ simulateChi2 <- function(nrep=3000, nk, p, trace=FALSE, alpha=0.75){
     p <- ncol(x)
     if(!is.factor(g <- grouping))
         g <- as.factor(grouping)
+
+    ## get rid of empty groups
+    grouping <- g <- as.factor(as.character(g))
+    
+    lev <- levels(g)
+    counts <- as.vector(table(g)) 
+    if(any(counts == 0)) {
+        stop(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
+    } 
+    ng <- length(counts)
+
+    if(method == "c" | method == "rank"){
+        wts <- rep(1, n)
+    }else if(method == "mcd"){
+        mcd <- covMWcd(x, grouping=grouping, alpha=alpha)
+        wts <- mcd$wt
+    }else
+        stop("Undefined method: ", method)
+    
+    group.means <- matrix(0,ng,p)
+    for(i in 1:ng){
+        group.means[i,] <- cov.wt(x[which(grouping == lev[i]),], wt=wts[which(grouping == lev[i])])$center
+    }
+
+    wcross <-cov.wt((x - group.means[g, ]), wt=wts)
+    wcross <- (sum(wts)-1) * wcross$cov
+    tcross <- cov.wt(x, wt=wts)
+    tcross <- (sum(wts)-1) * tcross$cov 
+
+    wilks <- det(wcross)/det(tcross)
+    names(wilks) <- "Wilks' Lambda"
+    names(group.means) <- names(x)
+
+    dimnames(group.means) <- list(lev, dimnames(x)[[2]]) 
+   
+    list(nk=counts,
+         wilks=wilks, 
+         W=wcross, 
+         T=tcross,
+         group.means=group.means)
+}
+
+.wilksx <- function(x, grouping, method, alpha=0.75){
+    n <- nrow(x)
+    p <- ncol(x)
+    if(!is.factor(g <- grouping))
+        g <- as.factor(grouping)
+    
+    ## get rid of empty groups
+    g <- as.factor(as.character(g))
     lev <- levels(g)
     counts <- as.vector(table(g)) 
     if(any(counts == 0)) {

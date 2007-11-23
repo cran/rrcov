@@ -1,7 +1,7 @@
-\name{Robpca}
-\alias{Robpca}
-\alias{Robpca.formula}
-\alias{Robpca.default}
+\name{PcaHubert}
+\alias{PcaHubert}
+\alias{PcaHubert.formula}
+\alias{PcaHubert.default}
 \title{ ROBPCA - ROBust method for Principal Components Analysis }
 \description{
     The ROBPCA algorithm was proposed by Hubert et al (2005) and stays for
@@ -12,9 +12,9 @@
     dimensions, the MCD method is applied.
 }
 \usage{
-Robpca(x, ...)
-\method{Robpca}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, trace=FALSE, \dots)
-\method{Robpca}{formula}(formula, data = NULL, subset, na.action, \dots)
+PcaHubert(x, ...)
+\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, trace=FALSE, \dots)
+\method{PcaHubert}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
   \item{formula}{a formula with no response variable, referring only to
@@ -51,18 +51,9 @@ Robpca(x, ...)
     principal components is then taken as k = rank(x). Default is \code{mcd=TRUE}.
     If \code{mcd=FALSE}, the ROBPCA algorithm is always applied.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
-%  \item{object}{Object of class inheriting from \code{"Pca"}}
-%  \item{newdata}{An optional data frame or matrix in which to look for
-%    variables with which to predict. If omitted, the scores are used.
-%    If the original fit used a formula or a data frame or a matrix with
-%    column names, \code{newdata} must contain columns with the same
-%    names. Otherwise it must contain the same number of columns, to be
-%    used in the same order.
-%  }
-} 
 }
 \details{
-Robpca, serving as a constructor for objects of class \code{\link{Robpca-class}} 
+\code{PcaHubert}, serving as a constructor for objects of class \code{\link{PcaHubert-class}} 
 is a generic function with "formula" and "default" methods. 
 The calculation is done using the ROBPCA method of Hubert et al (2005) which can 
 be described briefly as follows. For details see the relevant references.
@@ -111,7 +102,7 @@ reweighted MCD estimator and the eigenvectors of this scatter matrix
 yield the robust principal components.
 }
 \value{
-  An S4 object of class \code{\link{Robpca-class}} which is a subclass of the 
+  An S4 object of class \code{\link{PcaHubert-class}} which is a subclass of the 
   virtual class \code{\link{PcaRobust-class}}. 
 }
 \references{
@@ -129,7 +120,7 @@ yield the robust principal components.
 ## PCA of the Hawkins Bradu Kass's Artificial Data
 ##  using all 4 variables
     data(hbk)
-    pca <- Robpca(hbk)
+    pca <- PcaHubert(hbk)
     pca
 
 ## Compare with the classical PCA
@@ -142,16 +133,16 @@ yield the robust principal components.
     print(pca, print.x=TRUE)
 
 ## Using the formula interface
-    Robpca(~., data=hbk)
+    PcaHubert(~., data=hbk)
 
 ## To plot the results:
 
     plot(pca)               # distance plot
-    plot(Robpca(hbk, k=2))  # PCA diagnostic plot (or outlier map)
+    plot(PcaHubert(hbk, k=2))  # PCA diagnostic plot (or outlier map)
     
 ## Use the standard plots for \code{prcomp} and \code{princomp}
-    screeplot(getPrcomp(pca))    
-    biplot(getPrcomp(pca))    
+    screeplot(pca)    
+    biplot(pca)    
 }
 \keyword{robust}
 \keyword{multivariate}

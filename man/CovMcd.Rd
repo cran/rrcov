@@ -74,10 +74,10 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }
-\note{ 
-    The function \code{\link[robustbase]{covMcd}()} on which \code{CovMcd} is based 
-    is deprecated i.e. is going to be made obsolete in future versions.
-}
+%\note{ 
+%    The function \code{\link[robustbase]{covMcd}()} on which \code{CovMcd} is based 
+%    will be deprecated i.e. is going to be made obsolete in future versions.
+%}
 \seealso{
   \code{\link[MASS]{cov.mcd}} from package \pkg{MASS}
 }

@@ -1,13 +1,13 @@
-\name{CovControlMcd}
-\alias{CovControlMcd}
+\name{CovControlMve}
+\alias{CovControlMve}
 %
-\title{ Constructor function for objects of class "CovControlMcd"}
+\title{ Constructor function for objects of class "CovControlMve"}
 \description{
-  This function will create a control object \code{CovControlMcd} 
-  containing the control parameters for \code{CovMcd}
+  This function will create a control object \code{CovControlMve} 
+  containing the control parameters for \code{CovMve}
 }
 \usage{
-CovControlMcd(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE, use.correction = TRUE)
+CovControlMve(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE)
 }
 
 \arguments{
@@ -24,23 +24,21 @@ CovControlMcd(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE, use.correctio
     that the computation can take a very long time.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
-  \item{use.correction}{ whether to use finite sample correction factors. 
-    Default is \code{use.correction=TRUE}}
 }
 %\details{}
 \value{
-A \code{CovControlMcd} object
+A \code{CovControlMve} object
 }
 %\references{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 %\seealso{}
 \examples{
     ## the following two statements are equivalent
-    ctrl1 <- new("CovControlMcd", alpha=0.75)
-    ctrl2 <- CovControlMcd(alpha=0.75)
+    ctrl1 <- new("CovControlMve", alpha=0.75)
+    ctrl2 <- CovControlMve(alpha=0.75)
 
     data(hbk)
-    CovMcd(hbk, control=ctrl1)    
+    CovMve(hbk, control=ctrl1)    
 }
 \keyword{classes}
 \keyword{robust}

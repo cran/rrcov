@@ -6,10 +6,12 @@
 \description{ 
     This class extends the \code{CovControl} class 
     and contains the control parameters for CovMest}
+
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("CovControlMest", ...)} 
 or by calling the constructor-function \code{CovControlMest}.
 }
+
 \section{Slots}{
  \describe{
     \item{\code{r}:}{a numeric value specifying the required 
@@ -23,6 +25,10 @@ or by calling the constructor-function \code{CovControlMest}.
     Defaults to \code{1e-3}}
     \item{\code{maxiter}:}{maximum number of iterations allowed 
     in the computation of the M-estimate. Defaults to 120 }
+    \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
+    \item{tolSolve}{numeric tolerance to be used for inversion
+        (\code{\link{solve}}) of the covariance matrix in
+        \code{\link{mahalanobis}}.}
   }
 }
 \section{Extends}{

@@ -175,7 +175,7 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
 ##
 ## Validate that 'x' is a numeric data frame or matrix.
 ## Convert 'x' to a matrix
-## Optionally drop all rwos with missing values
+## Optionally drop all rows with missing values
 ##
 .tomatrix <- function(x, drop.missing=TRUE){
     x.name <- deparse(substitute(x))
