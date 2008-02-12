@@ -1,5 +1,5 @@
 
-R version 2.6.0 Patched (2007-11-09 r43414)
+R version 2.6.1 (2007-11-26)
 Copyright (C) 2007 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -253,7 +253,7 @@ Type 'q()' to quit R.
 > 
 > library(rrcov)
 Loading required package: robustbase
-Scalable Robust Estimators with High Breakdown Point (version 0.4-03)
+Scalable Robust Estimators with High Breakdown Point (version 0.4-05)
 > dodata()
 
 Call:  dodata() 

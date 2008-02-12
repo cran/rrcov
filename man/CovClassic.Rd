@@ -18,9 +18,7 @@
   \item{unbiased}{ whether to return the unbiased estimate of 
     the covariance matrix. Default is  \code{unbiased = TRUE}}
 }
-\details{
-  
-}
+%\details{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \value{

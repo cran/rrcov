@@ -11,6 +11,7 @@
 
 #include "R.h"
 #include "R_ext/Linpack.h"
+#include <R_ext/Applic.h>
 
 #define INFI 1e+20
 #define EPS_DET 1e-5

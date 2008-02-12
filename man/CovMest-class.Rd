@@ -39,10 +39,9 @@
 \section{Methods}{
    No methods defined with class "CovMest" in the signature.
 }
-\references{}
+%\references{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
-\note{}
-
+%\note{}
 \seealso{
    \code{\link{CovMest}}, \code{\link{Cov-class}}, \code{\link{CovRobust-class}}
 }

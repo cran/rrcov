@@ -25,6 +25,10 @@ CovControlOgk           Constructor function for objects of class
                         "CovControlOgk"
 CovControlOgk-class     Class 'CovControlOgk' - contains control
                         parameters for CovOgk
+CovControlSest          Constructor function for objects of class
+                        "CovControlSest"
+CovControlSest-class    Class 'CovControlSest' - contains control
+                        parameters for "CovSest"
 CovMcd                  Robust Location and Scatter Estimation via MCD
 CovMcd-class            MCD Estimates of Multivariate Location and
                         Scatter
@@ -42,6 +46,10 @@ CovOgk-class            OGK Estimates of Multivariate Location and
 CovRobust-class         Class "CovRobust" - virtual base class for
                         robust estimates of multivariate location and
                         scatter
+CovSest                 S Estimates of Multivariate Location and
+                        Scatter
+CovSest-class           S Estimates of Multivariate Location and
+                        Scatter
 estimate-methods        Methods for Function estimate in Package
                         'rrcov'
 fish                    Fish Catch Data Set
@@ -53,6 +61,7 @@ hemophilia              Hemophilia Data
 lmom32                  Hosking and Wallis Data Set, Table 3.2
 lmom33                  Hosking and Wallis Data Set, Table 3.3
 maryo                   Marona and Yohai Artificial Data
+OsloTransect            Oslo Transect Data
 Pca-class               Class "Pca" - virtual base class for all
                         classic and robust PCA classes
 PcaClassic              Principal Components Analysis

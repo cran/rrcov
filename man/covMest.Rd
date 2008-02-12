@@ -10,8 +10,8 @@
     Computes constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
     a High breakdown point initial estimate as defined by Rocke (1996). 
-    The default initial estimate is the Minimum Covariance Determinant 
-    estimate computed by the \sQuote{Fast MCD} algorithm.
+    The default initial estimate is the Minimum Volume Ellipsoid computed
+    with \code{\link{CovMve}}.
 }
 \arguments{
   \item{x}{a matrix or data frame. }
@@ -29,12 +29,12 @@
     will be used. If parameters are passed also in the invocation statement, they will 
     override the corresponding elements of the control object.}
   \item{t0}{ optional initial high breakdown point estimates of the location. 
-    If not supplied MCD will be used. }
+    If not supplied MVE will be used. }
   \item{S0}{ optional initial high breakdown point estimates of the 
-    scatter. If not supplied MCD will be used. }
+    scatter. If not supplied MVE will be used. }
   \item{initcontrol}{ optional control object - of class CovControl - specifing the 
     initial high breakdown point estimates of location and scatter. If not supplied 
-    MCD will be used. }
+    MVE will be used. }
 }
 \details{
   Rocke (1996) has shown that the S-estimates of multivariate location and scatter
@@ -45,8 +45,8 @@
   with the median under normality. This is then not an S-estimate, but is 
   instead a constrained M-estimate. In order to make the smooth estimators 
   to work, a reasonable starting point is necessary, which will lead reliably to a 
-  good solution of the estimator. In \code{covMest} the MCD computed by 
-  \code{\link[robustbase]{covMcd}} is used, but the user has the possibility to give her own 
+  good solution of the estimator. In \code{CovMest} the MVE computed by 
+  \code{\link{CovMve}} is used, but the user has the possibility to give her own 
   initial estimates.
   
 }
@@ -64,7 +64,7 @@
     http://www.sfb475.uni-dortmund.de/dienst/de/content/struk-d/bereicha-d/tpa1softw-d.html)
 }
 \value{
-  An object of class \code{CovMest} which is a subclass of the virtual class \code{CovRobust}.
+  An object of class \code{\link{CovMest-class}} which is a subclass of the virtual class \code{\link{CovRobust-class}}.
 }
 \references{
     D.L.Woodruff and D.M.Rocke (1994) Computable robust estimation of multivariate location
@@ -79,6 +79,7 @@
 }
 \seealso{
   \code{\link[robustbase]{covMcd}}, \code{\link{Cov-class}}, 
+  \code{\link{CovMve}}, 
   \code{\link{CovRobust-class}}, \code{\link{CovMest-class}}
 }
 \examples{

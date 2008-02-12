@@ -1,7 +1,6 @@
 \name{CovControlMest-class}
 \docType{class}
 \alias{CovControlMest-class}
-
 \title{Class 'CovControlMest' - contains control parameters for "CovMest"}
 \description{ 
     This class extends the \code{CovControl} class 
