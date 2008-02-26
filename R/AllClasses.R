@@ -74,6 +74,8 @@ setClass("CovMve", representation(alpha = "numeric",
                                   raw.mah = "Uvector",
                                   raw.wt = "Uvector"),
                     contains="CovRobust") 
+setClass("CovSest", representation(),
+                    contains="CovRobust") 
 
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
@@ -163,6 +165,19 @@ setClass("CovControlMve", representation(alpha="numeric",
                                           trace=FALSE,
                                           tolSolve=10e-14),
                            contains="CovControl") 
+## Control parameters for CovSest
+setClass("CovControlSest", representation(bdp="numeric",
+                                          nsamp="numeric",
+                                          seed="Uvector",
+                                          algo="character"),
+                           prototype = list(bdp=0.5,
+                                            nsamp=500,
+                                            seed=NULL,
+                                            trace=FALSE,
+                                            tolSolve=10e-14,
+                                            algo="sfast"),
+                           contains="CovControl") 
+                    
 
 ###################### ROBPCAPcaHubert ####################################
 setClass("Pca", representation(call = "language",

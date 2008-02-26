@@ -23,7 +23,7 @@ CovMve(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, control)
     exhaustive enumeration will be attempted however many samples are
     needed.  In this case a warning message will be displayed saying
     that the computation can take a very long time.}
-  \item{seed}{starting value for random generator. Default is \code{seed = FALSE}}
+  \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{control}{ a control object (S4) of class \code{\link{CovControlMve-class}} 
     containing estimation options - same as these provided in the fucntion 
@@ -46,8 +46,7 @@ CovMve(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, control)
 
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
-Matias Salibian-Barrera
-
+Matias Salibian-Barrera \email{matias@stat.ubc.ca}
 }
 \seealso{
   \code{\link[MASS]{cov.mve}} from package \pkg{MASS}

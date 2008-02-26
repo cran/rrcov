@@ -45,11 +45,7 @@ For details about the estimation options see the corresponding estimation functi
   A list with components, as the parameters passed  by the invocation
 
 }
-\references{ 
-}
-
-% ~Make other sections like Warning with \section{Warning }{....} ~
-
+%\references{}
 % \seealso{}
 \examples{
 data(Animals, package = "MASS")

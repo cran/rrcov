@@ -53,7 +53,7 @@ CovMve <- function(x,
     n <- dx[1]
     p <- dx[2]
     h <- h.alpha.n(alpha, n, p) # h(alpha) , the size of the subsamples
-    h <- floor(n/2)
+    ######## h <- floor(n/2)
     
     if(n <= p + 1)          # ==> floor((n+p+1)/2) > n - 1  -- not Ok
         stop(if (n <= p)    # absolute barrier!
@@ -145,36 +145,6 @@ CovMve <- function(x,
                          
 }
 
-fastmve.m <- function(x, nsamp=500, seed=99) {
-    n <- nrow(x)
-    p <- ncol(x)
-    n2 <- floor(n/2)
-    nind <- p +1
-    set.seed(seed)
-    tmp <- .C('r_fast_mve', 
-        as.double(x), 
-        as.integer(n), 
-        as.integer(p), 
-        as.integer(nsamp), 
-        nsing = as.integer(0), 
-        ctr = as.double(rep(0,p)), 
-        cov = as.double(rep(0,p*p)), 
-        scale = as.double(0), 
-        best=as.integer(rep(0,n)), 
-        as.integer(nind), 
-        as.integer(n2))
-
-    mve.cov <- matrix(tmp$cov, p, p)
-    return(list(center= tmp$ctr, 
-                cov=mve.cov, 
-                scale=tmp$scale,
-                best=tmp$best[1:n2],
-                nsamp=nsamp, 
-                nsing = tmp$nsing,
-                quan=n2))
-}
-
-
 .fastmve <- function(x, h, nsamp)
 {
     dx <- dim(x)
@@ -182,9 +152,6 @@ fastmve.m <- function(x, nsamp=500, seed=99) {
     p <- dx[2]
     nind <- p+1
     
-    set.seed(99)
-    
-
     if(FALSE) {## ---------------------------------------
         ##   parameters for partitioning {equal to those in Fortran !!}
         kmini <- 5

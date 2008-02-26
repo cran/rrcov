@@ -36,14 +36,24 @@
     this observation is usually excluded from the analysis. The last
     variable, Species, represents the grouping structure: the 7
     species are 1=Bream, 2=Whitewish, 3=Roach, 4=Parkki, 5=Smelt,
-    6=Pike, 7=Perch.
+    6=Pike, 7=Perch. This data set was also analyzed in the context 
+    of robust Linear Discriminant Analysis by Todorov (2007), 
+    Todorov and Pires (2007).
 }
 \source{
     Journal of Statistical Education, Fish Catch Data Set,
     [http://www.amstat.org/publications/jse/datasets/fishcatch.txt] accessed
     August, 2006.
 }
-%\references{}
+\references{
+Todorov, V. (2007 Robust selection of variables in linear
+  discriminant analysis, \emph{Statistical Methods and Applications}, \bold{15},
+  395--407, doi:10.1007/s10260-006-0032-6.
+
+Todorov, V. and Pires, A.M. (2007) Comparative performance of several robust
+  linear discriminant analysis methods, \emph{REVSTAT Statistical Journal}, \bold{5},
+  63--83.
+}
 \examples{
     data(fish)
 

@@ -1,5 +1,5 @@
 
-R version 2.6.0 Patched (2007-11-09 r43414)
+R version 2.6.1 (2007-11-26)
 Copyright (C) 2007 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > library(rrcov)
 Loading required package: robustbase
-Scalable Robust Estimators with High Breakdown Point (version 0.4-03)
+Scalable Robust Estimators with High Breakdown Point (version 0.4-05)
 > library(MASS)
 > 
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
@@ -164,23 +164,23 @@ Scalable Robust Estimators with High Breakdown Point (version 0.4-03)
 Call:  dodata() 
 Data Set               n   p       c1        M     LOG(det)       Time
 ======================================================================
-heart                 12   2   0.9029   1.5448     7.116594
+heart                 12   2   0.9029   1.5448     7.160341
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  7.12 
+Log(Det.):  7.16 
 Robust Estimate of Location:
 height  weight  
-  39.8    35.7  
+  34.9    27.0  
 Robust Estimate of Covariance:
         height  weight
-height    38.0    76.8
-weight    76.8   187.4
+height     102     155
+weight     155     250
 ----------------------------------------------------------------------
-starsCYG              47   2   1.2041   1.2437    -5.994599
+starsCYG              47   2   1.2041   1.2437    -5.994588
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
@@ -196,7 +196,7 @@ Robust Estimate of Covariance:
 log.Te     0.0169     0.0587
 log.light  0.0587     0.3523
 ----------------------------------------------------------------------
-phosphor              18   2   1.1526   1.2951     8.867568
+phosphor              18   2   1.1526   1.2951     8.867522
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
@@ -229,24 +229,24 @@ Air.Flow        9.34        8.69        8.52
 Water.Temp      8.69       13.72        9.13
 Acid.Conc.      8.52        9.13       34.54
 ----------------------------------------------------------------------
-coleman               20   5   0.0000   3.3272     4.062258
+coleman               20   5   0.0000   3.3272     2.574752
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  4.06 
+Log(Det.):  2.57 
 Robust Estimate of Location:
   salaryP   fatherWc    sstatus  teacherSc  motherLev  
-     2.86      51.61       8.40      25.24       6.50  
+     2.82      48.44       5.30      25.19       6.51  
 Robust Estimate of Covariance:
-           salaryP  fatherWc   sstatus  teacherSc  motherLev
-salaryP     0.3464    -0.762   -0.0693      0.397     0.0367
-fatherWc   -0.7624   969.532  176.4997      7.716    22.8309
-sstatus    -0.0693   176.500   41.3531      2.502     4.7008
-teacherSc   0.3968     7.716    2.5018      1.067     0.3092
-motherLev   0.0367    22.831    4.7008      0.309     0.6216
+           salaryP  fatherWc  sstatus  teacherSc  motherLev
+salaryP     0.2850     0.104     1.76      0.307     0.0355
+fatherWc    0.1045   824.830   260.71      3.751    17.7959
+sstatus     1.7585   260.706   105.61      4.114     5.7714
+teacherSc   0.3074     3.751     4.11      0.675     0.1563
+motherLev   0.0355    17.796     5.77      0.156     0.4147
 ----------------------------------------------------------------------
 salinity              28   3   0.6742   2.1212     3.875096
 -------------
@@ -265,24 +265,24 @@ X1  15.35   1.990  -5.075
 X2   1.99   5.210  -0.769
 X3  -5.08  -0.769   2.314
 ----------------------------------------------------------------------
-wood                  20   5   0.0000   3.3272   -32.359807
+wood                  20   5   0.0000   3.3272   -35.156305
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  -32.4 
+Log(Det.):  -35.2 
 Robust Estimate of Location:
    x1     x2     x3     x4     x5  
-0.555  0.134  0.501  0.517  0.914  
+0.587  0.122  0.531  0.538  0.892  
 Robust Estimate of Covariance:
-           x1         x2         x3        x4         x5
-x1   0.009862  -0.000417   0.004736   0.00299  -0.003927
-x2  -0.000417   0.000575  -0.000305  -0.00112   0.000633
-x3   0.004736  -0.000305   0.004422   0.00243  -0.001434
-x4   0.002994  -0.001116   0.002428   0.00444  -0.001480
-x5  -0.003927   0.000633  -0.001434  -0.00148   0.002683
+           x1         x2         x3         x4         x5
+x1   0.006449   1.21e-03   0.002028  -3.77e-04  -1.05e-03
+x2   0.001210   3.12e-04   0.000816  -3.34e-05   1.52e-05
+x3   0.002028   8.16e-04   0.004266  -5.60e-04   2.27e-04
+x4  -0.000377  -3.34e-05  -0.000560   1.83e-03   1.18e-03
+x5  -0.001048   1.52e-05   0.000227   1.18e-03   1.78e-03
 ----------------------------------------------------------------------
 hbk                   75   3   0.7046   2.0909     1.432485
 -------------
@@ -301,52 +301,52 @@ X1  1.6485  0.0739  0.171
 X2  0.0739  1.6780  0.205
 X3  0.1709  0.2049  1.558
 ----------------------------------------------------------------------
-Animals               28   2   1.2041   1.2437    19.340922
+Animals               28   2   1.2041   1.2437    18.194822
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  19.3 
+Log(Det.):  18.2 
 Robust Estimate of Location:
  body  brain  
- 21.5   89.6  
+ 18.7   64.9  
 Robust Estimate of Covariance:
-        body  brain
-body    5445  13171
-brain  13171  77950
+       body  brain
+body   4993   8466
+brain  8466  30335
 ----------------------------------------------------------------------
-milk                  86   8   0.0000   3.9379   -25.117490
+milk                  86   8   0.0000   3.9379   -25.041802
 -------------
 Minimum Covariance Determinant (MCD) estimator.
 Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  -25.1 
+Log(Det.):  -25.0 
 Robust Estimate of Location:
     X1      X2      X3      X4      X5      X6      X7      X8  
-  1.03   35.89   33.11   26.16   25.14   25.08  123.12   14.40  
+  1.03   35.88   33.04   26.11   25.09   25.02  123.12   14.39  
 Robust Estimate of Covariance:
-          X1        X2        X3       X4        X5        X6       X7
-X1  4.83e-07  0.000098  0.000188  0.00018  0.000163  0.000155  0.00065
-X2  9.79e-05  2.031418  0.316968  0.22126  0.152430  0.250731  1.89188
-X3  1.88e-04  0.316968  1.214883  0.88920  0.854294  0.856821  0.85036
-X4  1.80e-04  0.221256  0.889202  0.70344  0.655483  0.654518  0.66568
-X5  1.63e-04  0.152430  0.854294  0.65548  0.672069  0.640371  0.66409
-X6  1.55e-04  0.250731  0.856821  0.65452  0.640371  0.662445  0.66375
-X7  6.50e-04  1.891878  0.850356  0.66568  0.664088  0.663748  4.35587
-X8  6.49e-06  0.255473  0.202179  0.13095  0.111122  0.119927  0.40481
+          X1        X2        X3        X4        X5        X6        X7
+X1  4.89e-07  9.64e-05  0.000183  0.000176  0.000157  0.000148  0.000653
+X2  9.64e-05  2.05e+00  0.337685  0.236662  0.169509  0.271320  1.911291
+X3  1.83e-04  3.38e-01  1.163291  0.856115  0.848292  0.831194  0.884724
+X4  1.76e-04  2.37e-01  0.856115  0.683147  0.654951  0.640414  0.691274
+X5  1.57e-04  1.70e-01  0.848292  0.654951  0.693148  0.652277  0.690257
+X6  1.48e-04  2.71e-01  0.831194  0.640414  0.652277  0.660682  0.694612
+X7  6.53e-04  1.91e+00  0.884724  0.691274  0.690257  0.694612  4.396513
+X8  5.56e-06  2.60e-01  0.198394  0.128587  0.111902  0.118766  0.411756
           X8
-X1  6.49e-06
-X2  2.55e-01
-X3  2.02e-01
-X4  1.31e-01
-X5  1.11e-01
-X6  1.20e-01
-X7  4.05e-01
-X8  1.63e-01
+X1  5.56e-06
+X2  2.60e-01
+X3  1.98e-01
+X4  1.29e-01
+X5  1.12e-01
+X6  1.19e-01
+X7  4.12e-01
+X8  1.65e-01
 ----------------------------------------------------------------------
 bushfire              38   5   0.0000   3.3272    23.457490
 -------------

@@ -6,8 +6,7 @@
 \description{
     Computes constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
-    a High breakdown point initial estimate (Minimum Covariance Determinant - 
-    \sQuote{Fast MCD})
+    a High breakdown point initial estimate (Minimum Volume Ellipsoid)
 }
 \usage{
 covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3, 
@@ -30,9 +29,9 @@ covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3,
     will be used. If parameters are passed also in the invocation statement, they will
     override the corresponding elements of the control object.}
   \item{t0}{ optional initial high breakdown point estimates of the location. 
-    If not supplied MCD will be used. }
+    If not supplied MVE will be used. }
   \item{S0}{ optional initial high breakdown point estimates of the 
-    scatter. If not supplied MCD will be used. }
+    scatter. If not supplied MVE will be used. }
 }
 \details{
   Rocke (1996) has shown that the S-estimates of multivariate location and scatter
@@ -43,8 +42,8 @@ covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3,
   with the median under normality. This is then not an S-estimate, but is 
   instead a constrained M-estimate. In order to make the smooth estimators 
   to work, a reasonable starting point is necessary, which will lead reliably to a 
-  good solution of the estimator. In \code{covMest} the MCD computed by 
-  \code{\link[robustbase]{covMcd}} is used, but the user has the possibility to give her own 
+  good solution of the estimator. In \code{covMest} the MVE computed by 
+  \code{\link{CovMve}} is used, but the user has the possibility to give her own 
   initial estimates.
   
 }

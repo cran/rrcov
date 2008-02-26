@@ -102,9 +102,9 @@ two arguments.  All other arguments are optional.
 }
 
 \references{ 
- Todorov, V. and Filzmoser, P. (2007) A robust statistic for the one-way MANOVA
-  manuscript.
-  
+ Todorov, V. and Filzmoser, P. (2007) Robust statistic for the one-way MANOVA,
+ \emph{submetted to the Journal of Environmetrics}.
+
  Todorov, V. (2007) Robust selection of variables in linear discriminant 
  analysis, \emph{Statistical Methods and Applications}, \bold{15}, 
  395.407, doi:10.1007/s10260-006-0032-6.

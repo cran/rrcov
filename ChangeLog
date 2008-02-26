@@ -1,35 +1,44 @@
+2007-02-12  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-05
+    * Added the OsloTransect data set
+    * Fixed minor errors in the documentation
+    * Fixed two serious problems in .fastMve() - there was a
+    *   hard-coded seed setting and the half-sample was hardcoded too
+    * Added S-estimates computed by either the FAST-S algorithm or 
+    *   Ruppert's SURREAL
+
 2007-11-10  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-03
     * R/plot-utils.R - "Squared Robust distance" changed to "Robust distance",
-    *   added ylim parameter so that two parallel distance plots 
+    *   added ylim parameter so that two parallel distance plots
     *   (robust and classic) will have the same scale
-    * man/getCenter-methods.Rd - there was an 'unmatched right brace' in line 34 - 
+    * man/getCenter-methods.Rd - there was an 'unmatched right brace' in line 34 -
     *   shown as 'Note' in "R CMD install" but not in "R CMD check"
-    * R/CovRobust.R - method 'plot' - make robust and classic distance 
+    * R/CovRobust.R - method 'plot' - make robust and classic distance
     *   plot same scale
-    * Added function Cov() as an alias to CovClassic() for compatibility with 
+    * Added function Cov() as an alias to CovClassic() for compatibility with
     *   previous versions
     * Function and class Robpca changed to PcaHubert - Robpca was too general
     * Added methods predict, screeplot and biplot for Pca
-    
+
 2007-10-24  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-02
     * Fixed the OO-hierarchy for robust location and scatter: now
     *   Cov is a VIRTUAL class and CovClassic added for representing
-    *   the classic estimates 
-    
+    *   the classic estimates
+
     * CovMve added, to be used as initial solution for CovMest
 
 2007-09-28  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-01
 
-    * Removed covMcd, ltsReg and all datasets which were already moved to 
+    * Removed covMcd, ltsReg and all datasets which were already moved to
     * package robustbase. Now package robustbase is required and these
-    * functions are used from there. This could cause some minor 
-    * incompatibilities because of changed parameters in covMcd(), like: 
+    * functions are used from there. This could cause some minor
+    * incompatibilities because of changed parameters in covMcd(), like:
     *   - trace=FALSE instead of print.it=FALSE
     *   - seed=NULL instead of seed=0
-    *   - changed structure and names of datasets 
+    *   - changed structure and names of datasets
 
 2007-09-24  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-08
@@ -48,26 +57,26 @@
 2007-07-05  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.3-06
 
-    * Added one- and two-sample T2 Hotelling test and one-sample 
+    * Added one- and two-sample T2 Hotelling test and one-sample
     * robust T2 Hotelling test (Willems et al. 2002) - R/T2.test.R and
     * man/T2.test.RD
-    
+
     * R/covMcd.R: usage of simulated finite sample correction factors fixed:
     * - case p=1 fixed
-    * - simulated corrections used only when the Pison et.al. 
+    * - simulated corrections used only when the Pison et.al.
     *   formula is definitely wrong (negative or very large)
-    
+
     * Added the L-moments data sets from Hosking and Wallis (1997):
     *       Appalachia, Cascades, lmom32 and lmom33
-    
-    * Fixed print.mcd() to avoid conflict with package 'robust' 
+
+    * Fixed print.mcd() to avoid conflict with package 'robust'
     *   (same class "mcd")
-    
-    * R/covMcd.R - the calculation of the consistency correction factor 
-    *   for the raw and reweighted MCD covariance replaced by a call to 
+
+    * R/covMcd.R - the calculation of the consistency correction factor
+    *   for the raw and reweighted MCD covariance replaced by a call to
     *   a function MCDcons()
-    
-    * R/CovRobust.R, Cov.R, AllGenerics.R, utils.R - fixed the plot 
+
+    * R/CovRobust.R, Cov.R, AllGenerics.R, utils.R - fixed the plot
     *   method of CovRobust in case of singular covariance matrix
 
 2006-12-21  Valentin Todorov  <valentin.todorov@chello.at>

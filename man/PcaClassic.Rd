@@ -37,8 +37,7 @@ PcaClassic(x, ...)
     does not need to be specified, unless \code{k} is larger than 10.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
-\details{
-}
+%\details{}
 \value{
   An S4 object of class \code{\link{PcaClassic-class}} which is a subclass of the 
   virtual class \code{\link{Pca-class}}.    
@@ -51,7 +50,6 @@ returns the results of the PCA in a class compatible with the object model for r
 \seealso{
      \code{\link{Pca-class}}, \code{\link{PcaClassic-class}}, 
 }
-\examples{
-}
+%\examples{}
 \keyword{robust}
 \keyword{multivariate}
