@@ -202,3 +202,7 @@ setClass("PcaRobust", representation("VIRTUAL"),
 setClass("PcaHubert", representation(alpha = "numeric",
                                   quan = "numeric"),
                     contains="PcaRobust") 
+setClass("PcaLocantore", representation(),
+                    contains="PcaRobust") 
+setClass("PcaCov", representation(),
+                    contains="PcaRobust") 

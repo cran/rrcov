@@ -1,7 +1,7 @@
 Package: rrcov
-Date: 2008-02-12
+Date: 2008-05-05
 Title: Scalable Robust Estimators with High Breakdown Point
-Version: 0.4-05
+Version: 0.4-06
 Author: Valentin Todorov <valentin.todorov@chello.at>
 Description: Robust Location and Scatter Estimation and Robust Multivariate Analysis with High Breakdown Point.
 Maintainer: Valentin Todorov <valentin.todorov@chello.at>
@@ -9,4 +9,4 @@ Depends: methods, robustbase
 Imports: stats4
 LazyLoad: yes
 License: GPL (>= 2) 
-Packaged: Tue Feb 26 00:06:40 2008; Share
+Packaged: Tue Jun 17 23:16:59 2008; Share

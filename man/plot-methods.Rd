@@ -3,7 +3,9 @@
 \concept{High breakdown point}
 \alias{plot-methods}
 \alias{plot,CovClassic-method}
+\alias{plot,CovClassic,missing-method}
 \alias{plot,CovRobust-method}
+\alias{plot,CovRobust,missing-method}
 \title{Methods for Function 'plot' in Package 'rrcov'}
 \description{
  Shows the Mahalanobis distances based on robust and/or classical estimates 

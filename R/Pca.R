@@ -46,7 +46,9 @@ setMethod("biplot", "Pca", function(x, ...){
 ##  observations and variables of a matrix of multivariate data 
 ##  on the same plot. 
 
-setMethod("plot", "Pca", function(x, y="missing", 
+## VT::17.06.2008
+##setMethod("plot", "Pca", function(x, y="missing", 
+setMethod("plot", signature(x="Pca", y="missing"), function(x, y="missing", 
                                 id.n.sd=3,
                                 id.n.od=3,
                                 ...){
@@ -77,6 +79,12 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
 
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
+##
+##  data - 
+##  r    - rank
+##  res  - the Pca object
+##
+##  - cutoff for score distances: sqrt(qchisq(0.975, k)
 .distances <- function(data, r, res) {
     
     ## compute the score distances and the corresponding cutoff value
@@ -88,7 +96,7 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     ## Compute the orthogonal distances and the corresponding cutoff value
     ##  For each point this is the norm of the difference between the 
     ##  centered data and the back-transformed scores
-    res@od<-apply(data - repmat(res@center, n, 1) - res@scores %*% t(res@loadings), 1, vecnorm)
+    res@od <- apply(data - repmat(res@center, n, 1) - res@scores %*% t(res@loadings), 1, vecnorm)
     if(is.list(dimnames(res@scores))) { 
         names(res@od) <- dimnames(res@scores)[[1]]
     }

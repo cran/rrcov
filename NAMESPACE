@@ -1,5 +1,6 @@
 useDynLib(rrcov)
 importFrom(stats4, plot, summary)
+importFrom(stats, screeplot, biplot, predict)
 
 export(CovClassic,
        Cov,
@@ -17,7 +18,9 @@ export(CovClassic,
        T2.test,
        Wilks.test,
        PcaClassic,
-       PcaHubert
+       PcaHubert,
+       PcaLocantore,
+       PcaCov
 )
 
 ##S3 generics
@@ -33,6 +36,10 @@ S3method(PcaClassic, default)
 S3method(PcaClassic, formula)
 S3method(PcaHubert, default)
 S3method(PcaHubert, formula)
+S3method(PcaLocantore, default)
+S3method(PcaLocantore, formula)
+S3method(PcaCov, default)
+S3method(PcaCov, formula)
 
 ## S4 generics
 export(isClassic,
@@ -70,8 +77,9 @@ exportClasses(Cov,
               Pca,
               PcaClassic,
               PcaRobust,
-              PcaHubert
-              
+              PcaHubert,
+              PcaLocantore,
+              PcaCov
 )
 
 exportMethods(isClassic,

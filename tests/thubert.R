@@ -1,4 +1,4 @@
-dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca", "mcd")){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert", "hubert.mcd", "locantore", "cov")){
 ## Test the function PcaHubert() on the literature datasets: 
 ##
 ## Call PcaHubert() for all regression datasets available in 
@@ -13,10 +13,17 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
 
         n <- dim(x)[1]
         p <- dim(x)[2]
-        if(method == "mcd")
+        if(method == "hubert.mcd")
             pca <- PcaHubert(x)
-        else
+        else if(method == "hubert")
             pca <- PcaHubert(x, mcd=FALSE)
+        else if(method == "locantore")
+            pca <- PcaLocantore(x)
+        else if(method == "cov")
+            pca <- PcaCov(x)
+        else
+            stop("Undefined PCA method: ", method)
+            
         
         e1 <- getEigenvalues(pca)[1]
         e2 <- getEigenvalues(pca)[2]
@@ -88,9 +95,9 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("robpca"
     cat("==========================================================\n")
 }
 
-dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
+dogen <- function(nrep=1, eps=0.49, method=c("hubert", "hubert.mcd", "locantore", "cov")){
 
-    domcd <- function(x, nrep=1){ 
+    dopca <- function(x, nrep=1){ 
         gc()
         xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
@@ -116,6 +123,7 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
             if(5*p <= n){
                 xx <- gendata(n, p, eps)
                 X <- xx$X
+                ## print(dimnames(X))
                 tottime <- tottime + dopca(X, nrep)
             }
         } 
@@ -125,11 +133,20 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
     cat("Total time: ", tottime*nrep, "\n")
 }
 
-dorep <- function(x, nrep=1, method=c("robpca")){ 
+dorep <- function(x, nrep=1, method=c("hubert", "hubert.mcd", "locantore", "cov")){ 
 
     method <- match.arg(method)
     for(i in 1:nrep)
+    if(method == "hubert.mcd")
         PcaHubert(x)
+    else if(method == "hubert")
+        PcaHubert(x, mcd=FALSE)
+    else if(method == "locantore")
+        PcaLocantore(x)
+    else if(method == "cov")
+        PcaCov(x)
+    else
+        stop("Undefined PCA method: ", method)
 } 
 
 #### gendata() ####
@@ -148,6 +165,7 @@ gendata <- function(n,p,eps=0,b=10){
         stop(message="eps must be in [0,0.5)")
     X <- mvrnorm(n,rep(0,p),diag(1,nrow=p,ncol=p))
     nbad <- as.integer(eps * n)
+    xind <- vector("numeric")
     if(nbad > 0){
         Xbad <- mvrnorm(nbad,rep(b,p),diag(1,nrow=p,ncol=p))
         xind <- sample(n,nbad)
@@ -175,5 +193,7 @@ whatis<-function(x){
 }
 
 library(rrcov)
-dodata(method="mcd")
-dodata(method="robpca")
+dodata(method="hubert.mcd")
+dodata(method="hubert")
+dodata(method="locantore")
+dodata(method="cov")

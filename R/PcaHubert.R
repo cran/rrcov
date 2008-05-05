@@ -199,7 +199,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         if(is.list(dimnames(data)))
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
-        dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
+        dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
                
         res <- new("PcaHubert",call=cl, 
                             loadings=loadings, 
@@ -339,7 +339,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         scores <- (X2 - repmat(X2center, n, 1)) %*% P6
         if(is.list(dimnames(data)))
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
-        dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
+        dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
 
         res <- new("PcaHubert",call=cl, 
                             loadings=loadings, 

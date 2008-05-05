@@ -1,4 +1,7 @@
 Appalachia              Annual maximum streamflow in central Appalachia
+bus                     Automatic vehicle recognition data
+bushmiss                Campbell Bushfire Data with added missing data
+                        items
 Cascades                Annual precipitation totals for the North
                         Cascades region
 Cov-class               Class "Cov" - a base class for estimates of
@@ -67,10 +70,16 @@ Pca-class               Class "Pca" - virtual base class for all
 PcaClassic              Principal Components Analysis
 PcaClassic-class        Class "PcaClassic" - Principal Components
                         Analysis
+PcaCov                  Robust PCA based on a robust covariance matrix
+PcaCov-class            Class "PcaCov" - Robust PCA based on a robust
+                        covariance matrix
 PcaHubert               ROBPCA - ROBust method for Principal Components
                         Analysis
 PcaHubert-class         Class "PcaHubert" - ROBust method for Principal
                         Components Analysis
+PcaLocantore            Spherical Principal Components
+PcaLocantore-class      Class "PcaLocantore" Spherical Principal
+                        Components
 PcaRobust-class         Class "PcaRobust" virtual base class for all
                         robust PCA classes
 plot-methods            Methods for Function 'plot' in Package 'rrcov'

@@ -1,6 +1,7 @@
 \name{CovControlSest-class}
 \docType{class}
 \alias{CovControlSest-class}
+\alias{estimate,CovControlSest-method}
 \title{Class 'CovControlSest' - contains control parameters for "CovSest"}
 \description{ 
     This class extends the \code{CovControl} class 
