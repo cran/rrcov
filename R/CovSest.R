@@ -3,16 +3,6 @@
 ##   - 'best' and 'exact' options for nsamp, as in CovMcd
 ##   - start reimplementing parts in C
 ##
-CovControlSest <- function (bdp=0.5,
-                            nsamp=500,
-                            seed=NULL,
-                            trace=FALSE,
-                            tolSolve=10e-14,
-                            algo="sfast")
-{
-    new("CovControlSest", bdp=bdp, nsamp=nsamp, seed=seed, trace=trace, tolSolve=tolSolve, algo=algo)        
-}
-
 CovSest <- function(x, 
                     nsamp=500, 
                     bdp=0.5,

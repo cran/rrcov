@@ -36,12 +36,12 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
     call <- match.call()
     method <- "M-Estimates"
 
-    ## if not provided initial estimates, compute them as MCD 
+    ## if not provided initial estimates, compute them as MVE 
     if(missing(t0) || missing(S0)){
         if(missing(initcontrol))
             init <- CovMve(x)
         else
-            init <- estimate(initcontrol)
+            init <- estimate(initcontrol, x)
         t0 <- init@raw.center
         S0 <- init@raw.cov
     }

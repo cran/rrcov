@@ -36,7 +36,7 @@ PcaHubert(x, ...)
     components by finding such \code{k} that \eqn{l_k/l_1 >= 10.E-3} and 
     \eqn{\Sigma_{j=1}^k l_j/\Sigma_{j=1}^r l_j >= 0.8}. 
     It is preferable to investigate the scree plot in order to choose the number 
-    of components and the run again. Default is \code{k=0}. }
+    of components and then run again. Default is \code{k=0}. }
   \item{kmax}{maximal number of principal components to compute.
     Default is \code{kmax=10}. If \code{k} is provided, \code{kmax} 
     does not need to be specified, unless \code{k} is larger than 10.}
@@ -97,7 +97,7 @@ specified by the user after inspecting the scree plot.
 \bold{Step 3:} The data points are projected on the k-dimensional subspace
 spanned by the \code{k} eigenvectors corresponding to the largest
 \code{k} eigenvalues of the matrix \eqn{\Sigma_h}. The location and
-scatter and shape of the projected data are computed using the
+scatter of the projected data are computed using the
 reweighted MCD estimator and the eigenvectors of this scatter matrix
 yield the robust principal components.
 }
@@ -137,10 +137,11 @@ yield the robust principal components.
 
 ## To plot the results:
 
-    plot(pca)               # distance plot
-    plot(PcaHubert(hbk, k=2))  # PCA diagnostic plot (or outlier map)
+    plot(pca)                    # distance plot
+    pca2 <- PcaHubert(hbk, k=2)  
+    plot(pca2)                   # PCA diagnostic plot (or outlier map)
     
-## Use the standard plots for \code{prcomp} and \code{princomp}
+## Use the standard plots available for for prcomp and princomp
     screeplot(pca)    
     biplot(pca)    
 }

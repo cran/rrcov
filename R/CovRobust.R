@@ -43,7 +43,9 @@ setMethod("show", "SummaryCovRobust", function(object){
     print.default(format(as.vector(getDistance(object)), digits = digits), print.gap = 2, quote = FALSE)
 })
 
-setMethod("plot", "CovRobust", function(x, y="missing", 
+## VT::17.06.2008
+##setMethod("plot", "CovRobust", function(x, y="missing", 
+setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing", 
                                 which=c("all", "dd", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
                                 classic= FALSE,
                                 ask = (which=="all" && dev.interactive(TRUE)),

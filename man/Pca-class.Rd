@@ -7,7 +7,8 @@
 \alias{getPrcomp,Pca-method}
 \alias{getScores,Pca-method}
 \alias{getSdev,Pca-method}
-\alias{plot,Pca-method}
+\alias{plot}
+\alias{plot,Pca,missing-method}
 \alias{print,Pca-method}
 \alias{show,Pca-method}
 \alias{predict,Pca-method}

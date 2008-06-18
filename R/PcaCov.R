@@ -1,13 +1,14 @@
-##setGeneric("PcaClassic", function(x, ...) standardGeneric("PcaClassic")) 
-##setMethod("PcaClassic", "formula", PcaClassic.formula) 
-##setMethod("PcaClassic", "ANY", PcaClassic.default) 
+setClass("PcaCov", representation(delta = "numeric",
+                                    quan = "numeric"),
+                                contains="PcaRobust") 
 
-setMethod("getQuan", "PcaClassic", function(obj) obj@n.obs)
+setMethod("getQuan", "PcaCov", function(obj) obj@n.obs)
 
 ##  The S3 version
-PcaClassic <- function (x, ...) UseMethod("PcaClassic")
+PcaCov <- function (x, ...) 
+    UseMethod("PcaCov")
 
-PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
+PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
 {
     cl <- match.call()
 
@@ -28,10 +29,10 @@ PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
     
-    res <- PcaClassic.default(x, ...)
+    res <- PcaCov.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
-    cl[[1]] <- as.name("PcaClassic")
+    cl[[1]] <- as.name("PcaCov")
     res@call <- cl
 
 #    if (!is.null(na.act)) {
@@ -43,8 +44,9 @@ PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
+PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovControlMcd(), na.action = na.fail, trace=FALSE, ...)
 {
+
     cl <- match.call()
 
     if(missing(x)){
@@ -53,16 +55,17 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     data <- as.matrix(x)
     n <- nrow(data)
     p <- ncol(data)
-
-    Xsvd <- kernelEVD(data)
-    if(Xsvd$rank == 0) {
-        stop("All data points collapse!")
-    }   
     
+    if(n < p)
+        stop("'PcaCov' can only be used with more units than variables")
+        
     ##
     ## verify and set the input parameters: k and kmax
     ##
-    kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
+    ##
+    ## verify and set the input parameters: k and kmax
+    ##
+    kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
     if((k <- floor(k)) < 0)   
         k <- 0
     else if(k > kmax) {
@@ -72,31 +75,44 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     if(k != 0)
         k <- min(k, ncol(data))
     else {
-        k <- min(kmax,ncol(data))
+        k <- min(kmax, ncol(data))
         if(trace)
             cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
     }
-   
-    loadings <- as.matrix(Xsvd$loadings[,1:k])
-    eigenvalues <- as.vector(Xsvd$eigenvalues[1:k])
-    center <- as.vector(Xsvd$center)
-    scores <- as.matrix(Xsvd$scores[,1:k])
+######################################################################
+
+    cov <- estimate(cov.control, data)
+    covmat <- list(cov=getCov(cov), center=getCenter(cov), n.obs=cov@n.obs)
+    if(corr)
+        covmat$cor <- getCorr(cov)
+
+    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
+
+    scores <- predict(out, newdata=data)
+    center   <- getCenter(cov)
+    sdev     <- out$sdev
+    scores   <- scores[, 1:k]
+    loadings <- as.matrix(out$loadings)[, 1:k]
+    eigenvalues  <- (sdev^2)[1:k]
+
+######################################################################    
+    names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
-        dimnames(scores)[[1]] <- dimnames(data)[[1]]
+        rownames(scores) <- rownames(data)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
-    cl[[1]] <- as.name("PcaClassic")
-    res <- new("PcaClassic", call=cl, 
+    cl[[1]] <- as.name("PcaCov")
+    res <- new("PcaCov", call=cl, 
                             loadings=loadings, 
                             eigenvalues=eigenvalues, 
                             center=center, 
-                            scores=scores, 
-                            k=k, 
+                            scores=scores,
+                            k=p,
                             n.obs=n)
                
     ## Compute distances and flags
-    res <- .distances(data, Xsvd$rank, res)
+    res <- rrcov:::.distances(x, p, res)
     return(res)
 }

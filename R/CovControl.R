@@ -54,3 +54,17 @@ CovControlMve <- function (alpha=0.5,
 setMethod("estimate", "CovControlMve", function(obj, x, ...) 
     CovMve(x, control = obj, ...)
 )
+
+CovControlSest <- function (bdp=0.5,
+                            nsamp=500,
+                            seed=NULL,
+                            trace=FALSE,
+                            tolSolve=10e-14,
+                            algo="sfast")
+{
+    new("CovControlSest", bdp=bdp, nsamp=nsamp, seed=seed, trace=trace, tolSolve=tolSolve, algo=algo)        
+} 
+
+setMethod("estimate", "CovControlSest", function(obj, x, ...) 
+    CovSest(x, control = obj, ...)
+)

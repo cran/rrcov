@@ -32,8 +32,9 @@ site are regarded as a point in three dimensional space.
 \references{
     Neykov, N.M., Neytchev, P.N., Van Gelder, P.H.A.J.M. and Todorov V. (2007),
     Robust detection of discordant sites in regional frequency analysis,
-    \emph{Water Resources Research},
-    to appear
+    \emph{Water Resources Research}, 43, W06417, 
+    doi:10.1029/2006WR005322, 
+    \url{http://www.agu.org/pubs/crossref/2007/2006WR005322.shtml}
 }
 \examples{
     data(Cascades)
@@ -49,5 +50,14 @@ site are regarded as a point in three dimensional space.
     plot(mcd, which="dist", class=TRUE)
     plot(mcd, which="dd", class=TRUE)
 
+    ##  identify the discordant sites using robust distances and compare 
+    ##  to the classical ones
+    rd <- sqrt(getDistance(mcd))
+    ccov <- CovClassic(Cascades)
+    cd <- sqrt(getDistance(ccov))
+    r.out <- which(rd > sqrt(qchisq(0.975,3)))
+    c.out <- which(cd > sqrt(qchisq(0.975,3)))
+    cat("Robust: ", length(r.out), " outliers: ", r.out,"\n")
+    cat("Classical: ", length(c.out), " outliers: ", c.out,"\n")
 }
 \keyword{datasets}

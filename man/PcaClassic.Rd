@@ -8,7 +8,7 @@
 }
 \usage{
 PcaClassic(x, ...)
-\method{PcaClassic}{default}(x, k = 0, kmax = 10, trace=FALSE, \dots)
+\method{PcaClassic}{default}(x, k = 0, kmax = ncol(x), trace=FALSE, \dots)
 \method{PcaClassic}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{

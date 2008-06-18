@@ -23,12 +23,15 @@ CovMcd <- function(x,
     }
 
     ## prepare the call to covMcd() which will return an S3 object
+
+    ## handle the case of nsamp="best" or "exact"    
+    iter <- if(is.numeric(nsamp)) nsamp else 0
     
     xcall <- match.call()
     mcd <- covMcd(x=x, alpha=alpha, nsamp=nsamp, seed=seed, trace=trace, use.correction=use.correction)
     ans <- new("CovMcd", 
                call = xcall,
-               iter=nsamp,
+               iter=iter,
                crit=mcd$crit,
                cov=mcd$cov,
                center=mcd$center,

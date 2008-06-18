@@ -39,7 +39,9 @@ CovClassic <- function(x, unbiased = TRUE)
         method=method, X=x)
 }
 
-setMethod("plot", "CovClassic", function(x, y="missing", 
+## VT::17.06.2008
+##setMethod("plot", "CovClassic", function(x, y="missing", 
+setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing", 
                                 which=c("all", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
                                 ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
