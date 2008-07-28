@@ -137,12 +137,12 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
         if(length(dim(data)) >= 2 && dim(data)[2] == 2){
             if(!is.null(rd)){
                 if(classic &&  !is.null(md))
-                    .tolellipse(rcov=x, ccov = ccov, cutoff=cutoff, id.n=id.n, tol=tol)
+                    .tolellipse(rcov=x, ccov = ccov, cutoff=cutoff, id.n=id.n, tol=tol, ...)
                 else
-                    .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol)
+                    .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol, ...)
             }
         }
-        else
+        else if(which != "all")
             warning("Warning: For tolerance ellipses the dimension must be 2!")             
     }
 

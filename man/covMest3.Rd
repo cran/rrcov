@@ -6,7 +6,10 @@
 \description{
     Computes constrained M-Estimates of multivariate location and scatter 
     based on the translated biweight function (\sQuote{t-biweight}) using
-    a High breakdown point initial estimate (Minimum Volume Ellipsoid)
+    a High breakdown point initial estimate. The default initial estimate 
+    is the Minimum Volume Ellipsoid computed
+    with \code{\link{CovMve}}. The raw (not reweighted) estimates are taken 
+    and the covariance matrix is standardized to determinant 1.
 }
 \usage{
 covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3, 

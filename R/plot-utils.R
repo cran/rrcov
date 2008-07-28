@@ -86,11 +86,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
     if(missing(id.n))
         id.n <- length(which(x>cutoff))
 
-    if(classic)
-        ylab="Mahalanobis distance"
-    else
-        ylab="Robust distance"
-
+    ylab <- paste(if(classic) "Mahalanobis" else "Robust", "distance")
     plot(x, ylab=ylab, xlab="Index", type="p", ylim=ylim)
     .label(1:n, x, id.n)
     abline(h=cutoff)
@@ -155,7 +151,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
 }
 
 .tolellipse <-
-    function(rcov, ccov, cutoff = NULL, id.n = NULL, tol = 1e-07)
+    function(rcov, ccov, cutoff = NULL, id.n = NULL, tol = 1e-07, ...)
 {
 
 ## MM: This is nothing else but a version  cluster::ellipsoidPoints() !! -- FIXME
@@ -237,9 +233,13 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
 ##  plot the ellipse, write a title of the plot
     plot(data, xlim = x1, ylim = y1, xlab = xlab, ylab = ylab)
     box()
-    xrange <- par("usr")
-    xrange <- xrange[2] - xrange[1]
-    text(data[ind, 1] + xrange/50, data[ind, 2], ind)
+
+    ## VT:::03.08.2008
+    if(id.n > 0){
+        xrange <- par("usr")
+        xrange <- xrange[2] - xrange[1]
+        text(data[ind, 1] + xrange/50, data[ind, 2], ind)
+    }
 
     if(leg@leg)
         points(z1, type = "l", lty=leg@lty[1], col=leg@col[1])

@@ -7,34 +7,56 @@
     Computes S-Estimates of multivariate location and scatter based on Tukey's 
     biweight function using a fast algorithm similar to the one proposed by 
     Salibian-Barrera and Yohai (2006) for the case of regression. Alternativley, the 
-    Ruppert's SURREAL algorithm can be used.
+    Ruppert's SURREAL algorithm, bisquare or Rocke type estimation can be used.
 }
 \usage{
-    CovSest(x, nsamp = 500, bdp = 0.5, seed = NULL, trace = FALSE, tolSolve = 1e-13, 
-        algo = c("sfast", "surreal"), control)
+    CovSest(x, bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120, 
+        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13, 
+        method = c("sfast", "surreal", "bisquare", "rocke"), control,
+        t0, S0, initcontrol)
 }
 \arguments{
   \item{x}{ a matrix or data frame. }
-  \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}}.
   \item{bdp}{ required breakdown point.  Allowed values are between 
     \code{(n - p)/(2 * n)} and 1 and the default is 0.5}
+
+  \item{arp}{a numeric value specifying the asympthotic 
+    rejection point (for the Rocke type S estimates), 
+    i.e. the fraction of points receiving zero 
+    weight (see Rocke (1996)).  Default is \code{0.1} 
+  }
+  \item{eps}{a numeric value specifying the 
+    relative precision of the solution of the S-estimate (bisquare and Rocke type). 
+    Defaults to \code{1e-5}.
+  }
+  \item{maxiter}{maximum number of iterations allowed 
+    in the computation of the S-estimate (bisquare and Rocke type). 
+    Defaults to 120. 
+  }
+  \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}}.
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}  
   \item{tolSolve}{numeric tolerance to be used for inversion
     (\code{\link{solve}}) of the covariance matrix in
     \code{\link{mahalanobis}}.}
-  \item{algo}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
+  \item{method}{ Which algorithm to use: 'sfast'=FAST-S, 'surreal'=SURREAL, 'bisquare' or 'rocke' }
   \item{control}{ a control object (S4) of class \code{\link{CovControlSest-class}} 
     containing estimation options - same as these provided in the fucntion 
     specification. If the control object is supplied, the parameters from it 
     will be used. If parameters are passed also in the invocation statement, they will 
     override the corresponding elements of the control object.}
+  \item{t0}{ optional initial HBDP estimate for the center }
+  \item{S0}{ optional initial HBDP estimate for the covariance matrix }
+  \item{initcontrol}{ optional control object to be used for computing the initial HBDP estimates }
 }
 \details{
-    Computes biweight multivariate S-estimator of location and scatter. The 
-    algorithm used is similar to the one proposed by Salibian-Barrera and Yohai (2006) 
-    for the case of regression. Alternativley, if the parameter \code{algo} is set to 
-    \code{surreal} the Ruppert's SURREAL algorithm will be used.
+    Computes biweight multivariate S-estimator of location and scatter. The computation will be 
+    performed by one of the following algorithms:
+    \item{FAST-S}{An algorithm similar to the one proposed by Salibian-Barrera and Yohai (2006) 
+    for the case of regression}
+    \item{SURREAL}{Ruppert's SURREAL algorithm when \code{method} is set to 'surreal'}
+    \item{BISQUARE}{Bisquare S-Estimate with \code{method} set to 'bisquare'}
+    \item{ROCKE}{Rocke type S-Estimate with \code{method} set to 'rocke'}.
 }
 \value{
   An S4 object of class \code{\link{CovSest-class}} which is a subclass of the 
@@ -52,6 +74,9 @@
   M. Salibian-Barrera and V. Yohai (2006) A fast algorithm for {S}-regression
   estimates, \emph{Journal of Computational and Graphical Statistics}, \bold{15},
   414--427.
+  
+  R. A. Maronna, D. Martin and V. Yohai (2006). \emph{Robust Statistics: Theory and Methods}. 
+  Wiley, New York.  
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} and
 Matias Salibian-Barrera \email{matias@stat.ubc.ca}.  See also the code from 
@@ -80,8 +105,18 @@ summary(c1)
 plot(c1)
 
 ## Use the SURREAL algorithm of Ruppert
-cr <- CovSest(hbk.x, algo="surreal")
+cr <- CovSest(hbk.x, method="surreal")
 cr
+
+## Use Bisquare estimation
+cr <- CovSest(hbk.x, method="bisquare")
+cr
+
+## Use Rocke type estimation
+cr <- CovSest(hbk.x, method="rocke")
+cr
+
+
 }
 \keyword{robust}
 \keyword{multivariate}

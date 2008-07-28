@@ -38,11 +38,15 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
     defcontrol <- CovControlOgk()           # default control
     mrob <- defcontrol@mrob
     vrob <- defcontrol@vrob
+    smrob <- defcontrol@smrob
+    svrob <- defcontrol@svrob
     if(!missing(control)){                  # a control object was supplied
         if(niter == defcontrol@niter)       niter <- control@niter
         if(beta == defcontrol@beta)         beta <- control@beta
         mrob <- control@mrob
         vrob <- control@vrob
+        smrob <- control@smrob
+        svrob <- control@svrob
     }
 
     if(is.data.frame(x))
@@ -66,46 +70,78 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
 
     call <- match.call()
 
-##  iterate two times to obtain OGK2
-    first <- metodo2(x)
-    cov <- first$cov
-    center <- as.vector(first$center)
-    ZZ <- first$ZZ
-    if(niter >= 2){
-        second <- metodo2(first$ZZ)
-        cov  <- first$AA %*% second$cov %*% t(first$AA)
-        center <- as.vector(first$AA %*% as.vector(second$center))
-        ZZ <- second$ZZ
-    }
-    
-    dimnames(cov) <- list(dimn[[2]], dimn[[2]])
-    names(center) <- dimn[[2]]
-    
-##  compute distances and weights
-##  do not invert cov to compute the distances, use the transformed data
-##
-##  dist2 <- mahalanobis(X, center, cov)
-##
-    musigma <- apply(ZZ,2,mrob)
-    ZZ <- sweep(ZZ, 2, musigma[1,])
-    ZZ <- sweep(ZZ, 2, musigma[2,], '/')
-    dist2 <- rowSums(ZZ^2)
+    ## If the user has supplied own mrob and vrob use the pure R version
+    ##  with this functions. Otherwise call the C implementation
+    if(!is.null(mrob)){
+        
+        ##  iterate two times to obtain OGK2
+        first <- metodo2(x)
+        cov <- first$cov
+        center <- as.vector(first$center)
+        ZZ <- first$ZZ
+        if(niter >= 2){
+            second <- metodo2(first$ZZ)
+            cov  <- first$AA %*% second$cov %*% t(first$AA)
+            center <- as.vector(first$AA %*% as.vector(second$center))
+            ZZ <- second$ZZ
+        }
+        
+        dimnames(cov) <- list(dimn[[2]], dimn[[2]])
+        names(center) <- dimn[[2]]
+        
+        ##  compute distances and weights
+        ##  do not invert cov to compute the distances, use the transformed data
+        ##
+        ##  dist2 <- mahalanobis(X, center, cov)
+        ##
 
-    quantiel <- qchisq(beta, p)
-    qq <- (quantiel * median(dist2))/qchisq(0.5, p)
-    wt <- ifelse(dist2 < qq, 1, 0)
-    swt <- sum(wt)
+        musigma <- apply(ZZ,2,mrob)
+        ZZ <- sweep(ZZ, 2, musigma[1,])
+        ZZ <- sweep(ZZ, 2, musigma[2,], '/')
+        dist2 <- rowSums(ZZ^2)
+    
+        cdelta <- median(dist2)/qchisq(0.5, p)
+        cov <- cdelta * cov 
+
+        quantiel <- qchisq(beta, p)
+        qq <- (quantiel * median(dist2))/qchisq(0.5, p)
+        wt <- ifelse(dist2 < qq, 1, 0)
+        sum.wt <- sum(wt)
+    } else {
+        if(!(smrob %in% c("scaleTau2", "s_mad")))
+            stop(paste("Scale function not defined: ", smrob))
+        if(!(svrob %in% c("gk", "qc")))
+            stop(paste("Bivariate covariance function not defined: ", svrob))
+            
+        storage.mode(x) <- "double"
+        opw <- .Call("covOPW", x, as.integer(niter), smrob, svrob)
+        
+        dimnames(opw$cov) <- list(dimn[[2]], dimn[[2]])
+        names(opw$center) <- dimn[[2]]
+    
+        dist2 <- opw$distances
+        
+        cdelta <- median(dist2)/qchisq(0.5, p)
+        cov <- opw$cov <- cdelta * opw$cov 
+        center <- opw$center
+        
+        quantiel <- qchisq(beta, p)
+        qq <- (quantiel * median(dist2))/qchisq(0.5, p)
+        wt <- ifelse(dist2 < qq, 1, 0)
+        sum.wt <- sum(wt)
+    }
 
 ##  compute the reweighted estimates:  OGK2(0.9)
-    wcenter <- colSums(x*wt)/swt
+    wcenter <- colSums(x*wt)/sum.wt
     X <- sqrt(wt) * sweep(x, 2, wcenter)
-    wcov <- (t(X) %*% X)/swt
+    wcov <- (t(X) %*% X)/sum.wt
 
 ##  Compute consistency correction factor for the reweighted  cov
-##    qdelta.rew <- qchisq(sum(wt)/n, p)
-##    cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(wt)/n)
-##    cnp2 <- 1/cdeltainvers.rew
-
+    qdelta.rew <- qchisq(sum(wt)/n, p)
+    cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(wt)/n)
+    cnp2 <- 1/cdeltainvers.rew
+    
+ ##   wcov <- cnp2 * wcov
 
     method="Orthogonalized Gnanadesikan-Kettenring Estimator"
     ans <- new("CovOgk", 

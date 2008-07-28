@@ -36,14 +36,25 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
     call <- match.call()
     method <- "M-Estimates"
 
-    ## if not provided initial estimates, compute them as MVE 
+    ## If not provided initial estimates, compute them as MVE
+    ##  Take the raw estimates and standardise the covariance 
+    ##  matrix to determinant=1 
     if(missing(t0) || missing(S0)){
         if(missing(initcontrol))
             init <- CovMve(x)
         else
             init <- estimate(initcontrol, x)
-        t0 <- init@raw.center
-        S0 <- init@raw.cov
+        cl <- class(init)
+        if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
+            t0 <- init@raw.center
+            S0 <- init@raw.cov
+            detS0 <-det(S0)
+            detS02 <- detS0^(1.0/p)
+            S0 <- S0/detS02
+        } else{
+            t0 <- init@center
+            S0 <- init@cov
+        }
     }
 
     ## calculate the constants M and c 

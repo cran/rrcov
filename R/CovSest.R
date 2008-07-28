@@ -1,16 +1,23 @@
 ## TO DO 
 ##
 ##   - 'best' and 'exact' options for nsamp, as in CovMcd
-##   - start reimplementing parts in C
+##   - start reimplementing parts of the S-FAST algorithm in C
 ##
 CovSest <- function(x, 
-                    nsamp=500, 
                     bdp=0.5,
+                    arp=0.1,
+                    eps=1e-5, 
+                    maxiter=120, 
+                    nsamp=500, 
                     seed=NULL, 
                     trace=FALSE,
                     tolSolve=10e-14,
-                    algo=c("sfast", "surreal"),
-                    control)
+                    method=c("sfast", "surreal", "bisquare", "rocke"),
+                    control,
+                    t0, 
+                    S0, 
+                    initcontrol
+                )
 {
     ## Compute the constant kp (used in Tbsc)
     Tbsb <- function(c, p)
@@ -53,15 +60,19 @@ CovSest <- function(x,
     ## but if single parameters were passed (not defaults) they will override the
     ## control object.
 
-    algo <- match.arg(algo)
+    method <- match.arg(method)
     if(!missing(control)){
         defcontrol <- CovControlSest()     # default control
-        if(bdp == defcontrol@bdp)           bdp <- control@bdp
+        if(bdp == defcontrol@bdp)           bdp <- control@bdp          # for s-fast and surreal
+        if(arp == defcontrol@arp)           arp <- control@arp          # for rocke type
+        if(eps == defcontrol@eps)           eps <- control@eps          # for bisquare and rocke
+        if(maxiter == defcontrol@maxiter)   maxiter <- control@maxiter  # for bisquare and rocke
+        
         if(nsamp == defcontrol@nsamp)       nsamp <- control@nsamp
         if(is.null(seed) || seed == defcontrol@seed)         seed <- control@seed
         if(trace == defcontrol@trace)       trace <- control@trace
         if(tolSolve == defcontrol@tolSolve) tolSolve <- control@tolSolve
-        if(algo == defcontrol@algo)         algo <- control@algo
+        if(method == defcontrol@method)     method <- control@method
     }
 
     if(length(seed) > 0) {
@@ -82,7 +93,7 @@ CovSest <- function(x,
     n <- nrow(x)
     p <- ncol(x)
     
-    if(algo == "surreal" && nsamp == 500)   # default
+    if(method == "surreal" && nsamp == 500)   # default
         nsamp = 600*p
 
     ## compute the constants c1 and kp
@@ -93,12 +104,14 @@ CovSest <- function(x,
         cat("\nFAST-S : bdp, p, c1, kp=", bdp, p, c1, kp, "\n")
 
     
-    mm <- if(algo == "sfast") ..fastSloc(x, nsamp=nsamp, kp=kp, cc=c1, trace=trace)
-          else                ..covSURREAL(x, nsamp=nsamp, kp=kp, c1=c1, trace=trace, tol.inv=tolSolve)
+    mm <- if(method == "sfast")         ..fastSloc(x, nsamp=nsamp, kp=kp, cc=c1, trace=trace)
+          else if(method == "surreal")  ..covSURREAL(x, nsamp=nsamp, kp=kp, c1=c1, trace=trace, tol.inv=tolSolve)
+          else if(method == "bisquare") ..covSBic(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol)
+          else                          ..covSRocke(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol)
 
     ans <- new("CovSest", 
                call = xcall,
-               iter=nsamp,
+               iter=mm$iter,
                crit=mm$crit,
                cov=mm$cov,
                center=mm$center,
@@ -389,6 +402,7 @@ CovSest <- function(x,
                center=as.vector(super.best.mu),
                cov=super.best.sigma,
                crit=super.best.scale,
+               iter=nsamp,
                method="S estimation: S-FAST"))
 }
 
@@ -581,7 +595,556 @@ psibiweight <- function(xx, c1)
     return (list(center = mutil,
                  cov = covtil,
                  crit = Stil,
+                 iter = nsamp,
                  method="S estimation: SURREAL")
             )
 }
  
+##
+## Compute the S-estimate of location and scatter using the  bisquare function
+##
+##  NOTE: this function is equivalent to the function ..covSRocke() for computing
+##          the rocke type estimates with the following diferences:
+##          - the call to .iter.rocke() instead of iter.bic()
+##          - the mahalanobis distance returned by iter.bic() is sqrt(mah)
+##          
+##  arp     - not used, i.e. used only in the Rocke type estimates
+##  eps     - Iteration convergence criterion
+##  maxiter - maximum number of iterations
+##  t0, S0  - initial HBDM estimates of center and location
+##  nsamp, seed - if not provided T0 and S0, these will be used for CovMve() 
+##              to compute them
+##  initcontrol - if not provided t0 and S0, initcontrol will be used to compute 
+##              them
+##
+..covSBic <- function(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol){
+    
+    dimn <- dimnames(x)
+    dx <- dim(x)
+    n <- dx[1]
+    p <- dx[2]
+    method <- "S-Estimates: bisquare"
+
+    ##  standarization
+    mu <- apply(x, 2, median)
+    devin <- apply(x, 2, mad)
+    x <- scale(x, center = mu, scale=devin)
+
+    ## If not provided initial estimates, compute them as MVE
+    ##  Take the raw estimates and standardise the covariance 
+    ##  matrix to determinant=1 
+    if(missing(t0) || missing(S0)){
+        if(missing(initcontrol))
+            init <- CovMve(x, nsamp=nsamp, seed=seed)
+        else
+            init <- estimate(initcontrol, x)
+        cl <- class(init)
+        if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
+            t0 <- init@raw.center
+            S0 <- init@raw.cov
+            
+##            xinit <- cov.wt(x[init@best,])
+##            t0 <- xinit$center
+##            S0 <- xinit$cov
+
+            detS0 <-det(S0)
+            detS02 <- detS0^(1.0/p)
+            S0 <- S0/detS02
+        } else{
+            t0 <- init@center
+            S0 <- init@cov
+        }
+    }
+    
+    ## initial solution
+    center <- t0
+    cov <- S0
+    
+    out <- .iter.bic(x, center, cov, maxiter, eps)
+    center <- out$center
+    cov <- out$cov
+    mah <- out$mah
+    iter <- out$iter  
+
+    mah <- mah^2
+    med0 <- median(mah)
+    qchis5 <- qchisq(.5,p)
+    cov <- (med0/qchis5)*cov
+    mah <- (qchis5/med0)*mah
+
+    DEV1 <- diag(devin)
+    center  <- DEV1%*%center+mu
+    cov <- DEV1%*%cov%*%DEV1
+    center <- as.vector(center)
+
+    crit <- determinant(cov, log = FALSE)$modulus[1]
+    if(!is.null(nms <- dimn[[2]])) {
+        names(center) <- nms
+        dimnames(cov) <- list(nms,nms)
+    }
+
+    return (list(center=center,
+                 cov=cov,
+                 crit=crit,
+                 method=method,
+                 iter=iter,
+                 mah=mah)
+           )
+}
+
+##
+## Compute the S-estimate of location and scatter using Rocke type estimator
+##
+##  see the notes to ..covSBic()
+##
+..covSRocke <- function(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol){
+    
+    dimn <- dimnames(x)
+    dx <- dim(x)
+    n <- dx[1]
+    p <- dx[2]
+    method <- "S-Estimates: Rocke type"
+
+    ##  standarization
+    mu <- apply(x, 2, median)
+    devin <- apply(x, 2, mad)
+    x <- scale(x, center = mu, scale=devin)
+
+    ## If not provided initial estimates, compute them as MVE
+    ##  Take the raw estimates and standardise the covariance 
+    ##  matrix to determinant=1 
+    if(missing(t0) || missing(S0)){
+        if(missing(initcontrol))
+            init <- CovMve(x, nsamp=nsamp, seed=seed)
+        else
+            init <- estimate(initcontrol, x)
+        cl <- class(init)
+        if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
+            t0 <- init@raw.center
+            S0 <- init@raw.cov
+            
+##            xinit <- cov.wt(x[init@best,])
+##            t0 <- xinit$center
+##            S0 <- xinit$cov
+
+            detS0 <-det(S0)
+            detS02 <- detS0^(1.0/p)
+            S0 <- S0/detS02
+        } else{
+            t0 <- init@center
+            S0 <- init@cov
+        }
+    }
+    
+    ## initial solution
+    center <- t0
+    cov <- S0
+    
+    out <- .iter.rocke(x, center, cov, maxiter, eps, alpha=arp)
+    center <- out$center
+    cov <- out$cov
+    mah <- out$mah
+    iter <- out$iter  
+
+#    mah <- mah^2
+    med0 <- median(mah)
+    qchis5 <- qchisq(.5,p)
+    cov <- (med0/qchis5)*cov
+    mah <- (qchis5/med0)*mah
+
+    DEV1 <- diag(devin)
+    center  <- DEV1%*%center+mu
+    cov <- DEV1%*%cov%*%DEV1
+    center <- as.vector(center)
+
+    crit <- determinant(cov, log = FALSE)$modulus[1]
+    if(!is.null(nms <- dimn[[2]])) {
+        names(center) <- nms
+        dimnames(cov) <- list(nms,nms)
+    }
+
+    return (list(center=center,
+                 cov=cov,
+                 crit=crit,
+                 method=method,
+                 iter=iter,
+                 mah=mah)
+           )
+}
+
+.iter.bic <- function(x, center, cov, maxiter, eps)
+{ 
+
+    stepS <- function(x, b, cc, mah, n, p)
+    {
+        p2 <- (-1/p)
+        w <- w.bi(mah,cc)
+        w.v <- matrix(w,n,p)
+        tn <- colSums(w.v*x)/sum(w)
+        xc <- x-t(matrix(tn,p,n)) 
+        vn <- t(xc)%*%(xc*w.v)
+        eii <- eigen(vn, symmetric=TRUE, only.values = TRUE)
+        eii <- eii$values
+        aa <- min(eii)
+        bb <- max(eii)
+        condn <- bb/aa
+        cn <- NULL
+        fg <- TRUE
+        
+        if(condn > 1.e-12)
+        {
+            fg <- FALSE
+            cn <- (det(vn)^p2)*vn
+        }
+    
+        out1 <- list(tn, cn, fg)
+        names(out1) <- c("center", "cov", "flag")
+        return(out1)
+    }
+    
+    scale.full <- function(u, b, cc)
+    { 
+        #find the scale - full iterations 
+        max.it <- 200
+        s0 <- median(abs(u))/.6745
+        s.old <- s0
+        it <- 0
+        eps <- 1e-4
+        err <- eps + 1 
+        while(it < max.it && err > eps)
+        {
+            it <- it+1
+            s.new <- s.iter(u,b,cc,s.old)
+            err <- abs(s.new/s.old-1)
+            s.old <- s.new
+        }
+        return(s.old)
+    }
+    
+    rho.bi <- function(x, cc)
+    {
+        ## bisquared rho function
+        dif <- abs(x) - cc < 0
+        ro1 <- (x^2)/2 - (x^4)/(2*(cc^2)) + (x^6)/(6*(cc^4))
+        ro1[!dif] <- cc^2/6
+        return(ro1)
+    }
+    
+    psi.bi <- function(x, cc)
+    {
+        ## bisquared psi function
+        dif <- abs(x) - cc < 0
+        psi1 <- x - (2*(x^3))/(cc^2) + (x^5)/(cc^4)
+        psi1[!dif] <- 0
+        return(psi1)
+    }
+    
+    w.bi <- function(x, cc)
+    {
+        ## bicuadratic w function
+        dif <- abs(x) - cc < 0
+        w1 <- 1 - (2*(x^2))/(cc^2) + (x^4)/(cc^4)
+        w1[!dif] <- 0
+        w1
+    }
+    
+    s.iter <- function(u, b, cc, s0)
+    {
+        # does one step for the scale
+        ds <- u/s0
+        ro <- rho.bi(ds, cc)
+        snew <- sqrt(((s0^2)/b) * mean(ro))
+        return(snew)
+    }
+
+##################################################################################
+
+    ##  main routine for .iter.bic()
+    cc <- 1.56
+    b <- cc^2/12
+    
+    dimx <- dim(x)
+    n <- dimx[1]
+    p <- dimx[2]
+
+    mah <- sqrt(mahalanobis(x, center, cov))
+    s0 <- scale.full(mah, b, cc)
+    mahst <- mah/s0
+
+    ## main loop
+    u <- eps + 1
+    fg <- FALSE
+    it <- 0
+    while(u > eps & !fg & it < maxiter)
+    {
+        it <- it + 1
+        out <- stepS(x, b, cc, mahst, n, p)
+        fg <- out$flag
+        if(!fg) 
+        {
+            center <- out$center
+            cov <- out$cov 
+            mah <- sqrt(mahalanobis(x, center, cov))
+            s <- scale.full(mah, b, cc)
+            mahst <- mah/s   
+            u <- abs(s-s0)/s0
+            s0 <- s
+        }
+    }
+
+    list(center=center, cov=cov, mah=mah, iter=it)
+}
+
+
+.iter.rocke <- function(x, mu, v, maxit, tol, alpha)
+{ 
+
+
+rho.rk2 <- function(t, p, alpha)
+{
+    x <- t
+    z  <- qchisq(1-alpha, p)
+    g <- min(z/p - 1, 1)
+    uu1 <- (x <= 1-g)
+    uu2 <- (x > 1-g & x <= 1+g)
+    uu3 <- (x > 1+g)
+    zz <- x
+    x1 <- x[uu2]
+    dd <- ((x1-1)/(4*g))*(3-((x1-1)/g)^2)+.5
+    zz[uu1] <- 0
+    zz[uu2] <- dd
+    zz[uu3] <- 1
+    return(zz)
+}
+
+w.rk2 <- function(t, p, alpha)
+{
+    x <- t
+    z <- qchisq(1-alpha, p)
+    g <- min(z/p - 1, 1)
+    uu1 <- (x <= (1-g) )
+    uu2 <- (x > 1-g & x <= 1+g)
+    uu3 <- (x > (1+g))
+    zz <- x
+    x1 <- x[uu2]
+    dd <- (3/(4*g))*(1-((x1-1)/g)^2)
+    zz[uu1] <- 0
+    zz[uu2] <- dd
+    zz[uu3] <- 0
+    return(zz)
+}
+
+disesca <- function(x, mu, v, alpha, delta)
+{
+    ##  calculate square roots of Mahalanobis distances and scale
+    dimx <- dim(x)
+    n <- dimx[1]
+    p <- dimx[2]
+    p2 <- (1/p)
+    p3 <- -p2
+    maha <- mahalanobisfl(x,mu,v)
+    dis <- maha$dist
+    fg <- maha$flag
+    detv <- maha$det
+    
+    sig <- NULL
+    v1 <- NULL
+    dis1 <- NULL
+    if(!fg) 
+    {
+        dis1 <- dis*(detv^p2)
+        v1 <- v*(detv^p3)
+        sig <- escala(p,dis1,alpha,delta)$sig
+    }
+    out <- list(dis=dis1, sig=sig, flag=fg, v=v1)
+    return(out)
+}
+
+fespro <- function(sig, fp, fdis, falpha, fdelta)
+{
+    z <- fdis/sig 
+    sfun <- mean(rho.rk2(z, fp, falpha)) - fdelta
+    return(sfun)
+}
+
+escala <- function(p, dis, alpha, delta)
+{
+    ##  find initial interval for scale
+    sig <- median(dis)
+    a <- sig/100
+    ff <- fespro(a, p, dis, alpha, delta)
+    while(ff<0) {
+        a <- a/10
+        ff <- fespro(a, p, dis, alpha, delta)
+    }
+
+    b <- sig*10
+    ff <- fespro(b, p, dis, alpha, delta)
+    while(ff>0) {
+        b <- b*10
+        ff <- fespro(b, p, dis, alpha, delta)
+    }
+
+    ##  find scale (root of fespro)
+    sig.res <- uniroot(fespro, lower=a, upper=b, fp=p, fdis=dis, falpha=alpha, fdelta=delta)
+    sig <- sig.res$root
+    mens <- sig.res$message
+    ans <- list(sig=sig, message=mens)
+    return(ans)
+}
+
+gradien <- function(x, mu1, v1, mu0, v0, sig0, dis0, sig1, dis1, alpha)
+{
+    dimx <- dim(x)
+    n <- dimx[1]
+    p <- dimx[2]
+    delta <- 0.5*(1-p/n)
+    decre <- 0.  
+    mumin <- mu0
+    vmin <- v0
+    dismin <- dis0  
+    sigmin <- sig0
+    for(i in 1:10) {
+        gamma <- i/10
+        mu <- (1-gamma)*mu0+gamma*mu1
+        v <- (1-gamma)*v0+gamma*v1
+        dis.res <- disesca(x,mu,v,alpha,delta)
+        if(!dis.res$flag) {
+            sigma <- dis.res$sig  
+            decre <- (sig0-sigma)/sig0
+            if(sigma < sigmin) {
+                mumin <- mu
+                vmin <- dis.res$v
+                sigmin <- dis.res$sig 
+                dismin <- dis.res$dis
+            }
+        }
+    }      
+    ans <- list(mu=mumin, v=vmin, sig=sigmin, dis=dismin)
+    return(ans)
+}
+
+
+
+descen1 <- function(x,mu,v,alpha,sig0, dis0)
+{
+    ##  one step of reweighted
+    dimx <- dim(x)
+    n <- dimx[1]
+    p <- dimx[2]
+    p2 <- -(1/p)
+    delta <- 0.5*(1-p/n)
+    daux  <- dis0/sig0
+    w <- w.rk2(daux,p,alpha)
+    w.v <- w%*%matrix(1,1,p)
+    mui <- colSums(w.v*x)/sum(w)
+    xc <- x- (matrix(1,n,1)%*%mui)
+    va <- t(xc)%*%(xc*w.v)
+    disi.res <- disesca(x,mui,va,alpha,delta)
+    if(disi.res$flag) 
+    {
+        disi.res$sig <- sig0+1
+        disi.res$v <- va
+    }
+    disi <- disi.res$dis
+    sigi <- disi.res$sig
+    flagi <- disi.res$flag
+    deti<-disi.res$det
+    vi <- disi.res$v
+    
+    ans <- list(mui=mui,vi=vi,sig=sigi,dis=disi,flag=flagi)
+    return(ans)
+}
+
+invfg <- function(x, tol=1.e-12)
+{
+    dm <- dim(x)
+    p <- dm[1]
+    y <- svd(x)
+    u <- y$u
+    v <- y$v
+    d <- y$d
+    cond <- min(d)/max(d)
+    fl <- FALSE
+    if(cond < tol) 
+        fl <- TRUE
+    
+    det <- prod(d)
+    invx <- NULL
+    if(!fl) 
+        invx <- v%*%diag(1/d)%*%t(u)
+    out <- list(inv=invx, flag=fl, det=det)
+    return(out)
+}
+
+
+mahalanobisfl <- function(x, center, cov, tol=1.e-12)
+{
+    invcov <- invfg(cov,tol)
+    covinv <- invcov$inv
+    fg <- invcov$flag
+    det1 <- invcov$det
+    dist <- NULL
+    if(!fg)
+        dist <- mahalanobis(x, center, covinv, inverted=TRUE)
+
+    out <- list(dist=dist, flag=fg, det=det1)
+    return(out)
+} 
+
+##################################################################################
+
+    ##  main routine for .iter.rocke()
+    dimx <- dim(x)
+    n <- dimx[1]
+    p <- dimx[2]
+    delta <- 0.5*(1-p/n)
+    dis.res <- disesca (x,mu,v,alpha,delta)
+    vmin <- v
+    mumin <- mu
+    sigmin <- dis.res$sig
+    dismin <- dis.res$dis
+    it <- 1
+    decre <- tol+1 
+    while(decre > tol && it <= maxit) 
+    {
+        ##  do reweighting
+        des1 <- descen1(x, mumin, vmin, alpha, sigmin, dismin)
+        mu1 <- des1$mui
+        v1 <- des1$vi
+        dis1 <- des1$dis
+        sig1 <- des1$sig    
+        decre1 <- (sigmin-sig1)/sigmin
+        if(decre1 <= tol) {
+            grad <- gradien(x,mu1,v1,mumin,vmin,sigmin, dismin, sig1,dis1,alpha)             
+            mu2 <- grad$mu
+            v2 <- grad$v
+            sig2 <- grad$sig
+            dis2<-grad$dis
+            decre2 <- (sigmin-sig2)/sigmin
+            decre <- max(decre1,decre2)
+            if(decre1 >= decre2) {
+                mumin <- mu1
+                vmin <- v1
+                dismin <- dis1
+                sigmin <- sig1
+            }
+            if(decre1 < decre2) {
+                mumin <- mu2
+                vmin <- v2
+                dismin <- dis2
+                sigmin <- sig2
+            }
+        }
+        if(decre1 > tol) {
+            decre <- decre1
+            mumin <- mu1
+            vmin <- v1
+            dismin <- dis1
+            sigmin <- sig1
+        }
+        it <- it+1
+    }
+    ans <- list(center=mumin, cov=vmin, scale=sigmin, mah=dismin, iter=it)
+    return(ans)
+}

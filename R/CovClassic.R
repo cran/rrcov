@@ -32,8 +32,8 @@ CovClassic <- function(x, unbiased = TRUE)
     ans <- cov.wt(x)
 
     nobs <- nrow(x)
-    if(unbiased)
-        ans$cov <- (ans$cov * (nobs))/(nobs - 1)
+    if(!unbiased)
+        ans$cov <- (ans$cov * (nobs-1))/nobs
 
     new("CovClassic", call=call, cov=ans$cov, center=ans$center, n.obs=ans$n.obs, 
         method=method, X=x)
@@ -99,8 +99,8 @@ setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing
 
     if(which == "all" || which == "tolEllipsePlot") {
         if(p == 2)
-            .tolellipse(ccov = x, cutoff=cutoff, id.n=id.n, tol=tol)
-        else
+            .tolellipse(ccov = x, cutoff=cutoff, id.n=id.n, tol=tol, ...)
+        else if(which != "all")
             warning("Warning: For tolerance ellipses the dimension must be 2!")
     }
 

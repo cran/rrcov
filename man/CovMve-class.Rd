@@ -47,6 +47,13 @@ but the usual way of creating \code{CovMve} objects is a call to the function
         location and scatter }
     \item{\code{raw.wt}:}{Object of class \code{"Uvector"} - weights of 
         the observations based on the raw estimate of the location and scatter }
+    \item{\code{raw.cnp2}:}{Object of class \code{"numeric"} - a vector of length 
+        two containing the consistency correction factor and the finite sample 
+        correction factor of the raw estimate of the covariance matrix }
+    \item{\code{cnp2}:}{Object of class \code{"numeric"} - a vector of length two 
+        containing the consistency correction factor and the finite sample 
+        correction factor of the final estimate of the covariance matrix.
+    }
     \item{\code{X}:}{Object of class \code{"Umatrix"} - the data matrix or NULL }  }
 }
 \section{Extends}{

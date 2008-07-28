@@ -7,12 +7,26 @@
     containing the control parameters for \code{CovSest}
 }
 \usage{
-    CovControlSest(bdp = 0.5, nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13, algo = "sfast")
+    CovControlSest(bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120, 
+        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13, method= "sfast")
 }
 \arguments{
   \item{bdp}{ a numeric value specifying the required 
     breakdown point.  Allowed values are between 
     \code{(n - p)/(2 * n)} and 1 and the default is 0.45 
+  }
+  \item{arp}{a numeric value specifying the asympthotic 
+    rejection point (for the Rocke type S estimates), 
+    i.e. the fraction of points receiving zero 
+    weight (see Rocke (1996)).  Default is \code{0.1} 
+  }
+  \item{eps}{a numeric value specifying the 
+    relative precision of the solution of the S-estimate (bisquare and Rocke type). 
+    Defaults to \code{1e-5}.
+  }
+  \item{maxiter}{maximum number of iterations allowed 
+    in the computation of the S-estimate (bisquare and Rocke type). 
+    Defaults to 120. 
   }
   \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}.}
@@ -21,7 +35,7 @@
     (\code{\link{solve}}) of the covariance matrix in
     \code{\link{mahalanobis}}.
   }
-  \item{algo}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
+  \item{method}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
 }
 %\details{}
 \value{

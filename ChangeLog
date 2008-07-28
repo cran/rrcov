@@ -1,3 +1,33 @@
+2008-07-28  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-07
+    *
+    * data/un86 - data set added
+    *
+    * R/CovSest.R, man/CovSest.Rd, R/CovControlSest.R, man/CovControlSest.Rd - 
+    *   added two more estimation methods for the S estimates: bisqauare and
+    *   Rocke type, as described in Maronna et al. (2006) - thanks to Matias 
+    *   Salibian-Barrera for the provided code.
+    *
+    * R/CovMve.R, man/CovMve.Rd - now the raw cov matrix is properly scaled by 
+    *   a factor  median(dist)/qchisq(0.5, p) and the reweighted cov matrix is
+    *   multiplied by a consistency corretcion factor, similarly as in CovMcd().
+    *   No finite sample correction factors are used. For details see ?CovMve.
+    *
+    * man/CovMve.Rd -  the search for the approximate solution is explained 
+    *   (fast MVE) and the corresponding referecne (Maronna et al., 2006) is given.
+    *
+    * R/CovMest.R, man/CovMest.Rd - the default initial value now is the raw 
+    *   (not reweighted) MVE estimate with the covariance matrix standardised 
+    *   to det(cov)=1
+    *
+    * R/CovOgk.R, man/CovOgk.RD, src/covOPW.c, R/CovControlOgk.R, man/CovControlOgk.R 
+    *   Added a C implementation for OGK - thanks to Kjell Konis. 
+    *   See ?CovOgk for details
+    * 
+    * R/plot-utils.R - fixed a bug in plot(CovMcd(x), which="tolEllipsePlot", id.n=0) - 
+    *   even if id.n was set to 0, at least one observation was plotted with a label
+    *
+    
 2008-06-02  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-06
     * Added the 'bushmiss' - a group of data sets based on 'bushfire'

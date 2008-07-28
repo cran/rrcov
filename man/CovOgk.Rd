@@ -41,6 +41,17 @@ CovOgk(x, niter = 2, beta = 0.9, control)
     the coverage parameter \code{beta} and these reweighted estimates are returned as 
     'final' estimates.    
 }
+\note{
+If the user does not specify a scale and covariance function to be used in 
+the computations or specifies one by using the arguments \code{smrob} and \code{svrob} 
+(i.e. the names of the functions as strings), a native code written in C will be called which
+is by far faster than the R version. 
+
+If the arguments \code{mrob} and \code{vrob} are not NULL, the specified functions 
+will be used via the pure R implementation of the algorithm. This could be quite slow.
+
+See \code{\link{CovControlOgk}} for details.
+}
 \value{
   An S4 object of class \code{\link{CovOgk-class}} which is a subclass of the 
   virtual class \code{\link{CovRobust-class}}.
@@ -59,7 +70,8 @@ CovOgk(x, niter = 2, beta = 0.9, control)
   \emph{Biometrics} \bold{28}, 81--124.
 }
 
-\author{ Valentin Todorov \email{valentin.todorov@chello.at}
+\author{ Valentin Todorov \email{valentin.todorov@chello.at} and 
+Kjell Konis \email{kjell.konis@epfl.ch}
 }
 %\note{}
 \seealso{ \code{\link{CovMcd}}, \code{\link{CovMest}} }
@@ -77,7 +89,6 @@ c3 <- CovOgk(hbk.x, beta=0.95,
              control = CovControlOgk(beta=0.99))
 c1
 
-
 x<-matrix(c(1,2,3,7,1,2,3,7), ncol=2)
 ##  CovOgk(x)   - this would fail because the two columns of x are exactly collinear.
 ##              In order to fix it, redefine the default 'vrob' function for example
@@ -93,7 +104,6 @@ cc <- CovOgk(x, control=new("CovControlOgk",
                             })
 )
 cc
-
 }
 \keyword{robust}
 \keyword{multivariate}

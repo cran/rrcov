@@ -7,24 +7,43 @@
     containing the control parameters for \code{CovOgk}
 }
 \usage{
-CovControlOgk(niter = 2, beta = 0.9, mrob = rrcov:::.mrobTau, vrob = rrcov:::.vrobGK)
+CovControlOgk(niter = 2, beta = 0.9, mrob = NULL, vrob = rrcov:::.vrobGK, smrob = "scaleTau2", svrob = "gk")
 }
 \arguments{
   \item{niter}{ number of iterations, usually 1 or 2 since iterations 
     beyond the second do not lead to improvement. }
   \item{beta}{ coverage parameter for the final reweighted estimate }
   \item{mrob}{ function for computing the robust univariate location 
-    and dispersion - defaults to the \code{tau scale} defined in 
-    Yohai and Zamar (1998) 
+    and dispersion - one could use the \code{tau scale} defined in 
+    Yohai and Zamar (1998), see \code{\link[robustbase]{scaleTau2}()}. 
+    The C version of this function defined by \code{smrob} is the default. 
   }
   \item{vrob}{ function for computing robust estimate 
+    of covariance between two random vectors - one could use the function 
+    proposed by Gnanadesikan and Kettenring (1972), see 
+    \code{\link[robustbase]{covGK}()}. The C version of this function defined 
+    by \code{svrob} is the default. 
+  }
+  \item{smrob}{ a string indicating the name of the function for computing 
+    the robust univariate location and dispersion - defaults to 
+    \code{scaleTau2}  - the scale tau function defined in Yohai and Zamar (1998) 
+  }
+  \item{svrob}{ function for computing robust estimate 
     of covariance between two random vectors - defaults the one proposed by 
     Gnanadesikan and Kettenring (1972) 
   }
 }
-%\details{}
+\details{
+If the user does not specify a scale and covariance function to be used in 
+the computations or specifies one by using the arguments \code{smrob} and \code{svrob} 
+(i.e. the names of the functions as strings), a native code written in C will be called which
+is by far faster than the R version. 
+
+If the arguments \code{mrob} and \code{vrob} are not NULL, the specified functions 
+will be used via the pure R implementation of the algorithm. This could be quite slow.
+}
 \value{
-A \code{CovControlMcd} object
+A \code{CovControlOgk} object
 }
 \references{ 
   Maronna, R.A. and Zamar, R.H. (2002)
