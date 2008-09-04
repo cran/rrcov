@@ -1,0 +1,1063 @@
+
+R version 2.8.0 Under development (unstable) (2008-06-16 r45929)
+Copyright (C) 2008 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(rrcov)
+Loading required package: robustbase
+Scalable Robust Estimators with High Breakdown Point (version 0.4-07)
+> library(MASS)
+> dodata <- function(nrep = 1, time = FALSE, full = TRUE, method) {
++     doest <- function(x, xname, nrep = 1, method=c("sfast", "surreal", "bisquare", "rocke")) {
++ 
++         method <- match.arg(method)
++         
++         lname <- 20
++         n <- dim(x)[1]
++         p <- dim(x)[2]
++         
++         mm <- CovSest(x, method=method)
++             
++         crit <- log(mm@crit)
++ 
++         xres <- sprintf("%3d %3d %12.6f\n", dim(x)[1], dim(x)[2], crit)
++         lpad <- lname-nchar(xname)
++         cat(pad.right(xname,lpad), xres)
++ 
++         dist <- getDistance(mm)
++         quantiel <- qchisq(0.975, p)
++         ibad <- which(dist >= quantiel)
++         names(ibad) <- NULL
++         nbad <- length(ibad)
++         cat("Outliers: ",nbad,"\n")
++         if(nbad > 0)
++             print(ibad)
++         cat("-------------\n")
++         show(mm)   
++         cat("--------------------------------------------------------\n")
++     }
++ 
++     options(digits = 5)
++     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
++ 
++     data(heart)
++     data(starsCYG)
++     data(phosphor)
++     data(stackloss)
++     data(coleman)
++     data(salinity)
++     data(wood)
++     data(hbk)
++ 
++     data(Animals, package = "MASS")
++     brain <- Animals[c(1:24, 26:25, 27:28),]
++     data(milk)
++     data(bushfire)
++ 
++     tmp <- sys.call()
++     cat("\nCall: ", deparse(substitute(tmp)),"\n")
++ 
++     cat("Data Set               n   p    LOG(det)       Time\n")
++     cat("===================================================\n")
++     doest(heart[, 1:2], data(heart), nrep, method=method)
++     doest(starsCYG, data(starsCYG), nrep, method=method)
++     doest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep, method=method)
++     doest(stack.x, data(stackloss), nrep, method=method)
++     doest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep, method=method)
++     doest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep, method=method)
++     doest(data.matrix(subset(wood, select = -y)), data(wood), nrep, method=method)
++     doest(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep, method=method)
++ 
++ 
++     doest(brain, "Animals", nrep, method=method)
++     doest(milk, data(milk), nrep, method=method)
++     doest(bushfire, data(bushfire), nrep, method=method)
++ 
++     cat("===================================================\n")
++ }
+> 
+> #   generate contaminated data using the function gendata with different
+> #   number of outliers and check if the M-estimate breaks - i.e. the 
+> #   largest eigenvalue is larger than e.g. 5. 
+> #   For n=50 and p=10 and d=5 the M-estimate can break for number of 
+> #   outliers grater than 20.
+> dogen <- function(){
++     eig <- vector("numeric",26)
++     for(i in 0:25) {
++         gg <- gendata(eps=i)
++         mm <- CovSRocke(gg$x, t0=gg$tgood, S0=gg$sgood)
++         eig[i+1] <- ev <- getEvals(mm)[1]
++         cat(i, ev, "\n")
++         
++ ##        stopifnot(ev < 5 || i > 20)
++     }
++     plot(0:25, eig, type="l", xlab="Number of outliers", ylab="Largest Eigenvalue")
++ }
+> 
+> #
+> # generate data 50x10 as multivariate normal N(0,I) and add
+> # eps % outliers by adding d=5.0 to each component.
+> #   - if eps <0 and eps <=0.5, the number of outliers is eps*n
+> #   - if eps >= 1, it is the number of outliers
+> # - use the center and cov of the good data as good start
+> # - use the center and the cov of all data as a bad start
+> #   If using a good  start, the M-estimate must iterate to 
+> #   the good solution: the largest eigenvalue is less then e.g. 5
+> #
+> gendata <- function(n=50, p=10, eps=0, d=5.0){
++ 
++     if(eps < 0 || eps > 0.5 && eps < 1.0 || eps > 0.5*n)
++         stop("eps is out of range")
++         
++     library(MASS)
++     
++     x <- mvrnorm(n, rep(0,p), diag(p))
++     bad <- vector("numeric")
++     nbad = if(eps < 1) eps*n else eps
++     if(nbad > 0){
++         bad <- sample(n, nbad)
++         x[bad,] <- x[bad,] + d
++     }
++     cov1 <- cov.wt(x)
++     cov2 <- if(nbad <= 0) cov1 else cov.wt(x[-bad,])
++     
++     list(x=x, bad=sort(bad), tgood=cov2$center, sgood=cov2$cov, tbad=cov1$center, sbad=cov1$cov)
++ }
+> 
+> pad.right <- function(z, pads)
++ {
++     ## Pads spaces to right of text
++     padding <- paste(rep(" ", pads), collapse = "")
++     paste(z, padding, sep = "")
++ }
+> 
+> 
+> ## -- now do it:
+> dodata(method="sfast")
+
+Call:  dodata(method = "sfast") 
+Data Set               n   p    LOG(det)       Time
+===================================================
+heart                 12   2     2.017701
+Outliers:  3 
+[1]  2  6 12
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  36.1  29.5
+
+Robust Estimate of Covariance: 
+        height  weight
+height  129     210   
+weight  210     365   
+--------------------------------------------------------
+starsCYG              47   2    -1.450032
+Outliers:  7 
+[1]  7  9 11 14 20 30 34
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  4.42  4.97
+
+Robust Estimate of Covariance: 
+           log.Te  log.light
+log.Te     0.0176  0.0617   
+log.light  0.0617  0.3880   
+--------------------------------------------------------
+phosphor              18   2     2.320721
+Outliers:  2 
+[1] 1 6
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  14.1  38.8
+
+Robust Estimate of Covariance: 
+         inorg  organic
+inorg    174    190    
+organic  190    268    
+--------------------------------------------------------
+stackloss             21   3     1.470031
+Outliers:  3 
+[1] 1 2 3
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  57.5  20.5  86.0
+
+Robust Estimate of Covariance: 
+            Air.Flow  Water.Temp  Acid.Conc.
+Air.Flow    38.94     11.66       22.89     
+Water.Temp  11.66      9.96        7.81     
+Acid.Conc.  22.89      7.81       40.48     
+--------------------------------------------------------
+coleman               20   5     0.491419
+Outliers:  2 
+[1]  6 10
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]   2.77  45.58   4.13  25.13   6.39
+
+Robust Estimate of Covariance: 
+           salaryP   fatherWc  sstatus   teacherSc  motherLev
+salaryP      0.2209    1.9568    1.4389    0.2638     0.0674 
+fatherWc     1.9568  940.7409  307.8297    8.3290    21.9143 
+sstatus      1.4389  307.8297  134.0540    4.1808     7.4799 
+teacherSc    0.2638    8.3290    4.1808    0.7604     0.2917 
+motherLev    0.0674   21.9143    7.4799    0.2917     0.5817 
+--------------------------------------------------------
+salinity              28   3     0.734619
+Outliers:  4 
+[1]  5 16 23 24
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  10.31   3.07  22.60
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  13.200   0.784  -3.611
+X2   0.784   4.441  -1.658
+X3  -3.611  -1.658   2.877
+--------------------------------------------------------
+wood                  20   5    -3.220754
+Outliers:  4 
+[1]  4  6  8 19
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  0.580  0.123  0.530  0.538  0.890
+
+Robust Estimate of Covariance: 
+    x1         x2         x3         x4         x5       
+x1   8.16e-03   1.39e-03   1.97e-03  -2.82e-04  -7.61e-04
+x2   1.39e-03   4.00e-04   8.14e-04  -8.51e-05  -5.07e-06
+x3   1.97e-03   8.14e-04   4.74e-03  -9.59e-04   2.06e-05
+x4  -2.82e-04  -8.51e-05  -9.59e-04   3.09e-03   1.87e-03
+x5  -7.61e-04  -5.07e-06   2.06e-05   1.87e-03   2.28e-03
+--------------------------------------------------------
+hbk                   75   3     0.283145
+Outliers:  14 
+ [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  1.53  1.83  1.66
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  1.8091  0.0479  0.2446
+X2  0.0479  1.8190  0.2513
+X3  0.2446  0.2513  1.7288
+--------------------------------------------------------
+Animals               28   2     4.685129
+Outliers:  10 
+ [1]  2  6  7  9 12 14 15 16 24 25
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  30.8  84.2
+
+Robust Estimate of Covariance: 
+       body   brain
+body   14806  28767
+brain  28767  65195
+--------------------------------------------------------
+milk                  86   8    -1.437863
+Outliers:  15 
+ [1]  1  2  3 12 13 14 15 16 17 41 44 47 70 74 75
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]    1.03   35.81   32.97   26.04   25.02   24.94  122.81   14.36
+
+Robust Estimate of Covariance: 
+    X1        X2        X3        X4        X5        X6        X7      
+X1  8.30e-07  2.53e-04  4.43e-04  4.02e-04  3.92e-04  3.96e-04  1.44e-03
+X2  2.53e-04  2.24e+00  4.77e-01  3.63e-01  2.91e-01  3.94e-01  2.44e+00
+X3  4.43e-04  4.77e-01  1.58e+00  1.20e+00  1.18e+00  1.19e+00  1.65e+00
+X4  4.02e-04  3.63e-01  1.20e+00  9.74e-01  9.37e-01  9.39e-01  1.39e+00
+X5  3.92e-04  2.91e-01  1.18e+00  9.37e-01  9.78e-01  9.44e-01  1.37e+00
+X6  3.96e-04  3.94e-01  1.19e+00  9.39e-01  9.44e-01  9.82e-01  1.41e+00
+X7  1.44e-03  2.44e+00  1.65e+00  1.39e+00  1.37e+00  1.41e+00  6.96e+00
+X8  7.45e-05  3.33e-01  2.82e-01  2.01e-01  1.80e-01  1.91e-01  6.38e-01
+    X8      
+X1  7.45e-05
+X2  3.33e-01
+X3  2.82e-01
+X4  2.01e-01
+X5  1.80e-01
+X6  1.91e-01
+X7  6.38e-01
+X8  2.01e-01
+--------------------------------------------------------
+bushfire              38   5     2.443148
+Outliers:  13 
+ [1]  7  8  9 10 11 31 32 33 34 35 36 37 38
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: S-FAST 
+
+Robust Estimate of Location: 
+[1]  108  149  266  216  278
+
+Robust Estimate of Covariance: 
+    V1     V2     V3     V4     V5   
+V1    911    688  -3961   -856   -707
+V2    688    587  -2493   -492   -420
+V3  -3961  -2493  24146   5765   4627
+V4   -856   -492   5765   1477   1164
+V5   -707   -420   4627   1164    925
+--------------------------------------------------------
+===================================================
+> dodata(method="surreal")
+
+Call:  dodata(method = "surreal") 
+Data Set               n   p    LOG(det)       Time
+===================================================
+heart                 12   2     2.017701
+Outliers:  3 
+[1]  2  6 12
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+height  weight  
+  36.1    29.5  
+
+Robust Estimate of Covariance: 
+        height  weight
+height  129     210   
+weight  210     365   
+--------------------------------------------------------
+starsCYG              47   2    -1.450032
+Outliers:  7 
+[1]  7  9 11 14 20 30 34
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+   log.Te  log.light  
+     4.42       4.97  
+
+Robust Estimate of Covariance: 
+           log.Te  log.light
+log.Te     0.0176  0.0617   
+log.light  0.0617  0.3880   
+--------------------------------------------------------
+phosphor              18   2     2.320721
+Outliers:  2 
+[1] 1 6
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+  inorg  organic  
+   14.1     38.8  
+
+Robust Estimate of Covariance: 
+         inorg  organic
+inorg    174    190    
+organic  190    268    
+--------------------------------------------------------
+stackloss             21   3     1.470031
+Outliers:  3 
+[1] 1 2 3
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+  Air.Flow  Water.Temp  Acid.Conc.  
+      57.5        20.5        86.0  
+
+Robust Estimate of Covariance: 
+            Air.Flow  Water.Temp  Acid.Conc.
+Air.Flow    38.95     11.66       22.89     
+Water.Temp  11.66      9.96        7.81     
+Acid.Conc.  22.89      7.81       40.48     
+--------------------------------------------------------
+coleman               20   5     0.491419
+Outliers:  2 
+[1]  6 10
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+  salaryP   fatherWc    sstatus  teacherSc  motherLev  
+     2.77      45.58       4.13      25.13       6.39  
+
+Robust Estimate of Covariance: 
+           salaryP   fatherWc  sstatus   teacherSc  motherLev
+salaryP      0.2209    1.9568    1.4390    0.2638     0.0674 
+fatherWc     1.9568  940.7411  307.8298    8.3290    21.9143 
+sstatus      1.4390  307.8298  134.0540    4.1808     7.4799 
+teacherSc    0.2638    8.3290    4.1808    0.7604     0.2917 
+motherLev    0.0674   21.9143    7.4799    0.2917     0.5817 
+--------------------------------------------------------
+salinity              28   3     0.734619
+Outliers:  4 
+[1]  5 16 23 24
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+   X1     X2     X3  
+10.31   3.07  22.60  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  13.200   0.784  -3.611
+X2   0.784   4.441  -1.658
+X3  -3.611  -1.658   2.877
+--------------------------------------------------------
+wood                  20   5    -3.202636
+Outliers:  2 
+[1] 7 9
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+   x1     x2     x3     x4     x5  
+0.551  0.135  0.496  0.511  0.916  
+
+Robust Estimate of Covariance: 
+    x1         x2         x3         x4         x5       
+x1   0.011360  -0.000791   0.005473   0.004204  -0.004746
+x2  -0.000791   0.000701  -0.000534  -0.001452   0.000864
+x3   0.005473  -0.000534   0.004905   0.002959  -0.001914
+x4   0.004204  -0.001452   0.002959   0.005154  -0.002186
+x5  -0.004746   0.000864  -0.001914  -0.002186   0.003214
+--------------------------------------------------------
+hbk                   75   3     0.283145
+Outliers:  14 
+ [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+  X1    X2    X3  
+1.53  1.83  1.66  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  1.8091  0.0479  0.2446
+X2  0.0479  1.8190  0.2513
+X3  0.2446  0.2513  1.7288
+--------------------------------------------------------
+Animals               28   2     4.685129
+Outliers:  10 
+ [1]  2  6  7  9 12 14 15 16 24 25
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+ body  brain  
+ 30.8   84.2  
+
+Robust Estimate of Covariance: 
+       body   brain
+body   14799  28753
+brain  28753  65168
+--------------------------------------------------------
+milk                  86   8    -1.437863
+Outliers:  15 
+ [1]  1  2  3 12 13 14 15 16 17 41 44 47 70 74 75
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+    X1      X2      X3      X4      X5      X6      X7      X8  
+  1.03   35.81   32.97   26.04   25.02   24.94  122.81   14.36  
+
+Robust Estimate of Covariance: 
+    X1        X2        X3        X4        X5        X6        X7      
+X1  8.30e-07  2.53e-04  4.43e-04  4.02e-04  3.92e-04  3.96e-04  1.44e-03
+X2  2.53e-04  2.24e+00  4.77e-01  3.63e-01  2.91e-01  3.94e-01  2.44e+00
+X3  4.43e-04  4.77e-01  1.58e+00  1.20e+00  1.18e+00  1.19e+00  1.65e+00
+X4  4.02e-04  3.63e-01  1.20e+00  9.74e-01  9.36e-01  9.39e-01  1.39e+00
+X5  3.92e-04  2.91e-01  1.18e+00  9.36e-01  9.78e-01  9.44e-01  1.37e+00
+X6  3.96e-04  3.94e-01  1.19e+00  9.39e-01  9.44e-01  9.82e-01  1.41e+00
+X7  1.44e-03  2.44e+00  1.65e+00  1.39e+00  1.37e+00  1.41e+00  6.96e+00
+X8  7.45e-05  3.33e-01  2.82e-01  2.01e-01  1.80e-01  1.91e-01  6.38e-01
+    X8      
+X1  7.45e-05
+X2  3.33e-01
+X3  2.82e-01
+X4  2.01e-01
+X5  1.80e-01
+X6  1.91e-01
+X7  6.38e-01
+X8  2.01e-01
+--------------------------------------------------------
+bushfire              38   5     2.521598
+Outliers:  8 
+[1]  7  8  9 10 11 12 13 32
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S estimation: SURREAL 
+
+Robust Estimate of Location: 
+ V1   V2   V3   V4   V5  
+101  131  340  244  300  
+
+Robust Estimate of Covariance: 
+    V1     V2     V3     V4     V5   
+V1    594    912  -3709  -1263  -1015
+V2    912   2087  -7598  -2960  -2373
+V3  -3709  -7598  32499  12186   9707
+V4  -1263  -2960  12186   4768   3793
+V5  -1015  -2373   9707   3793   3020
+--------------------------------------------------------
+===================================================
+> dodata(method="bisquare")
+
+Call:  dodata(method = "bisquare") 
+Data Set               n   p    LOG(det)       Time
+===================================================
+heart                 12   2     7.721793
+Outliers:  3 
+[1]  2  6 12
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+height  weight  
+  36.1    29.4  
+
+Robust Estimate of Covariance: 
+        height  weight
+height  109     177   
+weight  177     307   
+--------------------------------------------------------
+starsCYG              47   2    -5.942108
+Outliers:  7 
+[1]  7  9 11 14 20 30 34
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+   log.Te  log.light  
+     4.42       4.97  
+
+Robust Estimate of Covariance: 
+           log.Te  log.light
+log.Te     0.0164  0.0574   
+log.light  0.0574  0.3613   
+--------------------------------------------------------
+phosphor              18   2     9.269096
+Outliers:  2 
+[1] 1 6
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+  inorg  organic  
+   14.1     38.7  
+
+Robust Estimate of Covariance: 
+         inorg  organic
+inorg    173    189    
+organic  189    268    
+--------------------------------------------------------
+stackloss             21   3     8.411100
+Outliers:  3 
+[1] 1 2 3
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+  Air.Flow  Water.Temp  Acid.Conc.  
+      57.5        20.5        86.0  
+
+Robust Estimate of Covariance: 
+            Air.Flow  Water.Temp  Acid.Conc.
+Air.Flow    33.82     10.17       20.02     
+Water.Temp  10.17      8.70        6.84     
+Acid.Conc.  20.02      6.84       35.51     
+--------------------------------------------------------
+coleman               20   5     4.722046
+Outliers:  2 
+[1]  6 10
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+  salaryP   fatherWc    sstatus  teacherSc  motherLev  
+     2.77      45.59       4.14      25.13       6.39  
+
+Robust Estimate of Covariance: 
+           salaryP   fatherWc  sstatus   teacherSc  motherLev
+salaryP      0.2135    1.8732    1.3883    0.2547     0.0648 
+fatherWc     1.8732  905.6704  296.1916    7.9820    21.0848 
+sstatus      1.3883  296.1916  128.9536    4.0196     7.1917 
+teacherSc    0.2547    7.9820    4.0196    0.7321     0.2799 
+motherLev    0.0648   21.0848    7.1917    0.2799     0.5592 
+--------------------------------------------------------
+salinity              28   3     4.169963
+Outliers:  4 
+[1]  5 16 23 24
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+   X1     X2     X3  
+10.30   3.07  22.59  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  12.234   0.748  -3.369
+X2   0.748   4.115  -1.524
+X3  -3.369  -1.524   2.655
+--------------------------------------------------------
+wood                  20   5   -33.862485
+Outliers:  5 
+[1]  4  6  8 11 19
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+   x1     x2     x3     x4     x5  
+0.580  0.123  0.530  0.538  0.890  
+
+Robust Estimate of Covariance: 
+    x1         x2         x3         x4         x5       
+x1   5.88e-03   9.96e-04   1.43e-03  -1.96e-04  -5.46e-04
+x2   9.96e-04   2.86e-04   5.89e-04  -5.78e-05  -2.24e-06
+x3   1.43e-03   5.89e-04   3.42e-03  -6.95e-04   1.43e-05
+x4  -1.96e-04  -5.78e-05  -6.95e-04   2.23e-03   1.35e-03
+x5  -5.46e-04  -2.24e-06   1.43e-05   1.35e-03   1.65e-03
+--------------------------------------------------------
+hbk                   75   3     1.472421
+Outliers:  14 
+ [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+  X1    X2    X3  
+1.53  1.83  1.66  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  1.6775  0.0447  0.2268
+X2  0.0447  1.6865  0.2325
+X3  0.2268  0.2325  1.6032
+--------------------------------------------------------
+Animals               28   2    18.528307
+Outliers:  11 
+ [1]  2  6  7  9 12 14 15 16 24 25 28
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+ body  brain  
+ 30.7   84.1  
+
+Robust Estimate of Covariance: 
+       body   brain
+body   13278  25795
+brain  25795  58499
+--------------------------------------------------------
+milk                  86   8   -24.816943
+Outliers:  19 
+ [1]  1  2  3 11 12 13 14 15 16 17 20 27 41 44 47 70 74 75 77
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+    X1      X2      X3      X4      X5      X6      X7      X8  
+  1.03   35.81   32.96   26.04   25.02   24.94  122.79   14.35  
+
+Robust Estimate of Covariance: 
+    X1        X2        X3        X4        X5        X6        X7      
+X1  6.80e-07  2.20e-04  3.70e-04  3.35e-04  3.27e-04  3.30e-04  1.21e-03
+X2  2.20e-04  1.80e+00  3.96e-01  3.03e-01  2.45e-01  3.27e-01  2.00e+00
+X3  3.70e-04  3.96e-01  1.27e+00  9.68e-01  9.49e-01  9.56e-01  1.37e+00
+X4  3.35e-04  3.03e-01  9.68e-01  7.86e-01  7.55e-01  7.57e-01  1.15e+00
+X5  3.27e-04  2.45e-01  9.49e-01  7.55e-01  7.88e-01  7.61e-01  1.14e+00
+X6  3.30e-04  3.27e-01  9.56e-01  7.57e-01  7.61e-01  7.90e-01  1.17e+00
+X7  1.21e-03  2.00e+00  1.37e+00  1.15e+00  1.14e+00  1.17e+00  5.71e+00
+X8  6.57e-05  2.71e-01  2.30e-01  1.64e-01  1.48e-01  1.57e-01  5.27e-01
+    X8      
+X1  6.57e-05
+X2  2.71e-01
+X3  2.30e-01
+X4  1.64e-01
+X5  1.48e-01
+X6  1.57e-01
+X7  5.27e-01
+X8  1.62e-01
+--------------------------------------------------------
+bushfire              38   5    21.704243
+Outliers:  13 
+ [1]  7  8  9 10 11 31 32 33 34 35 36 37 38
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: bisquare 
+
+Robust Estimate of Location: 
+ V1   V2   V3   V4   V5  
+108  149  266  216  278  
+
+Robust Estimate of Covariance: 
+    V1     V2     V3     V4     V5   
+V1    528    398  -2298   -497   -410
+V2    398    340  -1445   -285   -244
+V3  -2298  -1445  14026   3348   2687
+V4   -497   -285   3348    857    676
+V5   -410   -244   2687    676    537
+--------------------------------------------------------
+===================================================
+> dodata(method="rocke")
+
+Call:  dodata(method = "rocke") 
+Data Set               n   p    LOG(det)       Time
+===================================================
+heart                 12   2     7.285196
+Outliers:  3 
+[1]  2  6 12
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+height  weight  
+  34.3    26.1  
+
+Robust Estimate of Covariance: 
+        height  weight
+height  105     159   
+weight  159     256   
+--------------------------------------------------------
+starsCYG              47   2    -5.929361
+Outliers:  7 
+[1]  7  9 11 14 20 30 34
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+   log.Te  log.light  
+     4.42       4.93  
+
+Robust Estimate of Covariance: 
+           log.Te  log.light
+log.Te     0.0193  0.0709   
+log.light  0.0709  0.3987   
+--------------------------------------------------------
+phosphor              18   2     8.907518
+Outliers:  3 
+[1]  1  6 10
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+  inorg  organic  
+   15.8     39.4  
+
+Robust Estimate of Covariance: 
+         inorg  organic
+inorg    196    252    
+organic  252    360    
+--------------------------------------------------------
+stackloss             21   3     8.143313
+Outliers:  4 
+[1]  1  2  3 21
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+  Air.Flow  Water.Temp  Acid.Conc.  
+      56.8        20.2        86.4  
+
+Robust Estimate of Covariance: 
+            Air.Flow  Water.Temp  Acid.Conc.
+Air.Flow    29.26      9.62       14.78     
+Water.Temp   9.62      8.54        6.25     
+Acid.Conc.  14.78      6.25       29.70     
+--------------------------------------------------------
+coleman               20   5     4.001659
+Outliers:  5 
+[1]  2  6  9 10 13
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+  salaryP   fatherWc    sstatus  teacherSc  motherLev  
+     2.81      40.27       2.11      25.01       6.27  
+
+Robust Estimate of Covariance: 
+           salaryP   fatherWc  sstatus   teacherSc  motherLev
+salaryP      0.2850    1.1473    2.0254    0.3536     0.0737 
+fatherWc     1.1473  798.0714  278.0145    6.4590    18.6357 
+sstatus      2.0254  278.0145  128.7601    4.0666     6.3845 
+teacherSc    0.3536    6.4590    4.0666    0.8749     0.2980 
+motherLev    0.0737   18.6357    6.3845    0.2980     0.4948 
+--------------------------------------------------------
+salinity              28   3     3.455146
+Outliers:  9 
+[1]  3  5 10 11 15 16 17 23 24
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+  X1    X2    X3  
+ 9.9   3.1  22.5  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  12.710   1.868  -4.135
+X2   1.868   4.710  -0.663
+X3  -4.135  -0.663   1.907
+--------------------------------------------------------
+wood                  20   5   -35.020244
+Outliers:  7 
+[1]  4  6  7  8 11 16 19
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+   x1     x2     x3     x4     x5  
+0.588  0.123  0.534  0.535  0.891  
+
+Robust Estimate of Covariance: 
+    x1         x2         x3         x4         x5       
+x1   6.60e-03   1.25e-03   2.16e-03  -3.73e-04  -1.10e-03
+x2   1.25e-03   3.30e-04   8.91e-04  -1.23e-05   2.62e-05
+x3   2.16e-03   8.91e-04   4.55e-03  -4.90e-04   1.93e-04
+x4  -3.73e-04  -1.23e-05  -4.90e-04   2.01e-03   1.36e-03
+x5  -1.10e-03   2.62e-05   1.93e-04   1.36e-03   1.95e-03
+--------------------------------------------------------
+hbk                   75   3     1.413303
+Outliers:  14 
+ [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+  X1    X2    X3  
+1.56  1.77  1.68  
+
+Robust Estimate of Covariance: 
+    X1      X2      X3    
+X1  1.6483  0.0825  0.2133
+X2  0.0825  1.6928  0.2334
+X3  0.2133  0.2334  1.5334
+--------------------------------------------------------
+Animals               28   2    17.787210
+Outliers:  11 
+ [1]  2  6  7  9 12 14 15 16 24 25 28
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+ body  brain  
+ 60.6  150.2  
+
+Robust Estimate of Covariance: 
+       body   brain
+body   10670  19646
+brain  19646  41147
+--------------------------------------------------------
+milk                  86   8   -25.169970
+Outliers:  22 
+ [1]  1  2  3 11 12 13 14 15 16 17 18 20 27 28 41 44 47 70 73 74 75 77
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+    X1      X2      X3      X4      X5      X6      X7      X8  
+  1.03   35.87   33.14   26.19   25.17   25.11  123.16   14.41  
+
+Robust Estimate of Covariance: 
+    X1        X2        X3        X4        X5        X6        X7      
+X1  4.47e-07  1.77e-04  1.94e-04  1.79e-04  1.60e-04  1.45e-04  6.45e-04
+X2  1.77e-04  2.36e+00  4.03e-01  3.08e-01  2.08e-01  3.45e-01  2.18e+00
+X3  1.94e-04  4.03e-01  1.13e+00  8.31e-01  8.08e-01  7.79e-01  9.83e-01
+X4  1.79e-04  3.08e-01  8.31e-01  6.62e-01  6.22e-01  5.95e-01  7.82e-01
+X5  1.60e-04  2.08e-01  8.08e-01  6.22e-01  6.51e-01  5.93e-01  7.60e-01
+X6  1.45e-04  3.45e-01  7.79e-01  5.95e-01  5.93e-01  5.88e-01  7.81e-01
+X7  6.45e-04  2.18e+00  9.83e-01  7.82e-01  7.60e-01  7.81e-01  4.81e+00
+X8  2.47e-05  2.57e-01  2.00e-01  1.37e-01  1.13e-01  1.28e-01  4.38e-01
+    X8      
+X1  2.47e-05
+X2  2.57e-01
+X3  2.00e-01
+X4  1.37e-01
+X5  1.13e-01
+X6  1.28e-01
+X7  4.38e-01
+X8  1.61e-01
+--------------------------------------------------------
+bushfire              38   5    21.641566
+Outliers:  13 
+ [1]  7  8  9 10 11 31 32 33 34 35 36 37 38
+-------------
+
+Call:
+CovSest(x = x, method = method)
+-> Method:  S-Estimates: Rocke type 
+
+Robust Estimate of Location: 
+ V1   V2   V3   V4   V5  
+111  150  256  214  276  
+
+Robust Estimate of Covariance: 
+    V1     V2     V3     V4     V5   
+V1    554    408  -2321   -464   -393
+V2    408    343  -1361   -244   -215
+V3  -2321  -1361  14690   3277   2684
+V4   -464   -244   3277    783    629
+V5   -393   -215   2684    629    509
+--------------------------------------------------------
+===================================================
+> ##dogen()
+> ##cat('Time elapsed: ', proc.time(),'\n') # for ``statistical reasons''
+> 

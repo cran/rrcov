@@ -11,7 +11,8 @@
     based on the translated biweight function (\sQuote{t-biweight}) using
     a High breakdown point initial estimate as defined by Rocke (1996). 
     The default initial estimate is the Minimum Volume Ellipsoid computed
-    with \code{\link{CovMve}}.
+    with \code{\link{CovMve}}. The raw (not reweighted) estimates are taken 
+    and the covariance matrix is standardized to determinant 1.
 }
 \arguments{
   \item{x}{a matrix or data frame. }

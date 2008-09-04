@@ -13,6 +13,7 @@ setClass("PsiBwt", representation(M = "numeric"),
 setClassUnion("Uvector", c("vector", "NULL"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
 setClassUnion("Ulist", c("list", "NULL"))
+setClassUnion("Ufunction", c("function", "NULL"))
 
 ## This is a virtual base class for control objects. Each robust
 ##  method like CovMest, CovOgk, etc. will derive a subclass with
@@ -72,7 +73,9 @@ setClass("CovMve", representation(alpha = "numeric",
                                   raw.cov = "matrix",
                                   raw.center = "vector",
                                   raw.mah = "Uvector",
-                                  raw.wt = "Uvector"),
+                                  raw.wt = "Uvector",
+                                  raw.cnp2 = "numeric",
+                                  cnp2 = "numeric"),
                     contains="CovRobust") 
 setClass("CovSest", representation(),
                     contains="CovRobust") 
@@ -84,7 +87,7 @@ setClass("CovControlMcd", representation(alpha="numeric",
                                           use.correction="logical"),
                            prototype = list(alpha=0.5,
                                           nsamp=500,
-                                          seed=0,
+                                          seed=NULL,
                                           trace=FALSE,
                                           tolSolve=10e-14,
                                           use.correction=TRUE),
@@ -115,6 +118,10 @@ setClass("CovControlMest", representation(r="numeric",
 ##
 .mrobTau <- function(x, c1 = 4.5, c2 = 3.0, ...)       #c2=2.36075 
 {
+
+    return(scaleTau2(x, mu.too=TRUE))
+    
+if(FALSE) {
     m0 <- median(x)                     # MED
     s0 <- median(abs(x - m0))           # MAD
     r <- abs(x-m0)/s0
@@ -128,6 +135,7 @@ setClass("CovControlMest", representation(r="numeric",
     s2 <- s0^2 / length(x) * sum(r)     # sigma = tau scale (Yohai&Zamar 1988)
                                         # truncated standard deviation
     c(m, sqrt(s2))
+}
 }
 
 ##
@@ -145,12 +153,16 @@ setClass("CovControlMest", representation(r="numeric",
 
 setClass("CovControlOgk", representation(niter="numeric",
                                          beta="numeric",
-                                         mrob="function",
-                                         vrob="function"),
+                                         mrob="Ufunction",      # mrob=rrcov:::.mrobTau
+                                         vrob="Ufunction",      # vrob=rrcov:::.vrobGK
+                                         smrob="character",
+                                         svrob="character"),
                            prototype = list(niter=2,
                                             beta=0.90,
-                                            mrob=rrcov:::.mrobTau,
+                                            mrob=NULL,
                                             vrob=rrcov:::.vrobGK,
+                                            smrob="scaleTau2",
+                                            svrob="gk",
                                             trace=FALSE,
                                             tolSolve=10e-14),
                            contains="CovControl"
@@ -161,21 +173,27 @@ setClass("CovControlMve", representation(alpha="numeric",
                                           seed="Uvector"),
                            prototype = list(alpha=0.5,
                                           nsamp=500,
-                                          seed=0,
+                                          seed=NULL,
                                           trace=FALSE,
                                           tolSolve=10e-14),
                            contains="CovControl") 
 ## Control parameters for CovSest
 setClass("CovControlSest", representation(bdp="numeric",
+                                          arp="numeric",
+                                          eps="numeric",
+                                          maxiter="numeric",
                                           nsamp="numeric",
                                           seed="Uvector",
-                                          algo="character"),
+                                          method="character"),
                            prototype = list(bdp=0.5,
+                                            arp=0.1,
+                                            eps=1e-5,
+                                            maxiter=120,
                                             nsamp=500,
                                             seed=NULL,
                                             trace=FALSE,
                                             tolSolve=10e-14,
-                                            algo="sfast"),
+                                            method="sfast"),
                            contains="CovControl") 
                     
 

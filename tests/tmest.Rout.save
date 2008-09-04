@@ -1,6 +1,6 @@
 
-R version 2.6.0 Patched (2007-11-11 r43432)
-Copyright (C) 2007 The R Foundation for Statistical Computing
+R version 2.8.0 Under development (unstable) (2008-06-16 r45929)
+Copyright (C) 2008 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > library(rrcov)
 Loading required package: robustbase
-Scalable Robust Estimators with High Breakdown Point (version 0.4-06)
+Scalable Robust Estimators with High Breakdown Point (version 0.4-07)
 > library(MASS)
 > 
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {

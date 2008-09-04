@@ -6,6 +6,7 @@ CovMve <- function(x,
                    control)
 {
 
+    use.correction <- FALSE
     ## Analize and validate the input parameters ...
 
     ## if a control object was supplied, take the option parameters from it,
@@ -68,6 +69,25 @@ CovMve <- function(x,
     else if(alpha > 1) 
         stop("alpha must be <= 1")
     
+    ## VT::29.07.2008 - raw.cnp2 and cnp2 are vectors of size 2 and  will
+    ##   contain the correction factors (concistency and finite sample)
+    ##   for the raw and reweighted estimates respectively. Set them
+    ##   initially to 1.  If use.correction is set to FALSE
+    ##   (default=FALSE), the finite sample correction factor will not
+    ##   be used (neither for the raw estimates nor for the reweighted)
+    ##
+    ##  The finite sample correction factors for MVE are not known, except 
+    ##  for the very old cnp2=(1 + 15/(n - p))^2 (Rousseeuw&van Zomeren, 1988)
+    ##  therefore will remain always 1.
+    ##
+    ##  The consistancy factor for the raw covariance is 
+    ##      cf <- median(dist)/qchisq(0.5, p)
+    ##
+    ## FIXME: should be 
+    ##      cf <- quantile(dist, alpha)/qchisq(alpha, p)
+    ##
+
+    raw.cnp2 <- cnp2 <- c(1,1)
     
     ##  Case: alpha==1
     ##  ...
@@ -76,15 +96,22 @@ CovMve <- function(x,
     
     method <- "Minimum volume ellipsoid estimator"
     mve <- .fastmve(x, h, nsamp)
+
+    ## Compute the consistency correction factor for the raw MCD
+    ##  (see calfa in Croux and Haesbroeck)
+    ## calpha <- MCDcons(p, h/n)    ## VT::19.3.2007
+    mvecov <- cov.wt(x[mve$best,])
+    rcenter <- mvecov$center
+    rcov <- mvecov$cov
+    mah <- mahalanobis(x, rcenter, rcov, tol = tolSolve)
+    calpha <- quantile(mah, h/n)/qchisq(h/n, p)   # as in MASS
+    names(calpha) <- NULL
+    correct <- if(use.correction) (1 + 15/(n - p))^2 else 1.
+    raw.cnp2 <- c(calpha, correct)
     
-    rcenter <- mve$center
-    rcov <- mve$cov * (1 + 15/(n - p))^2    # correction as in MASS
-    
-    ## What about correction factors for the raw estimates?
-    ##  Are they applied in the C code?
-    ##
+    rcov <- calpha * correct * rcov
+
     ## Again consider p == 1
-    
     ## else, i.e. p >= 2
         ## handle exact fit, i.e. not general position situtations
         ##
@@ -93,18 +120,25 @@ CovMve <- function(x,
 
         ## FIXME: here we assume that mve$cov is not singular
         ## ----- but it could be!
-        mah <- mahalanobis(x, rcenter, rcov, tol = tolSolve)
         quantiel <- qchisq(0.975, p)
-        cut <- quantiel * quantile(mah, h/n)/qchisq(h/n, p)   # as in MASS
-
-        weights <- as.numeric(mah < cut)
+        mah <- mahalanobis(x, rcenter, rcov, tol = tolSolve)
+        weights <- as.numeric(mah < quantiel)
         sum.w <- sum(weights)
 
         ## Compute and apply the consistency correction factor for
         ## the reweighted cov
 
+        if(sum.w == n) {
+            cdelta.rew <- 1
+            correct.rew <- 1
+        }else {
+            cdelta.rew <- robustbase:::MCDcons(p, sum.w/n) ## VT::: 19.07.2008
+            correct.rew <- if(use.correction) 1 else 1.
+            cnp2 <- c(cdelta.rew, correct.rew)
+        }
+
         xcov <- cov.wt(x, wt = weights)
-        xcov$cov <- sum.w/(sum.w - 1) * xcov$cov
+        xcov$cov <- cdelta.rew * correct.rew * xcov$cov
 
         raw.mah <- mah
         raw.weights <- weights
@@ -140,9 +174,11 @@ CovMve <- function(x,
                 raw.center=rcenter,
                 raw.cov=rcov,
                 raw.mah=raw.mah,
-                raw.wt=raw.weights)
-    ans
-                         
+                raw.wt=raw.weights,
+                raw.cnp2=raw.cnp2,
+                cnp2=cnp2
+            )
+    ans                        
 }
 
 .fastmve <- function(x, h, nsamp)
@@ -152,52 +188,6 @@ CovMve <- function(x,
     p <- dx[2]
     nind <- p+1
     
-    if(FALSE) {## ---------------------------------------
-        ##   parameters for partitioning {equal to those in Fortran !!}
-        kmini <- 5
-        nmini <- 300
-        km10 <- 10*kmini
-        nmaxi <- nmini*kmini
-    
-        ##   Options "best" and "exact" for nsamp
-        if(!missing(nsamp)) {
-            if(is.numeric(nsamp) && (nsamp < 0 || nsamp == 0 && p > 1)) {
-                warning("Invalid number of trials nsamp= ", nsamp, " ! Using default.\n")
-                nsamp <- -1
-            } else if(nsamp == "exact" || nsamp == "best") {
-                myk <- p + 1 ## was 'p'; but p+1 ("nsel = nvar+1") is correct
-                if(n > 2*nmini-1) {
-                    warning("Options 'best' and 'exact' not allowed for n greater than ", 2*nmini-1,".\nUsing default.\n")
-                    nsamp <- -1
-                } else {
-                    nall <- choose(n, myk)
-                    if(nall > 5000 && nsamp == "best") {
-                        nsamp <- 5000
-                        warning("'nsamp = \"best\"' allows maximally 5000 subsets;\n",
-                            "computing these subsets of size ",
-                                        myk," out of ",n,"\n")
-                    } else { ## "exact" or ("best"  &  nall < 5000)
-                        nsamp <- 0 ## all subsamples
-                        if(nall > 5000)
-                        warning("Computing all ", nall, " subsets of size ",myk,
-                            " out of ",n,
-                            "\n This may take a very long time!\n",
-                            immediate. = TRUE)
-                    }
-                }
-            }
-        
-            if(!is.numeric(nsamp) || nsamp == -1) { # still not defined - set it to the default
-                defCtrl <- rrcov.control() # default control
-                if(!is.numeric(nsamp))
-                warning("Invalid number of trials nsamp= ",nsamp,
-                    " ! Using default nsamp= ",defCtrl$nsamp,"\n")
-                nsamp <- defCtrl$nsamp  # take the default nsamp
-            }
-        }
-    }   ##  ---------------------------------------------------------------
-
-           
     tmp <- .C('r_fast_mve', 
         x = if(is.double(x)) x else as.double(x),
         as.integer(n), 
@@ -209,7 +199,9 @@ CovMve <- function(x,
         scale = as.double(0), 
         best=as.integer(rep(0,n)), 
         as.integer(nind), 
-        as.integer(h))
+        as.integer(h),
+        as.double(qchisq(0.5, p)),
+        PACKAGE="rrcov")
         
     mve.cov <- matrix(tmp$cov, p, p)
     return(list(center= tmp$ctr, 

@@ -18,7 +18,7 @@
 
 void r_fast_mve(double *xx, int *nn, int *pp, int *nnsamp,
 			int *nsingular, double *ctr, double *ccov, double *scale,
-			int *best_ind, int *nnind, int *nn2)
+			int *best_ind, int *nnind, int *nn2, double *pchimed)
 {
 
 void r_find_k_smallest(double *a, int n, int k, int *ind, double *tmp);
@@ -37,6 +37,8 @@ int n = *nn, p = *pp, nsamp = *nnsamp, n2 = *nn2, nind = *nnind;
 double s0 = INFI, s, *best_ctr, det1, det2;
 double  *di, *tmp, *qraux, *tmp2, dn3; 
 double *cov_vec;
+double xmed, calpha;
+double chimed = *pchimed;   /* qchisq(0.5, p) */
 
 all_ind  = (int *) malloc( n * sizeof(int) );
 cov_vec  = (double*) calloc( p * p, sizeof(double) );
@@ -74,15 +76,21 @@ for(iter=0; iter < nsamp; iter++) {
 			det1 = det1 * det1 / dn3;
 			/* det1 = |cov matrix| */
 			det2 = pow(det1, 1.0 / (double) p );
-			s = median(di, n, tmp) * det2;
-			if( s < s0 )  {
-				s0 = s;
-				for(i=0; i<p; i++) {
-					best_ctr[i] = ctr[i];
-					for(j=0; j<p; j++)
-						ccov[ j*p + i] = cov_vec[i + j*p] / det2;
-				};
-				for(i=0;i<n2;i++) best_ind[i] = indi[i]+1;
+			xmed = median(di, n, tmp);
+			s = xmed * det2;
+			calpha = xmed/chimed;
+			/* Rprintf("calpha=%lf, chimed=%lf\n",calpha, chimed);			
+			 */
+			if(s < s0){
+			   s0 = s;
+			   for(i=0; i<p; i++) {
+			      best_ctr[i] = ctr[i];
+			      for(j=0; j<p; j++)
+			         /* ccov[ j*p + i] = cov_vec[i + j*p] / det2; */
+				 ccov[ j*p + i] = calpha * cov_vec[i + j*p];
+			   };
+			   for(i=0; i<n2; i++) 
+			      best_ind[i] = indi[i]+1;
 			};
 		};
 	} else *nsingular = *nsingular + 1;

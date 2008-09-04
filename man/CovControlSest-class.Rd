@@ -26,7 +26,7 @@
             (\code{\link{solve}}) of the covariance matrix in
             \code{\link{mahalanobis}}.
         }
-        \item{algo}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
+        \item{method}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
      
     }
 }
