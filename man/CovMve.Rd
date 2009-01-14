@@ -74,7 +74,7 @@ CovMve(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, control)
   C. Croux and G. Haesbroeck (1999).
     Influence function and efficiency of the minimum covariance determinant scatter matrix estimator.
     \emph{Journal of Multivariate Analysis}, 
-    \textbf{71}, 161--190.
+    \bold{71}, 161--190.
     
     R. A. Maronna, D. Martin and V. Yohai (2006). \emph{Robust Statistics: Theory and Methods}. 
     Wiley, New York.

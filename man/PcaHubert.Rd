@@ -44,7 +44,7 @@ PcaHubert(x, ...)
     resist. In MCD alpha controls the size of the subsets over which the 
     determinant is minimized, i.e. alpha*n observations are used for 
     computing the determinant. Allowed values are between 0.5 and 1 
-    and the default is 0.5. }
+    and the default is 0.75. }
   \item{mcd}{Logical - when the number of variables is sufficiently small,
     the loadings are computed as the eigenvectors of the MCD covariance matrix, 
     hence the function \code{\link{CovMcd}()} is automatically called. The number of 

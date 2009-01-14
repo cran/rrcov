@@ -1,10 +1,10 @@
-setMethod("getQuan", "PcaCov", function(obj) obj@n.obs)
+setMethod("getQuan", "PcaGrid", function(obj) obj@n.obs)
 
 ##  The S3 version
-PcaCov <- function (x, ...) 
-    UseMethod("PcaCov")
+PcaGrid <- function (x, ...) 
+    UseMethod("PcaGrid")
 
-PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
+PcaGrid.formula <- function (formula, data = NULL, subset, na.action, ...)
 {
     cl <- match.call()
 
@@ -25,10 +25,10 @@ PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
     
-    res <- PcaCov.default(x, ...)
+    res <- PcaGrid.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
-    cl[[1]] <- as.name("PcaCov")
+    cl[[1]] <- as.name("PcaGrid")
     res@call <- cl
 
 #    if (!is.null(na.act)) {
@@ -40,7 +40,7 @@ PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovControlMcd(), na.action = na.fail, trace=FALSE, ...)
+PcaGrid.default <- function(x, k=0, kmax=ncol(x), na.action = na.fail, trace=FALSE, ...)
 {
 
     cl <- match.call()
@@ -52,9 +52,6 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     n <- nrow(data)
     p <- ncol(data)
     
-    if(n < p)
-        stop("'PcaCov' can only be used with more units than variables")
-        
     ##
     ## verify and set the input parameters: k and kmax
     ##
@@ -77,15 +74,10 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     }
 ######################################################################
 
-    cov <- estimate(cov.control, data)
-    covmat <- list(cov=getCov(cov), center=getCenter(cov), n.obs=cov@n.obs)
-    if(corr)
-        covmat$cor <- getCorr(cov)
+    out <- PCAgrid(x, k, ...)
 
-    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
-
-    scores <- predict(out, newdata=data)
-    center   <- getCenter(cov)
+    scores <- predict(out)
+    center   <- out$center
     sdev     <- out$sdev
     scores   <- scores[, 1:k]
     loadings <- as.matrix(out$loadings)[, 1:k]
@@ -99,8 +91,8 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
-    cl[[1]] <- as.name("PcaCov")
-    res <- new("PcaCov", call=cl, 
+    cl[[1]] <- as.name("PcaGrid")
+    res <- new("PcaGrid", call=cl, 
                             loadings=loadings, 
                             eigenvalues=eigenvalues, 
                             center=center, 

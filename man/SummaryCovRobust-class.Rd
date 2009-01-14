@@ -40,3 +40,5 @@ cv
 summary(cv)
 }
 \keyword{classes}
+\keyword{robust}
+\keyword{multivariate}

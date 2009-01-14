@@ -1,3 +1,60 @@
+##  control can be a character specifying the name of the estimate, one of:
+##  auto, mcd, ogk, m, mve, sfast, surreal, bisquare, rocke
+##  If no control object is given or 'auto' is selected, the choise of the
+##  estimator will depend on the size of the data:
+##
+##  - Stahel-Donoho: n < 1000 and p < 10 or n < 5000 and p < 5
+##      not implemented yet - will use S estimates
+##  - MCD: n < 50000 and p < 20
+##  - OGK: otherwise
+##
+CovRobust <- function(x, control, na.action = na.fail)
+{
+    x <- na.action(x)
+    if(is.data.frame(x))
+        x <- data.matrix(x)
+    else if (!is.matrix(x))
+        x <- matrix(x, length(x), 1,
+            dimnames = list(names(x), deparse(substitute(x))))
+
+    n <- nrow(x)
+    p <- ncol(x)
+
+    method <- NULL
+    if(missing(control))
+        method <- "auto"
+    else if(is.character(control))
+        method <- casefold(control)
+
+    ## either no control specified or the estimator is given by a character name - 
+    ##  create the neccessary control object.
+    if(!is.null(method)){
+        control <- switch(method,
+            auto = {
+                if(n < 1000 && p < 10 || n < 5000 && p < 5)
+                    CovControlSest(method="sfast")
+                else if(n < 50000 && p < 20)
+                    CovControlMcd()
+                else
+                    CovControlOgk(smrob="s_mad", svrob="qc")
+            },
+            mcd = CovControlMcd(),
+            ogk = CovControlOgk(),
+            m   = CovControlMest(),
+            mve = CovControlMve(),
+            sfast = CovControlSest(method="sfast"),
+            surreal = CovControlSest(method="surreal"),
+            bisquare = CovControlSest(method="bisquare"),
+            rocke = CovControlSest(method="rocke"))
+
+        ## this is the 'default' option of the switch
+        if(is.null(control))            
+            stop(paste("Undefined estimator: ", method))
+    }
+
+    estimate(control, x)        
+}
+
 setMethod("isClassic", "CovRobust", function(obj) FALSE)
 setMethod("isClassic", "SummaryCovRobust", function(obj) FALSE)
 ##

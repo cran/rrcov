@@ -1,7 +1,7 @@
 \name{PcaRobust-class}
 \docType{class}
 \alias{PcaRobust-class}
-\title{Class "PcaRobust" virtual base class for all robust PCA classes }
+\title{Class "PcaRobust" is a virtual base class for all robust PCA classes }
 \description{ The class \code{PcaRobust} searves as a base class for deriving all other 
 classes representing the results of the robust Principal Component Analisys methods}
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}

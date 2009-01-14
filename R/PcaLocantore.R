@@ -139,7 +139,7 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
                             eigenvalues=eigenvalues, 
                             center=center, 
                             scores=scores,
-                            k=p,
+                            k=k,
                             n.obs=n)
                
     ## Compute distances and flags

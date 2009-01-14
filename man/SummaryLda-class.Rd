@@ -1,0 +1,35 @@
+\name{SummaryLda-class}
+\docType{class}
+\alias{SummaryLda-class}
+\alias{show,SummaryLda-method}
+
+\title{ Class "SummaryLda" - summary of "Lda" objects   }
+\description{ 
+Summary information about an \code{Lda} - Linear Discriminant Analysis object }
+\section{Objects from the Class}{
+Objects can be created by calls of the form \code{new("SummaryLda", ...)},
+but most often by invoking 'summary' on an "Lda" object. They contain values 
+meant for printing by 'show'.
+}
+\section{Slots}{
+    \describe{
+        \item{\code{ldaobj}:}{Object of class \code{"Lda"}}
+  }
+}
+\section{Methods}{
+  \describe{
+    \item{show}{\code{signature(object = "SummaryLda")}: display the object }
+     }
+}
+%\references{}
+\author{Valentin Todorov \email{valentin.todorov@chello.at}}
+%\note{}
+\seealso{
+  \code{\link{Lda-class}}
+}
+\examples{
+showClass("SummaryLda")
+}
+\keyword{classes}
+\keyword{robust}
+\keyword{multivariate}

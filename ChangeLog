@@ -1,7 +1,22 @@
-2008-07-28  Valentin Todorov  <valentin.todorov@chello.at>
+2009-01-14  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.4-08
+    *
+    * data/salmon - data set added
+    * Added Robust Linear Discriminant Analysis:
+    *   R/AllClasses, R/Lda.R, R/LdaClassic.R, R/Linda.R
+    *   and the corresponding manual pages: man/Lda*.Rd
+    *
+    * Added PP-approach PCA methods PcaProj and PcaGrid (see package pcaPP):
+    *   R/AllClasses, R/PcaProj.R, R/PcaGrid.R
+    *   and the corresponding manual pages: man/PcaProj*.Rd, man/PcaGrid*.Rd
+    *
+        
+2008-07-04  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-07
     *
     * data/un86 - data set added
+    *
+    * R/CovRobust.R - function to select a robust estimator added
     *
     * R/CovSest.R, man/CovSest.Rd, R/CovControlSest.R, man/CovControlSest.Rd - 
     *   added two more estimation methods for the S estimates: bisqauare and

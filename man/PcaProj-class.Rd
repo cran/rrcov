@@ -1,18 +1,16 @@
-\name{PcaCov-class}
+\name{PcaProj-class}
 \docType{class}
-\alias{PcaCov-class}
-\alias{getQuan,PcaCov-method}
+\alias{PcaProj-class}
+\alias{getQuan,PcaProj-method}
 
-\title{Class "PcaCov" - Robust PCA based on a robust covariance matrix }
-\description{ 
-Robust PCA are obtained by replacing the classical covariance matrix 
-by a robust covariance estimator. This can be one of the available 
-in \code{rrcov} estimators, i.e. MCD, OGK, M or S estimator.
+\title{Class "Pcaproj" - Robust PCA using PP - Croux and Ruiz-Gazen (2005) algorithm }
+\description{
+    Holds the results of an approximation of the PP-estimators for PCA by a fast and simple algorithm: Croux and Ruiz-Gazen (2005) algorithm.
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("PcaCov", ...)} but the 
-    usual way of creating \code{PcaCov} objects is a call to the function
-    \code{PcaCov} which serves as a constructor.
+Objects can be created by calls of the form \code{new("PcaProj", ...)} but the 
+    usual way of creating \code{PcaProj} objects is a call to the function
+    \code{PcaProj()} which serves as a constructor.
 }
 \section{Slots}{
      \describe{
@@ -47,7 +45,7 @@ Class \code{"\linkS4class{Pca}"}, by class "PcaRobust", distance 2.
 }
 \section{Methods}{
   \describe{
-    \item{getQuan}{\code{signature(obj = "PcaCov")}: ... }
+    \item{getQuan}{\code{signature(obj = "PcaProj")}: ... }
      }
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }
@@ -56,7 +54,7 @@ Class \code{"\linkS4class{Pca}"}, by class "PcaRobust", distance 2.
 }
 
 \examples{
-showClass("PcaCov")
+showClass("PcaProj")
 }
 \keyword{robust}
 \keyword{multivariate}

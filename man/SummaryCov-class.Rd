@@ -39,6 +39,6 @@ meant for printing by 'show'.
   \code{\link{Cov-class}}
 }
 \examples{
-showClass("Cov")
+showClass("SummaryCov")
 }
 \keyword{classes}

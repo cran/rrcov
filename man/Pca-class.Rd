@@ -17,6 +17,7 @@
 \alias{screeplot}
 \alias{biplot,Pca-method}
 \alias{biplot}
+\alias{summary,Pca-method}
 
 \title{Class "Pca" - virtual base class for all classic and robust PCA classes 
 }
@@ -69,7 +70,7 @@ Component Analisys methods
     \item{plot}{\code{signature(x = "Pca")}: produces a distance plot (if \code{k=rank}) or 
         distance-distance plot (if\code{k<rank}) }
     \item{print}{\code{signature(x = "Pca")}: prints the results. The difference to the show()
-        method is that additional parametesr ar epossible.}
+        method is that additional parametesr are possible.}
     \item{show}{\code{signature(object = "Pca")}: prints the results }
     \item{predict}{\code{signature(object = "Pca")}: calculates prediction using the results in 
         \code{object}. An optional data frame or matrix in which to look for variables with which 
