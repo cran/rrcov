@@ -44,7 +44,7 @@ PcaClassic(x, ...)
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }
-\note{ This function can be seen as a wrapper arround prcomp() from {stats} which
+\note{ This function can be seen as a wrapper arround prcomp() from \code{stats} which
 returns the results of the PCA in a class compatible with the object model for robust PCA. 
 }
 \seealso{

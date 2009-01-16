@@ -52,11 +52,12 @@
 \details{
     Computes biweight multivariate S-estimator of location and scatter. The computation will be 
     performed by one of the following algorithms:
-    \item{FAST-S}{An algorithm similar to the one proposed by Salibian-Barrera and Yohai (2006) 
-    for the case of regression}
-    \item{SURREAL}{Ruppert's SURREAL algorithm when \code{method} is set to 'surreal'}
-    \item{BISQUARE}{Bisquare S-Estimate with \code{method} set to 'bisquare'}
-    \item{ROCKE}{Rocke type S-Estimate with \code{method} set to 'rocke'}.
+    \describe{
+        \item{FAST-S}{An algorithm similar to the one proposed by Salibian-Barrera and Yohai (2006) for the case of regression}
+        \item{SURREAL}{Ruppert's SURREAL algorithm when \code{method} is set to 'surreal'}
+        \item{BISQUARE}{Bisquare S-Estimate with \code{method} set to 'bisquare'}
+        \item{ROCKE}{Rocke type S-Estimate with \code{method} set to 'rocke'}.
+    }
 }
 \value{
   An S4 object of class \code{\link{CovSest-class}} which is a subclass of the 
@@ -71,7 +72,7 @@
   Location/Dispersion. 
   \emph{Journal of Computational and Graphical Statistics} \bold{1} 253--270. 
 
-  M. Salibian-Barrera and V. Yohai (2006) A fast algorithm for {S}-regression
+  M. Salibian-Barrera and V. Yohai (2006) A fast algorithm for S-regression
   estimates, \emph{Journal of Computational and Graphical Statistics}, \bold{15},
   414--427.
   

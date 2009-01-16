@@ -15,7 +15,7 @@ CovControlOgk(niter = 2, beta = 0.9, mrob = NULL, vrob = rrcov:::.vrobGK, smrob 
   \item{beta}{ coverage parameter for the final reweighted estimate }
   \item{mrob}{ function for computing the robust univariate location 
     and dispersion - one could use the \code{tau scale} defined in 
-    Yohai and Zamar (1998), see \code{\link[robustbase]{scaleTau2}()}. 
+    Yohai and Zamar (1998), see \code{\link[robustbase]{scaleTau2}}. 
     The C version of this function defined by \code{smrob} is the default. 
   }
   \item{vrob}{ function for computing robust estimate 
@@ -28,9 +28,9 @@ CovControlOgk(niter = 2, beta = 0.9, mrob = NULL, vrob = rrcov:::.vrobGK, smrob 
     the robust univariate location and dispersion - defaults to 
     \code{scaleTau2}  - the scale tau function defined in Yohai and Zamar (1998) 
   }
-  \item{svrob}{ function for computing robust estimate 
-    of covariance between two random vectors - defaults the one proposed by 
-    Gnanadesikan and Kettenring (1972) 
+  \item{svrob}{ a string indicating the name of the function for computing 
+    robust estimate of covariance between two random vectors - defaults \code{gk},
+    the one proposed by Gnanadesikan and Kettenring (1972) 
   }
 }
 \details{

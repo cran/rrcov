@@ -19,7 +19,7 @@ Objects can be created by calls of the form \code{new("PcaHubert", ...)} but the
     \item{\code{alpha}:}{Object of class \code{"numeric"} the fraction of outliers 
         the algorithm should resist - this is the argument alpha}
     \item{\code{quan}:}{Object of class \code{"numeric"} The quantile h used throughout the algorithm }
-    \item{\code{call}:}{Object of class \code{"language"} }
+    \item{\code{call}:}{Object of class \code{"language"} The (matched) function call. }
     \item{\code{center}:}{Object of class \code{"vector"} the center of the data }
     \item{\code{loadings}:}{Object of class \code{"matrix"} the matrix 
     of variable loadings (i.e., a matrix whose columns contain the eigenvectors) }

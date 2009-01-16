@@ -61,7 +61,7 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
     ## for the translated biweight function
     psix <- new("PsiBwt", n=n, p=p, r=r, alpha=arp)
     psix <- csolve(psix)
-    mest <- iterM(psix, x, t0, S0, eps=1e-3, maxiter=maxiter)
+    mest <- iterM(psix, x, t0, S0, eps=eps, maxiter=maxiter)
 
     mah <- mahalanobis(x, mest$t1, mest$s)
     crit <- determinant(mest$s, log = FALSE)$modulus[1]

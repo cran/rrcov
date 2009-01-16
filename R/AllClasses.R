@@ -14,6 +14,7 @@ setClassUnion("Uvector", c("vector", "NULL"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
 setClassUnion("Ulist", c("list", "NULL"))
 setClassUnion("Ufunction", c("function", "NULL"))
+setClassUnion("Utable", c("table", "NULL"))
 
 ## This is a virtual base class for control objects. Each robust
 ##  method like CovMest, CovOgk, etc. will derive a subclass with
@@ -197,7 +198,7 @@ setClass("CovControlSest", representation(bdp="numeric",
                            contains="CovControl") 
                     
 
-###################### ROBPCAPcaHubert ####################################
+###################### PCA ####################################
 setClass("Pca", representation(call = "language",
                               center = "vector",
                               loadings = "matrix",
@@ -212,6 +213,9 @@ setClass("Pca", representation(call = "language",
                               n.obs = "numeric",
                               "VIRTUAL")) 
 
+setClass("SummaryPca", representation(pcaobj = "Pca", 
+                                      importance  ="matrix")) 
+
 setClass("PcaClassic", contains="Pca") 
 
 setClass("PcaRobust", representation("VIRTUAL"),
@@ -222,5 +226,39 @@ setClass("PcaHubert", representation(alpha = "numeric",
                     contains="PcaRobust") 
 setClass("PcaLocantore", representation(),
                     contains="PcaRobust") 
-setClass("PcaCov", representation(),
+setClass("PcaCov", representation(delta = "numeric",
+                                   quan = "numeric"),
+                                contains="PcaRobust") 
+setClass("PcaProj", representation(),
                     contains="PcaRobust") 
+setClass("PcaGrid", representation(),
+                    contains="PcaRobust") 
+
+###################### LDA ####################################
+setClass("Lda", representation(call = "language",
+                               prior = "vector",
+                               counts = "vector",
+                               center = "matrix",
+                               cov = "matrix",
+                               ldf = "matrix",
+                               ldfconst = "vector",
+                               method = "character",
+                               X = "Umatrix",
+                               grp = "factor",
+                               "VIRTUAL")) 
+                               
+setClass("SummaryLda", representation(ldaobj = "Lda")) 
+
+setClass("LdaClassic", contains="Lda") 
+
+setClass("LdaRobust", representation("VIRTUAL"),
+                    contains="Lda") 
+
+setClass("PredictLda", representation(classification = "factor",
+                                      posterior = "matrix",
+                                      x = "matrix",
+                                      cv="Utable")) 
+                                 
+                                 
+setClass("Linda", contains="LdaRobust") 
+                                 

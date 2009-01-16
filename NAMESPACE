@@ -4,6 +4,7 @@ importFrom(stats, screeplot, biplot, predict)
 
 export(CovClassic,
        Cov,
+       CovRobust,
        CovMcd,
        CovMest,
        CovOgk,
@@ -20,7 +21,11 @@ export(CovClassic,
        PcaClassic,
        PcaHubert,
        PcaLocantore,
-       PcaCov
+       PcaCov,
+       PcaProj,
+       PcaGrid,
+       LdaClassic,
+       Linda
 )
 
 ##S3 generics
@@ -40,6 +45,15 @@ S3method(PcaLocantore, default)
 S3method(PcaLocantore, formula)
 S3method(PcaCov, default)
 S3method(PcaCov, formula)
+S3method(PcaProj, default)
+S3method(PcaProj, formula)
+S3method(PcaGrid, default)
+S3method(PcaGrid, formula)
+
+S3method(LdaClassic, default)
+S3method(LdaClassic, formula)
+S3method(Linda, default)
+S3method(Linda, formula)
 
 ## S4 generics
 export(isClassic,
@@ -79,7 +93,16 @@ exportClasses(Cov,
               PcaRobust,
               PcaHubert,
               PcaLocantore,
-              PcaCov
+              PcaCov,
+              PcaProj,
+              PcaGrid,
+              SummaryPca,
+              Lda,
+              LdaClassic,
+              LdaRobust,
+              Linda,
+              PredictLda,
+              SummaryLda
 )
 
 exportMethods(isClassic,
@@ -102,6 +125,5 @@ exportMethods(isClassic,
               print,
               predict,
               screeplot,
-              biplot
-              
+              biplot             
 )

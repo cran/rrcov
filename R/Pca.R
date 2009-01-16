@@ -17,6 +17,27 @@ setMethod("getPrcomp", "Pca", function(obj) {
 ## Follow the standard methods: show, print, plot
 ##
 setMethod("show", "Pca", function(object) myPcaPrint(object))
+setMethod("summary", "Pca", function(object, ...){
+    vars <- getEigenvalues(object)
+    vars <- vars/sum(vars)
+    importance <- rbind("Standard deviation" = getSdev(object), 
+                        "Proportion of Variance" = round(vars,5), 
+                        "Cumulative Proportion" = round(cumsum(vars), 5))
+    colnames(importance) <- colnames(getLoadings(object))
+    new("SummaryPca", pcaobj=object, importance=importance)
+})
+setMethod("show", "SummaryPca", function(object){
+
+    cat("\nCall:\n")
+    print(object@pcaobj@call)
+    
+    digits = max(3, getOption("digits") - 3)
+
+    cat("Importance of components:\n")
+    print(object@importance, digits = digits)
+    invisible(object)
+})
+
 setMethod("print", "Pca", function(x, ...) myPcaPrint(x, ...))
 setMethod("predict", "Pca", function(object, ...){
     stats:::predict.prcomp(getPrcomp(object), ...)
@@ -54,9 +75,9 @@ setMethod("plot", signature(x="Pca", y="missing"), function(x, y="missing",
                                 ...){
 
     if(all(x@od > 1.E-06)) 
-        pca.ddplot(x, id.n.sd, id.n.od)
+        pca.ddplot(x, id.n.sd, id.n.od, ...)
     else
-        pca.distplot(x, id.n.sd)
+        pca.distplot(x, id.n.sd, ...)
 })
 
 myPcaPrint <- function(x, print.x=FALSE, ...) {
@@ -66,16 +87,15 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
         cat("\n")
     }
     
-    cat("Standard deviations:\n")
-    print(sqrt(x@eigenvalues), ...)
-    cat("\nRotation:\n")
-    print(x@loadings, ...)
+    cat("Standard deviations:\n"); print(sqrt(getEigenvalues(x)), ...)
+    cat("\nRotation:\n");          print(getLoadings(x), ...)
+
     if (print.x) {
-        cat("\nRotated variables:\n")
-        print(getScores(x), ...)
+        cat("\nRotated variables:\n"); print(getScores(x), ...)
     }
     invisible(x)
 }
+
 
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
@@ -188,7 +208,13 @@ kernelEVD <- function(x){
 
 ## Distance-distance plot (or diagnostic plot, or outlier map)
 ## Plots score distances against orthogonal distances
-pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title="ROBPCA") {   
+pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title, ...) {   
+
+    if(missing(title))
+    {
+        title <- if(inherits(obj,"PcaClassic")) "Classical PCA" else "Robust PCA"
+    }
+
 
     if(all(obj@od <= 1.E-06))
         warning("PCA diagnostic plot is not defined")
@@ -196,7 +222,7 @@ pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title="ROBPCA") {
         xmax <- max(max(obj@sd), obj@cutoff.sd)
         ymax <- max(max(obj@od), obj@cutoff.od)
     
-        plot(obj@sd, obj@od, xlab="Score distance", ylab="Orthogonal distance", xlim=c(0,xmax), ylim=c(0,ymax), type="p")
+        plot(obj@sd, obj@od, xlab="Score distance", ylab="Orthogonal distance", xlim=c(0,xmax), ylim=c(0,ymax), type="p", ...)
         abline(v=obj@cutoff.sd)
         abline(h=obj@cutoff.od)
         label.dd(obj@sd, obj@od, id.n.sd, id.n.od)
@@ -206,9 +232,15 @@ pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title="ROBPCA") {
 }
 
 ## Distance plot, plots score distances against index
-pca.distplot <- function(obj, id.n=3, title="Robust PCA") {   
+pca.distplot <- function(obj, id.n=3, title, ...) {   
+
+    if(missing(title))
+    {
+        title <- if(inherits(obj,"PcaClassic")) "Classical PCA" else "Robust PCA"
+    }
+
     ymax <- max(max(obj@sd), obj@cutoff.sd) 
-    plot(obj@sd, xlab="Index", ylab="Score distance", ylim=c(0,ymax), type="p")
+    plot(obj@sd, xlab="Index", ylab="Score distance", ylim=c(0,ymax), type="p", ...)
     abline(h=obj@cutoff.sd)
     label(1:length(obj@sd), obj@sd, id.n)
     title(title)
