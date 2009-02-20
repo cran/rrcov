@@ -20,24 +20,33 @@ CovRobust <- function(x, control, na.action = na.fail)
     n <- nrow(x)
     p <- ncol(x)
 
-    method <- NULL
-    if(missing(control))
-        method <- "auto"
-    else if(is.character(control))
-        method <- casefold(control)
+    control <- .covRobustControl(control, n, p)
+    restimate(control, x)        
+}
+
+.covRobustControl <- function(method, n, p)
+{
+    mm <- NULL
+    if(missing(method))
+        mm <- "auto"
+    else if(is.character(method))
+        mm <- casefold(method)
 
     ## either no control specified or the estimator is given by a character name - 
     ##  create the neccessary control object.
-    if(!is.null(method)){
-        control <- switch(method,
+    if(!is.null(mm)){
+        control <- switch(mm,
             auto = {
-                if(n < 1000 && p < 10 || n < 5000 && p < 5)
-                    CovControlSest(method="sfast")
+                if(missing(n) || missing(p))
+                    CovControlMcd()
+                else if(n < 1000 && p < 10 || n < 5000 && p < 5)
+                    CovControlSde()
                 else if(n < 50000 && p < 20)
                     CovControlMcd()
                 else
                     CovControlOgk(smrob="s_mad", svrob="qc")
             },
+            sde = CovControlSde(),
             mcd = CovControlMcd(),
             ogk = CovControlOgk(),
             m   = CovControlMest(),
@@ -50,13 +59,14 @@ CovRobust <- function(x, control, na.action = na.fail)
         ## this is the 'default' option of the switch
         if(is.null(control))            
             stop(paste("Undefined estimator: ", method))
-    }
-
-    estimate(control, x)        
+    } else
+        control <- method
+    control
 }
 
 setMethod("isClassic", "CovRobust", function(obj) FALSE)
 setMethod("isClassic", "SummaryCovRobust", function(obj) FALSE)
+setMethod("getMeth", "CovRobust", function(obj) obj@method)
 ##
 ## Follow the standard methods: show, summary, plot
 ##

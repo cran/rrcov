@@ -88,7 +88,7 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     }
     
     cat("Standard deviations:\n"); print(sqrt(getEigenvalues(x)), ...)
-    cat("\nRotation:\n");          print(getLoadings(x), ...)
+    cat("\nLoadings:\n");          print(getLoadings(x), ...)
 
     if (print.x) {
         cat("\nRotated variables:\n"); print(getScores(x), ...)

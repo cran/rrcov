@@ -34,12 +34,15 @@ Linda(x, ...)
   Returns an S4 object of class \code{Linda}
 }
 \references{ 
+    Hawkins, D.M. and McLachlan, G.J. (1997) High-Breakdown Linear Discriminant Analysis, 
+    \emph{Journal of the American Statistical Association}, \bold{92}, 136--143.
+
     Todorov V. (2007) Robust selection of variables in linear discriminant analysis, 
-    Statistical Methods and Applications, 15, 395--407, doi:10.1007/s10260-006-0032-6.
+        \emph{Statistical Methods and Applications}, \bold{15}, 395--407, doi:10.1007/s10260-006-0032-6.
 
     Todorov, V. and Pires, A.M. (2007) Comparative Performance of Several Robust 
-        Linear Discriminant Analysis Methods, REVSTAT Statistical Journal, 5, p 63--83
-    
+        Linear Discriminant Analysis Methods, 
+        \emph{REVSTAT Statistical Journal}, \bold{5}, p 63--83
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }

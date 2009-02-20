@@ -14,6 +14,7 @@ setGeneric("iterM", function(obj, x, t1, s, eps, maxiter) standardGeneric("iterM
 setGeneric("isClassic", function(obj) standardGeneric("isClassic")) 
 setGeneric("isSingular", function(obj) standardGeneric("isSingular")) 
 
+setGeneric("getMeth", function(obj) standardGeneric("getMeth")) 
 if(!isGeneric("getCenter"))
     setGeneric("getCenter", function(obj) standardGeneric("getCenter")) 
 setGeneric("getCov", function(obj) standardGeneric("getCov")) 
@@ -22,7 +23,7 @@ setGeneric("getData", function(obj) standardGeneric("getData"))
 setGeneric("getDistance", function(obj) standardGeneric("getDistance")) 
 setGeneric("getEvals", function(obj) standardGeneric("getEvals")) 
 
-setGeneric("estimate", function(obj, x, ...) standardGeneric("estimate")) 
+setGeneric("restimate", function(obj, x, ...) standardGeneric("restimate")) 
 
 if(!isGeneric("predict"))
     setGeneric("predict", function(object, ...) standardGeneric("predict")) 
@@ -35,7 +36,7 @@ if(!isGeneric("biplot"))
     
 if(!isGeneric("getQuan"))
     setGeneric("getQuan", function(obj) standardGeneric("getQuan"))         # returns the number of observations used 
-                                                                            # in the comptation of the PCA (n for classic)
+                                                                            # in the computation of the PCA (n for classic)
 if(!isGeneric("getLoadings"))
     setGeneric("getLoadings", function(obj) standardGeneric("getLoadings")) 
 if(!isGeneric("getEigenvalues"))
@@ -46,5 +47,5 @@ if(!isGeneric("getScores"))
     setGeneric("getScores", function(obj) standardGeneric("getScores")) 
 if(!isGeneric("getPrcomp"))
     setGeneric("getPrcomp", function(obj) standardGeneric("getPrcomp"))     # return a prcomp() compatible object to use the 
-                                                                            # available standard plots (i.e. S3 compatible obj.
-                                                                            # with sdev, scale, scores, rotation
+                                                                            # available standard plots (i.e. a list with
+                                                                            # with sdev, scale, scores, rotation)

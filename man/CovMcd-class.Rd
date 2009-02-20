@@ -29,7 +29,7 @@ but the usual way of creating \code{CovMcd} objects is a call to the function
     \item{\code{method}:}{Object of class \code{"character"} - method 
         used = \code{"Minimum Covariance Determinant Estimator"}}
     \item{\code{singularity}:}{a list with singularity information for the 
-        ocvariance matrix (or \code{NULL} if not singular)}
+        covariance matrix (or \code{NULL} if not singular)}
     \item{\code{alpha}:}{Object of class \code{"numeric"} - the size of the 
         subsets over which the determinant is minimized (the default is (n+p+1)/2) }
     \item{\code{quan}:}{Object of class \code{"numeric"} - the number of 

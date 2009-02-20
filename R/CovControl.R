@@ -11,7 +11,7 @@ CovControlMcd <- function (alpha=0.5,
                          use.correction = use.correction)
 }
 
-setMethod("estimate", "CovControlMcd", function(obj, x, ...) 
+setMethod("restimate", "CovControlMcd", function(obj, x, ...) 
     CovMcd(x, control = obj, ...)
 )
 
@@ -24,7 +24,7 @@ CovControlMest <- function (r = 0.45,
     new("CovControlMest", r = r, arp = arp, eps=eps, maxiter=maxiter)        
 }
 
-setMethod("estimate", "CovControlMest", function(obj, x, ...) 
+setMethod("restimate", "CovControlMest", function(obj, x, ...) 
     CovMest(x, control = obj, ...)
 )
 
@@ -39,7 +39,7 @@ CovControlOgk <- function (niter=2,
     new("CovControlOgk", niter=niter, beta=beta, mrob=mrob, vrob=vrob, smrob=smrob, svrob=svrob)
 }
 
-setMethod("estimate", "CovControlOgk", function(obj, x, ...) 
+setMethod("restimate", "CovControlOgk", function(obj, x, ...) 
     CovOgk(x, control = obj, ...)
 )
 
@@ -54,7 +54,7 @@ CovControlMve <- function (alpha=0.5,
                          trace = trace)
 }
 
-setMethod("estimate", "CovControlMve", function(obj, x, ...) 
+setMethod("restimate", "CovControlMve", function(obj, x, ...) 
     CovMve(x, control = obj, ...)
 )
 
@@ -72,6 +72,23 @@ CovControlSest <- function (bdp=0.5,
         nsamp=nsamp, seed=seed, trace=trace, tolSolve=tolSolve, method=method)        
 } 
 
-setMethod("estimate", "CovControlSest", function(obj, x, ...) 
+setMethod("restimate", "CovControlSest", function(obj, x, ...) 
     CovSest(x, control = obj, ...)
+)
+
+CovControlSde <- function  (nsamp=0,
+                            maxres=0,
+                            tune=0.95,
+                            eps=0.5,
+                            prob=0.99,
+                            seed=NULL,
+                            trace=FALSE,
+                            tolSolve=10e-14)
+{
+    new("CovControlSde", nsamp=nsamp, maxres=maxres, tune=tune, eps=eps, prob=prob,
+        seed=seed, trace=trace, tolSolve=tolSolve)
+} 
+
+setMethod("restimate", "CovControlSde", function(obj, x, ...) 
+    CovSde(x, control = obj, ...)
 )

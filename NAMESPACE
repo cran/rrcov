@@ -10,11 +10,13 @@ export(CovClassic,
        CovOgk,
        CovMve,
        CovSest,
+       CovSde,
        CovControlMcd,
        CovControlMest,
        CovControlOgk,
        CovControlMve,
        CovControlSest,
+       CovControlSde,
        covMest,
        T2.test,
        Wilks.test,
@@ -25,7 +27,9 @@ export(CovClassic,
        PcaProj,
        PcaGrid,
        LdaClassic,
-       Linda
+       Linda,
+       QdaClassic,
+       QdaCov
 )
 
 ##S3 generics
@@ -55,6 +59,11 @@ S3method(LdaClassic, formula)
 S3method(Linda, default)
 S3method(Linda, formula)
 
+S3method(QdaClassic, default)
+S3method(QdaClassic, formula)
+S3method(QdaCov, default)
+S3method(QdaCov, formula)
+
 ## S4 generics
 export(isClassic,
        getCenter,
@@ -63,7 +72,8 @@ export(isClassic,
        getData,
        getDistance,
        getEvals,
-       estimate,
+       getMeth,
+       restimate,
        getQuan,
        getLoadings,
        getEigenvalues,
@@ -80,12 +90,14 @@ exportClasses(Cov,
               CovOgk,
               CovMve,
               CovSest,
+              CovSde,
               CovControl,
               CovControlMcd,
               CovControlMest,
               CovControlOgk,
               CovControlMve,
               CovControlSest,
+              CovControlSde,
               SummaryCov,
               SummaryCovRobust,
               Pca,
@@ -102,7 +114,13 @@ exportClasses(Cov,
               LdaRobust,
               Linda,
               PredictLda,
-              SummaryLda
+              SummaryLda,
+              Qda,
+              QdaClassic,
+              QdaRobust,
+              QdaCov,
+              PredictQda,
+              SummaryQda
 )
 
 exportMethods(isClassic,
@@ -112,10 +130,11 @@ exportMethods(isClassic,
               getData,
               getDistance,
               getEvals,
+              getMeth,
               plot,
               show,
               summary,
-              estimate,
+              restimate,
               getQuan,
               getLoadings,
               getEigenvalues,

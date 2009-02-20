@@ -27,7 +27,7 @@ but the usual way of creating \code{CovSest} objects is a call to the function
     \item{\code{call}:}{Object of class \code{"language"} - the call to \code{CovMest}}
     \item{\code{method}:}{Object of class \code{"character"} - method used = \code{"S-Estimates"}}
     \item{\code{singularity}:}{a list with singularity information for the 
-        ocvariance matrix (or \code{NULL} of not singular)}
+        covariance matrix (or \code{NULL} if not singular)}
     \item{\code{X}:}{Object of class \code{"Umatrix"} - the data matrix or NULL }
   }
 }
@@ -38,7 +38,6 @@ Class \code{"Cov"}, by class \code{"CovRobust"}.
 \section{Methods}{
 No methods defined with class "CovSest" in the signature.
 }
-%\references{}
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }
 \seealso{
    \code{\link{CovSest}}, \code{\link{Cov-class}}, \code{\link{CovRobust-class}}

@@ -5,7 +5,7 @@
 
 \title{ Class "SummaryLda" - summary of "Lda" objects   }
 \description{ 
-Summary information about an \code{Lda} - Linear Discriminant Analysis object }
+Contains summary information about an \code{Lda} object - Linear Discriminant Analysis object }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("SummaryLda", ...)},
 but most often by invoking 'summary' on an "Lda" object. They contain values 

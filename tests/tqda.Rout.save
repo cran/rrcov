@@ -1,0 +1,957 @@
+
+R version 2.9.0 Under development (unstable) (2009-01-12 r47554)
+Copyright (C) 2009 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(rrcov)
+Loading required package: robustbase
+Loading required package: pcaPP
+Loading required package: mvtnorm
+pcaPP 0.1-1 loaded
+Scalable Robust Estimators with High Breakdown Point (version 0.5-01)
+> dodata <- function(method) {
++ 
++     options(digits = 5)
++     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
++ 
++     tmp <- sys.call()
++     cat("\nCall: ", deparse(substitute(tmp)),"\n")
++     cat("===================================================\n")
++ 
++     data(hemophilia);   show(QdaCov(as.factor(gr)~., data=hemophilia, method=method))
++     data(anorexia, package="MASS");     show(QdaCov(Treat~., data=anorexia, method=method))
++     data(Pima.tr, package="MASS");      # show(QdaCov(type~., data=Pima.tr, method=method))
++     data(iris);                         # show(QdaCov(Species~., data=iris, method=method))
++     data(crabs, package="MASS");        show(QdaCov(sp~., data=crabs, method=method))
++     
++     show(QdaClassic(as.factor(gr)~., data=hemophilia))
++     show(QdaClassic(Treat~., data=anorexia))
++     show(QdaClassic(type~., data=Pima.tr))
++     show(QdaClassic(Species~., data=iris))
++     show(QdaClassic(sp~., data=crabs))
++     cat("===================================================\n")
++ }
+> 
+> 
+> ## -- now do it:
+> dodata(method="mcd")
+
+Call:  dodata(method = "mcd") 
+===================================================
+Call:
+QdaCov(as.factor(gr) ~ ., data = hemophilia, method = method)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.30795 -0.0059911
+normal     -0.12920 -0.0603000
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.023784   0.015376
+AHFantigen     0.015376   0.024035
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity   0.0093528  0.0069246
+AHFantigen    0.0069246  0.0138008
+Call:
+QdaCov(Treat ~ ., data = anorexia, method = method)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.633 82.950
+Cont 81.558 81.108
+FT   84.331 94.762
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  21.919 19.240
+Postwt 19.240 26.427
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  32.5705 -4.3705
+Postwt -4.3705 22.5079
+
+Group:  FT 
+        Prewt Postwt
+Prewt  53.947 17.649
+Postwt 17.649 23.280
+Call:
+QdaCov(sp ~ ., data = crabs, method = method)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+     sexM  index     FL     RW     CL     CW     BD
+B 0.34722 27.181 14.175 12.225 30.292 35.006 12.717
+O 0.54430 25.063 17.032 13.390 33.968 37.880 15.399
+
+Group:  B 
+          sexM    index       FL        RW      CL       CW       BD
+sexM  0.325626   1.6858  0.87844  0.077319  2.0813   2.2879  0.85965
+index 1.685773 233.2267 42.79026 34.357019 97.2384 110.6933 44.19215
+FL    0.878442  42.7903  9.00281  6.086642 20.5462  23.2442  9.20224
+RW    0.077319  34.3570  6.08664  5.558080 13.9610  15.9530  6.43133
+CL    2.081291  97.2384 20.54617 13.960997 47.3642  53.4786 21.22348
+CW    2.287863 110.6933 23.24415 15.953030 53.4786  60.6164 24.02559
+BD    0.859653  44.1921  9.20224  6.431335 21.2235  24.0256  9.70766
+
+Group:  O 
+           sexM      index       FL       RW       CL        CW       BD
+sexM   0.333022  -0.029258 -0.38683 -0.88655 -0.44594  -0.76358 -0.15543
+index -0.029258 223.296059 46.30784 28.91499 93.59759 103.19557 44.15054
+FL    -0.386826  46.307843 10.28507  7.11042 20.49124  22.95524  9.58626
+RW    -0.886553  28.914989  7.11042  6.32552 13.69779  15.82406  6.27533
+CL    -0.445944  93.597586 20.49124 13.69779 41.94972  46.62646 19.57889
+CW    -0.763584 103.195571 22.95524 15.82406 46.62646  52.25936 21.75907
+BD    -0.155432  44.150536  9.58626  6.27533 19.57889  21.75907  9.26261
+Call:
+QdaClassic(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.30795 -0.0059911
+normal     -0.13487 -0.0778567
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.023784   0.015376
+AHFantigen     0.015376   0.024035
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity    0.020897   0.015515
+AHFantigen     0.015515   0.017920
+Call:
+QdaClassic(Treat ~ ., data = anorexia)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.690 85.697
+Cont 81.558 81.108
+FT   83.229 90.494
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  23.479 19.910
+Postwt 19.910 69.755
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  32.5705 -4.3705
+Postwt -4.3705 22.5079
+
+Group:  FT 
+        Prewt Postwt
+Prewt  25.167 22.883
+Postwt 22.883 71.827
+Call:
+QdaClassic(type ~ ., data = Pima.tr)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.9167 113.11 69.545 27.205 31.074 0.41548 29.235
+Yes 4.8382 145.06 74.588 33.118 34.709 0.54866 37.691
+
+Group:  No 
+          npreg       glu         bp       skin       bmi       ped      age
+npreg  7.878499  10.77226   8.190840   2.910305 -0.035751 -0.207341 16.82888
+glu   10.772265 709.56118  81.430257  13.237682 19.037867 -0.518609 59.01307
+bp     8.190840  81.43026 122.845246  33.879944 16.612630 -0.077183 46.78695
+skin   2.910305  13.23768  33.879944 119.446391 50.125920  0.074282 18.47068
+bmi   -0.035751  19.03787  16.612630  50.125920 40.722996  0.145242  6.99999
+ped   -0.207341  -0.51861  -0.077183   0.074282  0.145242  0.071388 -0.53814
+age   16.828880  59.01307  46.786954  18.470680  6.999988 -0.538138 91.08183
+
+Group:  Yes 
+         npreg        glu        bp      skin      bmi       ped       age
+npreg 15.77941  -8.199298   6.42493  -0.51800 -1.03288 -0.133011  21.93437
+glu   -8.19930 907.250219  23.71115  87.51536  9.98156 -0.082159  58.12291
+bp     6.42493  23.711150 134.18613  19.70588  5.15891 -0.795470  26.30378
+skin  -0.51800  87.515364  19.70588 151.32924 28.28551  0.347951  26.67867
+bmi   -1.03288   9.981563   5.15891  28.28551 23.14529  0.457694  -7.91216
+ped   -0.13301  -0.082159  -0.79547   0.34795  0.45769  0.128883  -0.41737
+age   21.93437  58.122915  26.30378  26.67867 -7.91216 -0.417375 131.79873
+Call:
+QdaClassic(Species ~ ., data = iris)
+
+Prior Probabilities of Groups:
+    setosa versicolor  virginica 
+   0.33333    0.33333    0.33333 
+
+Group means:
+           Sepal.Length Sepal.Width Petal.Length Petal.Width
+setosa            5.006       3.428        1.462       0.246
+versicolor        5.936       2.770        4.260       1.326
+virginica         6.588       2.974        5.552       2.026
+
+Group:  setosa 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.124249    0.099216    0.0163551   0.0103306
+Sepal.Width      0.099216    0.143690    0.0116980   0.0092980
+Petal.Length     0.016355    0.011698    0.0301592   0.0060694
+Petal.Width      0.010331    0.009298    0.0060694   0.0111061
+
+Group:  versicolor 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.266433    0.085184     0.182898    0.055780
+Sepal.Width      0.085184    0.098469     0.082653    0.041204
+Petal.Length     0.182898    0.082653     0.220816    0.073102
+Petal.Width      0.055780    0.041204     0.073102    0.039106
+
+Group:  virginica 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.404343    0.093763     0.303290    0.049094
+Sepal.Width      0.093763    0.104004     0.071380    0.047629
+Petal.Length     0.303290    0.071380     0.304588    0.048824
+Petal.Width      0.049094    0.047629     0.048824    0.075433
+Call:
+QdaClassic(sp ~ ., data = crabs)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+  sexM index     FL     RW     CL     CW     BD
+B  0.5  25.5 14.056 11.928 30.058 34.717 12.583
+O  0.5  25.5 17.110 13.549 34.153 38.112 15.478
+
+Group:  B 
+             sexM       index       FL       RW       CL       CW       BD
+sexM   2.5253e-01 -4.7913e-20  0.39697 -0.10606  0.98788   1.0571  0.38737
+index -4.7913e-20  2.1035e+02 41.49394 31.56162 93.85657 107.4510 41.95707
+FL     3.9697e-01  4.1494e+01  9.11804  6.17953 20.74157  23.6424  9.15844
+RW    -1.0606e-01  3.1562e+01  6.17953  5.19517 14.10301  16.2109  6.32280
+CL     9.8788e-01  9.3857e+01 20.74157 14.10301 47.64731  54.2205 21.00494
+CW     1.0571e+00  1.0745e+02 23.64237 16.21093 54.22052  61.8746 23.95262
+BD     3.8737e-01  4.1957e+01  9.15844  6.32280 21.00494  23.9526  9.41193
+
+Group:  O 
+             sexM       index       FL      RW       CL        CW        BD
+sexM   2.5253e-01 -4.7913e-20 -0.24444 -0.6500 -0.23485  -0.46667 -0.077778
+index -4.7913e-20  2.1035e+02 46.21313 31.3015 94.83081 105.04242 44.137374
+FL    -2.4444e-01  4.6213e+01 10.72939  7.7187 21.90159  24.49089 10.140828
+RW    -6.5000e-01  3.1302e+01  7.71870  6.7888 15.41899  17.67314  7.059574
+CL    -2.3485e-01  9.4831e+01 21.90159 15.4190 45.75524  50.84400 21.192592
+CW    -4.6667e-01  1.0504e+02 24.49089 17.6731 50.84400  56.86551 23.530772
+BD    -7.7778e-02  4.4137e+01 10.14083  7.0596 21.19259  23.53077  9.931834
+===================================================
+> dodata(method="m")
+
+Call:  dodata(method = "m") 
+===================================================
+Call:
+QdaCov(as.factor(gr) ~ ., data = hemophilia, method = method)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.29810 -0.0028222
+normal     -0.13081 -0.0675283
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.026018   0.017653
+AHFantigen     0.017653   0.030128
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity   0.0081933  0.0065737
+AHFantigen    0.0065737  0.0118565
+Call:
+QdaCov(Treat ~ ., data = anorexia, method = method)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.436 82.631
+Cont 81.559 80.272
+FT   85.120 94.657
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  23.630 25.128
+Postwt 25.128 38.142
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  35.8824 -8.2405
+Postwt -8.2405 23.7416
+
+Group:  FT 
+        Prewt Postwt
+Prewt  33.805 18.206
+Postwt 18.206 24.639
+Call:
+QdaCov(sp ~ ., data = crabs, method = method)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+     sexM  index     FL     RW     CL     CW     BD
+B 0.47059 25.682 14.091 11.993 30.132 34.772 12.614
+O 0.54878 25.500 17.135 13.452 34.195 38.130 15.477
+
+Group:  B 
+           sexM     index       FL        RW      CL      CW       BD
+sexM   0.286248   0.38803  0.55254 -0.065121  1.3089  1.4265  0.53306
+index  0.388025 204.08959 37.52458 28.251239 84.7568 96.4138 38.27392
+FL     0.552539  37.52458  7.84181  4.966442 17.7580 20.0811  7.93128
+RW    -0.065121  28.25124  4.96644  4.328175 11.3591 12.9634  5.19386
+CL     1.308870  84.75682 17.75799 11.359097 40.5868 45.8588 18.14913
+CW     1.426470  96.41385 20.08110 12.963382 45.8588 51.9646 20.54780
+BD     0.533058  38.27392  7.93128  5.193858 18.1491 20.5478  8.26369
+
+Group:  O 
+          sexM     index       FL       RW       CL      CW       BD
+sexM   0.28434  -0.30108 -0.37938 -0.77804 -0.44084 -0.7446 -0.15204
+index -0.30108 189.33744 39.43801 24.66687 79.60281 87.3378 37.23242
+FL    -0.37938  39.43801  8.79025  6.07409 17.53105 19.5390  8.13235
+RW    -0.77804  24.66687  6.07409  5.39962 11.71904 13.5339  5.32239
+CL    -0.44084  79.60281 17.53105 11.71904 36.22426 39.9842 16.79734
+CW    -0.74461  87.33777 19.53901 13.53389 39.98418 44.5276 18.52859
+BD    -0.15204  37.23242  8.13235  5.32239 16.79734 18.5286  7.90267
+Call:
+QdaClassic(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.30795 -0.0059911
+normal     -0.13487 -0.0778567
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.023784   0.015376
+AHFantigen     0.015376   0.024035
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity    0.020897   0.015515
+AHFantigen     0.015515   0.017920
+Call:
+QdaClassic(Treat ~ ., data = anorexia)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.690 85.697
+Cont 81.558 81.108
+FT   83.229 90.494
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  23.479 19.910
+Postwt 19.910 69.755
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  32.5705 -4.3705
+Postwt -4.3705 22.5079
+
+Group:  FT 
+        Prewt Postwt
+Prewt  25.167 22.883
+Postwt 22.883 71.827
+Call:
+QdaClassic(type ~ ., data = Pima.tr)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.9167 113.11 69.545 27.205 31.074 0.41548 29.235
+Yes 4.8382 145.06 74.588 33.118 34.709 0.54866 37.691
+
+Group:  No 
+          npreg       glu         bp       skin       bmi       ped      age
+npreg  7.878499  10.77226   8.190840   2.910305 -0.035751 -0.207341 16.82888
+glu   10.772265 709.56118  81.430257  13.237682 19.037867 -0.518609 59.01307
+bp     8.190840  81.43026 122.845246  33.879944 16.612630 -0.077183 46.78695
+skin   2.910305  13.23768  33.879944 119.446391 50.125920  0.074282 18.47068
+bmi   -0.035751  19.03787  16.612630  50.125920 40.722996  0.145242  6.99999
+ped   -0.207341  -0.51861  -0.077183   0.074282  0.145242  0.071388 -0.53814
+age   16.828880  59.01307  46.786954  18.470680  6.999988 -0.538138 91.08183
+
+Group:  Yes 
+         npreg        glu        bp      skin      bmi       ped       age
+npreg 15.77941  -8.199298   6.42493  -0.51800 -1.03288 -0.133011  21.93437
+glu   -8.19930 907.250219  23.71115  87.51536  9.98156 -0.082159  58.12291
+bp     6.42493  23.711150 134.18613  19.70588  5.15891 -0.795470  26.30378
+skin  -0.51800  87.515364  19.70588 151.32924 28.28551  0.347951  26.67867
+bmi   -1.03288   9.981563   5.15891  28.28551 23.14529  0.457694  -7.91216
+ped   -0.13301  -0.082159  -0.79547   0.34795  0.45769  0.128883  -0.41737
+age   21.93437  58.122915  26.30378  26.67867 -7.91216 -0.417375 131.79873
+Call:
+QdaClassic(Species ~ ., data = iris)
+
+Prior Probabilities of Groups:
+    setosa versicolor  virginica 
+   0.33333    0.33333    0.33333 
+
+Group means:
+           Sepal.Length Sepal.Width Petal.Length Petal.Width
+setosa            5.006       3.428        1.462       0.246
+versicolor        5.936       2.770        4.260       1.326
+virginica         6.588       2.974        5.552       2.026
+
+Group:  setosa 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.124249    0.099216    0.0163551   0.0103306
+Sepal.Width      0.099216    0.143690    0.0116980   0.0092980
+Petal.Length     0.016355    0.011698    0.0301592   0.0060694
+Petal.Width      0.010331    0.009298    0.0060694   0.0111061
+
+Group:  versicolor 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.266433    0.085184     0.182898    0.055780
+Sepal.Width      0.085184    0.098469     0.082653    0.041204
+Petal.Length     0.182898    0.082653     0.220816    0.073102
+Petal.Width      0.055780    0.041204     0.073102    0.039106
+
+Group:  virginica 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.404343    0.093763     0.303290    0.049094
+Sepal.Width      0.093763    0.104004     0.071380    0.047629
+Petal.Length     0.303290    0.071380     0.304588    0.048824
+Petal.Width      0.049094    0.047629     0.048824    0.075433
+Call:
+QdaClassic(sp ~ ., data = crabs)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+  sexM index     FL     RW     CL     CW     BD
+B  0.5  25.5 14.056 11.928 30.058 34.717 12.583
+O  0.5  25.5 17.110 13.549 34.153 38.112 15.478
+
+Group:  B 
+             sexM       index       FL       RW       CL       CW       BD
+sexM   2.5253e-01 -4.7913e-20  0.39697 -0.10606  0.98788   1.0571  0.38737
+index -4.7913e-20  2.1035e+02 41.49394 31.56162 93.85657 107.4510 41.95707
+FL     3.9697e-01  4.1494e+01  9.11804  6.17953 20.74157  23.6424  9.15844
+RW    -1.0606e-01  3.1562e+01  6.17953  5.19517 14.10301  16.2109  6.32280
+CL     9.8788e-01  9.3857e+01 20.74157 14.10301 47.64731  54.2205 21.00494
+CW     1.0571e+00  1.0745e+02 23.64237 16.21093 54.22052  61.8746 23.95262
+BD     3.8737e-01  4.1957e+01  9.15844  6.32280 21.00494  23.9526  9.41193
+
+Group:  O 
+             sexM       index       FL      RW       CL        CW        BD
+sexM   2.5253e-01 -4.7913e-20 -0.24444 -0.6500 -0.23485  -0.46667 -0.077778
+index -4.7913e-20  2.1035e+02 46.21313 31.3015 94.83081 105.04242 44.137374
+FL    -2.4444e-01  4.6213e+01 10.72939  7.7187 21.90159  24.49089 10.140828
+RW    -6.5000e-01  3.1302e+01  7.71870  6.7888 15.41899  17.67314  7.059574
+CL    -2.3485e-01  9.4831e+01 21.90159 15.4190 45.75524  50.84400 21.192592
+CW    -4.6667e-01  1.0504e+02 24.49089 17.6731 50.84400  56.86551 23.530772
+BD    -7.7778e-02  4.4137e+01 10.14083  7.0596 21.19259  23.53077  9.931834
+===================================================
+> dodata(method="ogk")
+
+Call:  dodata(method = "ogk") 
+===================================================
+Call:
+QdaCov(as.factor(gr) ~ ., data = hemophilia, method = method)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity  AHFantigen
+carrier    -0.29324  0.00033953
+normal     -0.12744 -0.06628182
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.019260   0.013026
+AHFantigen     0.013026   0.021889
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity   0.0049651  0.0039707
+AHFantigen    0.0039707  0.0066084
+Call:
+QdaCov(Treat ~ ., data = anorexia, method = method)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.587 82.709
+Cont 81.558 81.108
+FT   85.110 94.470
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  10.452 15.115
+Postwt 15.115 37.085
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  31.3178 -4.2024
+Postwt -4.2024 21.6422
+
+Group:  FT 
+        Prewt Postwt
+Prewt  5.5309 1.4813
+Postwt 1.4813 7.5501
+Call:
+QdaCov(sp ~ ., data = crabs, method = method)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+     sexM  index     FL     RW     CL     CW     BD
+B 0.48810 24.774 13.935 11.887 29.795 34.406 12.473
+O 0.56098 24.756 16.959 13.306 33.878 37.762 15.367
+
+Group:  B 
+           sexM     index       FL        RW      CL      CW      BD
+sexM   0.249858   0.21755  0.43315 -0.066227  1.0416  1.1280  0.4086
+index  0.217545 178.69884 33.68995 25.868467 76.3846 87.1597 34.2950
+FL     0.433149  33.68995  7.11059  4.763547 16.1815 18.3921  7.1823
+RW    -0.066227  25.86847  4.76355  4.132090 10.9147 12.5100  4.9467
+CL     1.041610  76.38464 16.18147 10.914700 37.1635 42.1867 16.4862
+CW     1.128047  87.15968 18.39206 12.509959 42.1867 48.0408 18.7392
+BD     0.408603  34.29500  7.18225  4.946665 16.4862 18.7392  7.4063
+
+Group:  O 
+           sexM     index       FL       RW       CL       CW        BD
+sexM   0.246282   0.22219 -0.22674 -0.60586 -0.18769 -0.42269 -0.048602
+index  0.222189 182.23319 38.51306 23.56978 78.80806 86.59078 36.929774
+FL    -0.226740  38.51306  8.67023  5.80769 17.54494 19.54794  8.156562
+RW    -0.605860  23.56978  5.80769  4.90521 11.35233 13.04108  5.181664
+CL    -0.187686  78.80806 17.54494 11.35233 36.46318 40.30271 16.923180
+CW    -0.422695  86.59078 19.54794 13.04108 40.30271 44.88064 18.708145
+BD    -0.048602  36.92977  8.15656  5.18166 16.92318 18.70815  7.939769
+Call:
+QdaClassic(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.30795 -0.0059911
+normal     -0.13487 -0.0778567
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.023784   0.015376
+AHFantigen     0.015376   0.024035
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity    0.020897   0.015515
+AHFantigen     0.015515   0.017920
+Call:
+QdaClassic(Treat ~ ., data = anorexia)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.690 85.697
+Cont 81.558 81.108
+FT   83.229 90.494
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  23.479 19.910
+Postwt 19.910 69.755
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  32.5705 -4.3705
+Postwt -4.3705 22.5079
+
+Group:  FT 
+        Prewt Postwt
+Prewt  25.167 22.883
+Postwt 22.883 71.827
+Call:
+QdaClassic(type ~ ., data = Pima.tr)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.9167 113.11 69.545 27.205 31.074 0.41548 29.235
+Yes 4.8382 145.06 74.588 33.118 34.709 0.54866 37.691
+
+Group:  No 
+          npreg       glu         bp       skin       bmi       ped      age
+npreg  7.878499  10.77226   8.190840   2.910305 -0.035751 -0.207341 16.82888
+glu   10.772265 709.56118  81.430257  13.237682 19.037867 -0.518609 59.01307
+bp     8.190840  81.43026 122.845246  33.879944 16.612630 -0.077183 46.78695
+skin   2.910305  13.23768  33.879944 119.446391 50.125920  0.074282 18.47068
+bmi   -0.035751  19.03787  16.612630  50.125920 40.722996  0.145242  6.99999
+ped   -0.207341  -0.51861  -0.077183   0.074282  0.145242  0.071388 -0.53814
+age   16.828880  59.01307  46.786954  18.470680  6.999988 -0.538138 91.08183
+
+Group:  Yes 
+         npreg        glu        bp      skin      bmi       ped       age
+npreg 15.77941  -8.199298   6.42493  -0.51800 -1.03288 -0.133011  21.93437
+glu   -8.19930 907.250219  23.71115  87.51536  9.98156 -0.082159  58.12291
+bp     6.42493  23.711150 134.18613  19.70588  5.15891 -0.795470  26.30378
+skin  -0.51800  87.515364  19.70588 151.32924 28.28551  0.347951  26.67867
+bmi   -1.03288   9.981563   5.15891  28.28551 23.14529  0.457694  -7.91216
+ped   -0.13301  -0.082159  -0.79547   0.34795  0.45769  0.128883  -0.41737
+age   21.93437  58.122915  26.30378  26.67867 -7.91216 -0.417375 131.79873
+Call:
+QdaClassic(Species ~ ., data = iris)
+
+Prior Probabilities of Groups:
+    setosa versicolor  virginica 
+   0.33333    0.33333    0.33333 
+
+Group means:
+           Sepal.Length Sepal.Width Petal.Length Petal.Width
+setosa            5.006       3.428        1.462       0.246
+versicolor        5.936       2.770        4.260       1.326
+virginica         6.588       2.974        5.552       2.026
+
+Group:  setosa 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.124249    0.099216    0.0163551   0.0103306
+Sepal.Width      0.099216    0.143690    0.0116980   0.0092980
+Petal.Length     0.016355    0.011698    0.0301592   0.0060694
+Petal.Width      0.010331    0.009298    0.0060694   0.0111061
+
+Group:  versicolor 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.266433    0.085184     0.182898    0.055780
+Sepal.Width      0.085184    0.098469     0.082653    0.041204
+Petal.Length     0.182898    0.082653     0.220816    0.073102
+Petal.Width      0.055780    0.041204     0.073102    0.039106
+
+Group:  virginica 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.404343    0.093763     0.303290    0.049094
+Sepal.Width      0.093763    0.104004     0.071380    0.047629
+Petal.Length     0.303290    0.071380     0.304588    0.048824
+Petal.Width      0.049094    0.047629     0.048824    0.075433
+Call:
+QdaClassic(sp ~ ., data = crabs)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+  sexM index     FL     RW     CL     CW     BD
+B  0.5  25.5 14.056 11.928 30.058 34.717 12.583
+O  0.5  25.5 17.110 13.549 34.153 38.112 15.478
+
+Group:  B 
+             sexM       index       FL       RW       CL       CW       BD
+sexM   2.5253e-01 -4.7913e-20  0.39697 -0.10606  0.98788   1.0571  0.38737
+index -4.7913e-20  2.1035e+02 41.49394 31.56162 93.85657 107.4510 41.95707
+FL     3.9697e-01  4.1494e+01  9.11804  6.17953 20.74157  23.6424  9.15844
+RW    -1.0606e-01  3.1562e+01  6.17953  5.19517 14.10301  16.2109  6.32280
+CL     9.8788e-01  9.3857e+01 20.74157 14.10301 47.64731  54.2205 21.00494
+CW     1.0571e+00  1.0745e+02 23.64237 16.21093 54.22052  61.8746 23.95262
+BD     3.8737e-01  4.1957e+01  9.15844  6.32280 21.00494  23.9526  9.41193
+
+Group:  O 
+             sexM       index       FL      RW       CL        CW        BD
+sexM   2.5253e-01 -4.7913e-20 -0.24444 -0.6500 -0.23485  -0.46667 -0.077778
+index -4.7913e-20  2.1035e+02 46.21313 31.3015 94.83081 105.04242 44.137374
+FL    -2.4444e-01  4.6213e+01 10.72939  7.7187 21.90159  24.49089 10.140828
+RW    -6.5000e-01  3.1302e+01  7.71870  6.7888 15.41899  17.67314  7.059574
+CL    -2.3485e-01  9.4831e+01 21.90159 15.4190 45.75524  50.84400 21.192592
+CW    -4.6667e-01  1.0504e+02 24.49089 17.6731 50.84400  56.86551 23.530772
+BD    -7.7778e-02  4.4137e+01 10.14083  7.0596 21.19259  23.53077  9.931834
+===================================================
+> dodata(method="sde")
+
+Call:  dodata(method = "sde") 
+===================================================
+Call:
+QdaCov(as.factor(gr) ~ ., data = hemophilia, method = method)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.29834 -0.0032286
+normal     -0.12944 -0.0676930
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.025398   0.017810
+AHFantigen     0.017810   0.030639
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity   0.0083435  0.0067686
+AHFantigen    0.0067686  0.0119565
+Call:
+QdaCov(Treat ~ ., data = anorexia, method = method)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.949 83.323
+Cont 81.484 80.840
+FT   84.596 93.835
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  22.283 17.084
+Postwt 17.084 25.308
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  37.1864 -8.8896
+Postwt -8.8896 31.1930
+
+Group:  FT 
+         Prewt  Postwt
+Prewt  20.7108  3.1531
+Postwt  3.1531 25.7046
+Call:
+QdaCov(sp ~ ., data = crabs, method = method)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+     sexM  index     FL     RW     CL     CW     BD
+B 0.48600 24.482 13.936 11.802 29.751 34.361 12.443
+O 0.55473 24.230 16.876 13.285 33.658 37.549 15.246
+
+Group:  B 
+          sexM    index       FL        RW      CL      CW       BD
+sexM  0.356731   1.3636  0.80168  0.042171  1.9469  2.1184  0.77197
+index 1.363649 163.3160 31.19657 21.471574 70.3199 79.8699 31.29232
+FL    0.801684  31.1966  6.90766  3.920106 15.7458 17.7231  6.87524
+RW    0.042171  21.4716  3.92011  3.165730  8.9114 10.1493  4.01684
+CL    1.946865  70.3199 15.74580  8.911352 36.3115 40.8005 15.82550
+CW    2.118388  79.8699 17.72307 10.149335 40.8005 46.0277 17.81725
+BD    0.771966  31.2923  6.87524  4.016838 15.8255 17.8173  7.04455
+
+Group:  O 
+           sexM     index       FL       RW       CL       CW        BD
+sexM   0.352647   0.45793 -0.35344 -0.89438 -0.35455 -0.67963 -0.078807
+index  0.457934 182.30900 36.33168 21.12471 72.51573 79.76389 34.396649
+FL    -0.353443  36.33168  7.99441  5.50067 15.59007 17.55129  7.259640
+RW    -0.894384  21.12471  5.50067  5.19799 10.19335 12.00514  4.556033
+CL    -0.354546  72.51573 15.59007 10.19335 31.31188 34.89727 14.583866
+CW    -0.679629  79.76389 17.55129 12.00514 34.89727 39.29175 16.223425
+BD    -0.078807  34.39665  7.25964  4.55603 14.58387 16.22342  6.915368
+Call:
+QdaClassic(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.30795 -0.0059911
+normal     -0.13487 -0.0778567
+
+Group:  carrier 
+            AHFactivity AHFantigen
+AHFactivity    0.023784   0.015376
+AHFantigen     0.015376   0.024035
+
+Group:  normal 
+            AHFactivity AHFantigen
+AHFactivity    0.020897   0.015515
+AHFantigen     0.015515   0.017920
+Call:
+QdaClassic(Treat ~ ., data = anorexia)
+
+Prior Probabilities of Groups:
+    CBT    Cont      FT 
+0.40278 0.36111 0.23611 
+
+Group means:
+      Prewt Postwt
+CBT  82.690 85.697
+Cont 81.558 81.108
+FT   83.229 90.494
+
+Group:  CBT 
+        Prewt Postwt
+Prewt  23.479 19.910
+Postwt 19.910 69.755
+
+Group:  Cont 
+         Prewt  Postwt
+Prewt  32.5705 -4.3705
+Postwt -4.3705 22.5079
+
+Group:  FT 
+        Prewt Postwt
+Prewt  25.167 22.883
+Postwt 22.883 71.827
+Call:
+QdaClassic(type ~ ., data = Pima.tr)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.9167 113.11 69.545 27.205 31.074 0.41548 29.235
+Yes 4.8382 145.06 74.588 33.118 34.709 0.54866 37.691
+
+Group:  No 
+          npreg       glu         bp       skin       bmi       ped      age
+npreg  7.878499  10.77226   8.190840   2.910305 -0.035751 -0.207341 16.82888
+glu   10.772265 709.56118  81.430257  13.237682 19.037867 -0.518609 59.01307
+bp     8.190840  81.43026 122.845246  33.879944 16.612630 -0.077183 46.78695
+skin   2.910305  13.23768  33.879944 119.446391 50.125920  0.074282 18.47068
+bmi   -0.035751  19.03787  16.612630  50.125920 40.722996  0.145242  6.99999
+ped   -0.207341  -0.51861  -0.077183   0.074282  0.145242  0.071388 -0.53814
+age   16.828880  59.01307  46.786954  18.470680  6.999988 -0.538138 91.08183
+
+Group:  Yes 
+         npreg        glu        bp      skin      bmi       ped       age
+npreg 15.77941  -8.199298   6.42493  -0.51800 -1.03288 -0.133011  21.93437
+glu   -8.19930 907.250219  23.71115  87.51536  9.98156 -0.082159  58.12291
+bp     6.42493  23.711150 134.18613  19.70588  5.15891 -0.795470  26.30378
+skin  -0.51800  87.515364  19.70588 151.32924 28.28551  0.347951  26.67867
+bmi   -1.03288   9.981563   5.15891  28.28551 23.14529  0.457694  -7.91216
+ped   -0.13301  -0.082159  -0.79547   0.34795  0.45769  0.128883  -0.41737
+age   21.93437  58.122915  26.30378  26.67867 -7.91216 -0.417375 131.79873
+Call:
+QdaClassic(Species ~ ., data = iris)
+
+Prior Probabilities of Groups:
+    setosa versicolor  virginica 
+   0.33333    0.33333    0.33333 
+
+Group means:
+           Sepal.Length Sepal.Width Petal.Length Petal.Width
+setosa            5.006       3.428        1.462       0.246
+versicolor        5.936       2.770        4.260       1.326
+virginica         6.588       2.974        5.552       2.026
+
+Group:  setosa 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.124249    0.099216    0.0163551   0.0103306
+Sepal.Width      0.099216    0.143690    0.0116980   0.0092980
+Petal.Length     0.016355    0.011698    0.0301592   0.0060694
+Petal.Width      0.010331    0.009298    0.0060694   0.0111061
+
+Group:  versicolor 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.266433    0.085184     0.182898    0.055780
+Sepal.Width      0.085184    0.098469     0.082653    0.041204
+Petal.Length     0.182898    0.082653     0.220816    0.073102
+Petal.Width      0.055780    0.041204     0.073102    0.039106
+
+Group:  virginica 
+             Sepal.Length Sepal.Width Petal.Length Petal.Width
+Sepal.Length     0.404343    0.093763     0.303290    0.049094
+Sepal.Width      0.093763    0.104004     0.071380    0.047629
+Petal.Length     0.303290    0.071380     0.304588    0.048824
+Petal.Width      0.049094    0.047629     0.048824    0.075433
+Call:
+QdaClassic(sp ~ ., data = crabs)
+
+Prior Probabilities of Groups:
+  B   O 
+0.5 0.5 
+
+Group means:
+  sexM index     FL     RW     CL     CW     BD
+B  0.5  25.5 14.056 11.928 30.058 34.717 12.583
+O  0.5  25.5 17.110 13.549 34.153 38.112 15.478
+
+Group:  B 
+             sexM       index       FL       RW       CL       CW       BD
+sexM   2.5253e-01 -4.7913e-20  0.39697 -0.10606  0.98788   1.0571  0.38737
+index -4.7913e-20  2.1035e+02 41.49394 31.56162 93.85657 107.4510 41.95707
+FL     3.9697e-01  4.1494e+01  9.11804  6.17953 20.74157  23.6424  9.15844
+RW    -1.0606e-01  3.1562e+01  6.17953  5.19517 14.10301  16.2109  6.32280
+CL     9.8788e-01  9.3857e+01 20.74157 14.10301 47.64731  54.2205 21.00494
+CW     1.0571e+00  1.0745e+02 23.64237 16.21093 54.22052  61.8746 23.95262
+BD     3.8737e-01  4.1957e+01  9.15844  6.32280 21.00494  23.9526  9.41193
+
+Group:  O 
+             sexM       index       FL      RW       CL        CW        BD
+sexM   2.5253e-01 -4.7913e-20 -0.24444 -0.6500 -0.23485  -0.46667 -0.077778
+index -4.7913e-20  2.1035e+02 46.21313 31.3015 94.83081 105.04242 44.137374
+FL    -2.4444e-01  4.6213e+01 10.72939  7.7187 21.90159  24.49089 10.140828
+RW    -6.5000e-01  3.1302e+01  7.71870  6.7888 15.41899  17.67314  7.059574
+CL    -2.3485e-01  9.4831e+01 21.90159 15.4190 45.75524  50.84400 21.192592
+CW    -4.6667e-01  1.0504e+02 24.49089 17.6731 50.84400  56.86551 23.530772
+BD    -7.7778e-02  4.4137e+01 10.14083  7.0596 21.19259  23.53077  9.931834
+===================================================
+> 

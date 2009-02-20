@@ -7,15 +7,15 @@
 
 \title{Class "Lda" - virtual base class for all classic and robust LDA classes 
 }
-\description{ The class \code{Lda} searves as a base class for deriving 
-    all other classes representing the results of the classical 
+\description{ The class \code{Lda} serves as a base class for deriving 
+    all other classes representing the results of classical 
     and robust Linear Discriminant Analisys methods }
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Slots}{
      \describe{
   
-    \item{\code{call}:}{The (matched) function call.}
-    \item{\code{prior}:}{Prior probabilities used, default to group proportions}
+    \item{\code{call}:}{the (matched) function call.}
+    \item{\code{prior}:}{prior probabilities used, default to group proportions}
     \item{\code{counts}:}{number of observations in each class}
     \item{\code{center}:}{the group means}
     \item{\code{cov}:}{the common covariance matrix}
@@ -36,6 +36,8 @@
         same names. Otherwise it must contain the same number of columns, 
         to be used in the same order. }
     \item{show}{\code{signature(object = "Lda")}: prints the results }
+    \item{summary}{\code{signature(object = "Lda")}: prints summary information }
+    
    }
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }
@@ -45,5 +47,6 @@
 \examples{
 showClass("Lda")
 }
+\keyword{classes}
 \keyword{robust}
 \keyword{multivariate}

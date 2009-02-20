@@ -1,6 +1,6 @@
 
-R version 2.8.1 (2008-12-22)
-Copyright (C) 2008 The R Foundation for Statistical Computing
+R version 2.9.0 Under development (unstable) (2009-01-12 r47554)
+Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -214,7 +214,7 @@ Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
 pcaPP 0.1-1 loaded
-Scalable Robust Estimators with High Breakdown Point (version 0.4-08)
+Scalable Robust Estimators with High Breakdown Point (version 0.5-01)
 > dodata(method="hubert.mcd")
 
 Call:  dodata(method = "hubert.mcd") 
@@ -242,7 +242,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 24.5539  2.7798
 
-Rotation:
+Loadings:
            PC1      PC2
 height 0.49192  0.87064
 weight 0.87064 -0.49192
@@ -304,7 +304,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 0.617339 0.089666
 
-Rotation:
+Loadings:
               PC1      PC2
 log.Te    0.16120  0.98692
 log.light 0.98692 -0.16120
@@ -337,7 +337,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 18.8939  6.3351
 
-Rotation:
+Loadings:
              PC1      PC2
 inorg   -0.58932 -0.80790
 organic -0.80790  0.58932
@@ -373,7 +373,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 9.5268 4.7114 2.3614
 
-Rotation:
+Loadings:
                PC1      PC2        PC3
 Air.Flow   0.80019  0.54554 -0.2491703
 Water.Temp 0.20786  0.13744  0.9684536
@@ -409,7 +409,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 27.678
 
-Rotation:
+Loadings:
            [,1]
 [1,]  0.0016065
 [2,]  0.9808022
@@ -455,7 +455,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 3.8208 2.2685 1.2048
 
-Rotation:
+Loadings:
         PC1      PC2     PC3
 X1 -0.93285  0.28177 0.22448
 X2 -0.16644 -0.88971 0.42511
@@ -491,7 +491,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 0.124442 0.060302 0.040797
 
-Rotation:
+Loadings:
           [,1]      [,2]      [,3]
 [1,] -0.896892  0.247801  0.325364
 [2,] -0.181949 -0.025322 -0.021386
@@ -584,7 +584,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 1.4024 1.2720 1.1801
 
-Rotation:
+Loadings:
        PC1        PC2      PC3
 X1 0.51805  0.7683642  0.37581
 X2 0.62577 -0.6399992  0.44588
@@ -628,7 +628,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 382.114  68.069
 
-Rotation:
+Loadings:
            PC1      PC2
 body  -0.63449 -0.77293
 brain -0.77293  0.63449
@@ -817,7 +817,7 @@ Standard deviations:
 [1] 2.62633379 1.70014141 1.01464625 0.36921951 0.21696728 0.19573429 0.17585482
 [8] 0.00059393
 
-Rotation:
+Loadings:
            PC1         PC2         PC3         PC4         PC5         PC6
 X1 -0.00011465 -1.0273e-05 -0.00023245 -0.00032885 -0.00038955 -6.8816e-05
 X2 -0.41277893  3.5993e-01  0.82968981 -0.09583799  0.00420510  4.6372e-02
@@ -885,7 +885,7 @@ PcaHubert(x = x)
 Standard deviations:
 [1] 196.7328  21.0860  18.0481   4.4044   1.0324
 
-Rotation:
+Loadings:
         PC1      PC2        PC3      PC4       PC5
 V1  0.10737  0.58891  0.4238361 -0.67622  0.068903
 V2  0.20691 -0.16080  0.8620879  0.42369 -0.092857
@@ -921,7 +921,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 23.374
 
-Rotation:
+Loadings:
          [,1]
 [1,] -0.49192
 [2,] -0.87064
@@ -983,7 +983,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 0.55581
 
-Rotation:
+Loadings:
          [,1]
 [1,] -0.16120
 [2,] -0.98692
@@ -1016,7 +1016,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 14.669
 
-Rotation:
+Loadings:
         [,1]
 [1,] 0.63279
 [2,] 0.77432
@@ -1052,7 +1052,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 8.2565 4.0852
 
-Rotation:
+Loadings:
         [,1]     [,2]
 [1,] 0.79013 -0.54069
 [2,] 0.24276 -0.15643
@@ -1088,7 +1088,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 27.678
 
-Rotation:
+Loadings:
            [,1]
 [1,]  0.0016065
 [2,]  0.9808022
@@ -1134,7 +1134,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 3.1460 2.6919
 
-Rotation:
+Loadings:
          [,1]     [,2]
 [1,] -0.95898 -0.10528
 [2,]  0.19666 -0.91578
@@ -1170,7 +1170,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 0.124442 0.060302 0.040797
 
-Rotation:
+Loadings:
           [,1]      [,2]      [,3]
 [1,] -0.896892  0.247801  0.325364
 [2,] -0.181949 -0.025322 -0.021386
@@ -1263,7 +1263,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 1.4024 1.2720 1.1801
 
-Rotation:
+Loadings:
         [,1]       [,2]     [,3]
 [1,] 0.51805  0.7683642 -0.37581
 [2,] 0.62577 -0.6399992 -0.44588
@@ -1307,7 +1307,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 421.51
 
-Rotation:
+Loadings:
         [,1]
 [1,] 0.63449
 [2,] 0.77293
@@ -1408,7 +1408,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 2.7622 1.7676
 
-Rotation:
+Loadings:
            [,1]        [,2]
 [1,] -0.0001925 -8.9013e-06
 [2,] -0.2869095  4.0055e-01
@@ -1467,7 +1467,7 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 196.05
 
-Rotation:
+Loadings:
           [,1]
 [1,] -0.060022
 [2,] -0.096811
@@ -1503,7 +1503,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 21.7128  2.3347
 
-Rotation:
+Loadings:
             PC1      PC2
 height -0.38641  0.92233
 weight -0.92233 -0.38641
@@ -1565,7 +1565,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 0.67332 0.10150
 
-Rotation:
+Loadings:
                PC1      PC2
 log.Te    -0.12291 -0.99242
 log.light -0.99242  0.12291
@@ -1598,7 +1598,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 18.5741  6.0804
 
-Rotation:
+Loadings:
             PC1      PC2
 inorg   0.50669 -0.86213
 organic 0.86213  0.50669
@@ -1634,7 +1634,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 9.1237 5.4713 2.7787
 
-Rotation:
+Loadings:
                 PC1      PC2      PC3
 Air.Flow   -0.82678  0.32303  0.46053
 Water.Temp -0.38481  0.27238 -0.88189
@@ -1670,7 +1670,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 28.16563  4.54803  1.10132  0.64312  0.30628
 
-Rotation:
+Loadings:
                  PC1        PC2       PC3        PC4        PC5
 salaryP   -0.0080817  0.0557321 -0.220033  0.9705684 -0.0800710
 fatherWc  -0.9561052 -0.2909481 -0.024141  0.0052955  0.0245186
@@ -1716,7 +1716,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 3.6974 2.9320 1.2921
 
-Rotation:
+Loadings:
         PC1        PC2     PC3
 X1  0.97003 -0.0014900 0.24296
 X2 -0.17892 -0.6809325 0.71015
@@ -1752,7 +1752,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 0.102305 0.070158 0.066354 0.041878 0.017076
 
-Rotation:
+Loadings:
          PC1       PC2      PC3        PC4       PC5
 x1 -0.895435 -0.319846  0.14704  0.2357070 -0.136806
 x2 -0.012940 -0.141589  0.15490  0.2155462  0.953588
@@ -1845,7 +1845,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 1.65530 1.59938 0.95948
 
-Rotation:
+Loadings:
         PC1      PC2      PC3
 X1 -0.35657 -0.91447  0.19130
 X2 -0.49959  0.35966  0.78807
@@ -1889,7 +1889,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 257.212  78.044
 
-Rotation:
+Loadings:
           PC1      PC2
 body  0.67862 -0.73449
 brain 0.73449  0.67862
@@ -2078,7 +2078,7 @@ Standard deviations:
 [1] 2.91432165 1.55588357 0.86319499 0.32806970 0.26247929 0.22777419 0.13492678
 [8] 0.00070436
 
-Rotation:
+Loadings:
           PC1         PC2         PC3         PC4         PC5         PC6
 X1 0.00017298 -3.0919e-05  0.00027708 -2.9971e-06 -0.00014507  0.00068081
 X2 0.25780993  3.6340e-01 -0.88357223 -1.2998e-01  0.01178057  0.05675449
@@ -2146,7 +2146,7 @@ PcaLocantore(x = x)
 Standard deviations:
 [1] 188.4014  17.7202  12.0059   8.9916   1.3385
 
-Rotation:
+Loadings:
          PC1      PC2      PC3      PC4       PC5
 V1  0.094115 0.587501  0.13920  0.79074 -0.036530
 V2  0.113512 0.752030 -0.41408 -0.49665  0.058676
@@ -2182,7 +2182,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 28.3215  3.9184
 
-Rotation:
+Loadings:
            PC1      PC2
 height 0.42480 -0.90529
 weight 0.90529  0.42480
@@ -2244,7 +2244,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 0.602491 0.097845
 
-Rotation:
+Loadings:
               PC1      PC2
 log.Te    0.14606 -0.98928
 log.light 0.98928  0.14606
@@ -2277,7 +2277,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 20.1597  5.5743
 
-Rotation:
+Loadings:
             PC1      PC2
 inorg   0.63279 -0.77432
 organic 0.77432  0.63279
@@ -2313,7 +2313,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 7.5097 4.2283 1.8427
 
-Rotation:
+Loadings:
                 PC1      PC2       PC3
 Air.Flow   -0.32892 -0.48960  0.807532
 Water.Temp -0.38211 -0.71299 -0.587913
@@ -2349,7 +2349,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 45.72091  7.13999  1.06857  0.53437  0.14876
 
-Rotation:
+Loadings:
                  PC1       PC2       PC3        PC4       PC5
 salaryP   -0.0011970  0.020913 -0.287348  0.9562852 -0.050108
 fatherWc  -0.9673709  0.252679  0.011292 -0.0040896 -0.014235
@@ -2395,7 +2395,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 3.9610 2.2950 1.0901
 
-Rotation:
+Loadings:
         PC1      PC2     PC3
 X1  0.92347  0.27917 0.26320
 X2  0.17816 -0.91956 0.35024
@@ -2431,7 +2431,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 0.1377983 0.0891373 0.0789622 0.0316081 0.0063248
 
-Rotation:
+Loadings:
         PC1       PC2       PC3      PC4       PC5
 x1  0.83450  0.371566 -0.342090  0.13987 -0.170156
 x2  0.18025 -0.063366 -0.070535  0.10460  0.973436
@@ -2524,7 +2524,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 1.3911 1.2617 1.1706
 
-Rotation:
+Loadings:
         PC1        PC2      PC3
 X1 -0.51805  0.7683642 -0.37581
 X2 -0.62577 -0.6399992 -0.44588
@@ -2568,7 +2568,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 128.639  34.922
 
-Rotation:
+Loadings:
           PC1      PC2
 body  0.29026 -0.95695
 brain 0.95695  0.29026
@@ -2757,7 +2757,7 @@ Standard deviations:
 [1] 2.58993138 1.69892206 1.05839616 0.37747034 0.22037557 0.18705797 0.13964125
 [8] 0.00059579
 
-Rotation:
+Loadings:
            PC1         PC2         PC3         PC4         PC5         PC6
 X1 -0.00011276 -5.5366e-06  0.00017983 -0.00027934 -0.00059506  0.00054874
 X2 -0.41094064  3.5423e-01 -0.83371338 -0.07654560  0.00188026  0.00733473
@@ -2825,7 +2825,7 @@ PcaCov(x = x)
 Standard deviations:
 [1] 136.6069  17.9864   6.2944   2.3373   1.3045
 
-Rotation:
+Loadings:
         PC1       PC2      PC3       PC4       PC5
 V1 -0.15907 -0.526809  0.17160  0.806244 -0.133026
 V2 -0.10616 -0.723339  0.37831 -0.552518  0.130815

@@ -30,11 +30,11 @@ setMethod("show", "Lda", function(object){
 
 setMethod("predict", "Lda", function(object, newdata){
 
-    cv <- FALSE
+    ct <- FALSE
     if(missing(newdata))
     {
         newdata <- object@X         # use the training sample
-        cv <- TRUE                  # perform cross-validation
+        ct <- TRUE                  # perform cross-validation
     }
         
     x <- as.matrix(newdata)
@@ -44,15 +44,15 @@ setMethod("predict", "Lda", function(object, newdata){
 
     ldf <- object@ldf
     ldfconst <- object@ldfconst
-    ret <- .mypredict(object@prior, levels(object@grp), ldf, ldfconst, x)
-    if(cv)
-        ret@cv <- .confusion(object@grp, ret@classification)
+    ret <- .mypredictLda(object@prior, levels(object@grp), ldf, ldfconst, x)
+    if(ct)
+        ret@ct <- .confusion(object@grp, ret@classification)
    
     ret
 })
 
 
-.mypredict <- function(prior, lev, ldf, ldfconst, x){
+.mypredictLda <- function(prior, lev, ldf, ldfconst, x){
 
     ng <- length(prior)
     nm <- names(prior)
@@ -72,98 +72,11 @@ setMethod("predict", "Lda", function(object, newdata){
     new("PredictLda", classification=cl, posterior=posterior, x = xx)
 }
 
-.AER <- function(tab)
-{
-    1 - sum(tab[row(tab) == col(tab)])/sum(tab)
-}
-
-.confusion <- function(actual, predicted, prior = NULL, printit=FALSE) {
-    
-    names <- levels(actual)
-    tab <- table(actual, predicted)
-    acctab <- t(apply(tab, 1, function(x) x/sum(x)))
-    dimnames(acctab) <- list(Actual = names, "Predicted (cv)" = names)
-    dimnames(tab) <- list(Actual = names, "Predicted (cv)" = names)
-    
-    if(is.null(prior)) 
-    {
-        cnt <- table(actual)
-        prior <- cnt/sum(cnt)
-    }
-    else
-        names(prior) <- names
-        
-    AER <- 1 - sum(tab[row(tab) == col(tab)])/sum(tab)
-
-    if(printit)
-    {
-        prt <- as.matrix(round(c("Apparent error rate" = AER, "Prior frequency" = prior),4))
-        colnames(prt) <- ""
-        print(prt)
-        
-        cat("\nClassification table", "\n")
-        print(tab)
-        cat("\nConfusion matrix", "\n")
-        print(round(acctab, 3))
-    }
-    
-    invisible(tab)
-}
-
-## Internal function to perform leaving-one-out cross validation by brute force - 
-##  recalculates the estimator n times, excluding each observation in turn.
-##
-.CV <- function(obj){
-
-    if(!inherits(obj, "Lda"))
-        stop("The object must be an Lda object")
-        
-    classic <- inherits(obj, "LdaClassic")
-    ret <- predict(obj)
-    
-    X <- obj@X
-    grp <- obj@grp
-    ng <- length(levels(grp))
-    method <- obj@method
-    
-    ptm <- proc.time()
-
-    n <- nrow(X)
-    p <- ncol(X)
-    
-    if(!classic && n*p > 500 || method == "fsa")
-        warning("This could take some time!")
-        
-    for(i in 1:n)
-    {
-        cat("i=",i,"\n")
-        
-        ll <- if(classic)
-            {
-                LdaClassic(X[-i,], grouping=grp[-i]) 
-            }
-            else
-            {
-                Linda(X[-i,], grouping=grp[-i], method=method) 
-            }
-        
-        pp <- predict(ll, newdata=t(X[i,]))
-        
-        ret@classification[i] <- pp@classification[1]
-        ret@posterior[i,] <- pp@posterior[1,]
-    }
-
-    ret@cv <- rrcov:::.confusion(grp, ret@classification)
-    
-##    cat("\nElapsed time (loo): ",(proc.time() - ptm)[1],"\n")     
-    ret
-}
-
 setMethod("show", "PredictLda", function(object){
 
-    if(!is.null(object@cv))
+    if(!is.null(object@ct))
     {
-        tab <- object@cv
+        tab <- object@ct
         acctab <- t(apply(tab, 1, function(x) x/sum(x)))
         dimnames(acctab) <- dimnames(tab)
         AER <- 1 - sum(diag(tab))/sum(tab)
@@ -194,3 +107,53 @@ setMethod("show", "SummaryLda", function(object){
     invisible(object)
 })
    
+.wcov.wt <- function (x, gr, wt = rep(1, nrow(x))) 
+{
+    xcall <- match.call()
+    if (is.data.frame(x)) 
+        x <- as.matrix(x)
+    else if (!is.matrix(x)) 
+        stop("'x' must be a matrix or a data frame")
+
+    if (!all(is.finite(x))) 
+        stop("'x' must contain finite values only")
+    n <- nrow(x)
+    p <- ncol(x)
+    lev <- levels(as.factor(gr))
+    ng <- length(lev)
+    dimn <- dimnames(x)
+    
+
+    if(with.wt <- !missing(wt)) {
+        if(length(wt) != n) 
+            stop("length of 'wt' must equal the number of rows in 'x'")
+        if(any(wt < 0) || (s <- sum(wt)) == 0) 
+            stop("weights must be non-negative and not all zero")
+    }
+
+    sqrtwt <- sqrt(wt)
+    means <- tapply(sqrtwt*x, list(rep(gr, p), col(x)), sum) /rep(tapply(sqrtwt, gr, sum), p) 
+    wcov <- crossprod(sqrtwt*(x-means[gr,]))/(sum(sqrtwt)-ng)
+    dimnames(wcov) <- list(dimn[[2]], dimn[[2]])
+    dimnames(means) <- list(lev, dimn[[2]])
+    ans <- list(call=xcall, means=means, wcov=wcov, method="Reweighted")
+    class(ans) <- "wcov"
+    ans
+}
+
+print.wcov <- function(x, ...)
+{
+    if(!is.null(cl <- x$call)) {
+        names(cl)[2] <- ""
+        cat("Call:\n")
+        dput(cl)
+    }
+
+    cat("\nGroup means:\n")
+    print(x$means, ...)
+
+    cat("\nWithin-groups Covariance Matrix:\n")
+    print(x$wcov, ...)
+
+    invisible(x)
+}

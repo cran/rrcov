@@ -14,12 +14,12 @@ meant for printing by 'show'}
     \item{\code{classification}:}{a factor variable containing the classification of each object }
     \item{\code{posterior}:}{a matrix containing the posterior probabilities }
     \item{\code{x}:}{ matrix with the discriminant scores }
-    \item{\code{cv}:}{re-classification table of the training sample}
+    \item{\code{ct}:}{re-classification table of the training sample}
   }
 }
 \section{Methods}{
   \describe{
-    \item{show}{\code{signature(object = "PredictLda")}: ... }
+    \item{show}{\code{signature(object = "PredictLda")}: Prints the results }
      }
 }
 %\references{}

@@ -20,9 +20,12 @@ setClassUnion("Utable", c("table", "NULL"))
 ##  method like CovMest, CovOgk, etc. will derive a subclass with
 ##  the necessary control parameters, e.g. CovControlMest will
 ##  contain the control parameters for CovMest.
+
 setClass("CovControl", representation(trace="logical",
                                       tolSolve="numeric",
                                       "VIRTUAL"))
+
+setClassUnion("UCovControl", c("CovControl", "NULL"))
 
 setClass("Cov", representation(call = "language",
                               cov = "matrix",
@@ -81,6 +84,9 @@ setClass("CovMve", representation(alpha = "numeric",
 setClass("CovSest", representation(),
                     contains="CovRobust") 
 
+setClass("CovSde", representation(),
+                    contains="CovRobust") 
+
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp="numeric",
@@ -120,7 +126,7 @@ setClass("CovControlMest", representation(r="numeric",
 .mrobTau <- function(x, c1 = 4.5, c2 = 3.0, ...)       #c2=2.36075 
 {
 
-    return(scaleTau2(x, mu.too=TRUE))
+    return(scaleTau2(x, mu.too=TRUE))   # use scaleTau2 from package robustbase
     
 if(FALSE) {
     m0 <- median(x)                     # MED
@@ -197,6 +203,21 @@ setClass("CovControlSest", representation(bdp="numeric",
                                             method="sfast"),
                            contains="CovControl") 
                     
+## Control parameters for CovSde
+setClass("CovControlSde", representation(nsamp="numeric",
+                                          maxres="numeric",
+                                          tune="numeric",
+                                          eps="numeric",
+                                          prob="numeric",
+                                          seed="Uvector"),
+                           prototype = list(tune=0.95,
+                                          eps=0.5,
+                                          prob=0.99,
+                                          seed=NULL,
+                                          trace=FALSE,
+                                          tolSolve=10e-14),
+                           contains="CovControl") 
+                    
 
 ###################### PCA ####################################
 setClass("Pca", representation(call = "language",
@@ -257,8 +278,35 @@ setClass("LdaRobust", representation("VIRTUAL"),
 setClass("PredictLda", representation(classification = "factor",
                                       posterior = "matrix",
                                       x = "matrix",
-                                      cv="Utable")) 
+                                      ct="Utable")) 
                                  
                                  
 setClass("Linda", contains="LdaRobust") 
                                  
+###################### QDA ####################################
+setClass("Qda", representation(call     = "language",
+                               prior    = "vector",
+                               counts   = "vector",
+                               center   = "matrix",
+                               cov      = "array",
+                               covinv   = "array",
+                               covdet   = "vector",
+                               method   = "character",
+                               X        = "Umatrix",
+                               grp      = "factor",
+                               control  = "UCovControl",
+                               "VIRTUAL")) 
+                               
+setClass("SummaryQda", representation(qdaobj = "Qda")) 
+
+setClass("QdaClassic", contains="Qda") 
+
+setClass("QdaRobust", representation("VIRTUAL"),
+                    contains="Qda") 
+
+setClass("PredictQda", representation(classification = "factor",
+                                      posterior = "matrix",
+                                      x = "matrix",
+                                      ct="Utable")) 
+                                
+setClass("QdaCov", contains="QdaRobust") 

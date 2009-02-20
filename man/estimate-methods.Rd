@@ -1,17 +1,17 @@
-\name{estimate-methods}
+\name{restimate-methods}
 \docType{methods}
-\alias{estimate}
-\alias{estimate-methods}
-\alias{estimate,CovControlMest-method}
+\alias{restimate}
+\alias{restimate-methods}
+\alias{restimate,CovControlMest-method}
 \title{ Methods for Function estimate in Package 'rrcov'}
 \description{
     Each concrete control class, like \code{CovControlMest}, \code{CovControlOgk}, 
-    etc., should implement an \code{estimate} method which will call the correponding
+    etc., should implement an \code{restimate} method which will call the correponding
     (constructor)-function and will return the obtained S4 class, derived from
     \code{CovRobust}.
 }
 \usage{
-\S4method{estimate}{CovControlMest}(obj, x) 
+\S4method{restimate}{CovControlMest}(obj, x) 
 }
 \arguments{
  \item{obj}{an object of class \code{"CovControlEstimate"}}

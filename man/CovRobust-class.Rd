@@ -2,6 +2,7 @@
 \docType{class}
 \alias{CovRobust-class}
 \alias{isClassic,CovRobust-method}
+\alias{getMeth,CovRobust-method}
 \alias{show,CovRobust-method}
 \alias{summary,CovRobust-method}
 
@@ -25,7 +26,7 @@ The derived classes can override these methods and can define new ones.}
     \item{\code{mah}:}{robust distances}
     \item{\code{method}:}{a character string describing the method used to compute the estimate.}
     \item{\code{singularity}:}{a list with singularity information for the 
-        ocvariance matrix (or \code{NULL} of not singular)}
+        covariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
 }
@@ -35,6 +36,7 @@ The derived classes can override these methods and can define new ones.}
 \section{Methods}{
 \describe{
 \item{isClassic}{\code{signature(obj = "CovRobust")}: Will return FALSE, since this is a 'Robust' object }
+\item{getMeth}{\code{signature(obj = "CovRobust")}: Return the name of the particular robust method used (as a character string) }
 \item{show}{\code{signature(object = "CovRobust")}: display the object }
 \item{plot}{\code{signature(x = "CovRobust")}: plot the object }
 }

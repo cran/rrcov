@@ -1,7 +1,7 @@
 \name{CovControlSest-class}
 \docType{class}
 \alias{CovControlSest-class}
-\alias{estimate,CovControlSest-method}
+\alias{restimate,CovControlSest-method}
 \title{Class 'CovControlSest' - contains control parameters for "CovSest"}
 \description{ 
     This class extends the \code{CovControl} class 
@@ -35,16 +35,13 @@
 }
 \section{Methods}{
 \describe{
-    \item{estimate}{\code{signature(obj = "CovControlSest")}: the generic
-    function \code{estimate} allowes the different methods for robust estimation to be
+    \item{restimate}{\code{signature(obj = "CovControlSest")}: the generic
+    function \code{restimate} allowes the different methods for robust estimation to be
     used polymorphically -  this function will call \code{CovSest} passing it the control
     object and will return the obtained \code{CovRobust} object}
 }
 }
-%\references{ }
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
-%\note{}
-%\seealso{}
 \examples{
     ## the following two statements are equivalent
     ctrl1 <- new("CovControlSest", bdp=0.4)
