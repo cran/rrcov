@@ -126,8 +126,8 @@ pad.right <- function(z, pads)
 
 
 ## -- now do it:
-dodata(method="sfast")
-dodata(method="surreal")
+##dodata(method="sfast")
+##dodata(method="surreal")
 dodata(method="bisquare")
 dodata(method="rocke")
 ##dogen()

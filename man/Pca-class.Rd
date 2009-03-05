@@ -34,8 +34,9 @@ Component Analisys methods
     of variable loadings (i.e., a matrix whose columns contain the eigenvectors) }
     \item{\code{eigenvalues}:}{Object of class \code{"vector"} the eigenvalues }
     \item{\code{scores}:}{Object of class \code{"matrix"} the scores - the value 
-    of the rotated data (the centred (and scaled if requested) data multiplied 
-    by the \code{rotation} matrix) is returned.  Hence, \code{cov(scores)} 
+    of the projected on the space of the principal components data (the centred 
+    (and scaled if requested) data multiplied 
+    by the \code{loadings} matrix) is returned.  Hence, \code{cov(scores)} 
     is the diagonal matrix \code{diag(eigenvalues)} }
     \item{\code{k}:}{Object of class \code{"numeric"} number of (choosen) principal components }
     \item{\code{sd}:}{Object of class \code{"Uvector"} Score distances within the robust PCA subspace }
@@ -55,8 +56,8 @@ Component Analisys methods
     \item{getEigenvalues}{\code{signature(obj = "Pca")}: the eigenvalues of the 
         covariance/correlation matrix, though the calculation is actually done 
         with the singular values of the data matrix) }
-    \item{getLoadings}{\code{signature(obj = "Pca")}: returns the matrix of variable 
-        loadings (i.e., a matrix whose columns contain the eigenvectors). 
+    \item{getLoadings}{\code{signature(obj = "Pca")}: returns the matrix 
+        \code{loadings} (i.e., a matrix whose columns contain the eigenvectors). 
         The function prcomp returns this matrix in the element rotation. }
     \item{getPrcomp}{\code{signature(obj = "Pca")}: returns an S3 object \code{prcomp} 
         for compatibility with the functions prcomp() and princomp(). Thus the 

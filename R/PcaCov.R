@@ -69,36 +69,38 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
         k <- kmax
     }
     if(k != 0)
-        k <- min(k, ncol(data))
+        k <- min(k, p)
     else {
-        k <- min(kmax, ncol(data))
+        k <- min(kmax, p)
         if(trace)
             cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
     }
 ######################################################################
 
-    cov <- estimate(cov.control, data)
+    cov <- restimate(cov.control, data)
     covmat <- list(cov=getCov(cov), center=getCenter(cov), n.obs=cov@n.obs)
     if(corr)
         covmat$cor <- getCorr(cov)
 
     out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
 
-    scores <- predict(out, newdata=data)
+    scores   <- predict(out, newdata=data)
     center   <- getCenter(cov)
     sdev     <- out$sdev
-    scores   <- scores[, 1:k]
-    loadings <- as.matrix(out$loadings)[, 1:k]
+    scores   <- scores[, 1:k, drop=FALSE]
+    loadings <- out$loadings[, 1:k, drop=FALSE]
     eigenvalues  <- (sdev^2)[1:k]
 
 ######################################################################    
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
+    {
         rownames(scores) <- rownames(data)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
+    }
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
-    ## fix up call to refer to the generic, but leave arg name as `formula'
+    ## fix up call to refer to the generic, but leave arg name as 'formula'
     cl[[1]] <- as.name("PcaCov")
     res <- new("PcaCov", call=cl, 
                             loadings=loadings, 

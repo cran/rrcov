@@ -77,12 +77,15 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
             cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
     }
    
-    loadings <- as.matrix(Xsvd$loadings[,1:k])
+    loadings    <- Xsvd$loadings[, 1:k, drop=FALSE]
     eigenvalues <- as.vector(Xsvd$eigenvalues[1:k])
-    center <- as.vector(Xsvd$center)
-    scores <- as.matrix(Xsvd$scores[,1:k])
-    if(is.list(dimnames(data)))
+    center      <- as.vector(Xsvd$center)
+    scores      <- Xsvd$scores[, 1:k, drop=FALSE]
+    if(is.list(dimnames(data)[[1]])) {
         dimnames(scores)[[1]] <- dimnames(data)[[1]]
+    } else {
+        dimnames(scores)[[1]] <- 1:n
+    }
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 

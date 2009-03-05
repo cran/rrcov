@@ -35,7 +35,7 @@
     \item{\code{method}:}{a character string describing the method used to 
         compute the estimate: "Classic"}
     \item{\code{singularity}:}{a list with singularity information for the 
-        ocvariance matrix (or \code{NULL} of not singular)}
+        covariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
 }

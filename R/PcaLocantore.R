@@ -118,21 +118,23 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
     dimnames(scores)[[2]]=names2
     dimnames(loadings)[[2]]=names2
  
-    scale = sc
-    center <- as.vector(mu)
-    scores = scores[, 1:k]
-    loadings = matrix(loadings, p, p)[, 1:k]
-    eigenvalues = (sdev^2)[1:k]
+    scale       <- sc
+    center      <- as.vector(mu)
+    scores      <- scores[, 1:k, drop=FALSE]
+    loadings    <- loadings[, 1:k, drop=FALSE]
+    eigenvalues <- (sdev^2)[1:k]
     
 ######################################################################    
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
+    {
         ##dimnames(scores)[[1]] <- dimnames(data)[[1]]
         rownames(scores) <- rownames(data)
+    }
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
-    ## fix up call to refer to the generic, but leave arg name as `formula'
+    ## fix up call to refer to the generic, but leave arg name as <formula>
     cl[[1]] <- as.name("PcaLocantore")
     res <- new("PcaLocantore", call=cl, 
                             loadings=loadings, 

@@ -1,3 +1,16 @@
+2009-02-20  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.5-01
+    *
+    * Added Quadratic Discriminant Abalyis: Qda, SummaryQda,
+    *   PredictQda, QdaClassic, QdaRobust and QdaCov
+    *
+    
+2009-02-14  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.5-00
+    *
+    * Added Stahel-Donoho estimator of multivariate location and scatter
+    *   CovSde   
+    
 2009-01-14  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-08
     *

@@ -39,7 +39,7 @@
 }
 %\details{}
 \value{
-A \code{CovControlSest} object
+A \code{CovControlSest} object.
 }
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 %\seealso{}

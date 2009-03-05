@@ -403,7 +403,7 @@ CovSest <- function(x,
                cov=super.best.sigma,
                crit=super.best.scale,
                iter=nsamp,
-               method="S estimation: S-FAST"))
+               method="S-estimates: S-FAST"))
 }
 
 ##
@@ -596,7 +596,7 @@ psibiweight <- function(xx, c1)
                  cov = covtil,
                  crit = Stil,
                  iter = nsamp,
-                 method="S estimation: SURREAL")
+                 method="S-estimates: SURREAL")
             )
 }
  
@@ -623,7 +623,7 @@ psibiweight <- function(xx, c1)
     dx <- dim(x)
     n <- dx[1]
     p <- dx[2]
-    method <- "S-Estimates: bisquare"
+    method <- "S-estimates: bisquare"
 
     ##  standarization
     mu <- apply(x, 2, median)
@@ -637,7 +637,7 @@ psibiweight <- function(xx, c1)
         if(missing(initcontrol))
             init <- CovMve(x, nsamp=nsamp, seed=seed)
         else
-            init <- estimate(initcontrol, x)
+            init <- restimate(initcontrol, x)
         cl <- class(init)
         if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
             t0 <- init@raw.center
@@ -703,7 +703,7 @@ psibiweight <- function(xx, c1)
     dx <- dim(x)
     n <- dx[1]
     p <- dx[2]
-    method <- "S-Estimates: Rocke type"
+    method <- "S-estimates: Rocke type"
 
     ##  standarization
     mu <- apply(x, 2, median)
@@ -717,7 +717,7 @@ psibiweight <- function(xx, c1)
         if(missing(initcontrol))
             init <- CovMve(x, nsamp=nsamp, seed=seed)
         else
-            init <- estimate(initcontrol, x)
+            init <- restimate(initcontrol, x)
         cl <- class(init)
         if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
             t0 <- init@raw.center

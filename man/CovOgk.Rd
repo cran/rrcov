@@ -42,15 +42,15 @@ CovOgk(x, niter = 2, beta = 0.9, control)
     'final' estimates.    
 }
 \note{
-If the user does not specify a scale and covariance function to be used in 
-the computations or specifies one by using the arguments \code{smrob} and \code{svrob} 
-(i.e. the names of the functions as strings), a native code written in C will be called which
-is by far faster than the R version. 
-
-If the arguments \code{mrob} and \code{vrob} are not NULL, the specified functions 
-will be used via the pure R implementation of the algorithm. This could be quite slow.
-
-See \code{\link{CovControlOgk}} for details.
+    If the user does not specify a scale and covariance function to be used in 
+    the computations or specifies one by using the arguments \code{smrob} and \code{svrob} 
+    (i.e. the names of the functions as strings), a native code written in C will be called which
+    is by far faster than the R version. 
+    
+    If the arguments \code{mrob} and \code{vrob} are not NULL, the specified functions 
+    will be used via the pure R implementation of the algorithm. This could be quite slow.
+    
+    See \code{\link{CovControlOgk}} for details.
 }
 \value{
   An S4 object of class \code{\link{CovOgk-class}} which is a subclass of the 

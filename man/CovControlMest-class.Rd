@@ -35,8 +35,8 @@ Class \code{"CovControl"}, directly.
 }
 \section{Methods}{
 \describe{
-    \item{estimate}{\code{signature(obj = "CovControlMest")}: the generic
-    function \code{estimate} allowes the different methods for robust estimation to be
+    \item{restimate}{\code{signature(obj = "CovControlMest")}: the generic
+    function \code{restimate} allowes the different methods for robust estimation to be
     used polymorphically -  this function will call \code{CovMest} passing it the control
     object and will return the obtained \code{CovRobust} object}
 }

@@ -70,6 +70,8 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ans$center <- mest$t1
     ans$mah <- mahalanobis(x, mest$t1, mest$s)
     ans$crit <- determinant(mest$s, log = FALSE)$modulus[1]
+    if(cor && !is.null(ans$cov))
+        cor <- cov2cor(ans$cov)
 
     class(ans) <- c("mest", "mcd")
     attr(ans, "call") <- sys.call()

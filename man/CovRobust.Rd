@@ -3,14 +3,14 @@
 \title{ Robust Location and Scatter Estimation }
 \description{
     Computes a robust multivariate location and scatter estimate with a high
-     breakdown point, using one of the abailable estimators.  
+     breakdown point, using one of the available estimators.  
 }
 \usage{
 CovRobust(x, control, na.action = na.fail)
 }
 \arguments{
   \item{x}{a matrix or data frame. }
-  \item{control}{ a control object (S4) of one of the available control classes, 
+  \item{control}{ a control object (S4) for one of the available control classes, 
     e.g. \code{\link{CovControlMcd-class}}, \code{\link{CovControlOgk-class}}, 
     \code{\link{CovControlSest-class}}, etc., 
     containing estimation options. The class of this object defines 
@@ -24,7 +24,7 @@ CovRobust(x, control, na.action = na.fail)
     values on any required variable.}
 }
 \details{
-  This function simply calls the \code{estimate} methd of the control object 
+  This function simply calls the \code{restimate} method of the control object 
   \code{control}. If a character string naming an estimator is specified, a 
   new control object will be created and used. If this argument is missing or 
   'auto' is specified, the function will select the robust estimator 

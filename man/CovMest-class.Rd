@@ -28,7 +28,7 @@
     \item{\code{call}:}{Object of class \code{"language"} - the call to \code{CovMest}}
     \item{\code{method}:}{Object of class \code{"character"} - method used = \code{"M-Estimates"}}
     \item{\code{singularity}:}{a list with singularity information for the 
-        ocvariance matrix (or \code{NULL} of not singular)}
+        covariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{Object of class \code{"Umatrix"} - the data matrix or NULL }
   }
 }

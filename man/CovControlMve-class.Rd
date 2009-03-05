@@ -1,7 +1,7 @@
 \name{CovControlMve-class}
 \docType{class}
 \alias{CovControlMve-class}
-\alias{estimate,CovControlMve-method}
+\alias{restimate,CovControlMve-method}
 
 \title{Class 'CovControlMve' - contains control parameters for CovMve }
 \description{ 
@@ -33,8 +33,8 @@ Class \code{"CovControl"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{estimate}{\code{signature(obj = "CovControlMve")}: the generic
-    function \code{estimate} allowes the different methods for robust estimation to be
+    \item{restimate}{\code{signature(obj = "CovControlMve")}: the generic
+    function \code{restimate} allowes the different methods for robust estimation to be
     used polymorphically -  this function will call \code{CovMve} passing it the control
     object and will return the obtained \code{CovRobust} object}
 }}

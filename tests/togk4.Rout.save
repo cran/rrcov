@@ -1,6 +1,6 @@
 
-R version 2.8.1 (2008-12-22)
-Copyright (C) 2008 The R Foundation for Statistical Computing
+R version 2.9.0 Under development (unstable) (2009-01-12 r47554)
+Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,7 +20,7 @@ Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
 pcaPP 0.1-1 loaded
-Scalable Robust Estimators with High Breakdown Point (version 0.4-08)
+Scalable Robust Estimators with High Breakdown Point (version 0.5-01)
 > dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 +     domcd <- function(x, xname, nrep=1){
 +         n <- dim(x)[1]

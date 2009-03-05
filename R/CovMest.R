@@ -43,7 +43,7 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
         if(missing(initcontrol))
             init <- CovMve(x)
         else
-            init <- estimate(initcontrol, x)
+            init <- restimate(initcontrol, x)
         cl <- class(init)
         if(cl == "CovMve" || cl == "CovMcd" || cl == "CovOgk"){
             t0 <- init@raw.center

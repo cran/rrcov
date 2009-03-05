@@ -13,6 +13,8 @@
 \alias{getDistance-methods} 
 \alias{getEvals}
 \alias{getEvals-methods} 
+\alias{getMeth}
+\alias{getMeth-methods} 
 \alias{isClassic}
 \alias{isClassic-methods} 
 \usage{
@@ -22,6 +24,7 @@ getCorr(obj)
 getData(obj)
 getDistance(obj)
 getEvals(obj)
+getMeth(obj)
 isClassic(obj)
 } 
 
@@ -36,7 +39,7 @@ isClassic(obj)
 \describe{
 
 \item{obj = "Cov"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{isClassic}}
-\item{obj = "CovRobust"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{isClassic}}
+\item{obj = "CovRobust"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{getMeth}, \code{isClassic}}
 }}
 \keyword{methods}
 \keyword{multivariate}
