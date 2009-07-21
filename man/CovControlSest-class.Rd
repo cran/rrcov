@@ -1,33 +1,44 @@
 \name{CovControlSest-class}
+\Rdversion{1.1}
 \docType{class}
 \alias{CovControlSest-class}
 \alias{restimate,CovControlSest-method}
 \title{Class 'CovControlSest' - contains control parameters for "CovSest"}
-\description{ 
-    This class extends the \code{CovControl} class 
+\description{
+    This class extends the \code{CovControl} class
     and contains the control parameters for CovSest
 }
 \section{Objects from the Class}{
-    Objects can be created by calls of the form \code{new("CovControlSest", ...)} 
+    Objects can be created by calls of the form \code{new("CovControlSest", ...)}
     or by calling the constructor-function \code{CovControlSest}.
 }
 \section{Slots}{
      \describe{
-        \item{bdp}{ a numeric value specifying the required 
-            breakdown point.  Allowed values are between 
-            \code{(n - p)/(2 * n)} and 1 and the default is 0.45 
+        \item{bdp}{a numeric value specifying the required
+            breakdown point.  Allowed values are between
+            \code{(n - p)/(2 * n)} and 1 and the default is \code{bdp=0.45}.
         }
-        \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}.}
-        \item{\code{seed}:}{starting value for random generator. Default is \code{seed = NULL}.}
-        \item{trace}{whether to print intermediate results. Default 
-            is \code{trace = FALSE}.
-        }  
-        \item{tolSolve}{numeric tolerance to be used for inversion
-            (\code{\link{solve}}) of the covariance matrix in
-            \code{\link{mahalanobis}}.
+        \item{arp}{a numeric value specifying the asympthotic
+            rejection point (for the Rocke type S estimates),
+            i.e. the fraction of points receiving zero
+            weight (see Rocke (1996)).  Default is \code{arp=0.1}.
         }
-        \item{method}{ Which algorithm to use: 'sfast'=FAST-S or 'surreal'=SURREAL }
-     
+        \item{eps}{a numeric value specifying the
+            relative precision of the solution of the S-estimate
+            (bisquare and Rocke type). Default is to \code{eps=1e-5}.
+        }
+        \item{maxiter}{maximum number of iterations allowed
+            in the computation of the S-estimate (bisquare and Rocke type).
+            Default is \code{maxiter=120}.
+        }
+        \item{nsamp}{the number of random subsets considered.
+            Default is \code{nsamp = 500}.}
+        \item{seed}{starting value for random generator. Default is \code{seed = NULL}.}
+        \item{method}{Which algorithm to use: 'sfast'=FAST-S, 'surreal'=Ruppert's SURREAL algorithm,
+            'bisquare'=Bisquare S-estimation with HBDP start or 'rocke' for Rocke type S-estimates}
+        \item{\code{trace}, \code{tolSolve}:}{from the
+            \code{"\linkS4class{CovControl}"} class.
+        }
     }
 }
 \section{Extends}{

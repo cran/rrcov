@@ -1,6 +1,6 @@
-##setGeneric("PcaHubert", function(x, ...) standardGeneric("PcaHubert")) 
-##setMethod("PcaHubert", "formula", PcaHubert.formula) 
-##setMethod("PcaHubert", "ANY", PcaHubert.default) 
+##setGeneric("PcaHubert", function(x, ...) standardGeneric("PcaHubert"))
+##setMethod("PcaHubert", "formula", PcaHubert.formula)
+##setMethod("PcaHubert", "ANY", PcaHubert.default)
 
 setMethod("getQuan", "PcaHubert", function(obj) obj@quan)
 
@@ -27,7 +27,7 @@ PcaHubert.formula <- function (formula, data = NULL, subset, na.action, ...)
     mt <- attr(mf, "terms")
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
-    
+
     res <- PcaHubert.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
@@ -43,25 +43,25 @@ PcaHubert.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE, ...)
+PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250, trace=FALSE, ...)
 {
-## k    -   Number of principal components to compute. If \code{k} is missing, 
-##              or \code{k = 0}, the algorithm itself will determine the number of 
+## k    -   Number of principal components to compute. If \code{k} is missing,
+##              or \code{k = 0}, the algorithm itself will determine the number of
 ##              components by finding such \code{k} that \code{l_k/l_1 >= 10.E-3} and
-##              \code{sum_1:k l_j/sum_1:r l_j >= 0.8}. It is preferable to 
-##              investigate the scree plot in order to choose the number 
+##              \code{sum_1:k l_j/sum_1:r l_j >= 0.8}. It is preferable to
+##              investigate the scree plot in order to choose the number
 ##              of components and the run again. Default is \code{k=0}.
 ##
 ## kmax -   Maximal number of principal components to compute Default is \code{kmax=10}.
-##              If \code{k} is provided, \code{kmax} does not need to be specified, 
-##              unless \code{k} is larger than 10.                 
+##              If \code{k} is provided, \code{kmax} does not need to be specified,
+##              unless \code{k} is larger than 10.
 ## alpha    This parameter measures the fraction of outliers the algorithm should
-##              resist. In MCD alpha controls the size of the subsets over which the determinant 
-##              is minimized, i.e. alpha*n observations are used for computing the determinant. 
-##              Allowed values are between 0.5 and 1 and the default is 0.5. 
+##              resist. In MCD alpha controls the size of the subsets over which the determinant
+##              is minimized, i.e. alpha*n observations are used for computing the determinant.
+##              Allowed values are between 0.5 and 1 and the default is 0.5.
 ## mcd  -   Logical - when the number of variables is sufficiently small,
-##              the loadings are computed as the eigenvectors of the MCD covariance matrix, 
-##              hence the function \code{\link{CovMcd}()} is automatically called. The number of 
+##              the loadings are computed as the eigenvectors of the MCD covariance matrix,
+##              hence the function \code{\link{CovMcd}()} is automatically called. The number of
 ##              principal components is then taken as k = rank(x). Default is \code{mcd=TRUE}.
 ##              If \code{mcd=FALSE}, the ROBPCA algorithm is always applied.
 ## trace    whether to print intermediate results. Default is \code{trace = FALSE}}
@@ -72,24 +72,24 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
 
 ##
 ## The value returned by 'PcaHubert' is an S4 object containing the following slots:
-## 
+##
 ## loadings     -   Robust loadings (eigenvectors)
-## eigenvalues  -   Robust eigenvalues       
+## eigenvalues  -   Robust eigenvalues
 ## center       -   Robust center of the data
-## scores       -   Robust scores 
+## scores       -   Robust scores
 ## k            -   Number of (chosen) principal components
 ##
 ## quan         -   The quantile h used throughout the algorithm
 ## sd           -   Robust score distances within the robust PCA subspace
-## od           -   Orthogonal distances to the robust PCA subspace 
+## od           -   Orthogonal distances to the robust PCA subspace
 ## cutoff       -   Cutoff values for the robust score and orthogonal distances
 ## flag         -   The observations whose score distance is larger than result.cutoff.sd
 ##                  or whose orthogonal distance is larger than result$cutoff$od
 ##                  can be considered as outliers and receive a flag equal to zero.
 ##                  The regular observations receive a flag 1.
 
-## This implementation followes closely the Matlab implementation, available as part of 'LIBRA, 
-##  a Matlab Library for Robust Analysis': 
+## This implementation followes closely the Matlab implementation, available as part of 'LIBRA,
+##  a Matlab Library for Robust Analysis':
 ##      www.wis.kuleuven.ac.be/stat/robust.html
 
     .wcov <- function(data, weights) {
@@ -98,42 +98,42 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         wcov$cov <- wcov$cov * ss/(ss-1)
         wcov
     }
-    
+
     cl <- match.call()
-    
+
     if(missing(x)){
-        stop("You have to provide at least some data") 
+        stop("You have to provide at least some data")
     }
     data <- as.matrix(x)
     n <- nrow(data)
     p <- ncol(data)
 
     ## ___Step 1___: Reduce the data space to the affine subspace spanned by the n observations
-    ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach - 
+    ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach -
     ##  the decomposition is based on computing the eignevalues and eigenvectors of(X-m)(X-m)'
     Xsvd <- kernelEVD(data)
 
     if(Xsvd$rank == 0) {
         stop("All data points collapse!")
-    }   
-    
+    }
+
     ##
     ## verify and set the input parameters: alpha, k and kmax
     ## determine h based on alpha and kmax, using the function h.alpha.n()
     ##
     kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
-    if((k <- floor(k)) < 0)   
+    if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
         k <- kmax
     }
-    
+
     if(missing(alpha)) {
         default.alpha <- alpha
         h <- min(h.alpha.n(alpha, n, kmax), n)
         alpha <- h/n
-        if(k == 0) {          
+        if(k == 0) {
             if(h < floor((n+kmax+1)/2)) {
                 h <- floor((n+kmax+1)/2)
                 alpha <- h/n
@@ -141,7 +141,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             }
         }
         else {
-        
+
             if(h < floor((n+k+1)/2)) {
                 h <- floor((n+k+1)/2)
                 alpha <- h/n
@@ -149,35 +149,35 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             }
         }
         if(h > n) {
-        
+
             alpha <- default.alpha
             if(k == 0)
-                h <- h.alpha.n(alpha, n, kmax)                 
+                h <- h.alpha.n(alpha, n, kmax)
             else
-                h <- h.alpha.n(alpha, n, k)                 
+                h <- h.alpha.n(alpha, n, k)
             warning(paste("h should be smaller than n = ", n, ". It is set to its default value ", h, ".", sep=""))
         }
     }else {
-        
+
         if(alpha < 0.5 | alpha > 1)
             stop("Alpha is out of range: should be between 1/2 and 1")
-        
+
         if(k == 0)
             h <- h.alpha.n(alpha, n, kmax)
-        else 
+        else
             h <- h.alpha.n(alpha, n, k)
     }
-    
+
     X <- Xsvd$scores
     center <- Xsvd$center
     rot <- Xsvd$loadings
 
     ##
-    ## ___Step 2___: Either calculate the standard PCA on the MCD covariance matrix (p<<n) 
+    ## ___Step 2___: Either calculate the standard PCA on the MCD covariance matrix (p<<n)
     ##  or apply the ROBPCA algorithm. If mcd=FALSE, allways apply ROBPCA.
     ##
     if(ncol(X) <= min(floor(n/5), kmax) & mcd)    # p << n => apply MCD
-    { 
+    {
         ## If k was not specified, set it equal to the number of columns in X
         ##
         if(k != 0)
@@ -185,13 +185,13 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         else {
             k <- ncol(X)
             if(trace)
-                cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
+                cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
         }
-        
+
         X.mcd <- CovMcd(as.data.frame(X), alpha=alpha)
         X.mcd.svd <- svd(getCov(X.mcd))
         scores <- (X - repmat(getCenter(X.mcd), nrow(X), 1)) %*% X.mcd.svd$u
-           
+
         center <- as.vector(center + getCenter(X.mcd) %*% t(rot))
         eigenvalues <- X.mcd.svd$d[1:k]
         loadings <- Xsvd$loadings %*% X.mcd.svd$u[,1:k]
@@ -200,37 +200,37 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
-               
-        res <- new("PcaHubert",call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
-                            scores=scores, 
-                            k=k, 
+
+        res <- new("PcaHubert",call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
+                            scores=scores,
+                            k=k,
                             quan=X.mcd@quan,
                             alpha=alpha,
                             n.obs=n)
-        
+
     }
-    else                                        # p > n or mcd=FALSE => apply the ROBPCA algorithm 
+    else                                        # p > n or mcd=FALSE => apply the ROBPCA algorithm
     {
         ##
-        ##  For each direction 'v' through 2 data points we project the n data points xi on v 
-        ##  and compute their robustly standardized absolute residual 
+        ##  For each direction 'v' through 2 data points we project the n data points xi on v
+        ##  and compute their robustly standardized absolute residual
         ##  |xi'v - tmcd(xj'v|/smcd(xj'v)
         ##
         alldir <- choose(n, 2)                  # all possible directions through two data points - n*(n-1)/2
-        ndir <- min(250, alldir)                # not more than 250    
+        ndir <- min(maxdir, alldir)             # not more than maxdir (250)
         all <- (ndir == alldir)                 # all directions if n small enough (say n < 25)
         B <- extradir(X, ndir, all=all)         # the rows of B[ndir, ncol(X)] are the (random) directions
-        
+
         Bnorm <- vector(mode="numeric", length=nrow(B))   # ndir x 1
-        Bnorm <- apply(B, 1, vecnorm)           # 
+        Bnorm <- apply(B, 1, vecnorm)           #
         Bnormr <- Bnorm[Bnorm > 1.E-12]         # choose only the nonzero length vectors
         m <- length(Bnormr)                     # the number of directions that will be used
         B <- B[Bnorm > 1.E-12,]                 # B[m x ncol(X)]
         A <- diag(1/Bnormr) %*% B               # A[m x ncol(X)]
-        
+
         Y <- X %*% t(A)                         # n x m - projections of the n points on each of the m directions
         Z <- zeros(n, m)                        # n x m - to collect the outlyingness of each point on each direction
         for(i in 1:m) {
@@ -239,12 +239,12 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             if(umcd$smcd < 1.E-12) {
                 ## exact fit situation: will not be handled
                 if((r2 <- rankMM(data[umcd$weights==1,])) == 1)
-                    stop("At least ", sum(umcd$weights), " observations are identical.")   
+                    stop("At least ", sum(umcd$weights), " observations are identical.")
             }
             else
                 Z[,i] <- abs(Y[,i] - umcd$tmcd) / umcd$smcd
         }
-        
+
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
         Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
         Xh.svd <- classSVD(Xh)
@@ -258,7 +258,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         ##
         if(k == 0) {
             test <- which(Xh.svd$eigenvalues/Xh.svd$eigenvalues[1] <= 1.E-3)
-            k <- if(length(test) != 0)  min(min(Xh.svd$rank, test[1]), kmax)               
+            k <- if(length(test) != 0)  min(min(Xh.svd$rank, test[1]), kmax)
                  else                   min(Xh.svd$rank, kmax)
 
             cumulative <- cumsum(Xh.svd$eigenvalues[1:k])/sum(Xh.svd$eigenvalues)
@@ -268,7 +268,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             if(trace)
                 cat(paste("The number of principal components is set by the algorithm. It is set to ", k, ".\n", sep=""))
         }
-        
+
         ## perform extra reweighting step
         if(k != Xsvd$rank){
             XRc <- X - repmat(Xh.svd$center, n, 1)
@@ -281,8 +281,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             Xh.svd <- classSVD(X[indexset,])
             k <- min(Xh.svd$rank, k)
         }
-            
-        ## Project the data points on the subspace spanned by the first k0 eigenvectors            
+
+        ## Project the data points on the subspace spanned by the first k0 eigenvectors
         center <- center + Xh.svd$center %*% t(rot)
         rot <- rot %*% Xh.svd$loadings
         X2 <- (X - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
@@ -316,7 +316,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             }
         }
 
-        ## Perform now MCD on X2 
+        ## Perform now MCD on X2
         X2mcd <- CovMcd(X2, nsamp=250, alpha=alpha)
         if(X2mcd@crit < obj) {
             X2cov <- getCov(X2mcd)
@@ -324,7 +324,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
         }else {
             consistencyfactor <- median(mah)/qchisq(0.5,k)
             mah <- mah/consistencyfactor
-            weights <- ifelse(mah <= qchisq(0.975, k), TRUE, FALSE) 
+            weights <- ifelse(mah <= qchisq(0.975, k), TRUE, FALSE)
             wcov <- .wcov(X2, weights)
             X2center <- wcov$center
             X2cov <- wcov$cov
@@ -341,21 +341,21 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
 
-        res <- new("PcaHubert",call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
-                            scores=scores, 
-                            k=k, 
+        res <- new("PcaHubert",call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
+                            scores=scores,
+                            k=k,
                             quan=h,
                             alpha=alpha,
                             n.obs=n)
-        
+
     }
 
     cl[[1]] <- as.name("PcaHubert")
     res@call <- cl
-    
+
     ## Compute distances and flags
     res <- .distances(data, Xsvd$rank, res)
     return(res)
@@ -363,8 +363,10 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, trace=FALSE
 
 
 ##
-##  Calculates 'ndirect' directions through 
-##  two randomly choosen data points from 'data'
+##  Returns 'ndirect' (random) directions through the data -
+##      each through a pair of (randomly choosen) data points.
+##  If all=TRUE all possible directions (all possible pairs of points)
+##      are returned.
 ##
 extradir <- function(data, ndirect, all=TRUE){
     if(all)                             # generate all possible directions (all pairs of n points)
@@ -373,63 +375,63 @@ extradir <- function(data, ndirect, all=TRUE){
         B2 <- data[cc[1,],] - data[cc[2,],]
     }
     else {                              # generate 'ndirect' random directions
-
-if(TRUE){
-        uniran <- function(seed = 0){
-            seed<-floor(seed*5761)+999
-            quot<-floor(seed/65536)
-            seed<-floor(seed)-floor(quot*65536)
-            random<-seed/65536
-            list(seed=seed, random=random)
-        }
-    
-        ##
-        ##  Draws a random subsubsample of k objects out of n.      
-        ##  This function is called if not all (p+1)-subsets 
-        ##  out of n will be considered. 
-        ## 
-        randomset <- function(n, k, seed){
-            ranset <- vector(mode="numeric", length=k)
-            for(j in 1:k){
-                r <- uniran(seed)
-                seed <- r$seed       
-                num <- floor(r$random * n) + 1
-        
-                if(j > 1){
-                    while(any(ranset == num)){
-                        r <- uniran(seed)
-                        seed <- r$seed           
-                        num <- floor(r$random * n) + 1
-                    }
+        if(TRUE){
+                uniran <- function(seed = 0){
+                    seed<-floor(seed*5761)+999
+                    quot<-floor(seed/65536)
+                    seed<-floor(seed)-floor(quot*65536)
+                    random<-seed/65536
+                    list(seed=seed, random=random)
                 }
-            
-                ranset[j] <- num
-            }
-            ans<-list()
-            ans$seed <- seed
-            ans$ranset <- ranset
-            ans
+
+                ##
+                ##  Draws a random subsubsample of k objects out of n.
+                ##  This function is called if not all (p+1)-subsets
+                ##  out of n will be considered.
+                ##
+                randomset <- function(n, k, seed){
+                    ranset <- vector(mode="numeric", length=k)
+                    for(j in 1:k){
+                        r <- uniran(seed)
+                        seed <- r$seed
+                        num <- floor(r$random * n) + 1
+
+                        if(j > 1){
+                            while(any(ranset == num)){
+                                r <- uniran(seed)
+                                seed <- r$seed
+                                num <- floor(r$random * n) + 1
+                            }
+                        }
+
+                        ranset[j] <- num
+                    }
+                    ans<-list()
+                    ans$seed <- seed
+                    ans$ranset <- ranset
+                    ans
+                }
+
+                n <- nrow(data)
+                p <- ncol(data)
+                r <- 1
+                B2 <- zeros(ndirect, p)
+                seed <- 0
+                while(r <= ndirect) {
+                    sseed <- randomset(n, 2, seed)
+                    seed  <- sseed$seed
+                    B2[r,] <- data[sseed$ranset[1], ] - data[sseed$ranset[2],]
+                    r <- r + 1
+                }
+        } else
+        {
+                B2 <- zeros(ndirect, ncol(data))
+                for(r in 1:ndirect) {
+                    smpl <- sample(1:nrow(data), 2)                 # choose a random pair of points
+                    B2[r,] <- data[smpl[1], ] - data[smpl[2], ]     # calculate the random direction based on these points
+                }
         }
 
-        n <- nrow(data)
-        p <- ncol(data)
-        r <- 1
-        B2 <- zeros(ndirect, p)
-        seed <- 0
-        while(r <= ndirect) {
-            sseed<-randomset(n, 2, seed)
-            seed<-sseed$seed
-            B2[r,] <- data[sseed$ranset[1], ] - data[sseed$ranset[2],]
-            r <- r + 1
-        }
-} else
-{
-        B2 <- zeros(ndirect, ncol(data))
-        for(r in 1:ndirect) {
-            smpl <- sample(1:nrow(data), 2)                 # choose a random pair of points
-            B2[r,] <- data[smpl[1], ] - data[smpl[2], ]     # calculate the random direction based on these points
-        }
-}        
     }
     return(B2)
 }
@@ -464,7 +466,7 @@ unimcd <- function(y, quan){
         slutn[1:ndup]<-ay[ii]
         initmean<-slutn[floor((ndup+1)/2)]/quan
         initcov<-sqmin/(quan-1)
-        res<-(y-initmean)^2/initcov 
+        res<-(y-initmean)^2/initcov
         sortres<-sort(res)
         factor<-sortres[quan]/qchisq(quan/ncas,1)
         initcov<-factor*initcov
@@ -474,7 +476,7 @@ unimcd <- function(y, quan){
         out$tmcd<-sum(y*out$weights)/sum(out$weights)
         out$smcd<-sqrt(sum((y-out$tmcd)^2*out$weights)/(sum(out$weights)-1))
         Iinv<-order(I)
-        out$weights<-out$weights[Iinv] 
+        out$weights<-out$weights[Iinv]
     }
     return(out)
 }

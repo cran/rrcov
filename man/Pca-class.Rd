@@ -15,8 +15,6 @@
 \alias{predict}
 \alias{screeplot,Pca-method}
 \alias{screeplot}
-\alias{biplot,Pca-method}
-\alias{biplot}
 \alias{summary,Pca-method}
 
 \title{Class "Pca" - virtual base class for all classic and robust PCA classes 
@@ -83,9 +81,6 @@ Component Analisys methods
     \item{screeplot}{\code{signature(x = "Pca")}: plots the variances against the 
         number of the principal component. See also \code{\link{plot.prcomp}} and 
         \code{\link{plot.princomp}}}
-    \item{biplot}{\code{signature(x = "Pca")}: Plot a biplot, i.e. represent both 
-        the observations and variables of a matrix of multivariate data on the same 
-        plot. See also \code{\link{biplot.princomp}}}
   }
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }

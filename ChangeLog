@@ -1,3 +1,9 @@
+2009-07-21  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.5-02
+    * Defaults of CovRobust() changed
+    * Corrections in some help pages
+    * Biplot implemented as a method of class PCA (generic function biplot)
+    *
 2009-02-20  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.5-01
     *

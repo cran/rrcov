@@ -25,21 +25,21 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
     that the computation can take a very long time.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
-  \item{use.correction}{ whether to use finite sample correction factors. 
+  \item{use.correction}{ whether to use finite sample correction factors.
     Default is \code{use.correction=TRUE}}
-  \item{control}{ a control object (S4) of class \code{\link{CovControlMcd-class}} 
-    containing estimation options - same as these provided in the fucntion 
-    specification. If the control object is supplied, the parameters from it 
-    will be used. If parameters are passed also in the invocation statement, they will 
+  \item{control}{ a control object (S4) of class \code{\link{CovControlMcd-class}}
+    containing estimation options - same as these provided in the fucntion
+    specification. If the control object is supplied, the parameters from it
+    will be used. If parameters are passed also in the invocation statement, they will
     override the corresponding elements of the control object.}
 }
 \details{
-  This function computes the minimum covariance determinant estimator 
-  of location and scatter and returns an S4 object of class 
-  \code{\link{CovMcd-class}} containing the estimates. 
-  The implementation of the function is similar to the existing \R function 
-  \code{\link[robustbase]{covMcd}()} which returns an S3 object.  
-  The MCD method looks for the \eqn{h (> n/2)} 
+  This function computes the minimum covariance determinant estimator
+  of location and scatter and returns an S4 object of class
+  \code{\link{CovMcd-class}} containing the estimates.
+  The implementation of the function is similar to the existing \R function
+  \code{\link[robustbase]{covMcd}()} which returns an S3 object.
+  The MCD method looks for the \eqn{h (> n/2)}
   observations (out of \eqn{n}) whose classical
   covariance matrix has the lowest possible determinant.  The raw MCD
   estimate of location is then the average of these \eqn{h} points,
@@ -48,7 +48,7 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
   (to make it consistent at the normal model and unbiased at small samples).
   Both rescaling factors are returned also in the vector \code{raw.cnp2}
   of length 2. Based on these raw MCD estimates, a reweighting step is performed
-  which increases the finite-sample eficiency considerably - see Pison et al. (2002).
+  which increases the finite-sample efficiency considerably - see Pison et al. (2002).
   The rescaling factors for the reweighted estimates are returned in the
   vector \code{cnp2} of length 2. Details for the computation of the finite
   sample correction factors can be found in Pison et al. (2002).
@@ -57,7 +57,7 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
   to approximate the minimum covariance determinant estimator.
 }
 \value{
-  An S4 object of class \code{\link{CovMcd-class}} which is a subclass of the 
+  An S4 object of class \code{\link{CovMcd-class}} which is a subclass of the
   virtual class \code{\link{CovRobust-class}}.
 }
 \references{
@@ -72,10 +72,10 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
   Small Sample Corrections for LTS and MCD,
   \emph{Metrika}, \bold{55}, 111-123.
 }
-\author{ Valentin Todorov \email{valentin.todorov@chello.at} 
+\author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
-%\note{ 
-%    The function \code{\link[robustbase]{covMcd}()} on which \code{CovMcd} is based 
+%\note{
+%    The function \code{\link[robustbase]{covMcd}()} on which \code{CovMcd} is based
 %    will be deprecated i.e. is going to be made obsolete in future versions.
 %}
 \seealso{

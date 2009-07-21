@@ -13,7 +13,7 @@
 }
 \usage{
 PcaHubert(x, ...)
-\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, trace=FALSE, \dots)
+\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, maxdir=250, trace=FALSE, \dots)
 \method{PcaHubert}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -50,6 +50,10 @@ PcaHubert(x, ...)
     hence the function \code{\link{CovMcd}()} is automatically called. The number of 
     principal components is then taken as k = rank(x). Default is \code{mcd=TRUE}.
     If \code{mcd=FALSE}, the ROBPCA algorithm is always applied.}
+  \item{maxdir}{maximal number of random directions to use for computing the 
+    outlyingness of the data points. Default is \code{maxdir=250}. If the number \code{n}
+    of observations is small all possible \code{n*(n-1)/2} pairs of observations 
+    are taken to generate the directions.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
