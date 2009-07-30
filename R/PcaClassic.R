@@ -1,6 +1,6 @@
-##setGeneric("PcaClassic", function(x, ...) standardGeneric("PcaClassic")) 
-##setMethod("PcaClassic", "formula", PcaClassic.formula) 
-##setMethod("PcaClassic", "ANY", PcaClassic.default) 
+##setGeneric("PcaClassic", function(x, ...) standardGeneric("PcaClassic"))
+##setMethod("PcaClassic", "formula", PcaClassic.formula)
+##setMethod("PcaClassic", "ANY", PcaClassic.default)
 
 setMethod("getQuan", "PcaClassic", function(obj) obj@n.obs)
 
@@ -27,7 +27,7 @@ PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
     mt <- attr(mf, "terms")
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
-    
+
     res <- PcaClassic.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
@@ -48,7 +48,7 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     cl <- match.call()
 
     if(missing(x)){
-        stop("You have to provide at least some data") 
+        stop("You have to provide at least some data")
     }
     data <- as.matrix(x)
     n <- nrow(data)
@@ -57,13 +57,13 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     Xsvd <- kernelEVD(data)
     if(Xsvd$rank == 0) {
         stop("All data points collapse!")
-    }   
-    
+    }
+
     ##
     ## verify and set the input parameters: k and kmax
     ##
     kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
-    if((k <- floor(k)) < 0)   
+    if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
@@ -74,14 +74,14 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     else {
         k <- min(kmax,ncol(data))
         if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
     }
-   
+
     loadings    <- Xsvd$loadings[, 1:k, drop=FALSE]
     eigenvalues <- as.vector(Xsvd$eigenvalues[1:k])
     center      <- as.vector(Xsvd$center)
     scores      <- Xsvd$scores[, 1:k, drop=FALSE]
-    if(is.list(dimnames(data)[[1]])) {
+    if(is.list(dimnames(data))) {
         dimnames(scores)[[1]] <- dimnames(data)[[1]]
     } else {
         dimnames(scores)[[1]] <- 1:n
@@ -91,14 +91,14 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
     cl[[1]] <- as.name("PcaClassic")
-    res <- new("PcaClassic", call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
-                            scores=scores, 
-                            k=k, 
+    res <- new("PcaClassic", call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
+                            scores=scores,
+                            k=k,
                             n.obs=n)
-               
+
     ## Compute distances and flags
     res <- .distances(data, Xsvd$rank, res)
     return(res)

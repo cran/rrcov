@@ -2,36 +2,35 @@
 \docType{class}
 \alias{CovControlMest-class}
 \title{Class 'CovControlMest' - contains control parameters for "CovMest"}
-\description{ 
-    This class extends the \code{CovControl} class 
+\description{
+    This class extends the \code{CovControl} class
     and contains the control parameters for CovMest}
 
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("CovControlMest", ...)} 
+Objects can be created by calls of the form \code{new("CovControlMest", ...)}
 or by calling the constructor-function \code{CovControlMest}.
 }
 
 \section{Slots}{
  \describe{
-    \item{\code{r}:}{a numeric value specifying the required 
-    breakdown point.  Allowed values are between 
+    \item{\code{r}:}{a numeric value specifying the required
+    breakdown point.  Allowed values are between
     \code{(n - p)/(2 * n)} and 1 and the default is 0.45}
-    \item{\code{arp}:}{a numeric value specifying the asympthotic 
-    rejection point, i.e. the fraction of points receiving zero 
+    \item{\code{arp}:}{a numeric value specifying the asympthotic
+    rejection point, i.e. the fraction of points receiving zero
     weight (see Rocke (1996)).  Default is \code{0.05} }
-    \item{\code{eps}:}{a numeric value specifying the 
-    relative precision of the solution of the M-estimate. 
+    \item{\code{eps}:}{a numeric value specifying the
+    relative precision of the solution of the M-estimate.
     Defaults to \code{1e-3}}
-    \item{\code{maxiter}:}{maximum number of iterations allowed 
+    \item{\code{maxiter}:}{maximum number of iterations allowed
     in the computation of the M-estimate. Defaults to 120 }
-    \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
-    \item{tolSolve}{numeric tolerance to be used for inversion
-        (\code{\link{solve}}) of the covariance matrix in
-        \code{\link{mahalanobis}}.}
+    \item{\code{trace}, \code{tolSolve}:}{from the
+        \code{"\linkS4class{CovControl}"} class.
+    }
   }
 }
 \section{Extends}{
-Class \code{"CovControl"}, directly.
+    Class \code{"\linkS4class{CovControl}"}, directly.
 }
 \section{Methods}{
 \describe{

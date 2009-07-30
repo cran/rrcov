@@ -16,7 +16,8 @@ Classical and Robust One-way MANOVA: Wilks Lambda
 \method{Wilks.test}{formula}(formula, data, \dots, subset, na.action)
 
 \method{Wilks.test}{default}(x, grouping, method=c("c", "mcd", "rank"), 
-    xd=NULL, xq=NULL, nrep=3000, trace=FALSE, \dots)
+    approximation=c("Bartlett", "Rao", "empirical"),
+    xd=NULL, xq=NULL, xfn = NULL, xwl=NULL, nrep=3000, trace=FALSE, \dots)
 
 \method{Wilks.test}{data.frame}(x, \dots)
 
@@ -51,8 +52,13 @@ Classical and Robust One-way MANOVA: Wilks Lambda
   }
   \item{method}{
     \code{"c"} for standard estimators of the mean and variance,
-    \code{"mcd"} for MCD estimators of mean and variances.
-    \code{"rank"} for rank based wilks' lambda as proposed by Nath and Pavur (1985)
+    \code{"mcd"} for MCD estimators of mean and variances and 
+    \code{"rank"} for rank based wilks' lambda as proposed by Nath and Pavur (1985).
+  }
+  \item{approximation}{
+    \code{"Bartlett"} for Bartlett approximation (default),
+    \code{"Rao"} for rao approximation (only for method="c") and
+    \code{"empirical"} for simulated empirical distribution.
   }
   \item{xd}{multiplication factor for the approximate distribution of 
     the robust Lambda statistic. If \code{xd=NULL} the factor will
@@ -61,6 +67,12 @@ Classical and Robust One-way MANOVA: Wilks Lambda
   \item{xq}{the degrees of freedom for the approximate \eqn{\chi^2} distribution of 
     the robust Lambda statistic. If \code{xq=NULL} the degrees of freedom will
     computed by simulation and will be returned in the value (see Details)
+  }
+  \item{xfn}{the empirical distribution function. If \code{xfn=NULL} the empirical function  will
+    be estimated by simulation and will be returned in the value (see Details)
+  }
+  \item{xwl}{the simulated values of the robust statistic. If \code{xwl=NULL} the simulation 
+    will be performed and the calculated result will be returned in the value (see Details)
   }
   \item{nrep}{number of trials for the simulations for computing the 
     multiplication factor \code{xd} and the degrees of freedom \code{xq}. Default is \code{nrep=3000}.

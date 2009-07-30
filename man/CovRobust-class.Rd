@@ -1,4 +1,5 @@
 \name{CovRobust-class}
+\Rdversion{1.1}
 \docType{class}
 \alias{CovRobust-class}
 \alias{isClassic,CovRobust-method}
@@ -14,24 +15,18 @@ standard methods common for all robust estimates like \code{show}, \code{summary
 The derived classes can override these methods and can define new ones.}
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Slots}{
-     \describe{
-    \item{\code{center}:}{location}
-    \item{\code{cov}:}{covariance matrix}
-    \item{\code{n.obs}:}{number of observations used to compute the estimates}
-    \item{\code{iter}:}{number of iterations used to compute the estimates}
-    \item{\code{crit}:}{value of the criterion function}
-    \item{\code{wt}:}{weights}
-    \item{\code{call}:}{the call to the function that returns the object}
-    \item{\code{corr}:}{whether the correlation matrix was computed}
-    \item{\code{mah}:}{robust distances}
-    \item{\code{method}:}{a character string describing the method used to compute the estimate.}
-    \item{\code{singularity}:}{a list with singularity information for the 
-        covariance matrix (or \code{NULL} of not singular)}
-    \item{\code{X}:}{data}
-  }
+    \describe{
+        \item{\code{iter}:}{number of iterations used to compute the estimates}
+        \item{\code{crit}:}{value of the criterion function}
+        \item{\code{wt}:}{weights}
+        \item{\code{call}, \code{cov}, \code{center},
+            \code{n.obs}, \code{mah}, \code{method},
+            \code{singularity}, \code{X}:}{from the \code{"\linkS4class{Cov}"} class.
+        }
+    }
 }
 \section{Extends}{
-    Class \code{"Cov"}, directly.
+    Class \code{"\linkS4class{Cov}"}, directly.
 }
 \section{Methods}{
 \describe{
@@ -51,7 +46,7 @@ The derived classes can override these methods and can define new ones.}
 \examples{
      data(hbk)
      hbk.x <- data.matrix(hbk[, 1:3])
-     cv <- CovMest(hbk.x)               # it is not possible to create an object of 
+     cv <- CovMest(hbk.x)               # it is not possible to create an object of
                                         # class CovRobust, since it is a VIRTUAL class
      cv
      summary(cv)                        # summary method for class CovRobust

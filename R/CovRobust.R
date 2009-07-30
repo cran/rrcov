@@ -2,9 +2,7 @@
 ##  auto, mcd, ogk, m, mve, sfast, surreal, bisquare, rocke
 ##  If no control object is given or 'auto' is selected, the choise of the
 ##  estimator will depend on the size of the data:
-##
 ##  - Stahel-Donoho: n < 1000 and p < 10 or n < 5000 and p < 5
-##      not implemented yet - will use S estimates
 ##  - MCD: n < 50000 and p < 20
 ##  - OGK: otherwise
 ##
@@ -21,7 +19,7 @@ CovRobust <- function(x, control, na.action = na.fail)
     p <- ncol(x)
 
     control <- .covRobustControl(control, n, p)
-    restimate(control, x)        
+    restimate(control, x)
 }
 
 .covRobustControl <- function(method, n, p)
@@ -32,7 +30,7 @@ CovRobust <- function(x, control, na.action = na.fail)
     else if(is.character(method))
         mm <- casefold(method)
 
-    ## either no control specified or the estimator is given by a character name - 
+    ## either no control specified or the estimator is given by a character name -
     ##  create the neccessary control object.
     if(!is.null(mm)){
         control <- switch(mm,
@@ -41,8 +39,10 @@ CovRobust <- function(x, control, na.action = na.fail)
                     CovControlMcd()
                 else if(n < 1000 && p < 10 || n < 5000 && p < 5)
                     CovControlSde()
+                else if(n < 50000 && p < 10)
+                    CovControlSest(method="bisquare")
                 else if(n < 50000 && p < 20)
-                    CovControlMcd()
+                    CovControlSest(method="rocke")
                 else
                     CovControlOgk(smrob="s_mad", svrob="qc")
             },
@@ -57,7 +57,7 @@ CovRobust <- function(x, control, na.action = na.fail)
             rocke = CovControlSest(method="rocke"))
 
         ## this is the 'default' option of the switch
-        if(is.null(control))            
+        if(is.null(control))
             stop(paste("Undefined estimator: ", method))
     } else
         control <- method
@@ -83,12 +83,12 @@ setMethod("show", "CovRobust", function(object){
     cat("\nRobust Estimate of Covariance: \n")
     print.default(format(getCov(object), digits = digits), print.gap = 2, quote = FALSE)
     invisible(object)
-}) 
+})
 
 setMethod("summary", "CovRobust", function(object, ...){
 
     new("SummaryCovRobust", covobj=object, evals=eigen(object@cov)$values)
-    
+
 })
 
 
@@ -96,13 +96,13 @@ setMethod("show", "SummaryCovRobust", function(object){
 
     cat("\nCall:\n")
     print(object@covobj@call)
-    
+
     digits = max(3, getOption("digits") - 3)
     cat("\nRobust Estimate of Location: \n")
     print.default(format(getCenter(object), digits = digits), print.gap = 2, quote = FALSE)
     cat("\nRobust Estimate of Covariance: \n")
     print.default(format(getCov(object), digits = digits), print.gap = 2, quote = FALSE)
-    
+
     cat("\nEigenvalues of covariance matrix: \n")
     print.default(format(getEvals(object), digits = digits), print.gap = 2, quote = FALSE)
 
@@ -111,8 +111,8 @@ setMethod("show", "SummaryCovRobust", function(object){
 })
 
 ## VT::17.06.2008
-##setMethod("plot", "CovRobust", function(x, y="missing", 
-setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing", 
+##setMethod("plot", "CovRobust", function(x, y="missing",
+setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing",
                                 which=c("all", "dd", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
                                 classic= FALSE,
                                 ask = (which=="all" && dev.interactive(TRUE)),
@@ -158,11 +158,11 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
         md <- sqrt(getDistance(ccov))
     if(!isSingular(x))
         rd <- sqrt(getDistance(x))
-    
+
     which <- match.arg(which)
     op <- if (ask) par(ask = TRUE) else list()
     on.exit(par(op))
-    
+
     ## distance-distance plot: here we need both robust and mahalanobis distances
     if((which == "all" || which == "dd") && !is.null(md) && !is.null(rd)) {
         .myddplot(md, rd, cutoff=cutoff, id.n=id.n) # distance-distance plot
@@ -173,7 +173,7 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
         ylim <- NULL
         if(classic && !is.null(md)) {
             opr <- if(prod(par("mfrow")) == 1) par(mfrow=c(1,2), pty="m") else list()
-            
+
             ##VT::10.11.2007 - set same scale on both plots
             ylim <- c(min(rd,md), max(md,rd))
         }
@@ -210,7 +210,7 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
             }
         }
         else if(which != "all")
-            warning("Warning: For tolerance ellipses the dimension must be 2!")             
+            warning("Warning: For tolerance ellipses the dimension must be 2!")
     }
 
     if(which == "all" || which == "screeplot") {

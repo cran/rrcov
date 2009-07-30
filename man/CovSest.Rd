@@ -4,53 +4,54 @@
 \title{ S Estimates of Multivariate Location and Scatter }
 \concept{High breakdown point}
 \description{
-    Computes S-Estimates of multivariate location and scatter based on Tukey's 
-    biweight function using a fast algorithm similar to the one proposed by 
-    Salibian-Barrera and Yohai (2006) for the case of regression. Alternativley, the 
+    Computes S-Estimates of multivariate location and scatter based on Tukey's
+    biweight function using a fast algorithm similar to the one proposed by
+    Salibian-Barrera and Yohai (2006) for the case of regression. Alternativley, the
     Ruppert's SURREAL algorithm, bisquare or Rocke type estimation can be used.
 }
 \usage{
-    CovSest(x, bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120, 
-        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13, 
+    CovSest(x, bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120,
+        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13,
         method = c("sfast", "surreal", "bisquare", "rocke"), control,
         t0, S0, initcontrol)
 }
 \arguments{
   \item{x}{ a matrix or data frame. }
-  \item{bdp}{ required breakdown point.  Allowed values are between 
-    \code{(n - p)/(2 * n)} and 1 and the default is 0.5}
-
-  \item{arp}{a numeric value specifying the asympthotic 
-    rejection point (for the Rocke type S estimates), 
-    i.e. the fraction of points receiving zero 
-    weight (see Rocke (1996)).  Default is \code{0.1} 
+  \item{bdp}{a numeric value specifying the required 
+    breakdown point.  Allowed values are between
+    \code{(n - p)/(2 * n)} and 1 and the default is \code{bdp=0.5}.
   }
-  \item{eps}{a numeric value specifying the 
-    relative precision of the solution of the S-estimate (bisquare and Rocke type). 
-    Defaults to \code{1e-5}.
+  \item{arp}{a numeric value specifying the asympthotic
+    rejection point (for the Rocke type S estimates),
+    i.e. the fraction of points receiving zero
+    weight (see Rocke (1996)).  Default is \code{arp=0.1}.
   }
-  \item{maxiter}{maximum number of iterations allowed 
-    in the computation of the S-estimate (bisquare and Rocke type). 
-    Defaults to 120. 
+  \item{eps}{a numeric value specifying the
+    relative precision of the solution of the S-estimate 
+    (bisquare and Rocke type). Default is to \code{eps=1e-5}.
   }
-  \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}}.
+  \item{maxiter}{maximum number of iterations allowed
+    in the computation of the S-estimate (bisquare and Rocke type).
+    Default is \code{maxiter=120}.
+  }
+  \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}.}
-  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}  
+  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}
   \item{tolSolve}{numeric tolerance to be used for inversion
     (\code{\link{solve}}) of the covariance matrix in
     \code{\link{mahalanobis}}.}
   \item{method}{ Which algorithm to use: 'sfast'=FAST-S, 'surreal'=SURREAL, 'bisquare' or 'rocke' }
-  \item{control}{ a control object (S4) of class \code{\link{CovControlSest-class}} 
-    containing estimation options - same as these provided in the fucntion 
-    specification. If the control object is supplied, the parameters from it 
-    will be used. If parameters are passed also in the invocation statement, they will 
+  \item{control}{ a control object (S4) of class \code{\link{CovControlSest-class}}
+    containing estimation options - same as these provided in the fucntion
+    specification. If the control object is supplied, the parameters from it
+    will be used. If parameters are passed also in the invocation statement, they will
     override the corresponding elements of the control object.}
   \item{t0}{ optional initial HBDP estimate for the center }
   \item{S0}{ optional initial HBDP estimate for the covariance matrix }
   \item{initcontrol}{ optional control object to be used for computing the initial HBDP estimates }
 }
 \details{
-    Computes biweight multivariate S-estimator of location and scatter. The computation will be 
+    Computes biweight multivariate S-estimator of location and scatter. The computation will be
     performed by one of the following algorithms:
     \describe{
         \item{FAST-S}{An algorithm similar to the one proposed by Salibian-Barrera and Yohai (2006) for the case of regression}
@@ -60,27 +61,28 @@
     }
 }
 \value{
-  An S4 object of class \code{\link{CovSest-class}} which is a subclass of the 
+  An S4 object of class \code{\link{CovSest-class}} which is a subclass of the
   virtual class \code{\link{CovRobust-class}}.
 }
 \references{
-  H.P. Lopuhaä (1989) On the Relation between S-estimators and M-estimators of 
+  H.P. Lopuhaä (1989) On the Relation between S-estimators and M-estimators of
   Multivariate Location and Covariance.
-  \emph{Annals of Statistics} \bold{17} 1662--1683. 
+  \emph{Annals of Statistics} \bold{17} 1662--1683.
 
-  D. Ruppert (1992) Computing S Estimators for Regression and Multivariate 
-  Location/Dispersion. 
-  \emph{Journal of Computational and Graphical Statistics} \bold{1} 253--270. 
+  D. Ruppert (1992) Computing S Estimators for Regression and Multivariate
+  Location/Dispersion.
+  \emph{Journal of Computational and Graphical Statistics} \bold{1} 253--270.
 
   M. Salibian-Barrera and V. Yohai (2006) A fast algorithm for S-regression
   estimates, \emph{Journal of Computational and Graphical Statistics}, \bold{15},
   414--427.
-  
-  R. A. Maronna, D. Martin and V. Yohai (2006). \emph{Robust Statistics: Theory and Methods}. 
-  Wiley, New York.  
+
+  R. A. Maronna, D. Martin and V. Yohai (2006). \emph{Robust Statistics: Theory and Methods}.
+  Wiley, New York.
 }
-\author{ Valentin Todorov \email{valentin.todorov@chello.at} and
-Matias Salibian-Barrera \email{matias@stat.ubc.ca}.  See also the code from 
+\author{ Valentin Todorov \email{valentin.todorov@chello.at},
+Matias Salibian-Barrera \email{matias@stat.ubc.ca} and
+Victor Yohai \email{vyohai@dm.uba.ar}.  See also the code from
 Kristel Joossens, K.U. Leuven, Belgium and Ella Roelant, Ghent University, Belgium.
 }
 %\note{}
