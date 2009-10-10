@@ -17,7 +17,7 @@
 }
 \arguments{
   \item{x}{ a matrix or data frame. }
-  \item{bdp}{a numeric value specifying the required 
+  \item{bdp}{a numeric value specifying the required
     breakdown point.  Allowed values are between
     \code{(n - p)/(2 * n)} and 1 and the default is \code{bdp=0.5}.
   }
@@ -27,7 +27,7 @@
     weight (see Rocke (1996)).  Default is \code{arp=0.1}.
   }
   \item{eps}{a numeric value specifying the
-    relative precision of the solution of the S-estimate 
+    relative precision of the solution of the S-estimate
     (bisquare and Rocke type). Default is to \code{eps=1e-5}.
   }
   \item{maxiter}{maximum number of iterations allowed
@@ -79,6 +79,11 @@
 
   R. A. Maronna, D. Martin and V. Yohai (2006). \emph{Robust Statistics: Theory and Methods}.
   Wiley, New York.
+
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at},
 Matias Salibian-Barrera \email{matias@stat.ubc.ca} and

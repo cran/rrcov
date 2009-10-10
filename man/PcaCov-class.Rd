@@ -37,6 +37,12 @@ Class \code{"\linkS4class{Pca}"}, by class "PcaRobust", distance 2.
     \item{getQuan}{\code{signature(obj = "PcaCov")}: ... }
      }
 }
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} }
 \seealso{
      \code{\link{PcaRobust-class}}, \code{\link{Pca-class}}, \code{\link{PcaClassic}}, \code{\link{PcaClassic-class}}

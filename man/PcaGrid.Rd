@@ -49,6 +49,11 @@ is a generic function with "formula" and "default" methods. For details see \cod
   C. Croux, P. Filzmoser, M. Oliveira, (2007).
   Algorithms for Projection-Pursuit Robust Principal Component Analysis,
   \emph{Chemometrics and Intelligent Laboratory Systems}, 87, 225.
+
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }

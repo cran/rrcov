@@ -71,6 +71,12 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
   Pison, G., Van Aelst, S., and Willems, G. (2002),
   Small Sample Corrections for LTS and MCD,
   \emph{Metrika}, \bold{55}, 111-123.
+
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }

@@ -42,6 +42,12 @@ PcaClassic(x, ...)
   An S4 object of class \code{\link{PcaClassic-class}} which is a subclass of the 
   virtual class \code{\link{Pca-class}}.    
 }
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }
 \note{ This function can be seen as a wrapper arround prcomp() from \code{stats} which

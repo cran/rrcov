@@ -43,7 +43,8 @@ PcaCov(x, ...)
   can only be used if there are no constant variables). Default is \code{corr=FALSE}.}
   \item{cov.control}{specifies which covariance estimator to use by providing 
   a \code{\link{CovControl-class}} object. 
-  The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}}
+  The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}. 
+  If \code{cov.control=NULL} is specified, the classical estimates will be used by calling \code{\link{CovClassic}}}.
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
@@ -54,7 +55,12 @@ is a generic function with "formula" and "default" methods. For details see the 
   An S4 object of class \code{\link{PcaCov-class}} which is a subclass of the 
   virtual class \code{\link{PcaRobust-class}}. 
 }
-%\references{}
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }
 %\note{}

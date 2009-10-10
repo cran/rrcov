@@ -1,7 +1,7 @@
 setMethod("getQuan", "PcaCov", function(obj) obj@n.obs)
 
 ##  The S3 version
-PcaCov <- function (x, ...) 
+PcaCov <- function (x, ...)
     UseMethod("PcaCov")
 
 PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
@@ -24,7 +24,7 @@ PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
     mt <- attr(mf, "terms")
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
-    
+
     res <- PcaCov.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
@@ -46,23 +46,20 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     cl <- match.call()
 
     if(missing(x)){
-        stop("You have to provide at least some data") 
+        stop("You have to provide at least some data")
     }
     data <- as.matrix(x)
     n <- nrow(data)
     p <- ncol(data)
-    
+
     if(n < p)
         stop("'PcaCov' can only be used with more units than variables")
-        
-    ##
-    ## verify and set the input parameters: k and kmax
-    ##
+
     ##
     ## verify and set the input parameters: k and kmax
     ##
     kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
-    if((k <- floor(k)) < 0)   
+    if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
@@ -73,25 +70,26 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     else {
         k <- min(kmax, p)
         if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
     }
 ######################################################################
 
-    cov <- restimate(cov.control, data)
-    covmat <- list(cov=getCov(cov), center=getCenter(cov), n.obs=cov@n.obs)
+    ## VT::30.09.2009 - add the option for classic covariance estimates - if cov.control = NULL
+    covx <- if(!is.null(cov.control)) restimate(cov.control, data) else Cov(data)
+    covmat <- list(cov=getCov(covx), center=getCenter(covx), n.obs=covx@n.obs)
     if(corr)
-        covmat$cor <- getCorr(cov)
+        covmat$cor <- getCorr(covx)
 
     out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
 
     scores   <- predict(out, newdata=data)
-    center   <- getCenter(cov)
+    center   <- getCenter(covx)
     sdev     <- out$sdev
     scores   <- scores[, 1:k, drop=FALSE]
     loadings <- out$loadings[, 1:k, drop=FALSE]
     eigenvalues  <- (sdev^2)[1:k]
 
-######################################################################    
+######################################################################
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
     {
@@ -102,14 +100,14 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
 
     ## fix up call to refer to the generic, but leave arg name as 'formula'
     cl[[1]] <- as.name("PcaCov")
-    res <- new("PcaCov", call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
+    res <- new("PcaCov", call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
                             scores=scores,
                             k=k,
                             n.obs=n)
-               
+
     ## Compute distances and flags
     res <- rrcov:::.distances(x, p, res)
     return(res)
