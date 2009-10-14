@@ -1,3 +1,15 @@
+2009-10-10  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.0-00
+    * CITATION to the JSS paper added
+    * Rd files updated to refer to the JSS paper
+    * vignette added
+    *
+**********************************************************
+2009-09-29  Valentin Todorov  <valentin.todorov@chello.at>
+    * 0.5-03
+    * citation file added
+    * PcaCov can compute the classical estimates (cov.control=NULL)
+    *
 2009-07-21  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.5-02
     * Defaults of CovRobust() changed
@@ -10,13 +22,13 @@
     * Added Quadratic Discriminant Abalyis: Qda, SummaryQda,
     *   PredictQda, QdaClassic, QdaRobust and QdaCov
     *
-    
+
 2009-02-14  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.5-00
     *
     * Added Stahel-Donoho estimator of multivariate location and scatter
-    *   CovSde   
-    
+    *   CovSde
+
 2009-01-14  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-08
     *
@@ -29,7 +41,7 @@
     *   R/AllClasses, R/PcaProj.R, R/PcaGrid.R
     *   and the corresponding manual pages: man/PcaProj*.Rd, man/PcaGrid*.Rd
     *
-        
+
 2008-07-04  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-07
     *
@@ -37,36 +49,36 @@
     *
     * R/CovRobust.R - function to select a robust estimator added
     *
-    * R/CovSest.R, man/CovSest.Rd, R/CovControlSest.R, man/CovControlSest.Rd - 
+    * R/CovSest.R, man/CovSest.Rd, R/CovControlSest.R, man/CovControlSest.Rd -
     *   added two more estimation methods for the S estimates: bisqauare and
-    *   Rocke type, as described in Maronna et al. (2006) - thanks to Matias 
+    *   Rocke type, as described in Maronna et al. (2006) - thanks to Matias
     *   Salibian-Barrera for the provided code.
     *
-    * R/CovMve.R, man/CovMve.Rd - now the raw cov matrix is properly scaled by 
+    * R/CovMve.R, man/CovMve.Rd - now the raw cov matrix is properly scaled by
     *   a factor  median(dist)/qchisq(0.5, p) and the reweighted cov matrix is
     *   multiplied by a consistency corretcion factor, similarly as in CovMcd().
     *   No finite sample correction factors are used. For details see ?CovMve.
     *
-    * man/CovMve.Rd -  the search for the approximate solution is explained 
+    * man/CovMve.Rd -  the search for the approximate solution is explained
     *   (fast MVE) and the corresponding referecne (Maronna et al., 2006) is given.
     *
-    * R/CovMest.R, man/CovMest.Rd - the default initial value now is the raw 
-    *   (not reweighted) MVE estimate with the covariance matrix standardised 
+    * R/CovMest.R, man/CovMest.Rd - the default initial value now is the raw
+    *   (not reweighted) MVE estimate with the covariance matrix standardised
     *   to det(cov)=1
     *
-    * R/CovOgk.R, man/CovOgk.RD, src/covOPW.c, R/CovControlOgk.R, man/CovControlOgk.R 
-    *   Added a C implementation for OGK - thanks to Kjell Konis. 
+    * R/CovOgk.R, man/CovOgk.RD, src/covOPW.c, R/CovControlOgk.R, man/CovControlOgk.R
+    *   Added a C implementation for OGK - thanks to Kjell Konis.
     *   See ?CovOgk for details
-    * 
-    * R/plot-utils.R - fixed a bug in plot(CovMcd(x), which="tolEllipsePlot", id.n=0) - 
+    *
+    * R/plot-utils.R - fixed a bug in plot(CovMcd(x), which="tolEllipsePlot", id.n=0) -
     *   even if id.n was set to 0, at least one observation was plotted with a label
     *
-    
+
 2008-06-02  Valentin Todorov  <valentin.todorov@chello.at>
     * 0.4-06
     * Added the 'bushmiss' - a group of data sets based on 'bushfire'
-    *   with added incompliteness (MCAR) with probability 0.1, 
-    *   0.2, 0.3 and 0.4 
+    *   with added incompliteness (MCAR) with probability 0.1,
+    *   0.2, 0.3 and 0.4
     * Fixed minor errors in the documentation
     * Added PCA based on robust cov matrix - PcaCov
     * Added Spherical PCA algorithm - PcaLocantore
@@ -80,7 +92,7 @@
     * Fixed minor errors in the documentation
     * Fixed two serious problems in .fastMve() - there was a
     *   hard-coded seed setting and the half-sample was hardcoded too
-    * Added S-estimates computed by either the FAST-S algorithm or 
+    * Added S-estimates computed by either the FAST-S algorithm or
     *   Ruppert's SURREAL
 
 2007-11-10  Valentin Todorov  <valentin.todorov@chello.at>

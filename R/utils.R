@@ -2,7 +2,7 @@
 {
 ##    return( - (determinant(mat, log = TRUE)$modulus[1] - 0)/ncol(mat) > 50)
     p <- ncol(mat)
-    if(!is.qr(mat)) 
+    if(!is.qr(mat))
         mat <- qr(mat)
     return(mat$rank < p)
 }
@@ -14,19 +14,19 @@
     mterms <- attr(mt, "factors")
     mterms <- rownames(mterms)[apply(mterms, 1, any)]
     any(sapply(mterms, function(x) is.factor(mf[,x]) || !is.numeric(mf[,x])))
-} 
+}
 
-vecnorm <- function(x, p=2) sum(x^p)^(1/p) 
+vecnorm <- function(x, p=2) sum(x^p)^(1/p)
 
 ## Several Matlab-like utility functions ======================================================
 ## Return the square root of a symetric positive definite matrix
 sqrtm <- function(a){
     ##
-    ## [E D] = eig(A); sqrtm(A) = E * sqrt(D) * E' 
+    ## [E D] = eig(A); sqrtm(A) = E * sqrt(D) * E'
     ##
     if(!is.matrix(a) || ncol(a) != nrow(a))
         stop("The matrix A must be a square matrix\n")
-    
+
     ee <- eigen(a)
     if(any(ee$values < 0)) {
         stop("The matrix A must be positive definite.")
@@ -54,13 +54,13 @@ zeros <- function(n=1, p=1){
 ## Author: Martin Maechler, Date:  7 Apr 2007, 16:16
 rankMM <- function(A, tol = NULL, sv = svd(A,0,0)$d) {
     d <- dim(A)
-    stopifnot(length(d)==2, length(sv)==min(d), diff(sv) < 0)   # must be sorted decreasingly  
+    stopifnot(length(d)==2, length(sv)==min(d), diff(sv) < 0)   # must be sorted decreasingly
     if(is.null(tol))
-        tol <- max(d) * .Machine$double.eps * abs(sv[1])     
-    else 
-        stopifnot(is.numeric(tol), tol >= 0)     
+        tol <- max(d) * .Machine$double.eps * abs(sv[1])
+    else
+        stopifnot(is.numeric(tol), tol >= 0)
     sum(sv >= tol)
-} 
+}
 
 
 ####    rankM <- function(A){

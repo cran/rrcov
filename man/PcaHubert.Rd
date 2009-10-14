@@ -112,6 +112,11 @@ yield the robust principal components.
 \references{
     M. Hubert, P. J. Rousseeuw, K. Vanden Branden (2005), ROBPCA: a new 
     approach to robust principal components analysis, \emph{Technometrics}, \bold{47}, 64--79.   
+    
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.    
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
 }

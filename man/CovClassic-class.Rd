@@ -4,7 +4,7 @@
 \title{Class "CovClassic" - classical estimates of multivariate
     location and scatter }
 \description{ The class \code{CovClassic} represents an estimate of the
-    multivariate location and scatter of a data set. The class \code{CovClassic} 
+    multivariate location and scatter of a data set. The class \code{CovClassic}
     objects contain the classical estimates.
 }
 \section{Objects from the Class}{
@@ -19,9 +19,9 @@
     \item{\code{center}:}{location}
     \item{\code{n.obs}:}{number of observations used for the computation of the estimates}
     \item{\code{mah}:}{mahalanobis distances}
-    \item{\code{method}:}{a character string describing the method used to 
+    \item{\code{method}:}{a character string describing the method used to
         compute the estimate: "Classic"}
-    \item{\code{singularity}:}{a list with singularity information for the 
+    \item{\code{singularity}:}{a list with singularity information for the
         ocvariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
@@ -40,7 +40,15 @@
     \item{summary}{\code{signature(object = "CovClassic")}: calculate summary information }
      }
 }
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
+%\note{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
+%\seealso{}
 \examples{
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])

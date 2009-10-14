@@ -1,5 +1,5 @@
 
-R version 2.10.0 Under development (unstable) (2009-04-28 r48429)
+R version 2.10.0 alpha (2009-10-07 r49971)
 Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -20,7 +20,7 @@ Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
 pcaPP 0.1-1 loaded
-Scalable Robust Estimators with High Breakdown Point (version 0.5-02)
+Scalable Robust Estimators with High Breakdown Point (version 1.0-00)
 > library(MASS)
 > dodata <- function(method) {
 + 

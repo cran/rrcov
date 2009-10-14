@@ -62,6 +62,12 @@ is a generic function with "formula" and "default" methods. For details see the 
     R. Maronna, D. Martin and V. Yohai (2006), Robust Statistics: Theory and Methods. Wiley, New York.
 
     R. Maronna (2005). Principal components and orthogonal regression based on robust scales. Technometrics, 47, 264-273.    
+    
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at} 
     The SPC algorithm is implemented on the bases of the available from 

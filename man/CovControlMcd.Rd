@@ -3,7 +3,7 @@
 %
 \title{ Constructor function for objects of class "CovControlMcd"}
 \description{
-  This function will create a control object \code{CovControlMcd} 
+  This function will create a control object \code{CovControlMcd}
   containing the control parameters for \code{CovMcd}
 }
 \usage{
@@ -24,14 +24,20 @@ CovControlMcd(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE, use.correctio
     that the computation can take a very long time.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
-  \item{use.correction}{ whether to use finite sample correction factors. 
+  \item{use.correction}{ whether to use finite sample correction factors.
     Default is \code{use.correction=TRUE}}
 }
 %\details{}
 \value{
 A \code{CovControlMcd} object
 }
-%\references{}
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
+%\note{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 %\seealso{}
 \examples{
@@ -40,7 +46,7 @@ A \code{CovControlMcd} object
     ctrl2 <- CovControlMcd(alpha=0.75)
 
     data(hbk)
-    CovMcd(hbk, control=ctrl1)    
+    CovMcd(hbk, control=ctrl1)
 }
 \keyword{classes}
 \keyword{robust}

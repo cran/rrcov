@@ -3,7 +3,7 @@
 %
 \title{ Constructor function for objects of class "CovControlMve"}
 \description{
-  This function will create a control object \code{CovControlMve} 
+  This function will create a control object \code{CovControlMve}
   containing the control parameters for \code{CovMve}
 }
 \usage{
@@ -29,7 +29,13 @@ CovControlMve(alpha = 0.5, nsamp = 500, seed = NULL, trace= FALSE)
 \value{
 A \code{CovControlMve} object
 }
-%\references{}
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
+%\note{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 %\seealso{}
 \examples{
@@ -38,7 +44,7 @@ A \code{CovControlMve} object
     ctrl2 <- CovControlMve(alpha=0.75)
 
     data(hbk)
-    CovMve(hbk, control=ctrl1)    
+    CovMve(hbk, control=ctrl1)
 }
 \keyword{classes}
 \keyword{robust}

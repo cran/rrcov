@@ -114,7 +114,6 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     invisible(x)
 }
 
-
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
 ##
@@ -300,7 +299,12 @@ label.dd <- function(x, y, id.n.sd=3, id.n.od=3){
     }
 }
 
-.biplot <- function(x, y,
+## VT::30.09.2009 - add a parameter 'classic' to generate a default caption
+##  "Robust biplot" or "Classical biplot" for a robust/classical
+##  PCA object, resp.
+##  --- do not use it for now ---
+##
+.biplot <- function(x, y, classic,
                     var.axes = TRUE,
                     col,
                     cex = rep(par("cex"), 2),
@@ -312,6 +316,9 @@ label.dd <- function(x, y, id.n.sd=3, id.n.od=3){
 {
     n <- nrow(x)
     p <- nrow(y)
+
+##    if(is.null(main))
+##        main <- if(classic) "Classical biplot" else "Robust biplot"
 
     if(missing(xlabs))
     {

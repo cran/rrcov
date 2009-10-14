@@ -32,9 +32,9 @@
     \item{\code{center}:}{location}
     \item{\code{n.obs}:}{number of observations used for the computation of the estimates}
     \item{\code{mah}:}{mahalanobis distances}
-    \item{\code{method}:}{a character string describing the method used to 
+    \item{\code{method}:}{a character string describing the method used to
         compute the estimate: "Classic"}
-    \item{\code{singularity}:}{a list with singularity information for the 
+    \item{\code{singularity}:}{a list with singularity information for the
         covariance matrix (or \code{NULL} of not singular)}
     \item{\code{X}:}{data}
   }
@@ -55,7 +55,15 @@
     \item{summary}{\code{signature(object = "Cov")}: calculate summary information }
      }
 }
+\references{
+  Todorov V & Filzmoser P (2009),
+  An Object Oriented Framework for Robust Multivariate Analysis.
+  \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
+  URL \url{http://www.jstatsoft.org/v32/i03/}.
+}
+%\note{}
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
+%\seealso{}
 \examples{
 showClass("Cov")
 }
