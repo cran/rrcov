@@ -4,7 +4,7 @@
 \alias{PcaProj-class}
 \alias{getQuan,PcaProj-method}
 
-\title{Class "Pcaproj" - Robust PCA using PP - Croux and Ruiz-Gazen (2005) algorithm }
+\title{Class "PcaProj" - Robust PCA using PP - Croux and Ruiz-Gazen (2005) algorithm }
 \description{
     Holds the results of an approximation of the PP-estimators for PCA by a fast and simple algorithm: Croux and Ruiz-Gazen (2005) algorithm.
 }
@@ -15,7 +15,7 @@ Objects can be created by calls of the form \code{new("PcaProj", ...)} but the
 }
 \section{Slots}{
     \describe{
-        \item{\code{call}, \code{center}, \code{loadings},
+        \item{\code{call}, \code{center}, \code{scale}, \code{loadings},
             \code{eigenvalues}, \code{scores}, \code{k},
             \code{sd}, \code{od}, \code{cutoff.sd}, \code{cutoff.od},
             \code{flag}, \code{n.obs}:}{

@@ -67,6 +67,7 @@ S3method(QdaCov, formula)
 ## S4 generics
 export(isClassic,
        getCenter,
+       getScale,
        getCov,
        getCorr,
        getData,
@@ -125,6 +126,7 @@ exportClasses(Cov,
 
 exportMethods(isClassic,
               getCenter,
+              getScale,
               getCov,
               getCorr,
               getData,

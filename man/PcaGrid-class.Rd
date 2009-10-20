@@ -4,7 +4,7 @@
 \alias{PcaGrid-class}
 \alias{getQuan,PcaGrid-method}
 
-\title{Class "Pcaproj" - Robust PCA using PP - GRID search Algorithm  }
+\title{Class "PcaGrid" - Robust PCA using PP - GRID search Algorithm  }
 \description{
     Holds the results of an approximation of the PP-estimators for PCA using the grid search algorithm in the plane.
 }
@@ -15,7 +15,7 @@ Objects can be created by calls of the form \code{new("PcaProj", ...)} but the
 }
 \section{Slots}{
     \describe{
-        \item{\code{call}, \code{center}, \code{loadings},
+        \item{\code{call}, \code{center}, \code{scale}, \code{loadings},
             \code{eigenvalues}, \code{scores}, \code{k},
             \code{sd}, \code{od}, \code{cutoff.sd}, \code{cutoff.od},
             \code{flag}, \code{n.obs}:}{

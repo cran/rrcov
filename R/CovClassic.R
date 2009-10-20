@@ -35,13 +35,13 @@ CovClassic <- function(x, unbiased = TRUE)
     if(!unbiased)
         ans$cov <- (ans$cov * (nobs-1))/nobs
 
-    new("CovClassic", call=call, cov=ans$cov, center=ans$center, n.obs=ans$n.obs, 
+    new("CovClassic", call=call, cov=ans$cov, center=ans$center, n.obs=ans$n.obs,
         method=method, X=x)
 }
 
 ## VT::17.06.2008
-##setMethod("plot", "CovClassic", function(x, y="missing", 
-setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing", 
+##setMethod("plot", "CovClassic", function(x, y="missing",
+setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing",
                                 which=c("all", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
                                 ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
@@ -88,13 +88,13 @@ setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing
 
     ## index plot of mahalanobis distances
     if(which == "all" || which == "distance") {
-        .mydistplot(md, cutoff, classic=TRUE, id.n=id.n)
+        .mydistplot(md, cutoff, classic=TRUE, id.n=id.n, ...)
     }
 
     ## qq-plot of the mahalanobis distances versus the
     ## quantiles of the chi-squared distribution
     if(which == "all" || which == "qqchi2") {
-        .qqplot(md, p, cutoff=cutoff, classic=TRUE, id.n=id.n)   
+        .qqplot(md, p, cutoff=cutoff, classic=TRUE, id.n=id.n, ...)
     }
 
     if(which == "all" || which == "tolEllipsePlot") {

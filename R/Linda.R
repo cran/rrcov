@@ -11,12 +11,12 @@ Linda.formula <- function(formula, data, ..., subset, na.action)
     grouping <- model.response(m)
     x <- model.matrix(Terms, m)
     xint <- match("(Intercept)", colnames(x), nomatch=0)
-    if(xint > 0) 
+    if(xint > 0)
         x <- x[, -xint, drop=FALSE]
     res <- Linda.default(x, grouping, ...)
 
 ##    res$terms <- Terms
-    
+
     ## fix up call to refer to the generic, but leave arg name as 'formula'
     cl <- match.call()
     cl[[1]] <- as.name("Linda")
@@ -27,16 +27,17 @@ Linda.formula <- function(formula, data, ..., subset, na.action)
 ##    res$na.action <- attr(m, "na.action")
 
     res
-} 
+}
 
-Linda.default <- function(x, 
-                 grouping, 
-                 prior = proportions, 
+Linda.default <- function(x,
+                 grouping,
+                 prior = proportions,
                  tol = 1.0e-4,
                  method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
-                 alpha=0.5, ...) 
+                 alpha=0.5,
+                 trace=FALSE, ...)
 {
-    if(is.null(dim(x))) 
+    if(is.null(dim(x)))
         stop("x is not a matrix")
 
     method <- match.arg(method)
@@ -63,36 +64,38 @@ Linda.default <- function(x,
         gx <- rep(0,0)
         for(i in 1:ng)
             gx <- c(gx, rep(i,grouping[i]))
-        grouping <- gx 
+        grouping <- gx
     }
 
     if(n != length(grouping))
         stop("nrow(x) and length(grouping) are different")
-    
+
     g <- as.factor(grouping)
     lev <- lev1 <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
 
     if(!missing(prior)) {
-        if(any(prior < 0) || round(sum(prior), 5) != 1) 
+        if(any(prior < 0) || round(sum(prior), 5) != 1)
             stop("invalid prior")
-        if(length(prior) != nlevels(g)) 
+        if(length(prior) != nlevels(g))
             stop("prior is of incorrect length")
         prior <- prior[counts > 0]
-    } 
+    }
     if(any(counts == 0)) {
         warning(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
         lev1 <- lev[counts > 0]
         g <- factor(g, levels=lev1)
         counts <- as.vector(table(g))
-    } 
-    proportions <- counts/n 
-    ng <- length(proportions) 
+    }
+    proportions <- counts/n
+    ng <- length(proportions)
     names(g) <- NULL
     names(prior) <- levels(g)
 
     if(method == "fsa"){
-        xcov <- .wcovMwcd(x, grouping, alpha=alpha)
+        if(nrow(x) > 5000 | ncol(x) > 100)
+            stop("Method 'fsa' can handle at most 5000 cases and 100 variables!")
+        xcov <- .wcovMwcd(x, grouping, alpha=alpha, trace=trace)
     } else if(method == "mcdA"){
         xcov <- .wcovMcd(x, grouping, method="A", alpha=alpha)
     } else if(method == "mcd" || method == "mcdB"){
@@ -118,8 +121,8 @@ Linda.default <- function(x,
         raw.ldf <- ldf
         raw.ldfconst <- ldfconst
     }
-    return (new("Linda", call=xcall, prior=prior, counts=counts, 
-                 center=xcov$means, cov=xcov$wcov, ldf = ldf, ldfconst = ldfconst, 
+    return (new("Linda", call=xcall, prior=prior, counts=counts,
+                 center=xcov$means, cov=xcov$wcov, ldf = ldf, ldfconst = ldfconst,
                  method=method, X=x, grp=g))
 }
 
@@ -135,12 +138,12 @@ Linda.default <- function(x,
     if(!is.factor(g <- grouping))
         g <- as.factor(grouping)
     lev <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
     if(any(counts == 0)) {
         stop(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
-    } 
-    ng <- length(counts/n) 
-    
+    }
+    ng <- length(counts/n)
+
     # compute group means and covariance matrices for each group
     mX <- matrix(0,ng,p)
     covX <- array(0,c(p,p,ng))
@@ -180,7 +183,7 @@ Linda.default <- function(x,
     }else if(method == "B"){
         #Method B: center the data and compute the covariance matrix
         #of the centered data
-        
+
         mcd <- CovMcd(x - mX[g,], alpha=alpha)
         final.xcov <- list(wcov=getCov(mcd), means=t(t(mX)+getCenter(mcd)))
 
@@ -188,7 +191,7 @@ Linda.default <- function(x,
         mX <- t(t(mX)+mcd@raw.center)
         mah <- mcd@raw.mah
         weights <- mcd@raw.wt
-        
+
         method <- "mcd-B"
     }else if(method == "C"){
 
@@ -199,9 +202,9 @@ Linda.default <- function(x,
         ## Center the data and compute the means and covariance matrix
         ## of the centered data as in Method B
         mcd <- CovMcd(x - mX[g,], alpha=alpha)
-        
+
         ## compute the group means as the means of these observations which are in
-        ##  mcd@best, i.e. in case of two groups, if H=best  
+        ##  mcd@best, i.e. in case of two groups, if H=best
         ##  partition H in H1 and H2 and compute mi as the mean of the Hi observations
         ##  respectively.
         ##  Take the raw covariance matrix as within group cov
@@ -213,7 +216,7 @@ Linda.default <- function(x,
         mah <- mahalanobis(x-mX[g,], rep(0,p), wcov)
         weights <- ifelse(mah< qchisq(0.975, p), 1, 0)
         final.xcov <- .wcov.wt(x, g, weights)
-        
+
         method <- "mcd-C"
     }else{
         stop("Unknown method specified: ", method)
@@ -223,7 +226,7 @@ Linda.default <- function(x,
     dimnames(mX) <- list(levels(g), dimn[[2]])
     dimnames(final.xcov$wcov) <- list(dimn[[2]], dimn[[2]])
     dimnames(final.xcov$means) <- list(levels(g), dimn[[2]])
-    
+
     ans <- list(call=xcall, means=final.xcov$means, wcov=final.xcov$wcov, method=method,
                 raw.means=mX, raw.wcov=wcov, raw.mah=mah, raw.wt=weights)
 
@@ -231,7 +234,7 @@ Linda.default <- function(x,
     return(ans)
 }
 
-.wcovMwcd <- function(x, grouping, alpha=0.5){
+.wcovMwcd <- function(x, grouping, alpha=0.5, trace=0){
 
     quan.f <- function(alpha, n, rk)
     {
@@ -249,15 +252,15 @@ Linda.default <- function(x,
     if(!is.factor(g <- grouping))
         g <- as.factor(grouping)
     lev <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
     if(any(counts == 0)) {
         stop(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
-    } 
-    ng <- length(counts/n) 
+    }
+    ng <- length(counts/n)
     grouping <- as.integer(g)
 
     # transpose x, as necessary for the FSADA subroutine
-    X <- t(x)   
+    X <- t(x)
 
     storage.mode(X) <- "double"
     storage.mode(n) <- "integer"
@@ -267,16 +270,16 @@ Linda.default <- function(x,
     storage.mode(grouping) <- "integer"             # IGRP
 
     xmean <- matrix(0, nrow = p * ng, ncol = 1)     # XM
-    storage.mode(xmean) <- "double"            
+    storage.mode(xmean) <- "double"
     xcov <- matrix(0, nrow = p * p, ncol = 1)       # XC
-    storage.mode(xcov) <- "double"            
+    storage.mode(xcov) <- "double"
 
     storage.mode(counts) <- "double"                # XND
 
     storage.mode(quan) <- "integer"                 # IHALF
     nsamp <- 0
     storage.mode(nsamp) <- "integer"                # NIT
-    
+
     inbest <- matrix(10000, nrow = quan, ncol = 1)  # IDSAV
     storage.mode(inbest) <- "integer"
     seed <- 0
@@ -285,7 +288,7 @@ Linda.default <- function(x,
     storage.mode(deter) <- "double"
     ierr <- 0                                       # IERR
     storage.mode(deter) <- "integer"
-    
+
 
     mwcd <- .Fortran("fsada",
         X,
@@ -302,7 +305,8 @@ Linda.default <- function(x,
         seed,
         ierr = ierr,
         detc = deter,
-        PACKAGE="rrcov")  
+        itrace=as.integer(trace),
+        PACKAGE="rrcov")
 
     xcov <- mwcd$xcov
     xmean <- mwcd$xmean
@@ -311,18 +315,18 @@ Linda.default <- function(x,
     xmean <- t(xmean)
     dimnames(xcov) <- list(dimn[[2]], dimn[[2]])
     dimnames(xmean) <- list(levels(g), dimn[[2]])
-    
-    ## Compute the consistency correction factor for the raw MCD 
+
+    ## Compute the consistency correction factor for the raw MCD
     ## (see calfa in croux and haesbroeck)
     qalpha <- qchisq(quan/n, p)
     calphainvers <- pgamma(qalpha/2, p/2 + 1)/(quan/n)
     calpha <- 1/calphainvers
     correct <- 1
-    
-    if(p == 1) 
+
+    if(p == 1)
     {
         scale <- sqrt(calpha) * as.double(xcov) * sqrt(correct)
-    }else 
+    }else
     {
         ## Apply correction factor to the raw estimates and use them to compute weights
         xcov <- calpha * xcov * correct
@@ -330,8 +334,8 @@ Linda.default <- function(x,
         weights <- ifelse(mah< qchisq(0.975, p), 1, 0)
         final.cov <- .wcov.wt(x, g, weights)
     }
-    
-    ans <- list(call=xcall, 
+
+    ans <- list(call=xcall,
                 raw.means=xmean, raw.wcov=xcov, raw.mah=mah, raw.wt=weights,
                 means=final.cov$means, wcov=final.cov$wcov)
     class(ans) <- "wcov"

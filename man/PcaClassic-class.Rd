@@ -14,6 +14,7 @@ Objects can be created by calls of the form \code{new("PcaClassic", ...)} but th
      \describe{
     \item{\code{call}:}{Object of class \code{"language"} }
     \item{\code{center}:}{Object of class \code{"vector"} the center of the data }
+    \item{\code{scale}:}{Object of class \code{"vector"} the scaling applied to each variable }
     \item{\code{loadings}:}{Object of class \code{"matrix"} the matrix 
     of variable loadings (i.e., a matrix whose columns contain the eigenvectors) }
     \item{\code{eigenvalues}:}{Object of class \code{"vector"} the eigenvalues }

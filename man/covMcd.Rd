@@ -28,7 +28,7 @@ CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction =
   \item{use.correction}{ whether to use finite sample correction factors.
     Default is \code{use.correction=TRUE}}
   \item{control}{ a control object (S4) of class \code{\link{CovControlMcd-class}}
-    containing estimation options - same as these provided in the fucntion
+    containing estimation options - same as these provided in the function
     specification. If the control object is supplied, the parameters from it
     will be used. If parameters are passed also in the invocation statement, they will
     override the corresponding elements of the control object.}

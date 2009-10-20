@@ -12,6 +12,8 @@
 \alias{getSdev}
 \alias{getQuan,methods}
 \alias{getQuan}
+\alias{getScale,methods}
+\alias{getScale}
 
 \title{ Accessor methods to the essential slots of Pca and its subclasses}
 \description{

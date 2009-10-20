@@ -8,7 +8,7 @@ A fast and simple algorithm for approximating the PP-estimators for PCA: Croux a
 }
 \usage{
     PcaProj(x, ...)
-    \method{PcaProj}{default}(x, k = 0, kmax = ncol(x), na.action = na.fail, trace=FALSE, \dots)
+    \method{PcaProj}{default}(x, k = 0, kmax = ncol(x), scale=FALSE, na.action = na.fail, trace=FALSE, \dots)
     \method{PcaProj}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -35,6 +35,14 @@ A fast and simple algorithm for approximating the PP-estimators for PCA: Croux a
   \item{kmax}{maximal number of principal components to compute.
     Default is \code{kmax=10}. If \code{k} is provided, \code{kmax} 
     does not need to be specified, unless \code{k} is larger than 10.}
+  \item{scale}{a value indicating whether and how the variables should be 
+  scaled. If \code{scale = FALSE} (default) or \code{scale = NULL} no scaling is 
+  performed (a vector of 1s is returned in the \code{scale} slot). 
+  If \code{scale = TRUE} the data are scaled to have unit variance. Alternatively it can 
+  be a function like \code{sd} or \code{mad} or a vector of length equal 
+  the number of columns of \code{x}. The value is passed to the underlying function
+  and the result returned is stored in the \code{scale} slot. 
+  Default is \code{scale = FALSE}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{

@@ -12,15 +12,15 @@
 ##
 ##  You should have received a copy of the GNU General Public License
 ##  along with this program; if not, write to the Free Software
-##  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+##  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
 
 rrcov.control <- function (alpha=1/2, nsamp=500, seed=NULL, tolSolve=10e-14,
-                            trace=FALSE, use.correction=TRUE, adjust=FALSE, 
+                            trace=FALSE, use.correction=TRUE, adjust=FALSE,
                             r = 0.45, arp = 0.05, eps=1e-3, maxiter=120)
 {
-    list(alpha=alpha, nsamp=nsamp, seed=seed, 
-        tolSolve=tolSolve, 
+    list(alpha=alpha, nsamp=nsamp, seed=seed,
+        tolSolve=tolSolve,
         trace=trace, use.correction=use.correction, adjust=adjust,
-        r = r, arp = arp, eps=eps, maxiter=maxiter)        
+        r = r, arp = arp, eps=eps, maxiter=maxiter)
 }

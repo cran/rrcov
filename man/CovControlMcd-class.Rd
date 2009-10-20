@@ -41,7 +41,7 @@ or by calling the constructor-function \code{CovControlMcd}.
 \section{Methods}{
   \describe{
     \item{restimate}{\code{signature(obj = "CovControlMcd")}: the generic
-    function \code{restimate} allowes the different methods for robust estimation to be
+    function \code{restimate} allows the different methods for robust estimation to be
     used polymorphically -  this function will call \code{CovMcd} passing it the control
     object and will return the obtained \code{CovRobust} object}
 }}

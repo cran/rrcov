@@ -1,11 +1,11 @@
 setClass("PcaLocantore", representation(delta = "numeric",
                                     quan = "numeric"),
-                                contains="PcaRobust") 
+                                contains="PcaRobust")
 
 setMethod("getQuan", "PcaLocantore", function(obj) obj@n.obs)
 
 ##  The S3 version
-PcaLocantore <- function (x, ...) 
+PcaLocantore <- function (x, ...)
     UseMethod("PcaLocantore")
 
 PcaLocantore.formula <- function (formula, data = NULL, subset, na.action, ...)
@@ -28,7 +28,7 @@ PcaLocantore.formula <- function (formula, data = NULL, subset, na.action, ...)
     mt <- attr(mf, "terms")
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
-    
+
     res <- PcaLocantore.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
@@ -44,18 +44,18 @@ PcaLocantore.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001, na.action = na.fail, trace=FALSE, ...)
+PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action = na.fail, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
 {
 
     cl <- match.call()
 
     if(missing(x)){
-        stop("You have to provide at least some data") 
+        stop("You have to provide at least some data")
     }
     y <- data <- x <- as.matrix(x)
     n <- nrow(y)
     p <- ncol(y)
-    
+
     ##
     ## verify and set the input parameters: k and kmax
     ##
@@ -63,7 +63,7 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
     ## verify and set the input parameters: k and kmax
     ##
     kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
-    if((k <- floor(k)) < 0)   
+    if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
@@ -74,37 +74,40 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
     else {
         k <- min(kmax, ncol(data))
         if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
     }
 ######################################################################
 
+    ## VT::15.06.2010: introduce 'scale' parameter (instead of 'corr' in this case)
+    ##  return the scale in the value object
+    ##
     sc = vector('numeric', p) + 1
-    if(corr == TRUE)
+    if(scale == TRUE)
     {
         sc = apply(data, 2, "mad")
         for(i in 1:p) {
             data[, i] = data[, i]/sc[i]
         }
     }
-    
+
     spa = spatial.median(data, delta)
     mu = spa$mu
     ep = spa$ep
     tt = matrix(mu, n, p, byrow=TRUE)
     data = data-tt
-    for(i in 1:n) 
+    for(i in 1:n)
     {
         z = sqrt(sum((data[i,  ])^2))
         y[i,  ] = 0 * data[i,  ]
-        if(z > ep) 
+        if(z > ep)
         {
             y[i,  ] = (data[i,  ]  )/z
         }
     }
-    
+
     ##out = princomp(y, scores = TRUE, cor = FALSE, na.action=na.action, subset = TRUE)
-    out = PcaClassic(y, na.action=na.action, subset = TRUE)
- 
+    out = PcaClassic(y, scale=scale, signflip=signflip, ...)
+
     scores = data %*% out@loadings
     sdev = apply(scores, 2, "mad")
     names2 = names(sdev)
@@ -113,18 +116,18 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
     sdev  = sdev[orsdev]
     scores  = scores[,orsdev]
     loadings = out@loadings[,orsdev]
- 
+
     names(sdev)=names2
     dimnames(scores)[[2]]=names2
     dimnames(loadings)[[2]]=names2
- 
+
     scale       <- sc
     center      <- as.vector(mu)
     scores      <- scores[, 1:k, drop=FALSE]
     loadings    <- loadings[, 1:k, drop=FALSE]
     eigenvalues <- (sdev^2)[1:k]
-    
-######################################################################    
+
+######################################################################
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
     {
@@ -136,14 +139,15 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, delta = 0.001
 
     ## fix up call to refer to the generic, but leave arg name as <formula>
     cl[[1]] <- as.name("PcaLocantore")
-    res <- new("PcaLocantore", call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
+    res <- new("PcaLocantore", call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
+                            scale=scale,
                             scores=scores,
                             k=k,
                             n.obs=n)
-               
+
     ## Compute distances and flags
     res <- rrcov:::.distances(x, p, res)
     return(res)
@@ -156,18 +160,18 @@ spatial.median <- function(x, delta)
     n=dime[1]
     p=dime[2]
     delta1=delta*sqrt(p)
-    mu0=apply(x,2,median) 
+    mu0=apply(x,2,median)
     h=delta1+1
     tt=0
     while(h>delta1)
-    {   
+    {
         tt=tt+1
         TT=matrix(mu0,n,p,byrow=TRUE)
-        U=(x-TT)^2  
+        U=(x-TT)^2
         w=sqrt(apply(U,1,sum))
         w0=median(w)
         ep=delta*w0
-    
+
         z=(w<=ep)
         w[z]=ep
         w[!z]=1/w[!z]
@@ -178,7 +182,7 @@ spatial.median <- function(x, delta)
         mu=apply(x1,2,sum)
         h=sqrt(sum((mu-mu0)^2))
         mu0=mu
-    } 
-    out=list(mu=mu0,ep=ep) 
+    }
+    out=list(mu=mu0,ep=ep)
     out
 }

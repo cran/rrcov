@@ -1,4 +1,5 @@
 setMethod("getCenter", "Pca", function(obj) obj@center)
+setMethod("getScale", "Pca", function(obj) obj@scale)
 setMethod("getLoadings", "Pca", function(obj) obj@loadings)
 setMethod("getEigenvalues", "Pca", function(obj) obj@eigenvalues)
 setMethod("getSdev", "Pca", function(obj) sqrt(obj@eigenvalues))
@@ -114,6 +115,17 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     invisible(x)
 }
 
+## Flip the signs of the loadings
+##  - comment from Stephan Milborrow
+##
+.signflip <- function(loadings)
+{
+    if(!is.matrix(loadings))
+        loadings <- as.matrix(loadings)
+    apply(loadings, 2, function(x) if(x[which.max(abs(x))] < 0) -x else x)
+}
+
+
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
 ##
@@ -126,8 +138,18 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
 
     ## compute the score distances and the corresponding cutoff value
     n <- nrow(data)
-    nk <- ncol(res@scores)
-    res@sd <- sqrt(mahalanobis(res@scores, rep(0, nk), diag(res@eigenvalues, ncol=nk)))
+    smat <- diag(res@eigenvalues, ncol=ncol(res@scores))
+
+    ## VT::02.06.2010: it can happen that the rank of the matrix
+    ##  is nk=ncol(scores), but the rank of the diagonal matrix of
+    ##  eigenvalues is lower: for example if the last singular
+    ##  value was 1E-7, the last eigenvalue will be sv^2=1E-14
+    ##
+    nk <- min(ncol(res@scores), rankMM(smat))
+    if(nk < ncol(res@scores))
+        warning(paste("Too small eigenvalue(s): ", res@eigenvalues[ncol(res@scores)], "- the diagonal matrix of the eigenvalues cannot be inverted!"))
+
+    res@sd <- sqrt(mahalanobis(as.matrix(res@scores[,1:nk]), rep(0, nk), diag(res@eigenvalues[1:nk], ncol=nk)))
     res@cutoff.sd <- sqrt(qchisq(0.975, res@k))
 
     ## Compute the orthogonal distances and the corresponding cutoff value
@@ -138,7 +160,7 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
         names(res@od) <- dimnames(res@scores)[[1]]
     }
 
-    ## The orthogonal distances make sence only of the number of PCs is less than
+    ## The orthogonal distances make sence only if the number of PCs is less than
     ##  the rank of the data matrix - otherwise set it to 0
     res@cutoff.od <- 0
     # quan <- if(!is.null(res@quan)) res@quan else n
@@ -157,7 +179,9 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     return(res)
 }
 
-classSVD <- function(x){
+## VT::15.06.2010 - Aded scaling and flipping of the loadings
+##
+classSVD <- function(x, scale=FALSE, signflip=TRUE){
     if(!is.numeric(x) || !is.matrix(x))
         stop("'x' must be a numeric matrix")
     else if(nrow(x) <= 1)
@@ -167,22 +191,18 @@ classSVD <- function(x){
     p <- ncol(x)
 
     center <- apply(x, 2, mean)
-    x <- scale(x, center=TRUE, scale=FALSE)
+    x <- scale(x, center=TRUE, scale=scale)
+    if(scale)
+        scale <- attr(x, "scaled:scale")
+
     svd <- svd(x/sqrt(n-1))
 
-if(FALSE){   ## to.delete
-    tolerance <- if(p < 5)          1E-12
-                 else if(p <= 8)    1E-14
-                 else               1E-16
-
-    rank <- sum(svd$d > tolerance)
-
-    tol = max(dim(x)) * svd$d[1]^2 * .Machine$double.eps
-    rank <- sum(svd$d > tol)
-}
     rank <- rankMM(x, sv=svd$d)
     eigenvalues <- (svd$d[1:rank])^2
     loadings <- svd$v[,1:rank]
+    ## VT::15.06.2010 - signflip: flip the sign of the loadings
+    if(signflip)
+        loadings <- .signflip(loadings)
     scores <- x %*% loadings
 
     list(loadings=loadings,
@@ -190,10 +210,13 @@ if(FALSE){   ## to.delete
          eigenvalues=eigenvalues,
          rank=rank,
          x=x,
-         center=center)
+         center=center,
+         scale=scale)
 }
 
-kernelEVD <- function(x){
+## VT::15.06.2010 - Aded scaling and flipping of the loadings
+##
+kernelEVD <- function(x, scale=FALSE, signflip=TRUE){
     if(!is.numeric(x) || !is.matrix(x))
         stop("'x' must be a numeric matrix")
     else if(nrow(x) <= 1)
@@ -202,10 +225,13 @@ kernelEVD <- function(x){
     n <- nrow(x)
     p <- ncol(x)
 
-    if(n > p) classSVD(x)
+    if(n > p) classSVD(x, scale=scale, signflip=signflip)
     else {
         center <- apply(x, 2, mean)
-        x <- scale(x, center=TRUE, scale=FALSE)
+        x <- scale(x, center=TRUE, scale=scale)
+        if(scale)
+            scale <- attr(x, "scaled:scale")
+
         e <- eigen(x %*% t(x)/(n-1))
 
         tolerance <- n * max(e$values) * .Machine$double.eps
@@ -213,13 +239,19 @@ kernelEVD <- function(x){
 
         eigenvalues <- e$values[1:rank]
         loadings <- t((x/sqrt(n-1))) %*% e$vectors[,1:rank] %*% diag(1/sqrt(eigenvalues))
+
+        ## VT::15.06.2010 - signflip: flip the sign of the loadings
+        if(signflip)
+            loadings <- .signflip(loadings)
+
         scores <- x %*% loadings
         ret <- list(loadings=loadings,
                     scores=scores,
                     eigenvalues=eigenvalues,
                     rank=rank,
                     x=x,
-                    center=center)
+                    center=center,
+                    scale=scale)
     }
 }
 

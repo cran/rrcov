@@ -17,7 +17,7 @@ LdaClassic(x, ...)
   \item{grouping}{grouping variable:  a factor specifying the class for each observation.}
   \item{prior}{prior probabilities, default to the class proportions for the training set.}
   \item{tol}{tolerance}
-  \item{\dots}{arguments passed to or from other methods.}  
+  \item{\dots}{arguments passed to or from other methods.}
 }
 %\details{}
 \value{
@@ -29,11 +29,26 @@ LdaClassic(x, ...)
   \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
   URL \url{http://www.jstatsoft.org/v32/i03/}.
 }
-\author{ Valentin Todorov \email{valentin.todorov@chello.at} 
+\author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \seealso{
-     \code{\link{Lda-class}}, \code{\link{LdaClassic-class}}, 
+     \code{\link{Lda-class}}, \code{\link{LdaClassic-class}},
 }
-%\examples{}
+\examples{
+## Example anorexia
+library(MASS)
+data(anorexia)
+
+## rrcov: LdaClassic()
+lda <- LdaClassic(Treat~., data=anorexia)
+predict(lda)@classification
+
+## MASS: lda()
+lda.MASS <- lda(Treat~., data=anorexia)
+predict(lda.MASS)$class
+
+## Compare the prediction results of MASS:::lda() and rrcov:::LdaClassic()
+all.equal(predict(lda)@classification, predict(lda.MASS)$class)
+}
 \keyword{robust}
 \keyword{multivariate}

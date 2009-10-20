@@ -1,7 +1,7 @@
 setMethod("getQuan", "PcaProj", function(obj) obj@n.obs)
 
 ##  The S3 version
-PcaProj <- function (x, ...) 
+PcaProj <- function (x, ...)
     UseMethod("PcaProj")
 
 PcaProj.formula <- function (formula, data = NULL, subset, na.action, ...)
@@ -24,7 +24,7 @@ PcaProj.formula <- function (formula, data = NULL, subset, na.action, ...)
     mt <- attr(mf, "terms")
     attr(mt, "intercept") <- 0
     x <- model.matrix(mt, mf)
-    
+
     res <- PcaProj.default(x, ...)
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
@@ -40,18 +40,18 @@ PcaProj.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaProj.default <- function(x, k=0, kmax=ncol(x), na.action = na.fail, trace=FALSE, ...)
+PcaProj.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fail, trace=FALSE, ...)
 {
 
     cl <- match.call()
 
     if(missing(x)){
-        stop("You have to provide at least some data") 
+        stop("You have to provide at least some data")
     }
     data <- as.matrix(x)
     n <- nrow(data)
     p <- ncol(data)
-    
+
     ##
     ## verify and set the input parameters: k and kmax
     ##
@@ -59,7 +59,7 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), na.action = na.fail, trace=FAL
     ## verify and set the input parameters: k and kmax
     ##
     kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
-    if((k <- floor(k)) < 0)   
+    if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
@@ -70,20 +70,25 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), na.action = na.fail, trace=FAL
     else {
         k <- min(kmax, ncol(data))
         if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="") 
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
     }
 ######################################################################
 
-    out <- PCAproj(x, k, ...)
+    if(is.logical(scale))
+    {
+        scale <- if(scale) sd else  NULL
+    }
+    out <- PCAproj(x, k, scale=scale, ...)
 
     scores <- predict(out)
     center   <- out$center
+    scale <- out$scale
     sdev     <- out$sdev
     scores   <- scores[, 1:k]
     loadings <- as.matrix(out$loadings)[, 1:k]
     eigenvalues  <- (sdev^2)[1:k]
 
-######################################################################    
+######################################################################
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
         rownames(scores) <- rownames(data)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
@@ -92,14 +97,15 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), na.action = na.fail, trace=FAL
 
     ## fix up call to refer to the generic, but leave arg name as `formula'
     cl[[1]] <- as.name("PcaProj")
-    res <- new("PcaProj", call=cl, 
-                            loadings=loadings, 
-                            eigenvalues=eigenvalues, 
-                            center=center, 
+    res <- new("PcaProj", call=cl,
+                            loadings=loadings,
+                            eigenvalues=eigenvalues,
+                            center=center,
+                            scale=scale,
                             scores=scores,
                             k=k,
                             n.obs=n)
-               
+
     ## Compute distances and flags
     res <- rrcov:::.distances(x, p, res)
     return(res)
