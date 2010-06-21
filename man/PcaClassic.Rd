@@ -8,7 +8,7 @@
 }
 \usage{
 PcaClassic(x, ...)
-\method{PcaClassic}{default}(x, k = 0, kmax = ncol(x), trace=FALSE, \dots)
+\method{PcaClassic}{default}(x, k = 0, kmax = ncol(x), scale=FALSE, signflip=TRUE, trace=FALSE, \dots)
 \method{PcaClassic}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -31,10 +31,17 @@ PcaClassic(x, ...)
     components by finding such \code{k} that \eqn{l_k/l_1 >= 10.E-3} and 
     \eqn{\Sigma_{j=1}^k l_j/\Sigma_{j=1}^r l_j >= 0.8}. 
     It is preferable to investigate the scree plot in order to choose the number 
-    of components and the run again. Default is \code{k=0}. }
+    of components and then run again. Default is \code{k=0}. }
   \item{kmax}{maximal number of principal components to compute.
     Default is \code{kmax=10}. If \code{k} is provided, \code{kmax} 
     does not need to be specified, unless \code{k} is larger than 10.}
+  \item{scale}{a logical value indicating whether the variables should be 
+  scaled to have unit variance. Alternatively, a vector of length equal 
+  the number of columns of x can be supplied. The value is passed to 
+  scale and the result of the scaling is stored in the \code{scale} slot. 
+  Default is \code{scale = FALSE}}
+  \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
+  ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 %\details{}

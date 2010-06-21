@@ -4,15 +4,15 @@
 \alias{Linda.default}
 \title{ Robust Linear Discriminant Analysis }
 \description{
-    Robust linear discriminant analysis based on MCD and returns 
-    the results as an object of class \code{Linda} (aka constructor). 
+    Robust linear discriminant analysis based on MCD and returns
+    the results as an object of class \code{Linda} (aka constructor).
 }
 \usage{
 Linda(x, ...)
 
 \method{Linda}{default}(x, grouping, prior = proportions, tol = 1.0e-4,
                  method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
-                 alpha=0.5, ...)
+                 alpha=0.5, trace=FALSE, ...)
 }
 \arguments{
   \item{x}{a matrix or data frame containing the explanatory variables (training set). }
@@ -21,10 +21,11 @@ Linda(x, ...)
   \item{tol}{tolerance}
   \item{method}{method}
   \item{alpha}{this parameter measures the fraction of outliers the algorithm should
-    resist. In MCD alpha controls the size of the subsets over which the 
-    determinant is minimized, i.e. alpha*n observations are used for 
-    computing the determinant. Allowed values are between 0.5 and 1 
+    resist. In MCD alpha controls the size of the subsets over which the
+    determinant is minimized, i.e. alpha*n observations are used for
+    computing the determinant. Allowed values are between 0.5 and 1
     and the default is 0.5.}
+  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{\dots}{arguments passed to or from other methods}
 }
 \details{
@@ -33,15 +34,15 @@ Linda(x, ...)
 \value{
   Returns an S4 object of class \code{Linda}
 }
-\references{ 
-    Hawkins, D.M. and McLachlan, G.J. (1997) High-Breakdown Linear Discriminant Analysis, 
+\references{
+    Hawkins, D.M. and McLachlan, G.J. (1997) High-Breakdown Linear Discriminant Analysis,
     \emph{Journal of the American Statistical Association}, \bold{92}, 136--143.
 
-    Todorov V. (2007) Robust selection of variables in linear discriminant analysis, 
+    Todorov V. (2007) Robust selection of variables in linear discriminant analysis,
         \emph{Statistical Methods and Applications}, \bold{15}, 395--407, doi:10.1007/s10260-006-0032-6.
 
-    Todorov, V. and Pires, A.M. (2007) Comparative Performance of Several Robust 
-        Linear Discriminant Analysis Methods. 
+    Todorov, V. and Pires, A.M. (2007) Comparative Performance of Several Robust
+        Linear Discriminant Analysis Methods.
         \emph{REVSTAT Statistical Journal}, \bold{5}, p 63--83.
         URL \url{www.ine.pt/revstat/pdf/rs070104.pdf}.
 
@@ -50,7 +51,7 @@ Linda(x, ...)
       \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
       URL \url{http://www.jstatsoft.org/v32/i03/}.
 }
-\author{ Valentin Todorov \email{valentin.todorov@chello.at} 
+\author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \section{Warning }{Still an experimental version!}
 \seealso{  \code{\link[rrcov]{CovMcd}} }

@@ -2,6 +2,7 @@
 \docType{class}
 \alias{Pca-class}
 \alias{getCenter,Pca-method}
+\alias{getScale,Pca-method}
 \alias{getEigenvalues,Pca-method}
 \alias{getLoadings,Pca-method}
 \alias{getPrcomp,Pca-method}
@@ -28,6 +29,7 @@ Component Analisys methods
      \describe{
     \item{\code{call}:}{Object of class \code{"language"} }
     \item{\code{center}:}{Object of class \code{"vector"} the center of the data }
+    \item{\code{scale}:}{Object of class \code{"vector"} the scaling applied to each variable of the data }
     \item{\code{loadings}:}{Object of class \code{"matrix"} the matrix 
     of variable loadings (i.e., a matrix whose columns contain the eigenvectors) }
     \item{\code{eigenvalues}:}{Object of class \code{"vector"} the eigenvalues }
@@ -51,6 +53,7 @@ Component Analisys methods
 \section{Methods}{
   \describe{
     \item{getCenter}{\code{signature(obj = "Pca")}: center of the data }
+    \item{getScale}{\code{signature(obj = "Pca")}: return the scaling applied to each variable }
     \item{getEigenvalues}{\code{signature(obj = "Pca")}: the eigenvalues of the 
         covariance/correlation matrix, though the calculation is actually done 
         with the singular values of the data matrix) }

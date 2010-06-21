@@ -112,8 +112,10 @@ setMethod("show", "SummaryCovRobust", function(object){
 
 ## VT::17.06.2008
 ##setMethod("plot", "CovRobust", function(x, y="missing",
-setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing",
-                                which=c("all", "dd", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
+setMethod("plot", signature(x="CovRobust", y="missing"),
+                                function(x, y="missing",
+                                    which=c("dd", "all", "distance", "qqchi2",
+                                    "tolEllipsePlot", "pairs", "screeplot", "xydistance", "xyqqchi2"),
                                 classic= FALSE,
                                 ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
@@ -165,7 +167,7 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
 
     ## distance-distance plot: here we need both robust and mahalanobis distances
     if((which == "all" || which == "dd") && !is.null(md) && !is.null(rd)) {
-        .myddplot(md, rd, cutoff=cutoff, id.n=id.n) # distance-distance plot
+        .myddplot(md, rd, cutoff=cutoff, id.n=id.n, ...) # distance-distance plot
     }
 
     ## index plot of mahalanobis distances
@@ -178,11 +180,17 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
             ylim <- c(min(rd,md), max(md,rd))
         }
 
-        .mydistplot(rd, cutoff, id.n=id.n, ylim=ylim)                   # index plot of robust distances
+        .mydistplot(rd, cutoff=cutoff, id.n=id.n, ...)            # index plot of robust distances
         if(classic && !is.null(md)) {
-            .mydistplot(md, cutoff, classic=TRUE, id.n=id.n, ylim=ylim) # index plot of mahalanobis distances
+            .mydistplot(md, cutoff=cutoff, classic=TRUE, id.n=id.n, ylim=ylim, ...) # index plot of mahalanobis distances
             par(opr)
         }
+    }
+
+    ## lattice: index plot of mahalanobis distances
+    if(which == "xydistance"  && !is.null(rd)) {
+        print(.xydistplot(x, cutoff=cutoff, ...))      # lattice:  index plot of robust distances
+
     }
 
     ## qq-plot of the mahalanobis distances versus the
@@ -191,32 +199,37 @@ setMethod("plot", signature(x="CovRobust", y="missing"), function(x, y="missing"
         if(classic && !is.null(md)) {
             opr <- if(prod(par("mfrow")) == 1) par(mfrow=c(1,2), pty="m") else list()
         }
-        .qqplot(rd, p, cutoff=cutoff, id.n=id.n) # qq-plot of the robust distances versus the
-                                                 # quantiles of the chi-squared distribution
+        .qqplot(rd, p, cutoff=cutoff, id.n=id.n, ...) # qq-plot of the robust distances versus the
+                                                      # quantiles of the chi-squared distribution
         if(classic && !is.null(md)) {
-            .qqplot(md, p, cutoff=cutoff, classic=TRUE, id.n=id.n)
+            .qqplot(md, p, cutoff=cutoff, classic=TRUE, id.n=id.n, ...)
                                                  # qq-plot of the mahalanobis distances
             par(opr)
         }
     }
 
-    if(which == "all" || which == "tolEllipsePlot") {
-        if(length(dim(data)) >= 2 && dim(data)[2] == 2){
+    ## lattice: qq-plot of the mahalanobis distances versus the
+    ##          quantiles of the chi-squared distribution
+    if(which == "xyqqchi2"  && !is.null(rd)) {
+        print(.xyqqchi2(x, cutoff=cutoff, ...))        # lattice:  qq-plot of the distances versus
+    }
+
+    if(which == "tolEllipsePlot" || which == "pairs") {
+        if(which == "tolEllipsePlot" & length(dim(data)) >= 2 && dim(data)[2] == 2){
             if(!is.null(rd)){
                 if(classic &&  !is.null(md))
                     .tolellipse(rcov=x, ccov = ccov, cutoff=cutoff, id.n=id.n, tol=tol, ...)
                 else
                     .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol, ...)
             }
-        }
-        else if(which != "all")
-            warning("Warning: For tolerance ellipses the dimension must be 2!")
+        }else if(length(dim(data)) >= 2 && dim(data)[2] <= 10)
+        {
+            .rrpairs(x, ...)
+        }else if(which != "all")
+            warning("Warning: For tolerance ellipses the dimension must be less than 10!")
     }
 
     if(which == "all" || which == "screeplot") {
-        if(classic == TRUE)
-            .myscreeplot(ccov=ccov, rcov=x)
-        else
-            .myscreeplot(rcov=x)
+        .myscreeplot(ccov=ccov, rcov=x)
     }
 }) ## end { plot("CovRobust") }

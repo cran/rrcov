@@ -1,5 +1,5 @@
       SUBROUTINE FSADA(X,NE,NV,NG,IGRP,XM,XC,XND,
-     1          IHALF,NIT,IDSAV,MRAND,IERR,DETC)
+     1          IHALF,NIT,IDSAV,MRAND,IERR,DETC,ITRACE)
 
         IMPLICIT DOUBLEPRECISION (A-H,O-Z)
 
@@ -18,14 +18,16 @@ C...Default number of iterations to be performed(if NIT=0)
 C...Set the default number of iterations if not supplied
         IF(NIT.EQ.0) NIT=ITK0
 
-c        CALL INTPR('Entering FSADA - NE: ',-1,KREP,1) 
+      if(ITRACE .ge. 2) then 
+        CALL INTPR('Entering FSADA - NIT: ',-1,NIT,1) 
+      endif
 
 C...Set the coverage for max breakdown point, if not supplied
       IF(IHALF.LE.0) IHALF = (NE+NV+1)/2
 
       call reader(X,NE,NV,NG,ave,cov,cinv,datimg,wtv,ustu,DETC,
      2 IGRP,ibasis,isin,IHALF,
-     3 XC,XM,XND,IDSAV,NIT,MRAND)
+     3 XC,XM,XND,IDSAV,NIT,MRAND,ITRACE)
 
 C...the cross-product matrix is returned - scale it
         DO I=1,NV
@@ -33,13 +35,15 @@ C...the cross-product matrix is returned - scale it
               XC(I,J) = XC(I,J)/(IHALF-NG)
            ENDDO
         ENDDO
+
+
         END
 
 
       subroutine reader(data,ncas,nord,npop,
      1ave,cov,cinv,datimg,wtv,ustu,deter,
      2igp,ibasis,isin,ncover,
-     3bescov,besave,beswtv,ibsbes,nsim,iseed)
+     3bescov,besave,beswtv,ibsbes,nsim,iseed,ITRACE)
 
       implicit doubleprecision (a-h,o-z)
       dimension data(nord,ncas),ave(nord,npop),cov(nord,nord), 
@@ -48,7 +52,7 @@ C...the cross-product matrix is returned - scale it
      3 isin(ncas),wtv(npop),cinv(nord,nord),
      4 bescov(nord,nord),besave(nord,npop),ibsbes(ncas),
      5 beswtv(npop),
-     6 index(500),devi(100),
+     6 index(5000),devi(100),
      7 detrtb(100),icount(100),isgntb(100)
 
       data xix, xia, xic /.31415925d0,17119.d0,0.1221d0/,
@@ -56,8 +60,13 @@ C...the cross-product matrix is returned - scale it
 
       xix = xix * iseed
 
-CCC      WRITE(*,*) ncas,' cases'
-C       ncover = cover * ncas + 0.5
+CCC     WRITE(*,*) ncas,' cases'
+c       ncover = cover * ncas + 0.5
+      if(ITRACE .ge. 2) then 
+        CALL INTPR('Entering READER - ncas: ',-1,ncas,1) 
+        CALL INTPR('Entering READER - ncover: ',-1,ncover,1) 
+      endif
+      
         do j = 1, ncas
            index(j) = j
         enddo
@@ -126,6 +135,11 @@ CCC     1 f10.4)') log10(deter)
 CCC      WRITE(8,'(/'' Log10 determinant of overall covariance matrix'',
 CCC     1 f10.4)') log10(deter)
 
+      if(ITRACE .ge. 2) then 
+        xdet = log10(deter)
+        CALL DBLEPR('Initialization ready - log det: ',-1,xdet,1) 
+      endif
+
       verbes = 1.d30
       if (ncover .ge. ncas) stop
 
@@ -152,6 +166,10 @@ CCC     1 '' of coverage'',f7.3)') cover
            ibasis(i) = index(i)
         enddo
 
+      if(ITRACE .ge. 2) then 
+        CALL INTPR('Entering iteration: ',-1,loopo,1) 
+      endif
+      
         call itera(data,ave,cov,cinv,datimg,wtv,ustu,deter,
      1 igp,ibasis,isin,nord,ncas,npop,ncover)
         isgn = isigna(ibasis,ncover)

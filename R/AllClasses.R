@@ -222,6 +222,7 @@ setClass("CovControlSde", representation(nsamp="numeric",
 ###################### PCA ####################################
 setClass("Pca", representation(call = "language",
                               center = "vector",
+                              scale = "Uvector",
                               loadings = "matrix",
                               eigenvalues = "vector",
                               scores = "matrix",

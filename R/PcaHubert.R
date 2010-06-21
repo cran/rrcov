@@ -111,7 +111,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ## ___Step 1___: Reduce the data space to the affine subspace spanned by the n observations
     ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach -
     ##  the decomposition is based on computing the eignevalues and eigenvectors of(X-m)(X-m)'
-    Xsvd <- kernelEVD(data)
+    Xsvd <- kernelEVD(data, scale=FALSE, signflip=FALSE)
 
     if(Xsvd$rank == 0) {
         stop("All data points collapse!")
@@ -178,6 +178,9 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ##
     if(ncol(X) <= min(floor(n/5), kmax) & mcd)    # p << n => apply MCD
     {
+        if(trace)
+            cat("\nApplying MCD.\n")
+
         ## If k was not specified, set it equal to the number of columns in X
         ##
         if(k != 0)
@@ -214,6 +217,9 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     }
     else                                        # p > n or mcd=FALSE => apply the ROBPCA algorithm
     {
+        if(trace)
+            cat("\nApplying the projection method of Hubert.\n")
+
         ##
         ##  For each direction 'v' through 2 data points we project the n data points xi on v
         ##  and compute their robustly standardized absolute residual
@@ -247,8 +253,10 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
         Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
-        Xh.svd <- classSVD(Xh)
+        Xh.svd <- classSVD(Xh, scale=FALSE, signflip=FALSE)
         kmax <- min(Xh.svd$rank, kmax)
+        if(trace)
+            cat("\nEigenvalues: ", Xh.svd$eigenvalues, "\n")
 
         ##
         ## Find the number of PC 'k'
@@ -278,7 +286,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             umcd <- unimcd(odh^(2/3), h)
             cutoffodh <- sqrt(qnorm(0.975, umcd$tmcd, umcd$smcd)^3)
             indexset <- (odh <= cutoffodh)
-            Xh.svd <- classSVD(X[indexset,])
+            Xh.svd <- classSVD(X[indexset,], scale=FALSE, signflip=FALSE)
             k <- min(Xh.svd$rank, k)
         }
 
@@ -299,8 +307,10 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         oldobj <- prod(Xh.svd$eigenvalues[1:k])
         niter <- 100
         for(j in 1:niter) {
+            if(trace)
+                cat("\nIter=",j, " h=", h, " k=", k, " obj=", oldobj, "\n")
             Xh <- X2[order(mah)[1:h], ]
-            Xh.svd <- classSVD(as.matrix(Xh))
+            Xh.svd <- classSVD(as.matrix(Xh), scale=FALSE, signflip=FALSE)
             obj <- prod(Xh.svd$eigenvalues)
             X2 <- (X2 - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
             center <- center + Xh.svd$center %*% t(rot)
@@ -318,9 +328,19 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         ## Perform now MCD on X2
         X2mcd <- CovMcd(X2, nsamp=250, alpha=alpha)
-        if(X2mcd@crit < obj) {
+        if(trace)
+            cat("\nMCD crit=",X2mcd@crit," and C-Step obj function=",obj," Abs difference=", abs(X2mcd@crit-obj), "\n")
+
+        ## VT::14.12.2009 - if there is even a slight difference between mcd$crit and obj
+        ## and it is on the negative side, the following reweighting step will be triggered,
+        ## which could lead to unwanted difference in the results. Therefore compare with
+        ## a tolerance 1E-16.
+        eps <- 1e-16
+        if(X2mcd@crit < obj + eps) {
             X2cov <- getCov(X2mcd)
             X2center <- getCenter(X2mcd)
+            if(trace)
+                cat("\nFinal step - PC of MCD cov used.\n")
         }else {
             consistencyfactor <- median(mah)/qchisq(0.5,k)
             mah <- mah/consistencyfactor
@@ -328,6 +348,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             wcov <- .wcov(X2, weights)
             X2center <- wcov$center
             X2cov <- wcov$cov
+            if(trace)
+                cat("\nFinal step - PC of a reweighted cov used.\n")
         }
 
         ee <- eigen(X2cov)

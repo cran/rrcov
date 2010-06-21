@@ -1,7 +1,7 @@
-CovMcd <- function(x, 
-                   alpha=1/2, 
-                   nsamp=500, 
-                   seed=NULL, 
+CovMcd <- function(x,
+                   alpha=1/2,
+                   nsamp=500,
+                   seed=NULL,
                    trace=FALSE,
                    use.correction = TRUE,
                    control)
@@ -12,7 +12,7 @@ CovMcd <- function(x,
     ## if a control object was supplied, take the option parameters from it,
     ## but if single parameters were passed (not defaults) they will override the
     ## control object.
-    
+
     if(!missing(control)){
         defcontrol <- CovControlMcd()       # default control
         if(alpha == defcontrol@alpha)       alpha <- control@alpha
@@ -24,12 +24,12 @@ CovMcd <- function(x,
 
     ## prepare the call to covMcd() which will return an S3 object
 
-    ## handle the case of nsamp="best" or "exact"    
+    ## handle the case of nsamp="best" or "exact"
     iter <- if(is.numeric(nsamp)) nsamp else 0
-    
+
     xcall <- match.call()
     mcd <- covMcd(x=x, alpha=alpha, nsamp=nsamp, seed=seed, trace=trace, use.correction=use.correction)
-    ans <- new("CovMcd", 
+    ans <- new("CovMcd",
                call = xcall,
                iter=iter,
                crit=mcd$crit,

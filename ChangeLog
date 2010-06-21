@@ -1,3 +1,28 @@
+2010-06-20  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.0-01
+    * data/rice.Rda, man/rice.Rd: Rice data set added
+    *
+    * R/PcaHubert.R - fixed a minor problem - see VT::14.12.2009
+    *
+    * src/fsada.f: fixed a problem in Linda with method 'fsa' -
+    *   number of cases was limited to 500 and number of
+    *   variables to 100 without error message
+    * R/Linda.R, man/Linda.Rd, src/fsada.f - added 'trace' parameter
+    *
+    * R/Allclasses.R, AllGenerics.R, PcaClassic.R, PcaLocantore.R,
+    *   RcaHubert.R, Pca.R, man/PcaClassic.Rd, PcaLocantore.Rd,
+    *   PcaClassic-class.Rd, PcaLocantore-class.Rd, Pca-class.Rd:
+    *   - added sign flipping for the loadings, controlled by a
+    *       signflip=TRUE parameter
+    *   - added a scale slot in Pca class and scale=FALSE parameter in
+    *       PcaClassic() and PcaLocantore()
+    *
+    * R/plot-utils.R, CovRobust.R, CovClassic:
+    *   - additional graphics parameters for the plot methods are available now, e.g.
+    *       different colors or different symbols for the different groups
+    *   - it is possible to provide custom labels for the id.n observations
+    *   - pairs-plot for more than 2 variables
+    *
 2009-10-10  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.0-00
     * CITATION to the JSS paper added

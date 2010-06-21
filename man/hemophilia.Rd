@@ -59,7 +59,8 @@ plot(AHFantigen~AHFactivity, data=hemophilia, col=as.numeric(as.factor(gr))+1)
 ## Compute robust location and covariance matrix and 
 ## plot the tolerance ellipses
 (mcd <- CovMcd(hemophilia[,1:2]))
-plot(mcd, which="tolEllipsePlot", class=TRUE)
+col <- ifelse(hemophilia$gr == "carrier", 2, 3) ## define clours for the groups
+plot(mcd, which="tolEllipsePlot", class=TRUE, col=col)
 
 %x <- hemophilia[,-3]
 %gr <- hemophilia[,3]

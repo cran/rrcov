@@ -1,6 +1,6 @@
 
-R version 2.10.0 alpha (2009-10-07 r49971)
-Copyright (C) 2009 The R Foundation for Statistical Computing
+R version 2.11.0 Under development (unstable) (2010-03-16 r51294)
+Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -255,8 +255,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-pcaPP 0.1-1 loaded
-Scalable Robust Estimators with High Breakdown Point (version 1.0-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.0-01)
 > dodata()
 
 Call:  dodata() 

@@ -43,7 +43,7 @@ PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
+PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE, trace=FALSE, ...)
 {
     cl <- match.call()
 
@@ -54,15 +54,22 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     n <- nrow(data)
     p <- ncol(data)
 
-    Xsvd <- kernelEVD(data)
+    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
     if(Xsvd$rank == 0) {
         stop("All data points collapse!")
+    }
+
+    if(trace)
+    {
+        cat("\nDimension of the input matrix x:\n", dim(x))
+        cat("\nInput parameters [k, kmax, rank(x)]: ", k, kmax, Xsvd$rank, "\n")
     }
 
     ##
     ## verify and set the input parameters: k and kmax
     ##
-    kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
+    kmax <- max(min(floor(kmax), Xsvd$rank),1)
+
     if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
@@ -72,15 +79,19 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
     if(k != 0)
         k <- min(k, ncol(data))
     else {
-        k <- min(kmax,ncol(data))
+        k <- min(kmax, ncol(data))
         if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
+            cat("The number of principal components is set to ", k, ".\n", sep="")
     }
+
+    if(trace)
+        cat("\nTo be used [k, kmax, ncol(data), rank(data)]=",k, kmax, ncol(data), Xsvd$rank, "\n")
 
     loadings    <- Xsvd$loadings[, 1:k, drop=FALSE]
     eigenvalues <- as.vector(Xsvd$eigenvalues[1:k])
     center      <- as.vector(Xsvd$center)
     scores      <- Xsvd$scores[, 1:k, drop=FALSE]
+    scale       <- Xsvd$scale
     if(is.list(dimnames(data))) {
         dimnames(scores)[[1]] <- dimnames(data)[[1]]
     } else {
@@ -95,6 +106,7 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), trace=FALSE, ...)
                             loadings=loadings,
                             eigenvalues=eigenvalues,
                             center=center,
+                            scale=scale,
                             scores=scores,
                             k=k,
                             n.obs=n)

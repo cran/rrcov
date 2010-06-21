@@ -22,7 +22,7 @@ Objects can be created by calls of the form \code{new("PcaLocantore", ...)} but 
     \describe{
         \item{\code{delta}:}{Accuracy parameter}
         \item{\code{quan}:}{Object of class \code{"numeric"} The quantile h used throughout the algorithm }
-        \item{\code{call}, \code{center}, \code{loadings},
+        \item{\code{call}, \code{center}, \code{scale}, \code{loadings},
             \code{eigenvalues}, \code{scores}, \code{k},
             \code{sd}, \code{od}, \code{cutoff.sd}, \code{cutoff.od},
             \code{flag}, \code{n.obs}:}{

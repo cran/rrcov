@@ -8,7 +8,7 @@
 \description{
 Robust PCA are obtained by replacing the classical covariance matrix
 by a robust covariance estimator. This can be one of the available
-in \code{rrcov} estimators, i.e. MCD, OGK, M or S estimator.
+in \code{rrcov} estimators, i.e. MCD, OGK, M, S or Stahel-Donoho estimator.
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("PcaCov", ...)} but the
