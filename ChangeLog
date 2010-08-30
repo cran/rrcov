@@ -1,3 +1,12 @@
+2010-08-30  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.1-00
+    * src/ds11.f - fixed a problem with CovSde for p=1 (i.e. option p=1 implemented)
+    * R/CovSest.R, man/CovSest.Rd - default number of samples 'nsamp' for method='sfast'
+    *       changed to nsamp=20
+    * Added MM-estimates of location and scatter
+    * Added methods getDet(), getShape() and getDflag() for objects of class 'Cov'
+    * C implementation of the FAST-S estimates
+    * signflip and scale parameters added to PcaHubert() and PcaCov()
 2010-06-20  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.0-01
     * data/rice.Rda, man/rice.Rd: Rice data set added

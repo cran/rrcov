@@ -84,14 +84,14 @@ PcaGrid.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
     center   <- out$center
     scale <- out$scale
     sdev     <- out$sdev
-    scores   <- scores[, 1:k]
-    loadings <- as.matrix(out$loadings)[, 1:k]
+    scores   <- as.matrix(scores[, 1:k])
+    loadings <- as.matrix(out$loadings[, 1:k])
     eigenvalues  <- (sdev^2)[1:k]
 
 ######################################################################
     names(eigenvalues) <- NULL
     if(is.list(dimnames(data)))
-        rownames(scores) <- rownames(data)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
+        rownames(scores) <- rownames(data)          # dimnames(scores)[[1]] <- dimnames(data)[[1]]
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 

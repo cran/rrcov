@@ -43,7 +43,7 @@ PcaHubert.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250, trace=FALSE, ...)
+PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
 {
 ## k    -   Number of principal components to compute. If \code{k} is missing,
 ##              or \code{k = 0}, the algorithm itself will determine the number of
@@ -92,18 +92,11 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 ##  a Matlab Library for Robust Analysis':
 ##      www.wis.kuleuven.ac.be/stat/robust.html
 
-    .wcov <- function(data, weights) {
-        wcov <- cov.wt(x=data, wt=weights, center=TRUE)
-        ss <- sum(weights)
-        wcov$cov <- wcov$cov * ss/(ss-1)
-        wcov
-    }
-
     cl <- match.call()
 
-    if(missing(x)){
+    if(missing(x))
         stop("You have to provide at least some data")
-    }
+
     data <- as.matrix(x)
     n <- nrow(data)
     p <- ncol(data)
@@ -111,11 +104,16 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ## ___Step 1___: Reduce the data space to the affine subspace spanned by the n observations
     ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach -
     ##  the decomposition is based on computing the eignevalues and eigenvectors of(X-m)(X-m)'
-    Xsvd <- kernelEVD(data, scale=FALSE, signflip=FALSE)
+    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
 
-    if(Xsvd$rank == 0) {
+    if(Xsvd$rank == 0)
         stop("All data points collapse!")
-    }
+
+    ## VT::27.08.2010: introduce 'scale' parameter; return the scale in the value object
+    ##
+    myscale = vector('numeric', p) + 1
+    if(scale)
+        myscale <- Xsvd$scale
 
     ##
     ## verify and set the input parameters: alpha, k and kmax
@@ -129,7 +127,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         k <- kmax
     }
 
-    if(missing(alpha)) {
+    if(missing(alpha))
+    {
         default.alpha <- alpha
         h <- min(h.alpha.n(alpha, n, kmax), n)
         alpha <- h/n
@@ -157,7 +156,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
                 h <- h.alpha.n(alpha, n, k)
             warning(paste("h should be smaller than n = ", n, ". It is set to its default value ", h, ".", sep=""))
         }
-    }else {
+    }else
+    {
 
         if(alpha < 0.5 | alpha > 1)
             stop("Alpha is out of range: should be between 1/2 and 1")
@@ -208,6 +208,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
                             loadings=loadings,
                             eigenvalues=eigenvalues,
                             center=center,
+                            scale=myscale,
                             scores=scores,
                             k=k,
                             quan=X.mcd@quan,
@@ -253,7 +254,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
         Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
-        Xh.svd <- classSVD(Xh, scale=FALSE, signflip=FALSE)
+        Xh.svd <- classSVD(Xh)
         kmax <- min(Xh.svd$rank, kmax)
         if(trace)
             cat("\nEigenvalues: ", Xh.svd$eigenvalues, "\n")
@@ -264,7 +265,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         ## the k-th eigenvalue to the first eigenvalue (sorted decreasingly) is larger than
         ## 10.E/3 and the fraction of the cumulative dispersion is larger or equal 80%
         ##
-        if(k == 0) {
+        if(k == 0)
+        {
             test <- which(Xh.svd$eigenvalues/Xh.svd$eigenvalues[1] <= 1.E-3)
             k <- if(length(test) != 0)  min(min(Xh.svd$rank, test[1]), kmax)
                  else                   min(Xh.svd$rank, kmax)
@@ -277,8 +279,17 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
                 cat(paste("The number of principal components is set by the algorithm. It is set to ", k, ".\n", sep=""))
         }
 
+        if(trace)
+            cat("\nXsvd$rank, Xh.svd$rank, k and kmax: ", Xsvd$rank, Xh.svd$rank, k, kmax,"\n")
+
         ## perform extra reweighting step
-        if(k != Xsvd$rank){
+        if(k != Xsvd$rank)
+        {
+            ## VT::27.08.2010 - bug report from Stephen Milborrow: if n is small relative to p
+            ## k can be < Xsvd$rank but larger than Xh.svd$rank - the number of observations in
+            ## Xh.svd is roughly half of these in Xsvd
+            k <- min(Xh.svd$rank, k)
+
             XRc <- X - repmat(Xh.svd$center, n, 1)
             Xtilde <- XRc %*% Xh.svd$loadings[,1:k] %*% t(Xh.svd$loadings[,1:k])
             Rdiff <- XRc - Xtilde
@@ -286,7 +297,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             umcd <- unimcd(odh^(2/3), h)
             cutoffodh <- sqrt(qnorm(0.975, umcd$tmcd, umcd$smcd)^3)
             indexset <- (odh <= cutoffodh)
-            Xh.svd <- classSVD(X[indexset,], scale=FALSE, signflip=FALSE)
+            Xh.svd <- classSVD(X[indexset,])
             k <- min(Xh.svd$rank, k)
         }
 
@@ -310,7 +321,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             if(trace)
                 cat("\nIter=",j, " h=", h, " k=", k, " obj=", oldobj, "\n")
             Xh <- X2[order(mah)[1:h], ]
-            Xh.svd <- classSVD(as.matrix(Xh), scale=FALSE, signflip=FALSE)
+            Xh.svd <- classSVD(as.matrix(Xh))
             obj <- prod(Xh.svd$eigenvalues)
             X2 <- (X2 - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
             center <- center + Xh.svd$center %*% t(rot)
@@ -336,16 +347,21 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         ## which could lead to unwanted difference in the results. Therefore compare with
         ## a tolerance 1E-16.
         eps <- 1e-16
-        if(X2mcd@crit < obj + eps) {
+        if(X2mcd@crit < obj + eps)
+        {
             X2cov <- getCov(X2mcd)
             X2center <- getCenter(X2mcd)
             if(trace)
                 cat("\nFinal step - PC of MCD cov used.\n")
-        }else {
+        }else
+        {
             consistencyfactor <- median(mah)/qchisq(0.5,k)
             mah <- mah/consistencyfactor
             weights <- ifelse(mah <= qchisq(0.975, k), TRUE, FALSE)
-            wcov <- .wcov(X2, weights)
+
+##          VT::27.08.2010 - not necessary, cov.wt is doing it ptoperly
+##            wcov <- .wcov(X2, weights)
+            wcov <- cov.wt(x=X2, wt=weights, method="ML")
             X2center <- wcov$center
             X2cov <- wcov$cov
             if(trace)
@@ -367,6 +383,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
                             loadings=loadings,
                             eigenvalues=eigenvalues,
                             center=center,
+                            scale=myscale,
                             scores=scores,
                             k=k,
                             quan=h,

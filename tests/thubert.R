@@ -1,13 +1,13 @@
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert", "hubert.mcd", "locantore", "cov")){
-## Test the function PcaHubert() on the literature datasets: 
+## Test the function PcaHubert() on the literature datasets:
 ##
-## Call PcaHubert() for all regression datasets available in 
+## Call PcaHubert() for all regression datasets available in
 ##  robustbase/rrcov and print:
 ##  - execution time (if time == TRUE)
 ##  - loadings
 ##  - eigenvalues
 ##  - scores
-## 
+##
 
     dopca <- function(x, xname, nrep=1){
 
@@ -23,12 +23,12 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
             pca <- PcaCov(x)
         else
             stop("Undefined PCA method: ", method)
-            
-        
+
+
         e1 <- getEigenvalues(pca)[1]
         e2 <- getEigenvalues(pca)[2]
         k <- pca@k
-        
+
         if(time){
            xtime <- system.time(dorep(x, nrep, method))[1]/nrep
            xres <- sprintf("%3d %3d %3d %12.6f %12.6f %10.3f\n", dim(x)[1], dim(x)[2], k, e1, e2, xtime)
@@ -42,24 +42,24 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
         if(!short){
             cat("Scores: \n")
             print(getScores(pca))
-        
+
             if(full){
                 cat("-------------\n")
-                show(pca)   
-            } 
+                show(pca)
+            }
             cat("----------------------------------------------------------\n")
         }
-    } 
+    }
 
     stopifnot(length(nrep) == 1, nrep >= 1)
-    method <- match.arg(method) 
+    method <- match.arg(method)
 
     options(digits = 5)
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
     library(rrcov)
-   
+
     data(heart)
     data(starsCYG)
     data(phosphor)
@@ -97,12 +97,12 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
 
 dogen <- function(nrep=1, eps=0.49, method=c("hubert", "hubert.mcd", "locantore", "cov")){
 
-    dopca <- function(x, nrep=1){ 
+    dopca <- function(x, nrep=1){
         gc()
         xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
-        xtime   
-    } 
+        xtime
+    }
 
     set.seed(1234)
 
@@ -126,14 +126,14 @@ dogen <- function(nrep=1, eps=0.49, method=c("hubert", "hubert.mcd", "locantore"
                 ## print(dimnames(X))
                 tottime <- tottime + dopca(X, nrep)
             }
-        } 
+        }
     }
-    
+
     cat("=====================\n")
     cat("Total time: ", tottime*nrep, "\n")
 }
 
-dorep <- function(x, nrep=1, method=c("hubert", "hubert.mcd", "locantore", "cov")){ 
+dorep <- function(x, nrep=1, method=c("hubert", "hubert.mcd", "locantore", "cov")){
 
     method <- match.arg(method)
     for(i in 1:nrep)
@@ -147,13 +147,13 @@ dorep <- function(x, nrep=1, method=c("hubert", "hubert.mcd", "locantore", "cov"
         PcaCov(x)
     else
         stop("Undefined PCA method: ", method)
-} 
+}
 
 #### gendata() ####
-# Generates a location contaminated multivariate 
+# Generates a location contaminated multivariate
 # normal sample of n observations in p dimensions
 #    (1-eps)*Np(0,Ip) + eps*Np(m,Ip)
-# where 
+# where
 #    m = (b,b,...,b)
 # Defaults: eps=0 and b=10
 #
@@ -192,8 +192,38 @@ whatis<-function(x){
         cat("Type: don't know\n")
 }
 
+#################################################################
+##  VT::27.08.2010
+##  bug report from Stephen Milborrow
+##
+test.case.1 <- function()
+{
+    X <- matrix(c(
+          -0.79984, -1.00103,  0.899794,  0.00000,
+           0.34279,  0.52832, -1.303783, -1.17670,
+          -0.79984, -1.00103,  0.899794,  0.00000,
+           0.34279,  0.52832, -1.303783, -1.17670,
+           0.34279,  0.52832, -1.303783, -1.17670,
+           1.48542,  0.66735,  0.716162,  1.17670,
+          -0.79984, -1.00103,  0.899794,  0.00000,
+           1.69317,  1.91864, -0.018363,  1.76505,
+          -1.00759, -0.16684, -0.385626,  0.58835,
+          -0.79984, -1.00103,  0.899794,  0.00000), ncol=4, byrow=TRUE)
+
+    cc1 <- PcaHubert(X, k=3)
+
+    cc2 <- PcaLocantore(X, k=3)
+    cc3 <- PcaCov(X, k=3, cov.control=CovControlSest())
+
+    cc4 <- PcaProj(X, k=2)           # with k=3 will produce warnings in rrcov:::.distances - too small eignevalues
+    cc5 <- PcaGrid(X, k=2)           # dito
+
+    list(cc1, cc2, cc3, cc4, cc5)
+}
+
 library(rrcov)
 dodata(method="hubert.mcd")
 dodata(method="hubert")
-dodata(method="locantore")
-dodata(method="cov")
+##dodata(method="locantore")
+##dodata(method="cov")
+test.case.1()

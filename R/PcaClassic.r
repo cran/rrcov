@@ -68,7 +68,7 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     ##
     ## verify and set the input parameters: k and kmax
     ##
-    kmax <- max(min(floor(kmax), Xsvd$rank),1)
+    kmax <- max(min(kmax, Xsvd$rank),1)
 
     if((k <- floor(k)) < 0)
         k <- 0
@@ -92,12 +92,13 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     center      <- as.vector(Xsvd$center)
     scores      <- Xsvd$scores[, 1:k, drop=FALSE]
     scale       <- Xsvd$scale
-    if(is.list(dimnames(data))) {
+    if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
+    {
         dimnames(scores)[[1]] <- dimnames(data)[[1]]
     } else {
         dimnames(scores)[[1]] <- 1:n
     }
-    dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
+    dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
     ## fix up call to refer to the generic, but leave arg name as `formula'

@@ -40,7 +40,7 @@ PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovControlMcd(), na.action = na.fail, trace=FALSE, ...)
+PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), na.action = na.fail, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
 {
 
     cl <- match.call()
@@ -74,20 +74,36 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
     }
 ######################################################################
 
+    ## VT::27.08.2010: introduce 'scale' parameter; return the scale in the value object
+    ##
+    myscale = vector('numeric', p) + 1
+    data <- scale(data, center=FALSE, scale=scale)
+    mxx <- attr(data, "scaled:scale")
+    if(!is.null(mxx))
+        myscale <- mxx
+
+
     ## VT::30.09.2009 - add the option for classic covariance estimates - if cov.control = NULL
     covx <- if(!is.null(cov.control)) restimate(cov.control, data) else Cov(data)
     covmat <- list(cov=getCov(covx), center=getCenter(covx), n.obs=covx@n.obs)
-    if(corr)
-        covmat$cor <- getCorr(covx)
 
-    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
+##    if(corr)
+##        covmat$cor <- getCorr(covx)
+##    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
 
-    scores   <- predict(out, newdata=data)
+    out <- princomp(covmat=covmat, na.action=na.action)
     center   <- getCenter(covx)
+    scale    <- myscale
     sdev     <- out$sdev
-    scores   <- scores[, 1:k, drop=FALSE]
     loadings <- out$loadings[, 1:k, drop=FALSE]
     eigenvalues  <- (sdev^2)[1:k]
+
+    ## VT::27.08.2010 - signflip: flip the sign of the loadings
+    if(signflip)
+        loadings <- .signflip(loadings)
+
+    scores   <- scale(data, center, scale) %*% loadings
+    scores   <- scores[, 1:k, drop=FALSE]
 
 ######################################################################
     names(eigenvalues) <- NULL
@@ -104,6 +120,7 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), corr=FALSE, cov.control = CovCo
                             loadings=loadings,
                             eigenvalues=eigenvalues,
                             center=center,
+                            scale=myscale,
                             scores=scores,
                             k=k,
                             n.obs=n)

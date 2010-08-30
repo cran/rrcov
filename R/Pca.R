@@ -8,7 +8,7 @@ setMethod("getPrcomp", "Pca", function(obj) {
     ret <- list(sdev=sqrt(obj@eigenvalues),
          rotation=obj@loadings,
          center=obj@center,
-         scale=FALSE,
+         scale=obj@scale,
          x=obj@scores)
     class(ret) <- "prcomp"
     ret
@@ -200,7 +200,10 @@ classSVD <- function(x, scale=FALSE, signflip=TRUE){
     rank <- rankMM(x, sv=svd$d)
     eigenvalues <- (svd$d[1:rank])^2
     loadings <- svd$v[,1:rank]
+
     ## VT::15.06.2010 - signflip: flip the sign of the loadings
+    if(!is.matrix(loadings))
+        loadings <- data.matrix(loadings)
     if(signflip)
         loadings <- .signflip(loadings)
     scores <- x %*% loadings

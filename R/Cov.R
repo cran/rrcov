@@ -30,8 +30,78 @@ setMethod("getDistance", "Cov", function(obj){
         stop("Cannot compute distances: no data provided")
 
     dd <- mahalanobis(obj@X, obj@center, obj@cov)
-    eval.parent(substitute(obj@mah <- dd))
+
+
+    ## check if the method is called on an object - i.e. cc=CovMcd(xxx); getDistance(cc)
+    ##  or on the constructor call - i.e. getDistance(CovMcd(xxx))
+    ## Do nothing in the second case
+    ## Our expression is 'obj@mah <- dd' and the parse tree is
+    ##  (as a string array) will be c("<-", "obj@mah", "dd")
+    ## We are interested if there are () in the second element
+    ##
+    expr <- substitute(obj@mah <- dd)
+    ss <- as.character(expr)
+    if(length(grep(pattern="(", x=ss[2], fixed=TRUE)) == 0)
+        eval.parent(expr)
+
     return(dd)
+})
+
+setMethod("getDet", "Cov", function(obj){
+    if(obj@det > 0)
+        return(obj@det)
+
+    dd <- if(isSingular(obj)) 0 else det(obj@cov)
+
+    ## check if the method is called on an object - i.e. cc=CovMcd(xxx); getDet(cc)
+    ##  or on the constructor call - i.e. getDet(CovMcd(xxx))
+    ## Do nothing in the second case
+    ## Our expression is 'obj@det <- dd' and the parse tree is
+    ##  (as a string array) will be c("<-", "obj@det", "dd")
+    ## We are interested if there are () in the second element
+    ##
+    expr <- substitute(obj@det <- dd)
+    ss <- as.character(expr)
+    if(length(grep(pattern="(", x=ss[2], fixed=TRUE)) == 0)
+        eval.parent(expr)
+
+    return(dd)
+})
+
+setMethod("getShape", "Cov", function(obj){
+    p <- ncol(getCov(obj))
+    return(if((dd <- getDet(obj)) > 0) dd^(-1/p)*getCov(obj) else getCov(obj))
+})
+
+setMethod("getFlag", "Cov", function(obj, prob=0.975){
+    if(!is(obj@flag,"NULL") && missing(prob))
+        return(obj@flag)
+
+    p <- ncol(getCov(obj))
+
+##    dd <- getDistance(obj)
+    if(!is(obj@mah,"NULL"))
+        dd <- obj@mah
+    else if(is(getData(obj), "NULL"))
+        stop("Cannot compute distances: no data provided")
+    else
+        dd <- mahalanobis(obj@X, obj@center, obj@cov)
+
+    chi <- qchisq(prob, p)
+    fl <- sqrt(dd) < sqrt(chi)
+
+    ## check if the method is called on an object - i.e. cc=CovMcd(xxx); getFlag(cc)
+    ##  or on the constructor call - i.e. getFlag(CovMcd(xxx))
+    ## Do nothing in the second case
+    ## Our expression is 'obj@flag <- fl' and the parse tree is
+    ##  (as a string array) will be c("<-", "obj@flag", "fl")
+    ## We are interested if there are () in the second element
+    ##
+    expr <- substitute(obj@flag <- fl)
+    ss <- as.character(expr)
+    if(length(grep(pattern="(", x=ss[2], fixed=TRUE)) == 0)
+        eval.parent(expr)
+    return(fl)
 })
 
 ##

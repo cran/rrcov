@@ -13,7 +13,7 @@
 }
 \usage{
 PcaHubert(x, ...)
-\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, maxdir=250, trace=FALSE, \dots)
+\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, maxdir=250, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
 \method{PcaHubert}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -54,6 +54,14 @@ PcaHubert(x, ...)
     outlyingness of the data points. Default is \code{maxdir=250}. If the number \code{n}
     of observations is small all possible \code{n*(n-1)/2} pairs of observations 
     are taken to generate the directions.}
+  \item{scale}{a logical value indicating whether the variables should be 
+  scaled to have unit variance (only possible if there are no constant 
+  variables). As a scale function \code{mad} is used but alternatively, a vector of length equal 
+  the number of columns of x can be supplied. The value is passed to 
+  scale and the result of the scaling is stored in the \code{scale} slot. 
+  Default is \code{scale = FALSE}}
+  \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
+  ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
@@ -153,6 +161,11 @@ yield the robust principal components.
 ## Use the standard plots available for for prcomp and princomp
     screeplot(pca)    
     biplot(pca)    
+    
+## Restore the covraiance matrix     
+    py <- PcaHubert(hbk)
+    cov.1 <- py@loadings %*% diag(py@eigenvalues) %*% t(py@loadings)
+    cov.1    
 }
 \keyword{robust}
 \keyword{multivariate}

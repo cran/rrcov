@@ -1,5 +1,5 @@
 
-R version 2.11.0 Under development (unstable) (2010-03-16 r51294)
+R version 2.11.1 (2010-05-31)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -17,14 +17,14 @@ Type 'q()' to quit R.
 
 > ## Test for singularity
 > doexact <- function(){
-+     exact <-function(){    
++     exact <-function(){
 +         n1 <- 45
 +         p <- 2
 +         x1 <- matrix(rnorm(p*n1),nrow=n1, ncol=p)
 +         x1[,p] <- x1[,p] + 3
 + ##       library(MASS)
 + ##       x1 <- mvrnorm(n=n1, mu=c(0,3), Sigma=diag(1,nrow=p))
-+         
++ 
 +         n2 <- 55
 +         m1 <- 0
 +         m2 <- 3
@@ -43,7 +43,7 @@ Type 'q()' to quit R.
 +         p <- dim(x)[2]
 + 
 +         mcd<-CovSde(x)
-+             
++ 
 +         if(time){
 +            xtime <- system.time(dorep(x, nrep))[1]/nrep
 +            xres <- sprintf("%3d %3d %3d\n", dim(x)[1], dim(x)[2], xtime)
@@ -55,7 +55,7 @@ Type 'q()' to quit R.
 +         cat(pad.right(xname,lpad), xres)
 + 
 +         if(!short){
-+         
++ 
 +             ibad <- which(mcd@wt==0)
 +             names(ibad) <- NULL
 +             nbad <- length(ibad)
@@ -64,11 +64,11 @@ Type 'q()' to quit R.
 +                 print(ibad)
 +             if(full){
 +                 cat("-------------\n")
-+                 show(mcd)   
-+             } 
++                 show(mcd)
++             }
 +             cat("--------------------------------------------------------\n")
 +         }
-+     } 
++     }
 + 
 +     options(digits = 5)
 +     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
@@ -108,18 +108,21 @@ Type 'q()' to quit R.
 +     domcd(brain, "Animals", nrep)
 +     domcd(milk, data(milk), nrep)
 +     domcd(bushfire, data(bushfire), nrep)
++     ## VT::19.07.2010: test the univariate SDE
++     for(i in 1:ncol(bushfire))
++         domcd(bushfire[i], data(bushfire), nrep)
 +     cat("========================================================\n")
 + }
 > 
 > dogen <- function(nrep=1, eps=0.49){
 + 
 +     library(MASS)
-+     domcd <- function(x, nrep=1){ 
++     domcd <- function(x, nrep=1){
 +         gc()
 +         xtime <- system.time(dorep(x, nrep))[1]/nrep
 +         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
-+         xtime   
-+     } 
++         xtime
++     }
 + 
 +     set.seed(1234)
 + 
@@ -139,9 +142,9 @@ Type 'q()' to quit R.
 +                 X <- xx$X
 +                 tottime <- tottime + domcd(X, nrep)
 +             }
-+         } 
++         }
 +     }
-+     
++ 
 +     cat("=====================\n")
 +     cat("Total time: ", tottime*nrep, "\n")
 + }
@@ -156,20 +159,20 @@ Type 'q()' to quit R.
 + ##  check if mcd is robust w.r.t xind, i.e. check how many of xind
 + ##  did not get zero weight
 +     mymatch <- xind %in% which(mcd@wt == 0)
-+     length(xind) - length(which(mymatch))    
++     length(xind) - length(which(mymatch))
 + }
 > 
-> dorep <- function(x, nrep=1){ 
+> dorep <- function(x, nrep=1){
 + 
 +     for(i in 1:nrep)
 +         CovSde(x)
-+ } 
++ }
 > 
 > #### gendata() ####
-> # Generates a location contaminated multivariate 
+> # Generates a location contaminated multivariate
 > # normal sample of n observations in p dimensions
 > #    (1-eps)*Np(0,Ip) + eps*Np(m,Ip)
-> # where 
+> # where
 > #    m = (b,b,...,b)
 > # Defaults: eps=0 and b=10
 > #
@@ -211,7 +214,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.0-01)
+Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
 > dodata()
 
 Call:  dodata() 
@@ -441,6 +444,90 @@ V2    1712    1526   -8732   -2145   -1763
 V3  -10230   -8732   56327   13803   11472
 V4   -2504   -2145   13803    3509    2894
 V5   -2066   -1763   11472    2894    2404
+--------------------------------------------------------
+bushfire              38   1
+Outliers:  2 
+[1] 13 30
+-------------
+
+Call:
+CovSde(x = x)
+-> Method:  Stahel-Donoho estimator 
+
+Robust Estimate of Location: 
+  V1  
+98.5  
+
+Robust Estimate of Covariance: 
+    V1 
+V1  431
+--------------------------------------------------------
+bushfire              38   1
+Outliers:  6 
+[1] 33 34 35 36 37 38
+-------------
+
+Call:
+CovSde(x = x)
+-> Method:  Stahel-Donoho estimator 
+
+Robust Estimate of Location: 
+ V2  
+141  
+
+Robust Estimate of Covariance: 
+    V2 
+V2  528
+--------------------------------------------------------
+bushfire              38   1
+Outliers:  0 
+-------------
+
+Call:
+CovSde(x = x)
+-> Method:  Stahel-Donoho estimator 
+
+Robust Estimate of Location: 
+ V3  
+238  
+
+Robust Estimate of Covariance: 
+    V3   
+V3  37148
+--------------------------------------------------------
+bushfire              38   1
+Outliers:  9 
+[1]  8  9 32 33 34 35 36 37 38
+-------------
+
+Call:
+CovSde(x = x)
+-> Method:  Stahel-Donoho estimator 
+
+Robust Estimate of Location: 
+ V4  
+210  
+
+Robust Estimate of Covariance: 
+    V4  
+V4  2543
+--------------------------------------------------------
+bushfire              38   1
+Outliers:  9 
+[1]  8  9 32 33 34 35 36 37 38
+-------------
+
+Call:
+CovSde(x = x)
+-> Method:  Stahel-Donoho estimator 
+
+Robust Estimate of Location: 
+ V5  
+273  
+
+Robust Estimate of Covariance: 
+    V5  
+V5  1575
 --------------------------------------------------------
 ========================================================
 > ##doexact()

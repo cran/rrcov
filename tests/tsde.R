@@ -1,13 +1,13 @@
 ## Test for singularity
 doexact <- function(){
-    exact <-function(){    
+    exact <-function(){
         n1 <- 45
         p <- 2
         x1 <- matrix(rnorm(p*n1),nrow=n1, ncol=p)
         x1[,p] <- x1[,p] + 3
 ##       library(MASS)
 ##       x1 <- mvrnorm(n=n1, mu=c(0,3), Sigma=diag(1,nrow=p))
-        
+
         n2 <- 55
         m1 <- 0
         m2 <- 3
@@ -26,7 +26,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE){
         p <- dim(x)[2]
 
         mcd<-CovSde(x)
-            
+
         if(time){
            xtime <- system.time(dorep(x, nrep))[1]/nrep
            xres <- sprintf("%3d %3d %3d\n", dim(x)[1], dim(x)[2], xtime)
@@ -38,7 +38,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE){
         cat(pad.right(xname,lpad), xres)
 
         if(!short){
-        
+
             ibad <- which(mcd@wt==0)
             names(ibad) <- NULL
             nbad <- length(ibad)
@@ -47,11 +47,11 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE){
                 print(ibad)
             if(full){
                 cat("-------------\n")
-                show(mcd)   
-            } 
+                show(mcd)
+            }
             cat("--------------------------------------------------------\n")
         }
-    } 
+    }
 
     options(digits = 5)
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
@@ -91,18 +91,21 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE){
     domcd(brain, "Animals", nrep)
     domcd(milk, data(milk), nrep)
     domcd(bushfire, data(bushfire), nrep)
+    ## VT::19.07.2010: test the univariate SDE
+    for(i in 1:ncol(bushfire))
+        domcd(bushfire[i], data(bushfire), nrep)
     cat("========================================================\n")
 }
 
 dogen <- function(nrep=1, eps=0.49){
 
     library(MASS)
-    domcd <- function(x, nrep=1){ 
+    domcd <- function(x, nrep=1){
         gc()
         xtime <- system.time(dorep(x, nrep))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
-        xtime   
-    } 
+        xtime
+    }
 
     set.seed(1234)
 
@@ -122,9 +125,9 @@ dogen <- function(nrep=1, eps=0.49){
                 X <- xx$X
                 tottime <- tottime + domcd(X, nrep)
             }
-        } 
+        }
     }
-    
+
     cat("=====================\n")
     cat("Total time: ", tottime*nrep, "\n")
 }
@@ -139,20 +142,20 @@ check <- function(mcd, xind){
 ##  check if mcd is robust w.r.t xind, i.e. check how many of xind
 ##  did not get zero weight
     mymatch <- xind %in% which(mcd@wt == 0)
-    length(xind) - length(which(mymatch))    
+    length(xind) - length(which(mymatch))
 }
 
-dorep <- function(x, nrep=1){ 
+dorep <- function(x, nrep=1){
 
     for(i in 1:nrep)
         CovSde(x)
-} 
+}
 
 #### gendata() ####
-# Generates a location contaminated multivariate 
+# Generates a location contaminated multivariate
 # normal sample of n observations in p dimensions
 #    (1-eps)*Np(0,Ip) + eps*Np(m,Ip)
-# where 
+# where
 #    m = (b,b,...,b)
 # Defaults: eps=0 and b=10
 #

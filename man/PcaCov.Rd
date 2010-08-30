@@ -10,8 +10,8 @@ in \code{rrcov} estimators, i.e. MCD, OGK, M or S estimator.
 }
 \usage{
 PcaCov(x, ...)
-\method{PcaCov}{default}(x, k = 0, kmax = ncol(x), corr=FALSE, cov.control=CovControlMcd(), 
-    na.action = na.fail, trace=FALSE, \dots)
+\method{PcaCov}{default}(x, k = 0, kmax = ncol(x), cov.control=CovControlMcd(), 
+    na.action = na.fail, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
 \method{PcaCov}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -38,13 +38,18 @@ PcaCov(x, ...)
   \item{kmax}{maximal number of principal components to compute.
     Default is \code{kmax=10}. If \code{k} is provided, \code{kmax} 
     does not need to be specified, unless \code{k} is larger than 10.}
-  \item{corr}{a logical value indicating whether the calculation should use 
-  the correlation matrix or the covariance matrix (the correlation matrix 
-  can only be used if there are no constant variables). Default is \code{corr=FALSE}.}
   \item{cov.control}{specifies which covariance estimator to use by providing 
   a \code{\link{CovControl-class}} object. 
   The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}. 
   If \code{cov.control=NULL} is specified, the classical estimates will be used by calling \code{\link{CovClassic}}}.
+  \item{scale}{a logical value indicating whether the variables should be 
+  scaled to have unit variance (only possible if there are no constant 
+  variables). As a scale function \code{mad} is used but alternatively, a vector of length equal 
+  the number of columns of x can be supplied. The value is passed to 
+  scale and the result of the scaling is stored in the \code{scale} slot. 
+  Default is \code{scale = FALSE}}
+  \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
+  ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
