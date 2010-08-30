@@ -9,7 +9,7 @@
 }
 \usage{
 CovControlSde(nsamp = 0, maxres = 0, tune = 0.95, eps = 0.5, prob = 0.99,
-    seed = NULL, trace = FALSE, tolSolve = 1e-13)
+    seed = NULL, trace = FALSE, tolSolve = 1e-14)
 }
 \arguments{
   \item{nsamp}{a positive integer giving the number of resamples required;

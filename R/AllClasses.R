@@ -30,12 +30,15 @@ setClassUnion("UCovControl", c("CovControl", "NULL"))
 setClass("Cov", representation(call = "language",
                               cov = "matrix",
                               center = "vector",
+                              det = "numeric",
                               n.obs = "numeric",
                               mah = "Uvector",
+                              flag = "Uvector",
                               method = "character",
                               singularity = "Ulist",
                               X = "Umatrix",
-                              "VIRTUAL"))
+                              "VIRTUAL"),
+                 prototype=list(det=-1))
 
 setClass("SummaryCov", representation(covobj = "Cov",
                               evals = "vector"))
@@ -87,6 +90,9 @@ setClass("CovSest", representation(),
 setClass("CovSde", representation(),
                     contains="CovRobust")
 
+setClass("CovMMest", representation(sest = "CovSest"),
+                    contains="CovRobust")
+
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp="numeric",
@@ -96,7 +102,7 @@ setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp=500,
                                           seed=NULL,
                                           trace=FALSE,
-                                          tolSolve=10e-14,
+                                          tolSolve=1e-14,
                                           use.correction=TRUE),
                            contains="CovControl")
 
@@ -110,7 +116,7 @@ setClass("CovControlMest", representation(r="numeric",
                                             eps=1e-3,
                                             maxiter=120,
                                             trace=FALSE,
-                                            tolSolve=10e-14),
+                                            tolSolve=1e-14),
                            contains="CovControl"
 )
 
@@ -171,7 +177,7 @@ setClass("CovControlOgk", representation(niter="numeric",
                                             smrob="scaleTau2",
                                             svrob="gk",
                                             trace=FALSE,
-                                            tolSolve=10e-14),
+                                            tolSolve=1e-14),
                            contains="CovControl"
 )
 ## Control parameters for CovMve
@@ -182,7 +188,7 @@ setClass("CovControlMve", representation(alpha="numeric",
                                           nsamp=500,
                                           seed=NULL,
                                           trace=FALSE,
-                                          tolSolve=10e-14),
+                                          tolSolve=1e-14),
                            contains="CovControl")
 ## Control parameters for CovSest
 setClass("CovControlSest", representation(bdp="numeric",
@@ -199,9 +205,23 @@ setClass("CovControlSest", representation(bdp="numeric",
                                             nsamp=500,
                                             seed=NULL,
                                             trace=FALSE,
-                                            tolSolve=10e-14,
+                                            tolSolve=1e-14,
                                             method="sfast"),
                            contains="CovControl")
+
+CovControlSest <- function (bdp=0.5,
+                            arp=0.1,
+                            eps=1e-5,
+                            maxiter=120,
+                            nsamp=500,
+                            seed=NULL,
+                            trace=FALSE,
+                            tolSolve=1e-14,
+                            method="sfast")
+{
+    new("CovControlSest", bdp=bdp, arp=arp, eps=eps, maxiter=maxiter,
+        nsamp=nsamp, seed=seed, trace=trace, tolSolve=tolSolve, method=method)
+}
 
 ## Control parameters for CovSde
 setClass("CovControlSde", representation(nsamp="numeric",
@@ -215,9 +235,22 @@ setClass("CovControlSde", representation(nsamp="numeric",
                                           prob=0.99,
                                           seed=NULL,
                                           trace=FALSE,
-                                          tolSolve=10e-14),
+                                          tolSolve=1e-14),
                            contains="CovControl")
 
+## Control parameters for CovMMest
+setClass("CovControlMMest", representation(bdp="numeric",
+                                          eff="numeric",
+                                          maxiter="numeric",
+                                          sest="CovControlSest"),
+                           prototype = list(bdp=0.5,
+                                            eff=0.95,
+                                            maxiter=50,
+                                            sest=CovControlSest(),
+                                            trace=FALSE,
+                                            tolSolve=10e-14),
+                           contains="CovControl"
+)
 
 ###################### PCA ####################################
 setClass("Pca", representation(call = "language",

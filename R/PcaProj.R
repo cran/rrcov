@@ -84,8 +84,8 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
     center   <- out$center
     scale <- out$scale
     sdev     <- out$sdev
-    scores   <- scores[, 1:k]
-    loadings <- as.matrix(out$loadings)[, 1:k]
+    scores   <- as.matrix(scores[, 1:k])
+    loadings <- as.matrix(out$loadings[, 1:k])
     eigenvalues  <- (sdev^2)[1:k]
 
 ######################################################################

@@ -1,10 +1,10 @@
-CovSde <- function(x, 
-                   nsamp, 
+CovSde <- function(x,
+                   nsamp,
                    maxres,
                    tune=0.95,
                    eps=0.5,
                    prob=0.99,
-                   seed=NULL, 
+                   seed=NULL,
                    trace=FALSE,
                    control)
 {
@@ -14,7 +14,7 @@ CovSde <- function(x,
     ## if a control object was supplied, take the option parameters from it,
     ## but if single parameters were passed (not defaults) they will override the
     ## control object.
-    
+
     if(!missing(control)){
         defcontrol <- CovControlSde()       # default control
         ##  no default if(nsamp == defcontrol@nsamp)       nsamp <- control@nsamp
@@ -33,7 +33,7 @@ CovSde <- function(x,
         }
         assign(".Random.seed", seed, envir=.GlobalEnv)
     }
-    
+
     if(is.data.frame(x))
         x <- data.matrix(x)
     else if (!is.matrix(x))
@@ -54,7 +54,7 @@ CovSde <- function(x,
 
     if(missing(nsamp))
         nsamp <- ceiling(log(1 - prob)/log(1 - (1 - eps)^(p+1)))
-    else if(!is.numeric(nsamp)) 
+    else if(!is.numeric(nsamp))
         stop("If present, nsamp must be a nonnegative integer or")
 
     if(nsamp != 0)
@@ -85,7 +85,7 @@ CovSde <- function(x,
 ##    if(length(center) == 1 && !center)
 ##        center <- rep(0, p)
 ##
-##    if(length(center) > 1) 
+##    if(length(center) > 1)
 ##    {
 ##        if(length(center) != p)
 ##            stop("the dimension of ", sQuote("center"), " does not match the ", "dimension of ", sQuote("x"))
@@ -113,7 +113,7 @@ CovSde <- function(x,
 
 ## again skipping the predefined center
 ##
-##    dist <- mahalanobis(x, 
+##    dist <- mahalanobis(x,
 ##        center = if(length(center) > 1) rep(0, p) else sdlist$center,
 ##        cov = sdlist$cov)
 
@@ -122,6 +122,9 @@ CovSde <- function(x,
     mah <- mahalanobis(x, center=center, cov=cov)
 
     consistency.correction <- median(mah) / qchisq(.5, p)
+
+##    cat("\nconsistency correction factor: ", consistency.correction, "\n")
+
     cov <- cov * consistency.correction
     mah <- mah / consistency.correction
 
@@ -131,12 +134,12 @@ CovSde <- function(x,
 ##    sdlist[c("cov", "center", "dist")]
 
     nms <- dimn[[2]]
-    if(is.null(nms)) 
+    if(is.null(nms))
         nms <- paste("V", 1:p, sep = "")
     names(center) <- nms
     dimnames(cov) <- list(nms,nms)
 
-    ans <- new("CovSde", 
+    ans <- new("CovSde",
                call = xcall,
                iter=sdlist$nresper,                # actual subsamples performed
                crit=0,
@@ -147,5 +150,5 @@ CovSde <- function(x,
                wt=sdlist$weights,
                X = as.matrix(x),
                method="Stahel-Donoho estimator")
-    ans   
+    ans
 }

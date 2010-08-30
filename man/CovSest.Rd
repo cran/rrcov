@@ -11,8 +11,8 @@
 }
 \usage{
     CovSest(x, bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120,
-        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13,
-        method = c("sfast", "surreal", "bisquare", "rocke"), control,
+        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-14,
+        method = c("sfast", "surreal", "bisquare", "rocke", "suser"), control,
         t0, S0, initcontrol)
 }
 \arguments{
@@ -34,13 +34,18 @@
     in the computation of the S-estimate (bisquare and Rocke type).
     Default is \code{maxiter=120}.
   }
-  \item{nsamp}{the number of random subsets considered. Default is \code{nsamp = 500}.}
+  \item{nsamp}{the number of random subsets considered. The default is different for the different methods: 
+  (i) for \code{sfast} it is \code{nsamp = 20}, 
+  (ii) for \code{surreal} it is \code{nsamp = 600*p} and 
+  (iii) for \code{bisquare} or  \code{rocke} it is \code{nsamp = 500}.}
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}
   \item{tolSolve}{numeric tolerance to be used for inversion
     (\code{\link{solve}}) of the covariance matrix in
     \code{\link{mahalanobis}}.}
-  \item{method}{ Which algorithm to use: 'sfast'=FAST-S, 'surreal'=SURREAL, 'bisquare' or 'rocke' }
+  \item{method}{ Which algorithm to use: 'sfast'=C implementation of FAST-S, 'surreal'=SURREAL, 
+  'bisquare', 'rocke'. The method 'suser' currently calls the R implementation of FAST-S 
+  but in the future will allow the user to supply own \code{rho} function.}
   \item{control}{ a control object (S4) of class \code{\link{CovControlSest-class}}
     containing estimation options - same as these provided in the fucntion
     specification. If the control object is supplied, the parameters from it

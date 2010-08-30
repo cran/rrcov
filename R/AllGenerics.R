@@ -24,6 +24,9 @@ setGeneric("getCorr", function(obj) standardGeneric("getCorr"))
 setGeneric("getData", function(obj) standardGeneric("getData"))
 setGeneric("getDistance", function(obj) standardGeneric("getDistance"))
 setGeneric("getEvals", function(obj) standardGeneric("getEvals"))
+setGeneric("getDet", function(obj) standardGeneric("getDet"))
+setGeneric("getShape", function(obj) standardGeneric("getShape"))
+setGeneric("getFlag", function(obj, prob=0.975) standardGeneric("getFlag"))
 
 setGeneric("restimate", function(obj, x, ...) standardGeneric("restimate"))
 

@@ -8,14 +8,20 @@
 \alias{getData,Cov-method}
 \alias{getDistance,Cov-method}
 \alias{getEvals,Cov-method}
+\alias{getDet,Cov-method}
+\alias{getShape,Cov-method}
+\alias{getFlag,Cov-method}
 \alias{isClassic,method}
 \alias{isClassic,Cov-method}
+\alias{plot}
+\alias{plot,Cov,missing-method}
+\alias{print,Cov-method}
 \alias{show,Cov-method}
 \alias{summary,Cov-method}
 
-\title{Class "Cov" - a base class for estimates of multivariate
-    location and scatter }
-\description{  The class \code{Cov} represents an estimate of the
+\title{Class "Cov" -- a base class for estimates of multivariate
+    location and scatter}
+\description{The class \code{Cov} represents an estimate of the
     multivariate location and scatter of a data set. The objects of class \code{Cov}
     contain the classical estimates and serve as base for deriving other
     estimates, i.e. different types of robust estimates.
@@ -32,6 +38,8 @@
     \item{\code{center}:}{location}
     \item{\code{n.obs}:}{number of observations used for the computation of the estimates}
     \item{\code{mah}:}{mahalanobis distances}
+    \item{\code{det}:}{determinant}
+    \item{\code{flag}:}{flags (FALSE if suspected an outlier)}
     \item{\code{method}:}{a character string describing the method used to
         compute the estimate: "Classic"}
     \item{\code{singularity}:}{a list with singularity information for the
@@ -48,6 +56,11 @@
     \item{getDistance}{\code{signature(obj = "Cov")}: distances }
     \item{getEvals}{\code{signature(obj = "Cov")}: Computes and returns
         the eigenvalues of the covariance matrix }
+    \item{getDet}{\code{signature(obj = "Cov")}: Computes and returns 
+    the determinant of the covariance matrix (or 0 if the covariance matrix is singular) }
+    \item{getShape}{\code{signature(obj = "Cov")}: Computes and returns 
+    the shape matrix corresponding to the covariance matrix (i.e. the covariance matrix scaled to have determinant =1) }
+    \item{getFlag}{\code{signature(obj = "Cov")}: Flags observations as outliers if the corresponding mahalanobis distance is larger then \code{qchisq(prob, p)} where \code{prob} defaults to 0.975. }
     \item{isClassic}{\code{signature(obj = "Cov")}: returns TRUE by default. If necessary, the robust
             classes will override }
     \item{plot}{\code{signature(x = "Cov")}: plot the object }

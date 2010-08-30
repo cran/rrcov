@@ -120,6 +120,7 @@ setMethod("plot", signature(x="CovRobust", y="missing"),
                                 ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
                                 id.n,
+                                labels.id = rownames(x$X),
                                 tol = 1e-7, ...)
 {
     data <- getData(x)

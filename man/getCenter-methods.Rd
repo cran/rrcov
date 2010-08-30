@@ -13,6 +13,12 @@
 \alias{getDistance-methods} 
 \alias{getEvals}
 \alias{getEvals-methods} 
+\alias{getDet}
+\alias{getDet-methods} 
+\alias{getShape}
+\alias{getShape-methods} 
+\alias{getFlag}
+\alias{getFlag-methods} 
 \alias{getMeth}
 \alias{getMeth-methods} 
 \alias{isClassic}
@@ -24,12 +30,16 @@ getCorr(obj)
 getData(obj)
 getDistance(obj)
 getEvals(obj)
+getDet(obj)
+getShape(obj)
+getFlag(obj, prob=0.975)
 getMeth(obj)
 isClassic(obj)
 } 
 
 \arguments{
     \item{obj}{an object of class \code{"Cov"}  or of a class derived from \code{"Cov"}}
+    \item{prob}{optional argument for \code{getFlag} - probability, defaults to 0.975}
 }
 
 \description{
@@ -38,8 +48,8 @@ isClassic(obj)
 \section{Methods}{
 \describe{
 
-\item{obj = "Cov"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{isClassic}}
-\item{obj = "CovRobust"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{getMeth}, \code{isClassic}}
+\item{obj = "Cov"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{getDet}, \code{getShape}, \code{getFlag}, \code{isClassic}}
+\item{obj = "CovRobust"}{generic functions - see \code{getCenter}, \code{getCov}, \code{getCorr}, \code{getData}, \code{getDistance}, \code{getEvals}, \code{getDet}, \code{getShape}, \code{getFlag}, \code{getMeth}, \code{isClassic}}
 }}
 \keyword{methods}
 \keyword{multivariate}

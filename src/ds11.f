@@ -1,6 +1,6 @@
       subroutine rlds(n,np,nresamp,x,tune,wk,locat,cov,maxres,
      1     nresper,w,z,icent,iwork)
-c
+c 
 c
 c  INPUT:  'n' = number  observations (integer);
 c         'np' = number of indepent  variables (integer);
@@ -38,10 +38,16 @@ c
       nind=nr+n
       naux=nind+np
 
+C      CALL INTPR('ENTER rlds. nresamp=',-1,nresamp,1) 
+C      CALL INTPR('maxres=',-1,maxres,1) 
+C      CALL INTPR('icent=',-1,icent,1) 
+
       call rndstart()
       call rlweights(n,np,nresamp,x,tune,w,z,locat,wk(nr),iwork(nind),
      1             cov,wk(naux),maxres,nresper,icent)
+
       call rldonostah(n,np,x,w,locat,cov,icent)
+
       call rndend()
       return
       end 
@@ -53,17 +59,25 @@ c
       dimension x(n,np),z(n),a(np),b(n),w(n),ind(np),u(n)
       dimension wk(np,np)
 
+C      CALL INTPR('ENTER rlweights',-1,0,0) 
+
       k1=(np-1)+(n+1)/2
       k2=(np-1)+(n+2)/2
       z1=dble(k1)
       zn=dble(n)
       z3=(1+(z1/zn))/2
-      call rlquntbi(z3, cc)
-      do i=1,n
-         z(i)=-1.
-         enddo
+
+        call rlquntbi(z3, cc)
+
+        do i=1,n
+           z(i)=-1.
+        enddo
+      
       nresper=0
-      if (nresamp.eq.0) then
+      if(np.eq.1) then
+         call rlprocess(n,np,nresper,x,a,b,w,z,ind,wk,u,k1,
+     +        k2,cc,icent)
+      elseif (nresamp.eq.0) then
          call rlall(n,np,nresper,x,a,b,w,z,ind,wk,u,k1,k2,cc,icent)
       else
          k=0
@@ -74,9 +88,14 @@ c
      +           k2,cc,icent)
           enddo
       endif
+      
+C      CALL DBLEPR('zi',-1,z,n) 
+
       do i=1,n
          call rlrwetml(z(i)/c,w(i))
       enddo
+
+C      CALL DBLEPR('EXIT rlweights: wi=',-1,w,n) 
       return
       end
 
@@ -112,15 +131,35 @@ c
       dimension x(n,np),z(n),a(np),b(n),w(n),ind(np),u(n)
       dimension wk(np,np)
       data tola,tolr,big1,big2 /1.d-15, 1.d-8,1.d+2,1.d+15/
-      call rlvectora(n,np,x,a,ind,wk,icent,ierr)
+
+C      CALL INTPR('ENTER rlprocess',-1,0,0) 
+
+      ierr=0
+      if(np.gt.1) then
+         call rlvectora(n,np,x,a,ind,wk,icent,ierr)
+      endif
+
+C      CALL INTPR('IERR',-1,ierr,1) 
+C      CALL DBLEPR('A',-1,a,np) 
+
       if (ierr.eq.0) then
          nresper=nresper+1
-         do i=1,n
-            b(i)=0.
-            do j=1,np
-               b(i)=b(i)+x(i,j)*a(j)
+
+C       VT::19.07.2010         
+C       Handle the univariate case         
+         if(np.eq.1) then
+            do i=1,n
+               b(i)=x(i,1)
             enddo
-         enddo
+         else
+            do i=1,n
+               b(i)=0.
+               do j=1,np
+                  b(i)=b(i)+x(i,j)*a(j)
+               enddo
+            enddo
+         endif
+         
          bmed=0.0d0
          if(icent.ne.0) bmed=rlamed(b,n,u)
          do i=1,n
@@ -140,7 +179,7 @@ c
                    aux=abs(b(i)-bmed)/bmad
                    if (aux.gt.z(i)) z(i)=aux
                enddo
-               else
+            else
                do i=1,n
                   if(abs(b(i)-bmed).gt. big1*bmad) z(i)=big2
                enddo
@@ -149,7 +188,6 @@ c
       endif
       return
       end
-
 
       subroutine rlvectora(n,np,x,a,ind,wk,icent,ierr)
       implicit double precision (a-h,o-z)
@@ -393,6 +431,9 @@ C-----------------------------------------------------------------------
       ELSE
          P = COEF(1)+COEF(2)*AX**2+COEF(3)*AX**4+COEF(4)*AX**6
       ENDIF
+
+C      CALL DBLEPR('IN RLRWETML',-1,p,1) 
+      
       RETURN
       END
 C=======================================================================

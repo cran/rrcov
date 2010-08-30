@@ -1,5 +1,5 @@
 
-R version 2.11.0 Under development (unstable) (2010-03-16 r51294)
+R version 2.11.1 (2010-05-31)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
@@ -241,7 +241,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.0-01)
+Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
 > dodata()
 
 Call:  dodata() 

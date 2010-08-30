@@ -8,7 +8,7 @@
 }
 \usage{
     CovControlSest(bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120,
-        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-13, method= "sfast")
+        nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-14, method= "sfast")
 }
 \arguments{
   \item{bdp}{ a numeric value specifying the required

@@ -106,16 +106,18 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action 
     }
 
     ##out = princomp(y, scores = TRUE, cor = FALSE, na.action=na.action, subset = TRUE)
-    out = PcaClassic(y, scale=scale, signflip=signflip, ...)
+    ## no scaling - we have already scaled with MAD
+    out = PcaClassic(y, scale=FALSE, signflip=signflip, ...)
 
+    k <- out@k
     scores = data %*% out@loadings
     sdev = apply(scores, 2, "mad")
     names2 = names(sdev)
     orsdev = order(sdev)
     orsdev = rev(orsdev)
     sdev  = sdev[orsdev]
-    scores  = scores[,orsdev]
-    loadings = out@loadings[,orsdev]
+    scores  = scores[,orsdev, drop=FALSE]
+    loadings = out@loadings[,orsdev, drop=FALSE]
 
     names(sdev)=names2
     dimnames(scores)[[2]]=names2
@@ -134,7 +136,7 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action 
         ##dimnames(scores)[[1]] <- dimnames(data)[[1]]
         rownames(scores) <- rownames(data)
     }
-    dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
+    dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
     ## fix up call to refer to the generic, but leave arg name as <formula>
