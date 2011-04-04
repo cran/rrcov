@@ -17,6 +17,10 @@
         \item{\code{iter}, \code{crit}, \code{wt}:}{from the
             \code{"\linkS4class{CovRobust}"} class.
         }
+        \item{\code{cc}, \code{kp}}{tuning parameters used in Tukey biweight 
+        loss function, as determined by bdp. Can be computed by the internal function 
+        \code{rrcov:::.csolve.bw.S(bdp, p)}.
+        }
         \item{\code{call}, \code{cov}, \code{center},
             \code{n.obs}, \code{mah}, \code{method},
             \code{singularity}, \code{X}:}{from the \code{"\linkS4class{Cov}"} class.

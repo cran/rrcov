@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.14.0 Under development (unstable) (2011-04-01 r55233)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i386-pc-mingw32/i386 (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -19,7 +20,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.2-01)
 > dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 +     domcd <- function(x, xname, nrep=1){
 +         n <- dim(x)[1]
@@ -276,8 +277,8 @@ CovOgk(x = x)
 -> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
 
 Robust Estimate of Location: 
-     X1       X2       X3       X4       X5       X6       X7       X8  
-  1.030   35.795   33.102   26.152   25.130   25.058  123.056   14.385  
+    X1      X2      X3      X4      X5      X6      X7      X8  
+  1.03   35.80   33.10   26.15   25.13   25.06  123.06   14.39  
 
 Robust Estimate of Covariance: 
     X1         X2         X3         X4         X5         X6         X7       

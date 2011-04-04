@@ -66,6 +66,13 @@ CovSde <- function(x,
         stop(sQuote("maxres"), " is not a positive integer")
     tune <- sqrt(qchisq(tune, p))
 
+    if(n <= p + 1)
+        stop(if (n <= p) "n <= p -- you can't be serious!" else "n == p+1  is too small sample size")
+    if(n < 2 * p)
+    { ## p+1 < n < 2p
+        warning("n < 2 * p, i.e., possibly too small sample size")
+    }
+
     ## Prepare for calling the Fortran function
     icent <- 1
     locat <- double(p)

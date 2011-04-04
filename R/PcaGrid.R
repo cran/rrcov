@@ -55,10 +55,10 @@ PcaGrid.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
     ##
     ## verify and set the input parameters: k and kmax
     ##
-    ##
-    ## verify and set the input parameters: k and kmax
-    ##
-    kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
+    kmax <- max(min(floor(kmax), rankMM(x)),1)
+    if(trace)
+        cat("k=", k, ", kmax=", kmax, ".\n", sep="")
+
     if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
@@ -67,7 +67,8 @@ PcaGrid.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
     }
     if(k != 0)
         k <- min(k, ncol(data))
-    else {
+    else
+    {
         k <- min(kmax, ncol(data))
         if(trace)
             cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")

@@ -1,6 +1,6 @@
 ##  control can be a character specifying the name of the estimate, one of:
 ##  auto, mcd, ogk, m, mve, sfast, surreal, bisquare, rocke
-##  If no control object is given or 'auto' is selected, the choise of the
+##  If no control object is given or 'auto' is selected, the choice of the
 ##  estimator will depend on the size of the data:
 ##  - Stahel-Donoho: n < 1000 and p < 10 or n < 5000 and p < 5
 ##  - MCD: n < 50000 and p < 20
@@ -31,7 +31,7 @@ CovRobust <- function(x, control, na.action = na.fail)
         mm <- casefold(method)
 
     ## either no control specified or the estimator is given by a character name -
-    ##  create the neccessary control object.
+    ##  create the necessary control object.
     if(!is.null(mm)){
         control <- switch(mm,
             auto = {

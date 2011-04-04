@@ -9,9 +9,9 @@
     Holds the results of an approximation of the PP-estimators for PCA using the grid search algorithm in the plane.
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("PcaProj", ...)} but the
-    usual way of creating \code{PcaProj} objects is a call to the function
-    \code{PcaProj()} which serves as a constructor.
+Objects can be created by calls of the form \code{new("PcaGrid", ...)} but the
+    usual way of creating \code{PcaGrid} objects is a call to the function
+    \code{PcaGrid()} which serves as a constructor.
 }
 \section{Slots}{
     \describe{

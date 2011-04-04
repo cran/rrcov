@@ -7,7 +7,7 @@
     Computes MM-Estimates of multivariate location and scatter starting from an initial S-estimate
 }
 \usage{
-    CovMMest(x, bdp = 0.5, eff = 0.95, maxiter = 50, 
+    CovMMest(x, bdp = 0.5, eff = 0.95, eff.shape=TRUE, maxiter = 50, 
         trace = FALSE, tolSolve = 1e-7, control)
 }
 \arguments{
@@ -19,6 +19,10 @@
     \item{eff}{a numeric value specifying the required efficiency
         for the MM estimates.  Default is \code{eff=0.95}.
     }
+    \item{eff.shape}{logical; if TRUE, eff is with regard to shape-efficiency, otherwise location-efficiency. Default is \code{eff.shape=FALSE}.
+    }
+
+
   \item{maxiter}{maximum number of iterations allowed
     in the computation of the S-estimate (bisquare and Rocke type).
     Default is \code{maxiter=50}.

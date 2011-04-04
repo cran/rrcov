@@ -19,39 +19,6 @@ CovSest <- function(x,
                     initcontrol
                 )
 {
-    ## Compute the constant kp (used in Tbsc)
-    Tbsb <- function(c, p)
-    {
-        ksiint <- function(c, s, p)
-        {
-            (2^s) * gamma(s + p/2) * pgamma(c^2/2, s + p/2)/gamma(p/2)
-        }
-
-        y1 = ksiint(c,1,p)*3/c - ksiint(c,2,p)*3/(c^3) + ksiint(c,3,p)/(c^5)
-        y2 = c*(1-pchisq(c^2,p))
-        return(y1 + y2)
-    }
-
-    ## Compute the tunning constant c1 for the  S-estimator with
-    ##  Tukey's biweight function given the breakdown point (bdp)
-    ##  and the dimension p
-    Tbsc <- function(bdp, p)
-    {
-        eps = 1e-8
-        maxit = 1e3
-        cnew <- cold <- sqrt(qchisq(1 - bdp, p))
-
-        ## iterate until the change is less than the tollerance or
-        ##  max number of iterations reached
-        for(iter in 1:maxit)
-        {
-            cnew <- Tbsb(cold, p)/bdp
-            if(abs(cold - cnew) <= eps)
-                break
-            cold <- cnew
-        }
-        return(cnew)
-    }
 
     ## Analize and validate the input parameters ...
     ## if a control object was supplied, take the option parameters from it,
@@ -100,22 +67,29 @@ CovSest <- function(x,
     n <- dx[1]
     p <- dx[2]
 
+    if(n <= p + 1)
+        stop(if (n <= p) "n <= p -- you can't be serious!" else "n == p+1  is too small sample size")
+    if(n < 2 * p)
+    { ## p+1 < n < 2p
+        warning("n < 2 * p, i.e., possibly too small sample size")
+    }
+
     if(method == "surreal" && nsamp == 500)     # default
         nsamp = 600*p
 
-    if(method == "sfast" && nsamp == 500)       # default. For the 'fast' method set the default number of samples to 20
-        nsamp = 20
-
     ## compute the constants c1 and kp
-    c1 = Tbsc(bdp, p)
-    kp = (c1/6) * Tbsb(c1, p)
+    ## c1 = Tbsc(bdp, p)
+    ## kp = (c1/6) * Tbsb(c1, p)
+    cobj <- .csolve.bw.S(bdp, p)
+    cc <- cobj$cc
+    kp <- cobj$kp
 
     if(trace)
-        cat("\nFAST-S...: bdp, p, c1, kp=", bdp, p, c1, kp, "\n")
+        cat("\nFAST-S...: bdp, p, cc, kp=", bdp, p, cc, kp, "\n")
 
-    mm <- if(method == "sfast")         ..CSloc(x, nsamp=nsamp, kp=kp, cc=c1, trace=trace)
-          else if(method == "suser")    ..fastSloc(x, nsamp=nsamp, kp=kp, cc=c1, trace=trace)
-          else if(method == "surreal")  ..covSURREAL(x, nsamp=nsamp, kp=kp, c1=c1, trace=trace, tol.inv=tolSolve)
+    mm <- if(method == "sfast")         ..CSloc(x, nsamp=nsamp, kp=kp, cc=cc, trace=trace)
+          else if(method == "suser")    ..fastSloc(x, nsamp=nsamp, kp=kp, cc=cc, trace=trace)
+          else if(method == "surreal")  ..covSURREAL(x, nsamp=nsamp, kp=kp, c1=cc, trace=trace, tol.inv=tolSolve)
           else if(method == "bisquare") ..covSBic(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol, trace=trace)
           else                          ..covSRocke(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol, trace=trace)
 
@@ -126,9 +100,57 @@ CovSest <- function(x,
                cov=mm$cov,
                center=mm$center,
                n.obs=n,
+               cc=mm$cc,
+               kp=mm$kp,
                X = as.matrix(x),
                method=mm$method)
     ans
+}
+
+
+##
+## Compute the constants kp and c1 for the Tukey Biweight rho-function for S
+##
+.csolve.bw.S <- function(bdp, p)
+{
+    ## Compute the constant kp (used in Tbsc)
+    Tbsb <- function(c, p)
+    {
+        ksiint <- function(c, s, p)
+        {
+            (2^s) * gamma(s + p/2) * pgamma(c^2/2, s + p/2)/gamma(p/2)
+        }
+
+        y1 = ksiint(c,1,p)*3/c - ksiint(c,2,p)*3/(c^3) + ksiint(c,3,p)/(c^5)
+        y2 = c*(1-pchisq(c^2,p))
+        return(y1 + y2)
+    }
+
+    ## Compute the tunning constant c1 for the  S-estimator with
+    ##  Tukey's biweight function given the breakdown point (bdp)
+    ##  and the dimension p
+    Tbsc <- function(bdp, p)
+    {
+        eps = 1e-8
+        maxit = 1e3
+        cnew <- cold <- sqrt(qchisq(1 - bdp, p))
+
+        ## iterate until the change is less than the tollerance or
+        ##  max number of iterations reached
+        for(iter in 1:maxit)
+        {
+            cnew <- Tbsb(cold, p)/bdp
+            if(abs(cold - cnew) <= eps)
+                break
+            cold <- cnew
+        }
+        return(cnew)
+    }
+
+    cc = Tbsc(bdp, p)
+    kp = (cc/6) * Tbsb(cc, p)
+
+    return(list(cc=cc, kp=kp))
 }
 
 ##
@@ -151,7 +173,7 @@ CovSest <- function(x,
 ##      cov     - robust estimate of scatter (matrix: p,p)
 ##      crit    - value of the objective function (number)
 ##
-..CSloc <- function(x, nsamp=20, kstep=2, best.r=5, kp, cc, trace=FALSE)
+..CSloc <- function(x, nsamp=500, kstep=2, best.r=5, kp, cc, trace=FALSE)
 {
     dimn <- dimnames(x)
     if(!is.matrix(x))
@@ -185,7 +207,7 @@ CovSest <- function(x,
     cov <- matrix(b$cov, nrow=p)
 
     if(scale < 0)
-	   stop("C function sest() exited prematurely")
+	   cat("\nC function sest() exited prematurely!\n")
 
     ## names(b)[names(b) == "k.max"] <- "k.iter" # maximal #{refinement iter.}
     ## FIXME: get 'res'iduals from C
@@ -200,6 +222,8 @@ CovSest <- function(x,
                cov=cov,
                crit=scale,
                iter=nsamp,
+               kp=kp,
+               cc=cc,
                method="S-estimates: S-FAST"))
 }
 
@@ -401,8 +425,16 @@ CovSest <- function(x,
         ##      speeding down!
         ##
         singular <- TRUE
+        iii <- 0
         while(singular)
         {
+            iii <- iii + 1
+            if(iii > 10000)
+            {
+                cat("\nToo many singular resamples: ", iii, "\n")
+                iii <- 0
+            }
+
             indices <- sample(n, p+1)
             xs <- x[indices,]
             mu <- colMeans(xs)
@@ -480,6 +512,8 @@ CovSest <- function(x,
                cov=super.best.sigma,
                crit=super.best.scale,
                iter=nsamp,
+               kp=kp,
+               cc=cc,
                method="S-estimates: S-FAST"))
 }
 
@@ -499,6 +533,8 @@ CovSest <- function(x,
                        tol.inv)
 {
 
+## --- now suspended ---
+##
 ## Compute the tunning constant c1 for the  S-estimator with
 ##  Tukey's biweight function given the breakdown point (bdp)
 ##  and the dimension p
@@ -587,12 +623,11 @@ psibiweight <- function(xx, c1)
 
     ## TEMPORARY for testing
     ##  ignore kp and c1
-    v1 <- vcTukey(0.5, m)
-    if(trace)
-        cat("\nSURREAL..: bdp, p, c1, kp=", 0.5, m, v1$c1, v1$kp, "\n")
-
-    c1 <- v1$c1
-    kp <- v1$kp
+    ##v1 <- vcTukey(0.5, m)
+    ##if(trace)
+    ##    cat("\nSURREAL..: bdp, p, c1, kp=", 0.5, m, v1$c1, v1$kp, "\n")
+    ##c1 <- v1$c1
+    ##kp <- v1$kp
 
     ma <- m+1
     mb <- 1/m
@@ -676,6 +711,7 @@ psibiweight <- function(xx, c1)
                  cov = covtil,
                  crit = Stil,
                  iter = nsamp,
+                 kp=kp, cc=c1,
                  method="S-estimates: SURREAL")
             )
 }
@@ -745,6 +781,8 @@ psibiweight <- function(xx, c1)
     cov <- out$cov
     mah <- out$mah
     iter <- out$iter
+    kp <- out$kp
+    cc <- out$cc
 
     mah <- mah^2
     med0 <- median(mah)
@@ -768,6 +806,8 @@ psibiweight <- function(xx, c1)
                  crit=crit,
                  method=method,
                  iter=iter,
+                 kp=kp,
+                 cc=cc,
                  mah=mah)
            )
 }
@@ -848,6 +888,8 @@ psibiweight <- function(xx, c1)
                  crit=crit,
                  method=method,
                  iter=iter,
+                 kp=0,
+                 cc=0,
                  mah=mah)
            )
 }
@@ -975,7 +1017,7 @@ psibiweight <- function(xx, c1)
         }
     }
 
-    list(center=center, cov=cov, mah=mah, iter=it)
+    list(center=center, cov=cov, mah=mah, iter=it, kp=b, cc=cc)
 }
 
 

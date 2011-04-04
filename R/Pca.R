@@ -134,7 +134,7 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
 ##  res  - the Pca object
 ##
 ##  - cutoff for score distances: sqrt(qchisq(0.975, k)
-.distances <- function(data, r, res) {
+.distances <- function(data, r, res, crit=0.975) {
 
     ## compute the score distances and the corresponding cutoff value
     n <- nrow(data)
@@ -150,7 +150,7 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
         warning(paste("Too small eigenvalue(s): ", res@eigenvalues[ncol(res@scores)], "- the diagonal matrix of the eigenvalues cannot be inverted!"))
 
     res@sd <- sqrt(mahalanobis(as.matrix(res@scores[,1:nk]), rep(0, nk), diag(res@eigenvalues[1:nk], ncol=nk)))
-    res@cutoff.sd <- sqrt(qchisq(0.975, res@k))
+    res@cutoff.sd <- sqrt(qchisq(crit, res@k))
 
     ## Compute the orthogonal distances and the corresponding cutoff value
     ##  For each point this is the norm of the difference between the
@@ -163,11 +163,8 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     ## The orthogonal distances make sence only if the number of PCs is less than
     ##  the rank of the data matrix - otherwise set it to 0
     res@cutoff.od <- 0
-    # quan <- if(!is.null(res@quan)) res@quan else n
-    quan <- getQuan(res)
     if(res@k != r) {
-        ms <- unimcd(res@od^(2/3), quan=quan)
-        res@cutoff.od <- sqrt(qnorm(0.975, ms$tmcd, ms$smcd)^3)
+        res@cutoff.od <- .crit.od(res@od, crit=crit, classic=inherits(res,"PcaClassic"))
     }
 
     ## flag the observations with 1/0 if the distances are less or equal the
@@ -177,6 +174,27 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
         res@flag <- (res@flag & res@od <= res@cutoff.od)
 
     return(res)
+}
+
+.crit.od <- function(od, crit=0.975, umcd=FALSE, quan, classic=FALSE)
+{
+    od <- od^(2/3)
+    if(classic)
+    {
+        t <- mean(od)
+        s <- sd(od)
+    }else if(umcd)
+    {
+        ms <- rrcov:::unimcd(od, quan=quan)
+        t <- ms$tmcd
+        s <- ms$smcd
+    }else
+    {
+        t <- median(od)
+        s <- mad(od)
+    }
+    cv <- (t + s * qnorm(crit))^(3/2)
+    cv
 }
 
 ## VT::15.06.2010 - Aded scaling and flipping of the loadings
@@ -258,27 +276,53 @@ kernelEVD <- function(x, scale=FALSE, signflip=TRUE){
     }
 }
 
+## Score plot of the Pca object 'obj' - scatterplot of ith against jth score
+##  with superimposed tollerance (0.975) ellipse
+pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
+{
+    if(missing(main))
+    {
+        main <- if(inherits(obj,"PcaClassic")) "Classical PCA" else "Robust PCA"
+    }
+
+    x <- cbind(getScores(obj)[,i], getScores(obj)[,j])
+    ev <- c(getEigenvalues(obj)[i], getEigenvalues(obj)[j])
+    cpc <- list(center=c(0,0), cov=diag(ev), n.obs=obj@n.obs)
+    rrcov:::.myellipse(x, xcov=cpc,
+        xlab=paste("PC",i,sep=""),
+        ylab=paste("PC",j, sep=""),
+        main=main,
+        id.n=id.n, ...)
+    abline(v=0)
+    abline(h=0)
+}
+
 ## Distance-distance plot (or diagnostic plot, or outlier map)
 ## Plots score distances against orthogonal distances
-pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, title, ...) {
+pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, main, xlim, ylim, ...) {
 
-    if(missing(title))
+    if(missing(main))
     {
-        title <- if(inherits(obj,"PcaClassic")) "Classical PCA" else "Robust PCA"
+        main <- if(inherits(obj,"PcaClassic")) "Classical PCA" else "Robust PCA"
     }
 
 
     if(all(obj@od <= 1.E-06))
         warning("PCA diagnostic plot is not defined")
-    else{
-        xmax <- max(max(obj@sd), obj@cutoff.sd)
-        ymax <- max(max(obj@od), obj@cutoff.od)
+    else
+    {
+        if(missing(xlim))
+            xlim <- c(0, max(max(obj@sd), obj@cutoff.sd))
+        if(missing(ylim))
+            ylim <- c(0, max(max(obj@od), obj@cutoff.od))
 
-        plot(obj@sd, obj@od, xlab="Score distance", ylab="Orthogonal distance", xlim=c(0,xmax), ylim=c(0,ymax), type="p", ...)
+        plot(obj@sd, obj@od, xlab="Score distance",
+                             ylab="Orthogonal distance",
+                             main=main,
+                             xlim=xlim, ylim=ylim, type="p", ...)
         abline(v=obj@cutoff.sd)
         abline(h=obj@cutoff.od)
         label.dd(obj@sd, obj@od, id.n.sd, id.n.od)
-        title(title)
     }
     invisible(obj)
 }

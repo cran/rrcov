@@ -58,7 +58,7 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), 
     ##
     ## verify and set the input parameters: k and kmax
     ##
-    kmax <- max(min(floor(kmax), floor(n/2), rankMM(x)),1)
+    kmax <- max(min(floor(kmax), rankMM(x)),1)
     if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {

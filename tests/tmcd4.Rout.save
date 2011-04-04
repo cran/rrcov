@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.14.0 Under development (unstable) (2011-04-01 r55233)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i386-pc-mingw32/i386 (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -17,14 +18,14 @@ Type 'q()' to quit R.
 
 > ## Test the exact fit property of CovMcd
 > doexact <- function(){
-+     exact <-function(){    
-+         n1 <- 45
++     exact <-function(seed=1234){
++     	
++ 	set.seed(seed)
++ 
++ 	n1 <- 45
 +         p <- 2
 +         x1 <- matrix(rnorm(p*n1),nrow=n1, ncol=p)
 +         x1[,p] <- x1[,p] + 3
-+ ##       library(MASS)
-+ ##       x1 <- mvrnorm(n=n1, mu=c(0,3), Sigma=diag(1,nrow=p))
-+         
 +         n2 <- 55
 +         m1 <- 0
 +         m2 <- 3
@@ -255,7 +256,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.2-01)
 > dodata()
 
 Call:  dodata() 
@@ -514,7 +515,7 @@ V5   -509   -318   3196    827    652
 The covariance matrix has become singular during
 the iterations of the MCD algorithm.
 There are 55 observations (in the entire dataset of 100 obs.) lying on
-the line with equation -4.0161e-16 (x_i1-m_1) + -1 (x_i2-m_2) = 0 with
+the line with equation 5.2182e-16 (x_i1-m_1) + -1 (x_i2-m_2) = 0 with
 (m_1,m_2) the mean of these observations.
 
 Call:
@@ -523,15 +524,15 @@ CovMcd(x = exact())
 The covariance matrix has become singular during
 the iterations of the MCD algorithm.
 There are 55 observations (in the entire dataset of 100 obs.) lying on
-the line with equation -4.0161e-16 (x_i1-m_1) + -1 (x_i2-m_2) = 0 with
+the line with equation 5.2182e-16 (x_i1-m_1) + -1 (x_i2-m_2) = 0 with
 (m_1,m_2) the mean of these observations.
 
 Robust Estimate of Location: 
     X1      X2  
--0.351   3.000  
+0.0621  3.0000  
 
 Robust Estimate of Covariance: 
-    X1         X2       
-X1   4.19e+00  -7.11e-16
-X2  -7.11e-16   0.00e+00
+    X1        X2      
+X1  2.86e+00  3.91e-16
+X2  3.91e-16  0.00e+00
 > 

@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.14.0 Under development (unstable) (2011-04-01 r55233)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i386-pc-mingw32/i386 (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -19,7 +20,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.2-01)
 > library(MASS)
 > dodata <- function(method) {
 + 
@@ -110,9 +111,9 @@ Prior Probabilities of Groups:
 0.66 0.34 
 
 Group means:
-     npreg    glu     bp   skin    bmi     ped    age
-No  1.8602 107.69 67.344 25.290 30.642 0.40777 24.667
-Yes 5.3167 145.85 74.283 31.800 34.095 0.49533 37.883
+     npreg    glu     bp  skin    bmi     ped    age
+No  1.8602 107.69 67.344 25.29 30.642 0.40777 24.667
+Yes 5.3167 145.85 74.283 31.80 34.095 0.49533 37.883
 
 Within-groups Covariance Matrix:
           npreg       glu         bp      skin       bmi       ped      age
@@ -327,14 +328,14 @@ B 0.39816 25.210 13.889 11.913 29.615 34.242 12.400
 O 0.61720 23.584 16.846 13.093 33.570 37.392 15.209
 
 Within-groups Covariance Matrix:
-          sexM     index       FL       RW       CL        CW       BD
-sexM   0.30056   0.24657  0.14443 -0.37580  0.55312   0.47274  0.22768
-index  0.24657 223.46867 45.98429 30.97225 97.35690 109.35707 44.50801
-FL     0.14443  45.98429 10.28740  6.79398 21.73138  24.46754  9.83847
-RW    -0.37580  30.97225  6.79398  5.57151 14.11929  16.17354  6.41085
-CL     0.55312  97.35690 21.73138 14.11929 46.79457  52.49499 21.15166
-CW     0.47274 109.35707 24.46754 16.17354 52.49499  59.17038 23.73976
-BD     0.22768  44.50801  9.83847  6.41085 21.15166  23.73976  9.68736
+          sexM     index       FL      RW       CL        CW       BD
+sexM   0.30056   0.24657  0.14443 -0.3758  0.55312   0.47274  0.22768
+index  0.24657 223.46867 45.98429 30.9723 97.35690 109.35707 44.50801
+FL     0.14443  45.98429 10.28740  6.7940 21.73138  24.46754  9.83847
+RW    -0.37580  30.97225  6.79398  5.5715 14.11929  16.17354  6.41085
+CL     0.55312  97.35690 21.73138 14.1193 46.79457  52.49499 21.15166
+CW     0.47274 109.35707 24.46754 16.1735 52.49499  59.17038 23.73976
+BD     0.22768  44.50801  9.83847  6.4108 21.15166  23.73976  9.68736
 
 Linear Coeficients:
     sexM   index      FL     RW     CL       CW       BD
@@ -465,7 +466,7 @@ virginica        12.716     0.19905      24.2692      8.1277
 
 Constants:
     setosa versicolor  virginica 
-    -81.12     -84.13    -116.89 
+   -81.121    -84.131   -116.889 
 Call:
 Linda(sp ~ ., data = crabs, method = method)
 
@@ -687,9 +688,9 @@ Cont 82.039 80.835
 FT   85.242 94.750
 
 Within-groups Covariance Matrix:
-        Prewt Postwt
-Prewt  19.659  8.389
-Postwt  8.389 22.880
+         Prewt  Postwt
+Prewt  19.6589  8.3891
+Postwt  8.3891 22.8805
 
 Linear Coeficients:
       Prewt Postwt
@@ -778,14 +779,14 @@ B 0.51685 23.551 13.697 11.560 29.189 33.702 12.196
 O 0.51648 24.407 16.885 13.318 33.696 37.575 15.279
 
 Within-groups Covariance Matrix:
-          sexM     index       FL       RW       CL       CW       BD
-sexM   0.25253   0.39081  0.13920 -0.30486  0.49788  0.43755  0.20948
-index  0.39081 192.51673 40.07997 26.59793 85.03322 95.23666 38.63929
-FL     0.13920  40.07997  9.03341  5.94687 19.14809 21.51632  8.62646
-RW    -0.30486  26.59793  5.94687  4.84239 12.42504 14.19134  5.59600
-CL     0.49788  85.03322 19.14809 12.42504 41.35656 46.31923 18.58482
-CW     0.43755  95.23666 21.51632 14.19134 46.31923 52.11400 20.82136
-BD     0.20948  38.63929  8.62646  5.59600 18.58482 20.82136  8.45780
+          sexM     index      FL       RW       CL       CW       BD
+sexM   0.25253   0.39081  0.1392 -0.30486  0.49788  0.43755  0.20948
+index  0.39081 192.51673 40.0800 26.59793 85.03322 95.23666 38.63929
+FL     0.13920  40.07997  9.0334  5.94687 19.14809 21.51632  8.62646
+RW    -0.30486  26.59793  5.9469  4.84239 12.42504 14.19134  5.59600
+CL     0.49788  85.03322 19.1481 12.42504 41.35656 46.31923 18.58482
+CW     0.43755  95.23666 21.5163 14.19134 46.31923 52.11400 20.82136
+BD     0.20948  38.63929  8.6265  5.59600 18.58482 20.82136  8.45780
 
 Linear Coeficients:
     sexM   index      FL      RW     CL       CW       BD

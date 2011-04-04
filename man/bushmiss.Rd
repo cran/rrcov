@@ -45,18 +45,27 @@ covMcd(bf)
 
 \dontrun{
 ##  This is the code with which the missing data were created:
-##  Creates a data set with missing values (for testing purposes) 
-##  from a complete data set 'x'. The probability of
-##  each item being missing is 'pr'. 
 ##
-getmiss <- function(x, pr=0.1){
-    library(Rlab)
+##  Creates a data set with missing values (for testing purposes)
+##  from a complete data set 'x'. The probability of
+##  each item being missing is 'pr' (Bernoulli trials).
+##
+getmiss <- function(x, pr=0.1)
+{
     n <- nrow(x)
     p <- ncol(x)
-    bt <- rbern(n*p, pr)
-    btmat <- matrix(bt, nrow=n)
-    btmiss <- ifelse(btmat==1, NA, 0)
-    x+btmiss
+    done <- FALSE
+    iter <- 0
+    while(iter <= 50){
+        bt <- rbinom(n*p, 1, pr)
+        btmat <- matrix(bt, nrow=n)
+        btmiss <- ifelse(btmat==1, NA, 0)
+        y <- x+btmiss
+        if(length(which(rowSums(nanmap(y)) == p)) == 0)
+            return (y)
+        iter <- iter + 1
+    }
+    y
 }
 }
 
