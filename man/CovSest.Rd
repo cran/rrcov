@@ -56,14 +56,18 @@
   \item{initcontrol}{ optional control object to be used for computing the initial HBDP estimates }
 }
 \details{
-    Computes biweight multivariate S-estimator of location and scatter. The computation will be
+    Computes multivariate S-estimator of location and scatter. The computation will be
     performed by one of the following algorithms:
     \describe{
         \item{FAST-S}{An algorithm similar to the one proposed by Salibian-Barrera and Yohai (2006) for the case of regression}
         \item{SURREAL}{Ruppert's SURREAL algorithm when \code{method} is set to 'surreal'}
         \item{BISQUARE}{Bisquare S-Estimate with \code{method} set to 'bisquare'}
-        \item{ROCKE}{Rocke type S-Estimate with \code{method} set to 'rocke'}.
+        \item{ROCKE}{Rocke type S-Estimate with \code{method} set to 'rocke'}
     }
+    Except for the last algorithm, \emph{ROCKE}, all other use Tukey biweight loss function. 
+    The tuning parameters used in the loss function (as determined by bdp) are 
+    returned in the slots \code{cc} and \code{kp} of the result object. They can be computed 
+    by the internal function \code{rrcov:::.csolve.bw.S(bdp, p)}.
 }
 \value{
   An S4 object of class \code{\link{CovSest-class}} which is a subclass of the

@@ -101,7 +101,7 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
-    ## fix up call to refer to the generic, but leave arg name as `formula'
+    ## fix up call to refer to the generic, but leave arg name as 'formula'
     cl[[1]] <- as.name("PcaClassic")
     res <- new("PcaClassic", call=cl,
                             loadings=loadings,

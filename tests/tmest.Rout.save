@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.14.0 Under development (unstable) (2011-04-01 r55233)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: i386-pc-mingw32/i386 (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -19,7 +20,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.1-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.2-01)
 > library(MASS)
 > 
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
@@ -189,7 +190,7 @@ Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  -6 
+Log(Det.):  -5.99 
 Robust Estimate of Location:
    log.Te  log.light  
      4.42       4.95  
@@ -326,7 +327,7 @@ Call:
 covMest(x = x)
 -> Method:  M-Estimator. 
 
-Log(Det.):  -25.0 
+Log(Det.):  -25 
 Robust Estimate of Location:
     X1      X2      X3      X4      X5      X6      X7      X8  
   1.03   35.88   33.04   26.11   25.09   25.02  123.12   14.39  

@@ -1,53 +1,13 @@
 CovMMest <- function(x,
                     bdp=0.5,
                     eff=0.95,
+                    eff.shape=TRUE,
                     maxiter=50,
                     trace=FALSE,
                     tolSolve=1e-7,
                     control
                 )
 {
-
-    ##
-    ## Compute the constant for the second Tukey Biweight rho-function for MM
-    ##  with for fixed shape-efficiency
-    ##
-    ## Adapted from Gert Willems:
-    ##      http://users.ugent.be/~svaelst/software/MMPCAboot.html
-    ##
-    csolve.bw.MM <- function(p, eff)
-    {
-        ## (taken from Claudia Becker's Sstart0 program)
-        chi.int <- function(p, a, c1)
-        {
-            ## partial expectation d in (0,c1) of d^a under chi-squared p
-            return(exp(lgamma((p + a) /2) - lgamma(p/2)) * 2^{a/2} * pchisq(c1^2, p + a))
-        }
-
-        sigma1.bw <- function(p, c1)
-        {
-            gamma1.1 <- chi.int(p,2,c1) - 6*chi.int(p,4,c1)/(c1^2) + 5*chi.int(p,6,c1)/(c1^4)
-            gamma1.2 <- chi.int(p,2,c1) - 2*chi.int(p,4,c1)/(c1^2) + chi.int(p,6,c1)/(c1^4)
-            gamma1 <- (gamma1.1 + (p+1)*gamma1.2) / (p+2)
-            sigma1.0 <- chi.int(p,4,c1) - 4*chi.int(p,6,c1)/(c1^2) + 6*chi.int(p,8,c1)/(c1^4) - 4*chi.int(p,10,c1)/(c1^6) + chi.int(p,12,c1)/(c1^8)
-            return(sigma1.0 / (gamma1^2) * p/(p+2))
-        }
-
-        maxit <- 1000
-        eps <- 1e-8
-
-        ## ctest <- csolve.bw.asymp(p,.5)
-        cold <- ctest <- -.4024 + 2.2539 * sqrt(p) # very precise approximation for c corresponding to 50% bdp
-        for(iter in 1:maxit)
-        {
-            ctest <- ctest * eff * sigma1.bw(p, ctest)
-            if(abs(cold-ctest) <= eps)
-                break
-            cold <- ctest
-        }
-        return(ctest)
-    }
-
     ## NOTES:
     ##  - in the functions rho, psi, and scaledpsi=psi/u (i.e. the weight function)
     ##      is used |x| <= c1
@@ -171,13 +131,13 @@ CovMMest <- function(x,
     p <- dx[2]
 
     ## compute the constant c1 for the rho function of the MM-estimates
-    c1 <- csolve.bw.MM(p, eff)
+    c1 <- .csolve.bw.MM(p, eff, eff.shape=eff.shape)
 
     if(trace)
-        cat("\nMM-EST...: bdp, eff, p, c1=", bdp, eff, p, c1, "\n")
+        cat("\nMM-EST...: bdp, eff, eff.shape, p, c1=", bdp, eff, eff.shape, p, c1, "\n")
 
     ## Compute the initial S-estimate
-    ss <- CovSest(x, control=scontrol)
+    ss <- CovSest(x, control=scontrol, trace=trace)
     if(trace)
     {
         cat("\nInitial S-estimates. Scale=", ss@crit, "\n")
@@ -235,9 +195,61 @@ CovMMest <- function(x,
                crit=ss@crit,
                cov=cova,
                center=center,
+               c1=c1,
                n.obs=n,
                X = as.matrix(x),
                sest=ss,
                method="MM-estimates")
     ans
+}
+
+##
+## Compute the constant for the second Tukey Biweight rho-function for MM
+##  with for fixed shape-efficiency
+##
+## Adapted from Gert Willems:
+##      http://users.ugent.be/~svaelst/software/MMPCAboot.html
+##
+.csolve.bw.MM <- function(p, eff, eff.shape=TRUE)
+{
+    ## (taken from Claudia Becker's Sstart0 program)
+    chi.int <- function(p, a, c1)
+    {
+        ## partial expectation d in (0,c1) of d^a under chi-squared p
+        return(exp(lgamma((p + a) /2) - lgamma(p/2)) * 2^{a/2} * pchisq(c1^2, p + a))
+    }
+
+    loceff.bw <- function(p, c1)
+    {
+        # called by csolve.bw.MM(); computes location efficiency corresponding to c1
+        alpha1 <- 1/p * (chi.int(p,2,c1) - 4*chi.int(p,4,c1)/(c1^2) + 6*chi.int(p,6,c1)/(c1^4) - 4*chi.int(p,8,c1)/(c1^6) + chi.int(p,10,c1)/(c1^8))
+        beta1.1 <- chi.int(p,0,c1) - 2*chi.int(p,2,c1)/(c1^2) + chi.int(p,4,c1)/(c1^4)
+        beta1.2 <- chi.int(p,0,c1) - 6*chi.int(p,2,c1)/(c1^2) + 5*chi.int(p,4,c1)/(c1^4)
+        beta1 <- (1-1/p)*beta1.1 + 1/p*beta1.2
+        return( beta1^2 / alpha1 )
+    }
+
+
+    sigma1.bw <- function(p, c1)
+    {
+        gamma1.1 <- chi.int(p,2,c1) - 6*chi.int(p,4,c1)/(c1^2) + 5*chi.int(p,6,c1)/(c1^4)
+        gamma1.2 <- chi.int(p,2,c1) - 2*chi.int(p,4,c1)/(c1^2) + chi.int(p,6,c1)/(c1^4)
+        gamma1 <- (gamma1.1 + (p+1)*gamma1.2) / (p+2)
+        sigma1.0 <- chi.int(p,4,c1) - 4*chi.int(p,6,c1)/(c1^2) + 6*chi.int(p,8,c1)/(c1^4) - 4*chi.int(p,10,c1)/(c1^6) + chi.int(p,12,c1)/(c1^8)
+        return(sigma1.0 / (gamma1^2) * p/(p+2))
+    }
+
+    maxit <- 1000
+    eps <- 1e-8
+
+    ## ctest <- csolve.bw.asymp(p,.5)
+    cold <- ctest <- -.4024 + 2.2539 * sqrt(p) # very precise approximation for c corresponding to 50% bdp
+    for(iter in 1:maxit)
+    {
+        ctest <- if(eff.shape) ctest * eff * sigma1.bw(p, ctest) else ctest * eff / loceff.bw(p, ctest)
+        if(abs(cold-ctest) <= eps)
+            break
+        cold <- ctest
+    }
+    return(ctest)
 }

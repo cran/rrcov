@@ -1,3 +1,15 @@
+2011-04-04  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.2-00
+    * R/CovSest.R, CovMMest.R, man/* - added slots for the tuning constants of
+    * the S- and MM-loss functions. The functions for calculationg these
+    * constants (.csolve.bw.S() and .csolve.bw.MM() are not exported but the
+    * user could access them using rrcov:::.csolve.bw.S() call
+
+    * data/wages.rda - Added dataset Wages and Hours
+
+    * R/Pca.R - fixed the cutoff for the orthogonal distances (diagnostic plot)-
+    *   univariate MCD replaced by median and MAD
+
 2010-08-30  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.1-00
     * src/ds11.f - fixed a problem with CovSde for p=1 (i.e. option p=1 implemented)

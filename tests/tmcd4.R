@@ -1,13 +1,13 @@
 ## Test the exact fit property of CovMcd
 doexact <- function(){
-    exact <-function(){    
-        n1 <- 45
+    exact <-function(seed=1234){
+    	
+	set.seed(seed)
+
+	n1 <- 45
         p <- 2
         x1 <- matrix(rnorm(p*n1),nrow=n1, ncol=p)
         x1[,p] <- x1[,p] + 3
-##       library(MASS)
-##       x1 <- mvrnorm(n=n1, mu=c(0,3), Sigma=diag(1,nrow=p))
-        
         n2 <- 55
         m1 <- 0
         m2 <- 3

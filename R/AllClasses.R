@@ -84,13 +84,15 @@ setClass("CovMve", representation(alpha = "numeric",
                                   raw.cnp2 = "numeric",
                                   cnp2 = "numeric"),
                     contains="CovRobust")
-setClass("CovSest", representation(),
+setClass("CovSest", representation(cc = "numeric",
+                                   kp = "numeric"),
                     contains="CovRobust")
 
 setClass("CovSde", representation(),
                     contains="CovRobust")
 
-setClass("CovMMest", representation(sest = "CovSest"),
+setClass("CovMMest", representation(c1 ="numeric",
+                                    sest = "CovSest"),
                     contains="CovRobust")
 
 ## Control parameters for CovMcd

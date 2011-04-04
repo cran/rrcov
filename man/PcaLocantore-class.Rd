@@ -15,7 +15,7 @@ that this method has very good performance.
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("PcaLocantore", ...)} but the
-    usual way of creating \code{PcaHubert} objects is a call to the function
+    usual way of creating \code{PcaLocantore} objects is a call to the function
     \code{PcaLocantore} which serves as a constructor.
 }
 \section{Slots}{
