@@ -306,7 +306,7 @@ pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
 
 ## Distance-distance plot (or diagnostic plot, or outlier map)
 ## Plots score distances against orthogonal distances
-pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, main, xlim, ylim, ...) {
+pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, main, xlim, ylim, off=0.02, ...) {
 
     if(missing(main))
     {
@@ -329,13 +329,13 @@ pca.ddplot <- function(obj, id.n.sd=3, id.n.od=3, main, xlim, ylim, ...) {
                              xlim=xlim, ylim=ylim, type="p", ...)
         abline(v=obj@cutoff.sd)
         abline(h=obj@cutoff.od)
-        label.dd(obj@sd, obj@od, id.n.sd, id.n.od)
+        label.dd(obj@sd, obj@od, id.n.sd, id.n.od, off=off)
     }
     invisible(obj)
 }
 
 ## Distance plot, plots score distances against index
-pca.distplot <- function(obj, id.n=3, title, ...) {
+pca.distplot <- function(obj, id.n=3, title, off=0.02, ...) {
 
     if(missing(title))
     {
@@ -345,12 +345,12 @@ pca.distplot <- function(obj, id.n=3, title, ...) {
     ymax <- max(max(obj@sd), obj@cutoff.sd)
     plot(obj@sd, xlab="Index", ylab="Score distance", ylim=c(0,ymax), type="p", ...)
     abline(h=obj@cutoff.sd)
-    label(1:length(obj@sd), obj@sd, id.n)
+    label(1:length(obj@sd), obj@sd, id.n, off=off)
     title(title)
     invisible(obj)
 }
 
-label <- function(x, y, id.n=3){
+label <- function(x, y, id.n=3, off=0.02){
     xrange <- par("usr")
     xrange <- xrange[2] - xrange[1]
     if(id.n > 0) {
@@ -361,11 +361,11 @@ label <- function(x, y, id.n=3){
             lab <- names(y[ind])
         else
             lab <- ind
-        text(x[ind] + xrange/50, y[ind], lab)
+        text(x[ind] - off*xrange, y[ind], lab)
     }
 }
 
-label.dd <- function(x, y, id.n.sd=3, id.n.od=3){
+label.dd <- function(x, y, id.n.sd=3, id.n.od=3, off=0.02){
     xrange <- par("usr")
     xrange <- xrange[2] - xrange[1]
     if(id.n.sd > 0 && id.n.od > 0) {
@@ -377,11 +377,11 @@ label.dd <- function(x, y, id.n.sd=3, id.n.od=3){
         lab <- ind.od
         if(is.character(names(y)))
             lab <- names(y[ind.od])
-        text(x[ind.od] + xrange/50, y[ind.od], lab)
+        text(x[ind.od] - off*xrange, y[ind.od], lab)
         lab <- ind.sd
         if(is.character(names(x)))
             lab <- names(x[ind.sd])
-        text(x[ind.sd] + xrange/50, y[ind.sd], lab)
+        text(x[ind.sd] - off*xrange, y[ind.sd], lab)
     }
 }
 
