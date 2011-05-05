@@ -317,6 +317,10 @@ setClass("PredictLda", representation(classification = "factor",
 
 
 setClass("Linda", contains="LdaRobust")
+setClass("LdaPP", representation(
+                   raw.ldf = "matrix",
+                   raw.ldfconst = "vector"),
+                   contains="LdaRobust")
 
 ###################### QDA ####################################
 setClass("Qda", representation(call     = "language",

@@ -5,14 +5,17 @@ setMethod("show", "Lda", function(object){
         cat("Call:\n")
         dput(cl)
     }
-    
+
     digits = max(3, getOption("digits") - 3)
     cat("\nPrior Probabilities of Groups:\n")
     print(object@prior)
-    cat("\nGroup means:\n")
-    print(object@center)
-    cat("\nWithin-groups Covariance Matrix:\n")
-    print(object@cov)
+    if(length(object@center) > 0)
+    {
+        cat("\nGroup means:\n")
+        print(object@center)
+        cat("\nWithin-groups Covariance Matrix:\n")
+        print(object@cov)
+    }
     cat("\nLinear Coeficients:\n")
     print(object@ldf)
     cat("\nConstants:\n")
@@ -36,18 +39,18 @@ setMethod("predict", "Lda", function(object, newdata){
         newdata <- object@X         # use the training sample
         ct <- TRUE                  # perform cross-validation
     }
-        
+
     x <- as.matrix(newdata)
-    
-    if(ncol(x) != ncol(object@center)) 
-        stop("wrong number of variables")         
+
+    if(length(object@center)>0 & ncol(x) != ncol(object@center) | ncol(x) != ncol(object@ldf))
+        stop("wrong number of variables")
 
     ldf <- object@ldf
     ldfconst <- object@ldfconst
     ret <- .mypredictLda(object@prior, levels(object@grp), ldf, ldfconst, x)
     if(ct)
         ret@ct <- .confusion(object@grp, ret@classification)
-   
+
     ret
 })
 
@@ -67,7 +70,7 @@ setMethod("predict", "Lda", function(object, newdata){
         for(j in 1:ncol(xx))
             posterior[i,j] <- exp(xx[i,j])/tmp
     }
-    
+
     cl <- factor(nm[max.col(xx)], levels = lev)
     new("PredictLda", classification=cl, posterior=posterior, x = xx)
 }
@@ -80,19 +83,19 @@ setMethod("show", "PredictLda", function(object){
         acctab <- t(apply(tab, 1, function(x) x/sum(x)))
         dimnames(acctab) <- dimnames(tab)
         AER <- 1 - sum(diag(tab))/sum(tab)
-        
+
         prt <- as.matrix(round(c("Apparent error rate" = AER),4))
         colnames(prt) <- ""
         print(prt)
-        
+
         cat("\nClassification table", "\n")
         print(tab)
         cat("\nConfusion matrix", "\n")
-        print(round(acctab, 3))    
+        print(round(acctab, 3))
     }
     else
         print(object@classification)
-        
+
 ##    print(object@posterior)
 ##    print(object@x)
     invisible(object)
@@ -106,33 +109,33 @@ setMethod("show", "SummaryLda", function(object){
     show(object@ldaobj)
     invisible(object)
 })
-   
-.wcov.wt <- function (x, gr, wt = rep(1, nrow(x))) 
+
+.wcov.wt <- function (x, gr, wt = rep(1, nrow(x)))
 {
     xcall <- match.call()
-    if (is.data.frame(x)) 
+    if (is.data.frame(x))
         x <- as.matrix(x)
-    else if (!is.matrix(x)) 
+    else if (!is.matrix(x))
         stop("'x' must be a matrix or a data frame")
 
-    if (!all(is.finite(x))) 
+    if (!all(is.finite(x)))
         stop("'x' must contain finite values only")
     n <- nrow(x)
     p <- ncol(x)
     lev <- levels(as.factor(gr))
     ng <- length(lev)
     dimn <- dimnames(x)
-    
+
 
     if(with.wt <- !missing(wt)) {
-        if(length(wt) != n) 
+        if(length(wt) != n)
             stop("length of 'wt' must equal the number of rows in 'x'")
-        if(any(wt < 0) || (s <- sum(wt)) == 0) 
+        if(any(wt < 0) || (s <- sum(wt)) == 0)
             stop("weights must be non-negative and not all zero")
     }
 
     sqrtwt <- sqrt(wt)
-    means <- tapply(sqrtwt*x, list(rep(gr, p), col(x)), sum) /rep(tapply(sqrtwt, gr, sum), p) 
+    means <- tapply(sqrtwt*x, list(rep(gr, p), col(x)), sum) /rep(tapply(sqrtwt, gr, sum), p)
     wcov <- crossprod(sqrtwt*(x-means[gr,]))/(sum(sqrtwt)-ng)
     dimnames(wcov) <- list(dimn[[2]], dimn[[2]])
     dimnames(means) <- list(lev, dimn[[2]])

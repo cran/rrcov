@@ -198,7 +198,7 @@ void sest(double *X,
 	  int *converged)
 {
     int i, j, ntry, ires, ind, iter, ibest;
-    Rboolean singular, conv;
+    Rboolean singular, conv = 0;
     int n = *nn, p = *pp;
     int best_r = *bbest_r;
     double kp = *kkp, c1 = *cc1;

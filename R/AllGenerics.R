@@ -39,6 +39,9 @@ if(!isGeneric("screeplot"))
 if(!isGeneric("biplot"))
     setGeneric("biplot", function(x, ...) standardGeneric("biplot"))
 
+if(!isGeneric("scoreplot"))
+    setGeneric("scoreplot", function(x, ...) standardGeneric("scoreplot"))
+
 if(!isGeneric("getQuan"))
     setGeneric("getQuan", function(obj) standardGeneric("getQuan"))         # returns the number of observations used
                                                                             # in the computation of the PCA (n for classic)

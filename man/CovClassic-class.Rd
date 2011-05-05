@@ -4,8 +4,8 @@
 \title{Class "CovClassic" - classical estimates of multivariate
     location and scatter }
 \description{ The class \code{CovClassic} represents an estimate of the
-    multivariate location and scatter of a data set. The class \code{CovClassic}
-    objects contain the classical estimates.
+    multivariate location and scatter of a data set. The objects of class \code{CovClassic}
+    contain the classical estimates.
 }
 \section{Objects from the Class}{
     Objects can be created by calls of the form \code{new("CovClassic", ...)},

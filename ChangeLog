@@ -1,3 +1,18 @@
+2011-04-30  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.2-02
+    *
+    * R/plot-methods.R: fixed the pairs-plot for Cov objects - on the diagonal
+    *   were shown not the variable names but Var1, var2, etc.
+    *
+    * R/Pca.R, AllGenerics.R, Man/scoreplot.rda, pca.scoreplot.rda:
+    *   the internal function pca.scoreplot()is defined now in the namespace,
+    *   help is added and corresponding method/generic scoreplot() function
+    *   is defined too.
+    *
+    * Data/pottery.rda, Man/pottery.rd: added the pottery data set - 
+    *   see Pires and Branco (2010)
+    *
+    *
 2011-04-04  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.2-00
     * R/CovSest.R, CovMMest.R, man/* - added slots for the tuning constants of
