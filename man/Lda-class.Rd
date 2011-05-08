@@ -31,7 +31,7 @@
   \describe{
     \item{predict}{\code{signature(object = "Lda")}: calculates prediction using the results in 
         \code{object}. An optional data frame or matrix in which to look for variables with which 
-        to predict. If omitted, the scores are used. If the original fit used a formula or 
+        to predict. If omitted, the training data set is used. If the original fit used a formula or 
         a data frame or a matrix with column names, newdata must contain columns with the 
         same names. Otherwise it must contain the same number of columns, 
         to be used in the same order. }

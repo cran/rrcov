@@ -383,6 +383,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
 ##
 .rrpairs <- function(obj, main="", sub="", xlab="", ylab="", ...){
     hcol       <- "cyan"      # colour for histogram
+    dcol       <- "red"       # color of the density line
     ecol.class <- "blue"      # colour for classical ellipse
     ecol.rob   <- "red"       # colour for robust ellipse
 
@@ -413,10 +414,29 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
     {
         usr <- par("usr"); on.exit(par(usr))
         par(usr = c(usr[1:2], 0, 1.5) )
+
         h <- hist(x, plot = FALSE)
         breaks <- h$breaks; nB <- length(breaks)
         y <- h$counts; y <- y/max(y)
         rect(breaks[-nB], 0, breaks[-1], y, col=hcol, ...)
+    }
+
+    panel.hist.density <- function(x,...)
+    {
+        usr <- par("usr"); on.exit(par(usr))
+        par(usr = c(usr[1:2], 0, 1.5) )
+
+        h <- hist(x, plot = FALSE)
+        breaks <- h$breaks; nB <- length(breaks)
+        y <- h$counts; y <- y/max(y)
+        rect(breaks[-nB], 0, breaks[-1], y, col=hcol)
+
+        tryd <- try( d <- density(x, na.rm=TRUE, bw="nrd", adjust=1.2), silent=TRUE)
+        if(class(tryd) != "try-error")
+        {
+            d$y <- d$y/max(d$y)
+            lines(d, col=dcol)
+        }
     }
 
     panel.cor <- function(x, y, digits=2, ...)
@@ -443,6 +463,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
         text(0.5, 0.3, txt, cex = cex, col=ecol.class)
         text(0.5, 0.5, rtxt, cex = cex, col=ecol.rob)
     }
+
     panel.ellipse <- function(x, y, ...)
     {
         usr <- par("usr"); on.exit(par(usr))
@@ -482,10 +503,15 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
     ## get the data
     x <- getData(obj)
 
+    ## VT::27.04.2011 - fix the names of the variables on the
+    ##  diagonal - labels= in the call to pairs().
+    ##  Plot also density line
+    ##
     pairs(x, main = main, sub=sub,
         lower.panel=panel.cor,
-        diag.panel=panel.hist,
+        diag.panel=panel.hist.density,
         upper.panel=panel.ellipse,
+        labels=names(getCenter(obj)),
         ...)
 }
 

@@ -30,8 +30,10 @@ export(CovClassic,
        PcaGrid,
        LdaClassic,
        Linda,
+       LdaPP,
        QdaClassic,
-       QdaCov
+       QdaCov,
+       pca.scoreplot
 )
 
 ##S3 generics
@@ -60,6 +62,8 @@ S3method(LdaClassic, default)
 S3method(LdaClassic, formula)
 S3method(Linda, default)
 S3method(Linda, formula)
+S3method(LdaPP, default)
+S3method(LdaPP, formula)
 
 S3method(QdaClassic, default)
 S3method(QdaClassic, formula)
@@ -85,7 +89,8 @@ export(isClassic,
        getEigenvalues,
        getSdev,
        getScores,
-       getPrcomp
+       getPrcomp,
+       scoreplot
 )
 
 exportClasses(Cov,
@@ -121,6 +126,7 @@ exportClasses(Cov,
               LdaClassic,
               LdaRobust,
               Linda,
+              LdaPP,
               PredictLda,
               SummaryLda,
               Qda,
@@ -156,5 +162,6 @@ exportMethods(isClassic,
               print,
               predict,
               screeplot,
-              biplot
+              biplot,
+              scoreplot
 )

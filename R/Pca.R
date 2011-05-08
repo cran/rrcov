@@ -39,15 +39,15 @@ setMethod("show", "SummaryPca", function(object){
     invisible(object)
 })
 
-setMethod("print", "Pca", function(x, ...) myPcaPrint(x, ...))
-setMethod("predict", "Pca", function(object, ...){
+setMethod("print",     "Pca", function(x, ...) myPcaPrint(x, ...))
+setMethod("predict",   "Pca", function(object, ...){
     stats:::predict.prcomp(getPrcomp(object), ...)
 })
 setMethod("screeplot", "Pca", function(x, ...){
     stats:::screeplot.default(getPrcomp(x), ...)
 })
 
-setMethod("biplot", "Pca", function(x, scale=1, ...){
+setMethod("biplot",    "Pca", function(x, scale=1, ...){
     choices = 1L:2
     lam <- sqrt(getEigenvalues(x)[choices])
     scores <- getScores(x)
@@ -68,6 +68,10 @@ setMethod("biplot", "Pca", function(x, scale=1, ...){
     invisible()
 })
 
+setMethod("scoreplot", "Pca", function(x, i=1, j=2, ...){
+    pca.scoreplot(obj=x, i=i, j=j, ...)
+})
+
 ##  The __outlier map__ (diagnostic plot, distance-distance plot)
 ##  visualizes the observations by plotting their orthogonal
 ##  distance to the robust PCA subspace versus their robust
@@ -85,7 +89,10 @@ setMethod("biplot", "Pca", function(x, scale=1, ...){
 ##  The __biplot__ is plot which aims to represent both the
 ##  observations and variables of a matrix of multivariate data
 ##  on the same plot.
-
+##
+## The __scoreplot__ shows a scatterplot of ith against jth score
+##  of the Pca object with superimposed tollerance (0.975) ellipse
+##
 ## VT::17.06.2008
 ##setMethod("plot", "Pca", function(x, y="missing",
 setMethod("plot", signature(x="Pca", y="missing"), function(x, y="missing",
