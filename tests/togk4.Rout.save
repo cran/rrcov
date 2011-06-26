@@ -20,7 +20,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.3-00)
+Scalable Robust Estimators with High Breakdown Point (version 1.3-01)
 > dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 +     domcd <- function(x, xname, nrep=1){
 +         n <- dim(x)[1]

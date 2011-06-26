@@ -101,13 +101,14 @@ LdaPP.default <- function(x,
     ## We have only two groups!
     n1 <- counts[1]
     n2 <- counts[2]
-    a1 <- (n1-1)/(n2-2)
+##    a1 <- (n1-1)/(n-2)
+    a1 <- n1/n
     a2 <- 1 - a1
     raw.ldf <- ldf <- matrix(0, nrow=2, ncol=p)
     raw.ldfconst <- ldfconst <- rep(0,2)
 
     alpha <- .projpp(x, grp=g, a1, a2, mrob)
-    dx <- .det.a0(alpha, x, grp=g, a1, a2, mrob, prior)
+    dx <- .det.a0(alpha, x, grp=g, a1=a1, a2=a2, mrob=mrob, prior=prior)
     raw.ldf[1,] <- dx$alpha
     raw.ldfconst[1] <- dx$alpha0
     ldf <- raw.ldf
@@ -140,8 +141,11 @@ LdaPP.default <- function(x,
     X1  <- x[grp == lev[1],]
     X2  <- x[grp == lev[2],]
 
+    inull <- 0
     dmax <- 0
     alpha <- NULL
+    imax <- 0
+    jmax <- 0
     for(i in 1:n1)
     {
         for(j in 1:n2)
@@ -152,11 +156,21 @@ LdaPP.default <- function(x,
             px2  <- as.vector(t(X2%*%dx))
             m1 <- mrob(px1)
             m2 <- mrob(px2)
-            xdist <- (m1$mu - m2$mu)**2/(m1$s**2*a1 + m2$s**2*a2)
-            if(xdist > dmax)
+            if(is.null(m1$mu) | is.null(m1$s) | is.null(m2$mu) | is.null(m2$s))
             {
-                dmax <- xdist
-                alpha <- dx
+                inull <- inull + 1
+                if(inull > 10)
+                    stop("Too many unsuccessful S-estimations!")
+            }else
+            {
+                xdist <- (m1$mu - m2$mu)**2/(m1$s**2*a1 + m2$s**2*a2)
+                if(xdist > dmax)
+                {
+                    dmax <- xdist
+                    alpha <- dx
+                    imax <- i
+                    jmax <- j
+                }
             }
         }
     }
@@ -182,7 +196,9 @@ LdaPP.default <- function(x,
         m1$mu <- -1*m1$mu
         m2$mu <- -1*m2$mu
     }
+
     alpha0 <- -((m1$mu + m2$mu)/2 + log(prior[2]/prior[1])/(m1$mu - m2$mu)*(a1*m1$s**2 + a2*m2$s**2))
+    names(alpha0) <- NULL
     list(alpha=alpha, alpha0=alpha0)
 }
 
@@ -243,13 +259,18 @@ LdaPP.default <- function(x,
     list(mu=mu, s=s)
 }
 
-.mrob.huber <- function(y, k=1.5, tol=1e-06, iter=8)
+.mrob.huber <- function(y, k1=1.5, k2=2, tol=1e-06, iter=8)
 {
     if(any(i <- is.na(y)))
         y <- y[!i]
     n <- length(y)
-    mx1 <- huberM(y, k=k, tol=tol)
 
+    ## replicate the huberM() function from robustbase and add an
+    ##  iter parameter to be able to reproduce Ana's results
+#    mx1 <- huberM(y, k=k1, tol=tol)
+    mx1 <- .huberM(y, k=k1, tol=tol, iter=iter)
+
+    k <- k2
     mu <- median(y)
     s0 <- mx1$s
     th <- 2 * pnorm(k) - 1
@@ -261,13 +282,61 @@ LdaPP.default <- function(x,
         yy <- pmin(pmax(mu - k * s0, y), mu + k * s0)
         ss <- sum((yy - mu)^2)/n
         s1 <- sqrt(ss/beta)
-        if(abs(s0-s1) < tol || (iter > 0 & it >= iter))
+##        if(abs(s0-s1) < tol || (iter > 0 & it > iter))
+        if(it > iter)
             break
         s0 <- s1
     }
     list(mu=mx1$mu, s=s0, it1=mx1$it, it2=it)
 }
 
+##
+## This is from robustbase - I added 'iter' parameter,
+##  only to be able to reproduce exactly na Pires' LdaPP
+##  FIXME: remove later
+##
+.huberM <- function (x, k = 1.5, weights = NULL, tol = 1e-06, mu = if (is.null(weights)) median(x) else wgt.himedian(x,
+    weights), s = if (is.null(weights)) mad(x, center = mu) else wgt.himedian(abs(x -
+    mu), weights), warn0scale = getOption("verbose"), iter=8)
+{
+    if (any(i <- is.na(x))) {
+        x <- x[!i]
+        if (!is.null(weights))
+            weights <- weights[!i]
+    }
+    n <- length(x)
+    sum.w <- if (!is.null(weights)) {
+        stopifnot(is.numeric(weights), weights >= 0, length(weights) ==
+            n)
+        sum(weights)
+    }
+    else n
+    it <- 0:0
+    if (sum.w == 0)
+        return(list(mu = NA, s = NA, it = it))
+    if (s <= 0) {
+        if (s < 0)
+            stop("negative scale 's'")
+        if (warn0scale && n > 1)
+            warning("scale 's' is zero -- returning initial 'mu'")
+    }
+    else {
+        wsum <- if (is.null(weights))
+            sum
+        else function(u) sum(u * weights)
+        repeat {
+            it <- it + 1:1
+            y <- pmin(pmax(mu - k * s, x), mu + k * s)
+            mu1 <- wsum(y)/sum.w
+##            if (abs(mu - mu1) < tol * s)
+            if (it > iter)
+                break
+
+            mu <- mu1
+        }
+    }
+    list(mu = mu, s = s, it = it)
+}
 
 ##
 ## Predict method for LdaPP - additional parameter raw=FALSE.
