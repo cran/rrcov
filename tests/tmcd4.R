@@ -21,7 +21,7 @@ doexact <- function(){
 
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 ##@bdescr
-## Test the function covMcd() on the literature datasets: 
+## Test the function covMcd() on the literature datasets:
 ##
 ## Call covMcd() for all regression datasets available in rrcov and print:
 ##  - execution time (if time == TRUE)
@@ -29,18 +29,18 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 ##  - best subsample found (if short == false)
 ##  - outliers identified (with cutoff 0.975) (if short == false)
 ##  - estimated center and covarinance matrix if full == TRUE)
-## 
+##
 ##@edescr
 ##
-##@in  nrep              : [integer] number of repetitions to use for estimating the 
+##@in  nrep              : [integer] number of repetitions to use for estimating the
 ##                                   (average) execution time
 ##@in  time              : [boolean] whether to evaluate the execution time
-##@in  short             : [boolean] whether to do short output (i.e. only the 
+##@in  short             : [boolean] whether to do short output (i.e. only the
 ##                                   objective function value). If short == FALSE,
-##                                   the best subsample and the identified outliers are 
+##                                   the best subsample and the identified outliers are
 ##                                   printed. See also the parameter full below
-##@in  full              : [boolean] whether to print the estimated cente and covariance matrix 
-##@in  method            : [character] select a method: one of (FASTMCD, MASS) 
+##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
+##@in  method            : [character] select a method: one of (FASTMCD, MASS)
 
     domcd <- function(x, xname, nrep=1){
         n <- dim(x)[1]
@@ -48,17 +48,17 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         if(method == "MASS"){
             mcd<-cov.mcd(x)
             quan <- as.integer(floor((n + p + 1)/2))   #default: floor((n+p+1)/2)
-        }            
+        }
         else{
             mcd<-CovMcd(x, trace=FALSE)
             quan <- as.integer(mcd@quan)
         }
-        
-        if(method == "MASS") 
+
+        if(method == "MASS")
             crit <- mcd@crit
         else
             crit <- log(mcd@crit)
-            
+
         if(time){
            xtime <- system.time(dorep(x, nrep, method))[1]/nrep
            xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
@@ -72,7 +72,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         if(!short){
             cat("Best subsample: \n")
             print(mcd@best)
-        
+
             ibad <- which(mcd@wt==0)
             names(ibad) <- NULL
             nbad <- length(ibad)
@@ -81,11 +81,11 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
                 print(ibad)
             if(full){
                 cat("-------------\n")
-                show(mcd)   
-            } 
+                show(mcd)
+            }
             cat("--------------------------------------------------------\n")
         }
-    } 
+    }
 
     options(digits = 5)
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
@@ -134,12 +134,12 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
 
-    domcd <- function(x, nrep=1){ 
+    domcd <- function(x, nrep=1){
         gc()
         xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
-        xtime   
-    } 
+        xtime
+    }
 
     set.seed(1234)
 
@@ -162,9 +162,9 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
                 X <- xx$X
                 tottime <- tottime + domcd(X, nrep)
             }
-        } 
+        }
     }
-    
+
     cat("=====================\n")
     cat("Total time: ", tottime*nrep, "\n")
 }
@@ -179,10 +179,10 @@ check <- function(mcd, xind){
 ##  check if mcd is robust w.r.t xind, i.e. check how many of xind
 ##  did not get zero weight
     mymatch <- xind %in% which(mcd@wt == 0)
-    length(xind) - length(which(mymatch))    
+    length(xind) - length(which(mymatch))
 }
 
-dorep <- function(x, nrep=1, method=c("FASTMCD","MASS")){ 
+dorep <- function(x, nrep=1, method=c("FASTMCD","MASS")){
 
     method <- match.arg(method)
     for(i in 1:nrep)
@@ -190,13 +190,13 @@ dorep <- function(x, nrep=1, method=c("FASTMCD","MASS")){
         cov.mcd(x)
     else
         CovMcd(x)
-} 
+}
 
 #### gendata() ####
-# Generates a location contaminated multivariate 
+# Generates a location contaminated multivariate
 # normal sample of n observations in p dimensions
 #    (1-eps)*Np(0,Ip) + eps*Np(m,Ip)
-# where 
+# where
 #    m = (b,b,...,b)
 # Defaults: eps=0 and b=10
 #
@@ -236,4 +236,4 @@ whatis<-function(x){
 
 library(rrcov)
 dodata()
-doexact()
+##doexact()

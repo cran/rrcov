@@ -18,6 +18,11 @@
 \alias{print,Cov-method}
 \alias{show,Cov-method}
 \alias{summary,Cov-method}
+\alias{Uvector-class}
+\alias{Ulist-class}
+\alias{Utable-class}
+\alias{Umatrix-class}
+\alias{Ufunction-class}
 
 \title{Class "Cov" -- a base class for estimates of multivariate
     location and scatter}

@@ -287,7 +287,7 @@ Linda.default <- function(x,
     deter <- 0                                      # DETC
     storage.mode(deter) <- "double"
     ierr <- 0                                       # IERR
-    storage.mode(deter) <- "integer"
+    storage.mode(ierr) <- "integer"
 
 
     mwcd <- .Fortran("fsada",

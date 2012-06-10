@@ -89,7 +89,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
     dopca(data.matrix(subset(wood, select = -y)), data(wood), nrep)
     dopca(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
 
-    dopca(brain, "Animals", nrep)
+##    dopca(brain, "Animals", nrep)
     dopca(milk, data(milk), nrep)
     dopca(bushfire, data(bushfire), nrep)
     cat("==========================================================\n")

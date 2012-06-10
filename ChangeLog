@@ -1,3 +1,25 @@
+2012-06-10  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.3-02
+    *
+    *   R/Linda.R: Fixed a problem with array over-run in .Fortran("fsada") 
+            in integer argument 14
+    *       
+    *   Method getRaw() for CovMcd, CovMve and CovOgk added
+    *   Union S4 classes Uvector, Umatrix, Ulist, Ufunction, Utable exported
+    *       in the name space
+    *   T2.test() fixed - the F statistic was shown but titled as "T^2". Now both
+    *   T2 and F are shown
+    *
+2011-06-26  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.3-01
+    *
+    *   Fix for LdaPP()
+    *
+2011-05-05  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.3-00
+    *
+    *   Added LdaPP() and the related classes - see Pires and Branco (2010)
+    *
 2011-04-30  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.2-02
     *
@@ -9,18 +31,18 @@
     *   help is added and corresponding method/generic scoreplot() function
     *   is defined too.
     *
-    * Data/pottery.rda, Man/pottery.rd: added the pottery data set - 
+    * Data/pottery.rda, Man/pottery.rd: added the pottery data set -
     *   see Pires and Branco (2010)
     *
     *
 2011-04-04  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.2-00
     * R/CovSest.R, CovMMest.R, man/* - added slots for the tuning constants of
-    * the S- and MM-loss functions. The functions for calculationg these
+    * the S- and MM-loss functions. The functions for calculating these
     * constants (.csolve.bw.S() and .csolve.bw.MM() are not exported but the
     * user could access them using rrcov:::.csolve.bw.S() call
 
-    * data/wages.rda - Added dataset Wages and Hours
+    * data/wages.rda - Added data set Wages and Hours
 
     * R/Pca.R - fixed the cutoff for the orthogonal distances (diagnostic plot)-
     *   univariate MCD replaced by median and MAD

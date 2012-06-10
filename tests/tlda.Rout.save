@@ -1,6 +1,6 @@
 
-R version 2.14.0 Under development (unstable) (2011-04-30 r55703)
-Copyright (C) 2011 The R Foundation for Statistical Computing
+R Under development (unstable) (2012-02-18 r58393)
+Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: i386-pc-mingw32/i386 (32-bit)
 
@@ -20,7 +20,8 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.3-01)
+Scalable Robust Estimators with High Breakdown Point (version 1.3-02)
+
 > library(MASS)
 > dodata <- function(method) {
 + 
@@ -31,17 +32,31 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-01)
 +     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 +     cat("===================================================\n")
 + 
-+     data(hemophilia);   show(Linda(as.factor(gr)~., data=hemophilia, method=method))
-+     data(anorexia);     show(Linda(Treat~., data=anorexia, method=method))
-+     data(Pima.tr);      show(Linda(type~., data=Pima.tr, method=method))
-+     data(iris);         show(Linda(Species~., data=iris, method=method))
-+     data(crabs);        show(Linda(sp~., data=crabs, method=method))
-+     
++     cat("\nData: ", "anorexia\n");
++     data(hemophilia);
++     show(Linda(as.factor(gr)~., data=hemophilia, method=method))
 +     show(Linda(as.factor(gr)~., data=hemophilia))
++ 
++     cat("\nData: ", "anorexia\n");
++     data(anorexia);
++     show(Linda(Treat~., data=anorexia, method=method))
 +     show(Linda(Treat~., data=anorexia))
++ 
++     cat("\nData: ", "Pima\n");
++     data(Pima.tr);
++     show(Linda(type~., data=Pima.tr, method=method))
 +     show(Linda(type~., data=Pima.tr))
-+     show(Linda(Species~., data=iris))
++ 
++ ##    cat("\nData: ", "iris\n");
++ ##    data(iris);
++ ##    show(Linda(Species~., data=iris, method=method))
++ ##    show(Linda(Species~., data=iris))
++ 
++     cat("\nData: ", "crabs\n");
++     data(crabs);
++     show(Linda(sp~., data=crabs, method=method))
 +     show(Linda(sp~., data=crabs))
++ 
 +     cat("===================================================\n")
 + }
 > 
@@ -51,6 +66,8 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-01)
 
 Call:  dodata(method = "mcdA") 
 ===================================================
+
+Data:  anorexia
 Call:
 Linda(as.factor(gr) ~ ., data = hemophilia, method = method)
 
@@ -76,6 +93,33 @@ normal      -8.1418     2.0402
 Constants:
 carrier  normal 
 -4.5788 -1.3807 
+Call:
+Linda(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.31456  -0.014775
+normal     -0.13582  -0.069084
+
+Within-groups Covariance Matrix:
+            AHFactivity AHFantigen
+AHFactivity    0.016444   0.011351
+AHFantigen     0.011351   0.023937
+
+Linear Coeficients:
+        AHFactivity AHFantigen
+carrier    -27.8058    12.5688
+normal      -9.3172     1.5323
+
+Constants:
+carrier  normal 
+-4.7913 -1.4961 
+
+Data:  anorexia
 Call:
 Linda(Treat ~ ., data = anorexia, method = method)
 
@@ -104,126 +148,6 @@ Constants:
     CBT    Cont      FT 
 -180.36 -173.83 -218.24 
 Call:
-Linda(type ~ ., data = Pima.tr, method = method)
-
-Prior Probabilities of Groups:
-  No  Yes 
-0.66 0.34 
-
-Group means:
-     npreg    glu     bp  skin    bmi     ped    age
-No  1.8602 107.69 67.344 25.29 30.642 0.40777 24.667
-Yes 5.3167 145.85 74.283 31.80 34.095 0.49533 37.883
-
-Within-groups Covariance Matrix:
-          npreg       glu         bp      skin       bmi       ped      age
-npreg  9.706635  -6.22068   5.511519   1.62465  0.930142 -0.020624 14.03895
-glu   -6.220683 790.08188  61.345250  19.65694 29.744834 -0.477622 20.05841
-bp     5.511519  61.34525 147.176158  36.36459 16.264038 -0.083953 25.34483
-skin   1.624652  19.65694  36.364593 141.44078 56.033516 -0.215665  8.64726
-bmi    0.930142  29.74483  16.264038  56.03352 45.266617  0.043775  2.57539
-ped   -0.020624  -0.47762  -0.083953  -0.21566  0.043775  0.077364 -0.10287
-age   14.038947  20.05841  25.344826   8.64726  2.575386 -0.102867 73.32846
-
-Linear Coeficients:
-       npreg      glu      bp     skin     bmi    ped     age
-No  -0.37963 0.077767 0.36932 -0.23799 0.77512 5.3054 0.26843
-Yes -0.17660 0.125772 0.35917 -0.19784 0.76053 7.0697 0.39843
-
-Constants:
-     No     Yes 
--29.944 -42.239 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
-Call:
-Linda(Species ~ ., data = iris, method = method)
-
-Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
-
-Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           4.9724      3.3793       1.4448      0.2000
-versicolor       5.9205      2.8154       4.2026      1.3051
-virginica        6.4622      2.9489       5.4289      2.0156
-
-Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length      0.37598    0.134289     0.194409    0.048120
-Sepal.Width       0.13429    0.140836     0.074982    0.050606
-Petal.Length      0.19441    0.074982     0.224446    0.052937
-Petal.Width       0.04812    0.050606     0.052937    0.057699
-
-Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           9.6268    25.56739      -5.2037    -22.2126
-versicolor       8.8378     6.36695       8.5024      1.8641
-virginica        8.1276     0.54234      13.3214     15.4565
-
-Constants:
-    setosa versicolor  virginica 
-   -62.252    -55.306    -79.896 
-Call:
-Linda(sp ~ ., data = crabs, method = method)
-
-Prior Probabilities of Groups:
-  B   O 
-0.5 0.5 
-
-Group means:
-     sexM  index     FL     RW     CL     CW     BD
-B 0.35135 27.014 14.158 12.219 30.249 34.968 12.682
-O 0.56627 25.554 17.131 13.405 34.247 38.155 15.525
-
-Within-groups Covariance Matrix:
-          sexM     index       FL       RW      CL        CW       BD
-sexM   0.32282   0.79495  0.22869 -0.40413  0.8001   0.73378  0.34653
-index  0.79495 233.69787 46.44552 32.18117 99.6385 111.25259 46.16110
-FL     0.22869  46.44552 10.19597  6.84590 21.7568  24.39200  9.97629
-RW    -0.40413  32.18117  6.84590  5.99098 14.3479  16.42145  6.59352
-CL     0.80010  99.63847 21.75680 14.34788 47.4952  52.98213 21.73993
-CW     0.73378 111.25259 24.39200 16.42145 52.9821  59.45517 24.27099
-BD     0.34653  46.16110  9.97629  6.59352 21.7399  24.27099 10.11184
-
-Linear Coeficients:
-    sexM   index      FL     RW     CL       CW       BD
-B 20.327 -1.9984  8.3623 11.829 1.2407  -3.6227 -0.25489
-O 30.766 -3.1263 21.4300 17.622 2.7575 -14.1322 10.11185
-
-Constants:
-       B        O 
- -62.546 -127.232 
-Call:
-Linda(as.factor(gr) ~ ., data = hemophilia)
-
-Prior Probabilities of Groups:
-carrier  normal 
-    0.6     0.4 
-
-Group means:
-        AHFactivity AHFantigen
-carrier    -0.31456  -0.014775
-normal     -0.13582  -0.069084
-
-Within-groups Covariance Matrix:
-            AHFactivity AHFantigen
-AHFactivity    0.016444   0.011351
-AHFantigen     0.011351   0.023937
-
-Linear Coeficients:
-        AHFactivity AHFantigen
-carrier    -27.8058    12.5688
-normal      -9.3172     1.5323
-
-Constants:
-carrier  normal 
--4.7913 -1.4961 
-Call:
 Linda(Treat ~ ., data = anorexia)
 
 Prior Probabilities of Groups:
@@ -250,6 +174,38 @@ FT   2.0947 1.6859
 Constants:
     CBT    Cont      FT 
 -147.73 -143.05 -169.82 
+
+Data:  Pima
+Call:
+Linda(type ~ ., data = Pima.tr, method = method)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  1.9681 108.13 67.372 24.968 30.633 0.40857 24.798
+Yes 5.2778 143.74 75.407 32.537 34.174 0.50163 37.500
+
+Within-groups Covariance Matrix:
+          npreg        glu         bp      skin       bmi       ped       age
+npreg  9.568878  -2.672874   6.987792   3.58160  2.159437 -0.024136 15.375245
+glu   -2.672874 743.529159  78.239989  22.82144 29.020613 -0.013762 10.915702
+bp     6.987792  78.239989 150.246804  31.38364 16.777863 -0.028983 32.079388
+skin   3.581603  22.821444  31.383644 134.07938 57.030465 -0.171995 11.777700
+bmi    2.159437  29.020613  16.777863  57.03047 46.132300  0.089654  7.031032
+ped   -0.024136  -0.013762  -0.028983  -0.17199  0.089654  0.081037 -0.017182
+age   15.375245  10.915702  32.079388  11.77770  7.031032 -0.017182 74.825655
+
+Linear Coeficients:
+       npreg      glu     bp     skin     bmi    ped     age
+No  -0.47610 0.082011 0.3422 -0.23131 0.75277 3.7628 0.23710
+Yes -0.32966 0.130122 0.3288 -0.17134 0.69994 5.1723 0.37134
+
+Constants:
+     No     Yes 
+-28.259 -39.390 
 Call:
 Linda(type ~ ., data = Pima.tr)
 
@@ -259,62 +215,59 @@ Prior Probabilities of Groups:
 
 Group means:
      npreg    glu     bp   skin    bmi     ped    age
-No  2.1781 109.61 67.887 26.409 30.949 0.41231 24.822
-Yes 5.5774 146.39 74.647 33.705 34.708 0.49896 37.899
+No  2.1476 109.87 67.814 26.341 30.929 0.41068 24.850
+Yes 5.6004 146.71 74.666 33.547 34.616 0.49796 37.994
 
 Within-groups Covariance Matrix:
           npreg       glu         bp      skin      bmi       ped      age
-npreg  8.760831  13.48912   9.462762   6.83792  1.69126 -0.054605 14.26926
-glu   13.489117 708.47308  75.544946  38.02468 35.68039 -0.575944 40.97180
-bp     9.462762  75.54495 138.944829  36.37643 15.91293 -0.083125 31.14860
-skin   6.837921  38.02468  36.376431 141.53432 57.22908  0.129477 22.94077
-bmi    1.691255  35.68039  15.912930  57.22908 47.97049  0.232094  7.80276
-ped   -0.054605  -0.57594  -0.083125   0.12948  0.23209  0.076839 -0.17695
-age   14.269261  40.97180  31.148601  22.94077  7.80276 -0.176952 51.46094
+npreg  8.809342  13.96704   9.610995   6.03640  1.51731 -0.035524 14.95911
+glu   13.967043 746.24672  74.147809  29.96163 35.53701 -0.628038 45.39416
+bp     9.610995  74.14781 135.012461  34.59710 15.33435 -0.056385 31.54911
+skin   6.036405  29.96163  34.597104 138.97832 55.77100  0.104743 19.26204
+bmi    1.517310  35.53701  15.334354  55.77100 46.67094  0.215915  6.81249
+ped   -0.035524  -0.62804  -0.056385   0.10474  0.21591  0.075454 -0.11675
+age   14.959110  45.39416  31.549115  19.26204  6.81249 -0.116750 54.35835
 
 Linear Coeficients:
       npreg      glu      bp     skin     bmi    ped     age
-No  -0.9891 0.087763 0.39177 -0.24373 0.67324 5.2137 0.47410
-Yes -1.0489 0.130265 0.36298 -0.23600 0.67098 7.1741 0.73204
+No  -1.0157 0.079647 0.41090 -0.22269 0.67953 4.9739 0.43610
+Yes -1.0609 0.119375 0.38471 -0.20065 0.66954 6.7799 0.66969
 
 Constants:
      No     Yes 
--31.605 -44.565 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
+-31.648 -43.860 
+
+Data:  crabs
 Call:
-Linda(Species ~ ., data = iris)
+Linda(sp ~ ., data = crabs, method = method)
 
 Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
+  B   O 
+0.5 0.5 
 
 Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           4.9877      3.4017       1.4468     0.22972
-versicolor       5.9299      2.8321       4.2288     1.33703
-virginica        6.4775      2.9712       5.4308     2.04527
+     sexM  index     FL     RW     CL     CW     BD
+B 0.35714 27.129 14.191 12.217 30.356 35.057 12.727
+O 0.54321 25.086 17.032 13.399 33.957 37.872 15.385
 
 Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length     0.240457    0.103086     0.124265    0.046567
-Sepal.Width      0.103086    0.130967     0.056122    0.035667
-Petal.Length     0.124265    0.056122     0.141827    0.047443
-Petal.Width      0.046567    0.035667     0.047443    0.036905
+          sexM     index       FL       RW       CL        CW       BD
+sexM   0.33515   0.65242  0.19884 -0.43989  0.74845   0.67237  0.31241
+index  0.65242 230.96485 45.45747 31.96449 96.42323 107.82751 44.25166
+FL     0.19884  45.45747  9.88291  6.74024 20.86803  23.43870  9.46954
+RW    -0.43989  31.96449  6.74024  6.01317 13.98351  16.03077  6.35949
+CL     0.74845  96.42323 20.86803 13.98351 45.16926  50.47717 20.43105
+CW     0.67237 107.82751 23.43870 16.03077 50.47717  56.75013 22.84862
+BD     0.31241  44.25166  9.46954  6.35949 20.43105  22.84862  9.39412
 
 Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           21.014   20.850857      -5.1461    -33.8276
-versicolor       15.380    4.765175      18.1916    -11.1689
-virginica        12.760    0.020252      24.4888      7.8185
+    sexM   index      FL     RW      CL       CW      BD
+B 19.663 -2.0632  8.6222 11.461 0.36729  -3.4132  1.4725
+O 30.180 -3.2383 21.1061 17.265 1.49869 -13.3785 12.2046
 
 Constants:
-    setosa versicolor  virginica 
-   -81.360    -84.444   -116.947 
+       B        O 
+ -62.525 -129.678 
 Call:
 Linda(sp ~ ., data = crabs)
 
@@ -324,32 +277,34 @@ Prior Probabilities of Groups:
 
 Group means:
      sexM  index     FL     RW     CL     CW     BD
-B 0.39816 25.210 13.889 11.913 29.615 34.242 12.400
-O 0.61720 23.584 16.846 13.093 33.570 37.392 15.209
+B 0.41538 25.336 13.923 11.881 29.710 34.320 12.444
+O 0.60474 23.253 16.792 13.091 33.423 37.249 15.134
 
 Within-groups Covariance Matrix:
-          sexM     index       FL      RW       CL        CW       BD
-sexM   0.30056   0.24657  0.14443 -0.3758  0.55312   0.47274  0.22768
-index  0.24657 223.46867 45.98429 30.9723 97.35690 109.35707 44.50801
-FL     0.14443  45.98429 10.28740  6.7940 21.73138  24.46754  9.83847
-RW    -0.37580  30.97225  6.79398  5.5715 14.11929  16.17354  6.41085
-CL     0.55312  97.35690 21.73138 14.1193 46.79457  52.49499 21.15166
-CW     0.47274 109.35707 24.46754 16.1735 52.49499  59.17038 23.73976
-BD     0.22768  44.50801  9.83847  6.4108 21.15166  23.73976  9.68736
+          sexM     index      FL       RW       CL        CW       BD
+sexM   0.29951   0.29129  0.1474 -0.36657  0.56132   0.48521  0.23265
+index  0.29129 224.22278 46.3342 30.97518 98.03533 110.02567 44.74437
+FL     0.14740  46.33418 10.3848  6.84011 21.93000  24.68355  9.92082
+RW    -0.36657  30.97518  6.8401  5.56357 14.20417  16.25396  6.43655
+CL     0.56132  98.03533 21.9300 14.20417 47.20484  52.93635 21.31768
+CW     0.48521 110.02567 24.6836 16.25396 52.93635  59.64328 23.91483
+BD     0.23265  44.74437  9.9208  6.43655 21.31768  23.91483  9.75202
 
 Linear Coeficients:
-    sexM   index      FL     RW     CL       CW       BD
-B 11.908 -2.1270  5.5544  9.244 1.5258  -1.8089  0.11543
-O 12.878 -3.3989 18.1279 11.282 3.8909 -12.1602 12.31003
+    sexM   index     FL      RW     CL       CW        BD
+B 11.091 -2.1318  5.776  8.7807 2.0069  -2.1129 -0.084072
+O 11.897 -3.4273 18.696 10.6644 4.5095 -12.4745 11.668398
 
 Constants:
-      B       O 
- -62.23 -122.71 
+       B        O 
+ -61.394 -122.544 
 ===================================================
 > dodata(method="mcdB")
 
 Call:  dodata(method = "mcdB") 
 ===================================================
+
+Data:  anorexia
 Call:
 Linda(as.factor(gr) ~ ., data = hemophilia, method = method)
 
@@ -375,6 +330,33 @@ normal      -9.3172     1.5323
 Constants:
 carrier  normal 
 -4.7913 -1.4961 
+Call:
+Linda(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.31456  -0.014775
+normal     -0.13582  -0.069084
+
+Within-groups Covariance Matrix:
+            AHFactivity AHFantigen
+AHFactivity    0.016444   0.011351
+AHFantigen     0.011351   0.023937
+
+Linear Coeficients:
+        AHFactivity AHFantigen
+carrier    -27.8058    12.5688
+normal      -9.3172     1.5323
+
+Constants:
+carrier  normal 
+-4.7913 -1.4961 
+
+Data:  anorexia
 Call:
 Linda(Treat ~ ., data = anorexia, method = method)
 
@@ -403,126 +385,6 @@ Constants:
     CBT    Cont      FT 
 -147.73 -143.05 -169.82 
 Call:
-Linda(type ~ ., data = Pima.tr, method = method)
-
-Prior Probabilities of Groups:
-  No  Yes 
-0.66 0.34 
-
-Group means:
-     npreg    glu     bp   skin    bmi     ped    age
-No  2.0767 109.45 67.790 26.158 30.930 0.41455 24.695
-Yes 5.5938 145.40 74.748 33.754 34.501 0.49898 37.821
-
-Within-groups Covariance Matrix:
-          npreg       glu         bp      skin      bmi       ped       age
-npreg  8.253576  11.92843   9.170629   4.47646  2.08222 -0.024996 13.330294
-glu   11.928434 716.46162  75.731612  35.47043 37.86433 -0.545890 35.405751
-bp     9.170629  75.73161 140.079879  34.70380 16.92999 -0.050649 30.872456
-skin   4.476462  35.47043  34.703804 140.03693 59.04382  0.125528 16.764129
-bmi    2.082224  37.86433  16.929993  59.04382 47.98303  0.219914  8.302882
-ped   -0.024996  -0.54589  -0.050649   0.12553  0.21991  0.078207 -0.088361
-age   13.330294  35.40575  30.872456  16.76413  8.30288 -0.088361 50.627190
-
-Linear Coeficients:
-      npreg      glu      bp     skin     bmi    ped     age
-No  -1.0456 0.086784 0.38714 -0.24505 0.68786 4.7825 0.44300
-Yes -1.0506 0.130049 0.35576 -0.20410 0.63846 6.4944 0.68999
-
-Constants:
-     No     Yes 
--31.095 -43.129 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
-Call:
-Linda(Species ~ ., data = iris, method = method)
-
-Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
-
-Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           4.9855      3.3996       1.4558     0.23053
-versicolor       5.9336      2.8357       4.2135     1.33565
-virginica        6.4753      2.9692       5.4398     2.04608
-
-Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length     0.240334    0.103216     0.124415    0.046652
-Sepal.Width      0.103216    0.131328     0.055244    0.035656
-Petal.Length     0.124415    0.055244     0.142687    0.047228
-Petal.Width      0.046652    0.035656     0.047228    0.036859
-
-Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           20.960    20.70211      -4.7745    -34.1836
-versicolor       15.552     4.86971      17.6492    -10.7716
-virginica        12.716     0.19905      24.2692      8.1277
-
-Constants:
-    setosa versicolor  virginica 
-   -81.121    -84.131   -116.889 
-Call:
-Linda(sp ~ ., data = crabs, method = method)
-
-Prior Probabilities of Groups:
-  B   O 
-0.5 0.5 
-
-Group means:
-     sexM  index     FL     RW     CL     CW     BD
-B 0.40369 24.972 13.847 11.868 29.513 34.124 12.354
-O 0.62273 23.346 16.803 13.047 33.468 37.274 15.163
-
-Within-groups Covariance Matrix:
-          sexM     index       FL       RW       CL        CW      BD
-sexM   0.30183   0.20283  0.12731 -0.38769  0.51426   0.43033  0.2146
-index  0.20283 224.89123 46.63819 31.39518 98.83172 110.95372 44.9822
-FL     0.12731  46.63819 10.47597  6.94676 22.16628  24.95117 10.0004
-RW    -0.38769  31.39518  6.94676  5.68177 14.46744  16.55521  6.5310
-CL     0.51426  98.83172 22.16628 14.46744 47.79627  53.60723 21.5217
-CW     0.43033 110.95372 24.95117 16.55521 53.60723  60.40312 24.1468
-BD     0.21460  44.98216 10.00042  6.53100 21.52174  24.14681  9.8174
-
-Linear Coeficients:
-    sexM   index      FL      RW     CL       CW       BD
-B 12.221 -2.1480  6.3655  9.1065 1.1900  -1.9015  0.35886
-O 12.586 -3.4604 19.1765 10.9220 4.0945 -12.4683 12.01557
-
-Constants:
-       B        O 
- -61.781 -123.826 
-Call:
-Linda(as.factor(gr) ~ ., data = hemophilia)
-
-Prior Probabilities of Groups:
-carrier  normal 
-    0.6     0.4 
-
-Group means:
-        AHFactivity AHFantigen
-carrier    -0.31456  -0.014775
-normal     -0.13582  -0.069084
-
-Within-groups Covariance Matrix:
-            AHFactivity AHFantigen
-AHFactivity    0.016444   0.011351
-AHFantigen     0.011351   0.023937
-
-Linear Coeficients:
-        AHFactivity AHFantigen
-carrier    -27.8058    12.5688
-normal      -9.3172     1.5323
-
-Constants:
-carrier  normal 
--4.7913 -1.4961 
-Call:
 Linda(Treat ~ ., data = anorexia)
 
 Prior Probabilities of Groups:
@@ -549,6 +411,38 @@ FT   2.0947 1.6859
 Constants:
     CBT    Cont      FT 
 -147.73 -143.05 -169.82 
+
+Data:  Pima
+Call:
+Linda(type ~ ., data = Pima.tr, method = method)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.1865 110.13 67.476 26.346 30.965 0.40847 24.958
+Yes 5.5064 146.08 75.483 33.535 34.531 0.50327 37.732
+
+Within-groups Covariance Matrix:
+          npreg       glu         bp     skin     bmi       ped      age
+npreg  8.746473  13.55818   9.832730   6.0005  1.4848 -0.034142 14.72172
+glu   13.558185 743.59136  75.512336  29.7212 35.3311 -0.619568 43.83541
+bp     9.832730  75.51234 135.903361  34.8678 15.3255 -0.050059 32.70803
+skin   6.000456  29.72117  34.867842 138.9702 55.7417  0.106497 19.15397
+bmi    1.484762  35.33107  15.325483  55.7417 46.6632  0.215802  6.66581
+ped   -0.034142  -0.61957  -0.050059   0.1065  0.2158  0.075499 -0.10938
+age   14.721718  43.83541  32.708028  19.1540  6.6658 -0.109377 53.52380
+
+Linear Coeficients:
+      npreg      glu      bp     skin     bmi    ped     age
+No  -1.0032 0.080384 0.40146 -0.22363 0.68515 4.8708 0.43572
+Yes -1.0566 0.119289 0.38379 -0.20088 0.67094 6.7512 0.66548
+
+Constants:
+     No     Yes 
+-31.383 -43.837 
 Call:
 Linda(type ~ ., data = Pima.tr)
 
@@ -558,62 +452,59 @@ Prior Probabilities of Groups:
 
 Group means:
      npreg    glu     bp   skin    bmi     ped    age
-No  2.2429 109.46 67.727 26.306 30.798 0.41312 24.796
-Yes 5.4720 146.72 75.419 33.203 34.390 0.48347 38.070
+No  2.2197 109.67 67.559 26.523 30.999 0.41272 24.745
+Yes 5.4094 145.42 75.272 33.358 34.450 0.49549 38.044
 
 Within-groups Covariance Matrix:
           npreg       glu         bp       skin      bmi       ped      age
-npreg  8.466590  11.72184   8.463651   6.021744  2.61914 -0.018136 13.64342
-glu   11.721836 719.65653  75.341861  42.883148 43.51519 -0.386068 38.77834
-bp     8.463651  75.34186 135.233242  37.396673 17.82483 -0.063768 28.60301
-skin   6.021744  42.88315  37.396673 141.026410 57.39878  0.017322 19.11065
-bmi    2.619135  43.51519  17.824831  57.398781 46.16215  0.121493  8.48861
-ped   -0.018136  -0.38607  -0.063768   0.017322  0.12149  0.074912 -0.13804
-age   13.643417  38.77834  28.603010  19.110648  8.48861 -0.138036 51.38666
+npreg  8.787050  12.96612   9.814707   6.046115  1.47868 -0.036541 14.78285
+glu   12.966120 696.23983  75.567194  37.361459 35.64088 -0.566053 38.52903
+bp     9.814707  75.56719 137.133568  35.066577 15.43990 -0.057015 32.96688
+skin   6.046115  37.36146  35.066577 139.291531 56.33788  0.093605 19.94916
+bmi    1.478681  35.64088  15.439902  56.337876 47.18870  0.217859  6.61518
+ped   -0.036541  -0.56605  -0.057015   0.093605  0.21786  0.076184 -0.11455
+age   14.782850  38.52903  32.966883  19.949165  6.61518 -0.114545 54.63137
 
 Linear Coeficients:
-      npreg      glu      bp     skin     bmi    ped     age
-No  -1.0171 0.076726 0.40284 -0.25321 0.71162 5.7636 0.46254
-Yes -1.0954 0.119047 0.38524 -0.23314 0.68397 7.4033 0.72102
+       npreg      glu      bp     skin     bmi    ped    age
+No  -0.97514 0.090635 0.39411 -0.23228 0.68493 4.8872 0.4272
+Yes -1.07936 0.133417 0.37112 -0.21868 0.67659 6.6148 0.6822
 
 Constants:
      No     Yes 
--31.669 -44.747 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
+-31.446 -44.450 
+
+Data:  crabs
 Call:
-Linda(Species ~ ., data = iris)
+Linda(sp ~ ., data = crabs, method = method)
 
 Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
+  B   O 
+0.5 0.5 
 
 Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           4.9965      3.3964       1.4597     0.22974
-versicolor       5.9446      2.8325       4.2174     1.33487
-virginica        6.4863      2.9660       5.4438     2.04529
+     sexM  index     FL     RW     CL     CW     BD
+B 0.41538 25.336 13.923 11.881 29.710 34.320 12.444
+O 0.60474 23.253 16.792 13.091 33.423 37.249 15.134
 
 Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length     0.255427    0.104438     0.133043    0.050536
-Sepal.Width      0.104438    0.129398     0.054755    0.034151
-Petal.Length     0.133043    0.054755     0.146925    0.048383
-Petal.Width      0.050536    0.034151     0.048383    0.036227
+          sexM     index      FL       RW       CL        CW       BD
+sexM   0.29951   0.29129  0.1474 -0.36657  0.56132   0.48521  0.23265
+index  0.29129 224.22278 46.3342 30.97518 98.03533 110.02567 44.74437
+FL     0.14740  46.33418 10.3848  6.84011 21.93000  24.68355  9.92082
+RW    -0.36657  30.97518  6.8401  5.56357 14.20417  16.25396  6.43655
+CL     0.56132  98.03533 21.9300 14.20417 47.20484  52.93635 21.31768
+CW     0.48521 110.02567 24.6836 16.25396 52.93635  59.64328 23.91483
+BD     0.23265  44.74437  9.9208  6.43655 21.31768  23.91483  9.75202
 
 Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           20.393     21.2293      -4.5929    -35.9847
-versicolor       13.731      6.4850      17.9245    -12.3593
-virginica        10.202      2.4065      24.5598      7.1568
+    sexM   index     FL      RW     CL       CW        BD
+B 11.091 -2.1318  5.776  8.7807 2.0069  -2.1129 -0.084072
+O 11.897 -3.4273 18.696 10.6644 4.5095 -12.4745 11.668398
 
 Constants:
-    setosa versicolor  virginica 
-   -80.612    -80.643   -111.921 
+       B        O 
+ -61.394 -122.544 
 Call:
 Linda(sp ~ ., data = crabs)
 
@@ -623,32 +514,34 @@ Prior Probabilities of Groups:
 
 Group means:
      sexM  index     FL     RW     CL     CW     BD
-B 0.36744 26.557 14.138 12.100 30.190 34.893 12.662
-O 0.55680 24.474 17.007 13.309 33.904 37.821 15.353
+B 0.40950 25.400 13.970 11.952 29.766 34.400 12.474
+O 0.64204 23.673 16.857 13.079 33.656 37.466 15.241
 
 Within-groups Covariance Matrix:
-          sexM    index       FL       RW        CL        CW       BD
-sexM   0.30524   1.0421  0.25721 -0.32918   0.82938   0.79588  0.35614
-index  1.04208 233.1479 49.64115 33.21884 104.93487 117.62053 48.18426
-FL     0.25721  49.6411 11.34966  7.57396  23.97593  27.00309 10.91392
-RW    -0.32918  33.2188  7.57396  6.28201  15.75504  18.02824  7.18918
-CL     0.82938 104.9349 23.97593 15.75504  51.63306  57.95649 23.48064
-CW     0.79588 117.6205 27.00309 18.02824  57.95649  65.35600 26.36813
-BD     0.35614  48.1843 10.91392  7.18918  23.48064  26.36813 10.81932
+          sexM    index       FL       RW       CL        CW       BD
+sexM   0.31032   0.1883  0.11546 -0.42812  0.49456   0.39805  0.20243
+index  0.18830 224.9597 46.35440 30.67663 98.36561 109.98771 44.84110
+FL     0.11546  46.3544 10.35887  6.74042 21.94431  24.60103  9.91260
+RW    -0.42812  30.6766  6.74042  5.50503 14.01065  15.98202  6.33201
+CL     0.49456  98.3656 21.94431 14.01065 47.40407  52.93199 21.35958
+CW     0.39805 109.9877 24.60103 15.98202 52.93199  59.39009 23.85704
+BD     0.20243  44.8411  9.91260  6.33201 21.35958  23.85704  9.75107
 
 Linear Coeficients:
-    sexM   index     FL      RW     CL       CW       BD
-B 14.568 -2.3414 10.420  8.8815 2.6676  -4.7042  0.38076
-O 21.844 -3.9456 26.327 12.7933 4.4785 -16.1755 12.91658
+    sexM   index      FL     RW       CL        CW      BD
+B 17.701 -2.1578  5.3832 11.427 -0.96336  -0.61249  1.5504
+O 18.846 -3.4189 17.5549 13.412  1.57777 -10.56970 12.7429
 
 Constants:
-      B       O 
- -60.28 -136.67 
+       B        O 
+ -67.603 -127.601 
 ===================================================
 > dodata(method="mcdC")
 
 Call:  dodata(method = "mcdC") 
 ===================================================
+
+Data:  anorexia
 Call:
 Linda(as.factor(gr) ~ ., data = hemophilia, method = method)
 
@@ -674,6 +567,33 @@ normal      -11.015    0.71742
 Constants:
 carrier  normal 
 -6.4636 -1.5947 
+Call:
+Linda(as.factor(gr) ~ ., data = hemophilia)
+
+Prior Probabilities of Groups:
+carrier  normal 
+    0.6     0.4 
+
+Group means:
+        AHFactivity AHFantigen
+carrier    -0.31456  -0.014775
+normal     -0.13582  -0.069084
+
+Within-groups Covariance Matrix:
+            AHFactivity AHFantigen
+AHFactivity    0.016444   0.011351
+AHFantigen     0.011351   0.023937
+
+Linear Coeficients:
+        AHFactivity AHFantigen
+carrier    -27.8058    12.5688
+normal      -9.3172     1.5323
+
+Constants:
+carrier  normal 
+-4.7913 -1.4961 
+
+Data:  anorexia
 Call:
 Linda(Treat ~ ., data = anorexia, method = method)
 
@@ -702,126 +622,6 @@ Constants:
     CBT    Cont      FT 
 -230.85 -226.60 -274.53 
 Call:
-Linda(type ~ ., data = Pima.tr, method = method)
-
-Prior Probabilities of Groups:
-  No  Yes 
-0.66 0.34 
-
-Group means:
-     npreg    glu     bp   skin    bmi     ped    age
-No  2.3056 110.63 67.991 26.444 31.010 0.41653 25.806
-Yes 5.0444 142.58 74.267 33.067 34.309 0.49422 35.156
-
-Within-groups Covariance Matrix:
-          npreg       glu         bp       skin      bmi       ped       age
-npreg  6.164422   8.43753   6.879286   3.252980  1.54269 -0.020158  9.543745
-glu    8.437528 542.79578  57.156929  26.218837 28.63494 -0.421819 23.809124
-bp     6.879286  57.15693 106.687356  26.315526 12.86691 -0.039577 22.992973
-skin   3.252980  26.21884  26.315526 106.552759 44.95420  0.094311 12.005740
-bmi    1.542689  28.63494  12.866911  44.954202 36.56262  0.167258  6.112925
-ped   -0.020158  -0.42182  -0.039577   0.094311  0.16726  0.059609 -0.072712
-age    9.543745  23.80912  22.992973  12.005740  6.11292 -0.072712 35.594886
-
-Linear Coeficients:
-      npreg     glu      bp     skin     bmi    ped     age
-No  -1.4165 0.11776 0.49336 -0.31564 0.88761 6.5013 0.67462
-Yes -1.3784 0.17062 0.46662 -0.26771 0.83745 8.5204 0.90557
-
-Constants:
-     No     Yes 
--41.716 -55.056 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
-Call:
-Linda(Species ~ ., data = iris, method = method)
-
-Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
-
-Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           5.0163      3.4510       1.4653      0.2449
-versicolor       5.9478      2.7804       4.2522      1.3109
-virginica        6.4062      3.0000       5.3688      2.0688
-
-Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length     0.184843    0.082357     0.094913    0.037068
-Sepal.Width      0.082357    0.097216     0.046239    0.028770
-Petal.Length     0.094913    0.046239     0.108827    0.037976
-Petal.Width      0.037068    0.028770     0.037976    0.029633
-
-Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           26.157     29.6972      -6.0986    -45.4723
-versicolor       20.896      4.3127      25.6179    -18.9191
-virginica        17.156     -1.4826      31.8840      8.9313
-
-Constants:
-    setosa versicolor  virginica 
-   -107.91    -111.30    -148.65 
-Call:
-Linda(sp ~ ., data = crabs, method = method)
-
-Prior Probabilities of Groups:
-  B   O 
-0.5 0.5 
-
-Group means:
-     sexM  index     FL     RW     CL     CW     BD
-B 0.51685 23.551 13.697 11.560 29.189 33.702 12.196
-O 0.51648 24.407 16.885 13.318 33.696 37.575 15.279
-
-Within-groups Covariance Matrix:
-          sexM     index      FL       RW       CL       CW       BD
-sexM   0.25253   0.39081  0.1392 -0.30486  0.49788  0.43755  0.20948
-index  0.39081 192.51673 40.0800 26.59793 85.03322 95.23666 38.63929
-FL     0.13920  40.07997  9.0334  5.94687 19.14809 21.51632  8.62646
-RW    -0.30486  26.59793  5.9469  4.84239 12.42504 14.19134  5.59600
-CL     0.49788  85.03322 19.1481 12.42504 41.35656 46.31923 18.58482
-CW     0.43755  95.23666 21.5163 14.19134 46.31923 52.11400 20.82136
-BD     0.20948  38.63929  8.6265  5.59600 18.58482 20.82136  8.45780
-
-Linear Coeficients:
-    sexM   index      FL      RW     CL       CW       BD
-B 14.828 -2.5080  9.2324  9.9866 1.0862  -2.5921  0.50266
-O 14.985 -3.9849 22.7488 12.2576 4.5277 -14.5224 14.12991
-
-Constants:
-       B        O 
- -71.178 -140.997 
-Call:
-Linda(as.factor(gr) ~ ., data = hemophilia)
-
-Prior Probabilities of Groups:
-carrier  normal 
-    0.6     0.4 
-
-Group means:
-        AHFactivity AHFantigen
-carrier    -0.31456  -0.014775
-normal     -0.13582  -0.069084
-
-Within-groups Covariance Matrix:
-            AHFactivity AHFantigen
-AHFactivity    0.016444   0.011351
-AHFantigen     0.011351   0.023937
-
-Linear Coeficients:
-        AHFactivity AHFantigen
-carrier    -27.8058    12.5688
-normal      -9.3172     1.5323
-
-Constants:
-carrier  normal 
--4.7913 -1.4961 
-Call:
 Linda(Treat ~ ., data = anorexia)
 
 Prior Probabilities of Groups:
@@ -848,6 +648,38 @@ FT   2.0947 1.6859
 Constants:
     CBT    Cont      FT 
 -147.73 -143.05 -169.82 
+
+Data:  Pima
+Call:
+Linda(type ~ ., data = Pima.tr, method = method)
+
+Prior Probabilities of Groups:
+  No  Yes 
+0.66 0.34 
+
+Group means:
+     npreg    glu     bp   skin    bmi     ped    age
+No  2.4182 110.88 68.064 26.709 30.983 0.41383 26.055
+Yes 4.9348 142.52 74.065 32.913 34.489 0.49285 34.913
+
+Within-groups Covariance Matrix:
+          npreg      glu         bp       skin      bmi       ped       age
+npreg  6.698493   9.4416   7.345899   4.585201  1.15105 -0.028783 10.800195
+glu    9.441569 534.7464  56.943260  28.339644 27.60413 -0.440900 25.940234
+bp     7.345899  56.9433 105.411421  26.885047 11.95749 -0.045431 23.888825
+skin   4.585201  28.3396  26.885047 107.612617 43.56626  0.071876 14.833751
+bmi    1.151052  27.6041  11.957490  43.566258 36.48443  0.168486  5.165975
+ped   -0.028783  -0.4409  -0.045431   0.071876  0.16849  0.058900 -0.092062
+age   10.800195  25.9402  23.888825  14.833751  5.16598 -0.092062 38.086525
+
+Linear Coeficients:
+      npreg     glu      bp     skin     bmi    ped     age
+No  -1.4042 0.12149 0.50024 -0.30124 0.86747 6.6175 0.70142
+Yes -1.4294 0.17355 0.47777 -0.28303 0.87079 8.6246 0.91710
+
+Constants:
+     No     Yes 
+-42.400 -56.106 
 Call:
 Linda(type ~ ., data = Pima.tr)
 
@@ -857,62 +689,59 @@ Prior Probabilities of Groups:
 
 Group means:
      npreg    glu     bp   skin    bmi     ped    age
-No  2.2429 109.46 67.727 26.306 30.798 0.41312 24.796
-Yes 5.4720 146.72 75.419 33.203 34.390 0.48347 38.070
+No  2.2197 109.67 67.559 26.523 30.999 0.41272 24.745
+Yes 5.4094 145.42 75.272 33.358 34.450 0.49549 38.044
 
 Within-groups Covariance Matrix:
           npreg       glu         bp       skin      bmi       ped      age
-npreg  8.466590  11.72184   8.463651   6.021744  2.61914 -0.018136 13.64342
-glu   11.721836 719.65653  75.341861  42.883148 43.51519 -0.386068 38.77834
-bp     8.463651  75.34186 135.233242  37.396673 17.82483 -0.063768 28.60301
-skin   6.021744  42.88315  37.396673 141.026410 57.39878  0.017322 19.11065
-bmi    2.619135  43.51519  17.824831  57.398781 46.16215  0.121493  8.48861
-ped   -0.018136  -0.38607  -0.063768   0.017322  0.12149  0.074912 -0.13804
-age   13.643417  38.77834  28.603010  19.110648  8.48861 -0.138036 51.38666
+npreg  8.787050  12.96612   9.814707   6.046115  1.47868 -0.036541 14.78285
+glu   12.966120 696.23983  75.567194  37.361459 35.64088 -0.566053 38.52903
+bp     9.814707  75.56719 137.133568  35.066577 15.43990 -0.057015 32.96688
+skin   6.046115  37.36146  35.066577 139.291531 56.33788  0.093605 19.94916
+bmi    1.478681  35.64088  15.439902  56.337876 47.18870  0.217859  6.61518
+ped   -0.036541  -0.56605  -0.057015   0.093605  0.21786  0.076184 -0.11455
+age   14.782850  38.52903  32.966883  19.949165  6.61518 -0.114545 54.63137
 
 Linear Coeficients:
-      npreg      glu      bp     skin     bmi    ped     age
-No  -1.0171 0.076726 0.40284 -0.25321 0.71162 5.7636 0.46254
-Yes -1.0954 0.119047 0.38524 -0.23314 0.68397 7.4033 0.72102
+       npreg      glu      bp     skin     bmi    ped    age
+No  -0.97514 0.090635 0.39411 -0.23228 0.68493 4.8872 0.4272
+Yes -1.07936 0.133417 0.37112 -0.21868 0.67659 6.6148 0.6822
 
 Constants:
      No     Yes 
--31.669 -44.747 
-The covariance matrix has become singular during
-the iterations of the MCD algorithm.
-There are 29 observations (in the entire dataset of 50 obs.) lying on
-the hyperplane with equation a_1*(x_i1 - m_1) + ... + a_p*(x_ip - m_p)
-= 0 with (m_1,...,m_p) the mean of these observations and coefficients
-a_i from the vector a <- c(0, 0, 0, -1)
+-31.446 -44.450 
+
+Data:  crabs
 Call:
-Linda(Species ~ ., data = iris)
+Linda(sp ~ ., data = crabs, method = method)
 
 Prior Probabilities of Groups:
-    setosa versicolor  virginica 
-   0.33333    0.33333    0.33333 
+  B   O 
+0.5 0.5 
 
 Group means:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           4.9965      3.3964       1.4597     0.22974
-versicolor       5.9446      2.8325       4.2174     1.33487
-virginica        6.4863      2.9660       5.4438     2.04529
+     sexM  index     FL     RW     CL     CW     BD
+B 0.50000 23.956 13.790 11.649 29.390 33.934 12.274
+O 0.51648 24.352 16.873 13.293 33.638 37.529 15.244
 
 Within-groups Covariance Matrix:
-             Sepal.Length Sepal.Width Petal.Length Petal.Width
-Sepal.Length     0.255427    0.104438     0.133043    0.050536
-Sepal.Width      0.104438    0.129398     0.054755    0.034151
-Petal.Length     0.133043    0.054755     0.146925    0.048383
-Petal.Width      0.050536    0.034151     0.048383    0.036227
+          sexM     index       FL       RW       CL       CW       BD
+sexM   0.25266   0.42722  0.14939 -0.29212  0.53264  0.47099  0.22673
+index  0.42722 192.79648 40.01474 26.49613 84.70128 95.13980 38.70498
+FL     0.14939  40.01474  8.98549  5.89390 18.99496 21.40504  8.60501
+RW    -0.29212  26.49613  5.89390  4.77665 12.26892 14.07065  5.56491
+CL     0.53264  84.70128 18.99496 12.26892 40.95316 45.98989 18.52488
+CW     0.47099  95.13980 21.40504 14.07065 45.98989 51.88675 20.81405
+BD     0.22673  38.70498  8.60501  5.56491 18.52488 20.81405  8.49271
 
 Linear Coeficients:
-           Sepal.Length Sepal.Width Petal.Length Petal.Width
-setosa           20.393     21.2293      -4.5929    -35.9847
-versicolor       13.731      6.4850      17.9245    -12.3593
-virginica        10.202      2.4065      24.5598      7.1568
+    sexM   index     FL     RW     CL       CW       BD
+B 13.760 -2.5749  9.093 10.189 3.0596  -3.8089 -0.41527
+O 13.979 -4.0788 23.224 12.721 6.9736 -16.4929 13.35375
 
 Constants:
-    setosa versicolor  virginica 
-   -80.612    -80.643   -111.921 
+       B        O 
+ -73.115 -144.712 
 Call:
 Linda(sp ~ ., data = crabs)
 
@@ -922,27 +751,30 @@ Prior Probabilities of Groups:
 
 Group means:
      sexM  index     FL     RW     CL     CW     BD
-B 0.36744 26.557 14.138 12.100 30.190 34.893 12.662
-O 0.55680 24.474 17.007 13.309 33.904 37.821 15.353
+B 0.40950 25.400 13.970 11.952 29.766 34.400 12.474
+O 0.64204 23.673 16.857 13.079 33.656 37.466 15.241
 
 Within-groups Covariance Matrix:
-          sexM    index       FL       RW        CL        CW       BD
-sexM   0.30524   1.0421  0.25721 -0.32918   0.82938   0.79588  0.35614
-index  1.04208 233.1479 49.64115 33.21884 104.93487 117.62053 48.18426
-FL     0.25721  49.6411 11.34966  7.57396  23.97593  27.00309 10.91392
-RW    -0.32918  33.2188  7.57396  6.28201  15.75504  18.02824  7.18918
-CL     0.82938 104.9349 23.97593 15.75504  51.63306  57.95649 23.48064
-CW     0.79588 117.6205 27.00309 18.02824  57.95649  65.35600 26.36813
-BD     0.35614  48.1843 10.91392  7.18918  23.48064  26.36813 10.81932
+          sexM    index       FL       RW       CL        CW       BD
+sexM   0.31032   0.1883  0.11546 -0.42812  0.49456   0.39805  0.20243
+index  0.18830 224.9597 46.35440 30.67663 98.36561 109.98771 44.84110
+FL     0.11546  46.3544 10.35887  6.74042 21.94431  24.60103  9.91260
+RW    -0.42812  30.6766  6.74042  5.50503 14.01065  15.98202  6.33201
+CL     0.49456  98.3656 21.94431 14.01065 47.40407  52.93199 21.35958
+CW     0.39805 109.9877 24.60103 15.98202 52.93199  59.39009 23.85704
+BD     0.20243  44.8411  9.91260  6.33201 21.35958  23.85704  9.75107
 
 Linear Coeficients:
-    sexM   index     FL      RW     CL       CW       BD
-B 14.568 -2.3414 10.420  8.8815 2.6676  -4.7042  0.38076
-O 21.844 -3.9456 26.327 12.7933 4.4785 -16.1755 12.91658
+    sexM   index      FL     RW       CL        CW      BD
+B 17.701 -2.1578  5.3832 11.427 -0.96336  -0.61249  1.5504
+O 18.846 -3.4189 17.5549 13.412  1.57777 -10.56970 12.7429
 
 Constants:
-      B       O 
- -60.28 -136.67 
+       B        O 
+ -67.603 -127.601 
 ===================================================
 > #dodata(method="fsa")
 > 
+> proc.time()
+   user  system elapsed 
+   1.82    0.06    1.88 

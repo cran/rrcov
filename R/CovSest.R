@@ -795,7 +795,7 @@ psibiweight <- function(xx, c1)
     cov <- DEV1%*%cov%*%DEV1
     center <- as.vector(center)
 
-    crit <- determinant(cov, log = FALSE)$modulus[1]
+    crit <- determinant(cov, logarithm = FALSE)$modulus[1]
     if(!is.null(nms <- dimn[[2]])) {
         names(center) <- nms
         dimnames(cov) <- list(nms,nms)
@@ -877,7 +877,7 @@ psibiweight <- function(xx, c1)
     cov <- DEV1%*%cov%*%DEV1
     center <- as.vector(center)
 
-    crit <- determinant(cov, log = FALSE)$modulus[1]
+    crit <- determinant(cov, logarithm = FALSE)$modulus[1]
     if(!is.null(nms <- dimn[[2]])) {
         names(center) <- nms
         dimnames(cov) <- list(nms,nms)

@@ -141,7 +141,8 @@ CCC     1 f10.4)') log10(deter)
       endif
 
       verbes = 1.d30
-      if (ncover .ge. ncas) stop
+      if (ncover .ge. ncas) return
+
 
       cover = 1.0*ncover/ncas
 
@@ -496,7 +497,7 @@ c
  5    continue
       if (biger .gt. 0.001) then
 CCC        WRITE(*,*) 'Inversion error, departure from I is',biger
-        stop
+        return
         endif
       return
       end
