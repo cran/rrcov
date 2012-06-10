@@ -18,9 +18,9 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
     n <- n1 <- dx[1]
     p <- dx[2]
 
-    if(!is.null(y)) 
+    if(!is.null(y))
     {
-                        
+
         ##  Validate that y is a numerical matrix or a dataframe,
         ##  convert to a matrix and drop all rows with missing values
         y <- .tomatrix(y)
@@ -31,7 +31,7 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
             stop("'x' and 'y' must have the same dimension!")
     }
 
-    
+
     if(!is.numeric(mu) || ((lmu <- length(mu)) > 1 & lmu != p))
         stop("'mu' must be a numeric vector of length ", p)
     if(lmu == 1)
@@ -54,11 +54,11 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
             xbar <- colMeans(x)
             xdiff <- xbar - mu
             V <- var(x)
-            
+
             d <- p * (n-1)/(n-p)
             q <- n-p
-            STATISTIC <- n * crossprod(xdiff, solve(V, xdiff))[1, ]
-            STATISTIC <- STATISTIC/d
+            T2 <- STATISTIC <- n * crossprod(xdiff, solve(V, xdiff))[1, ]
+            F  <- STATISTIC <- STATISTIC/d
 
             PVALUE <- 1 - pf(STATISTIC, p, n - p)
             PARAMETER <- c(p, n - p)
@@ -73,16 +73,15 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
             xdq <- .getApprox(p, n)
             d <- xdq$d
             q <- xdq$q
-    
-            STATISTIC <- n * crossprod(xdiff, solve(V, xdiff))[1, ]
-            STATISTIC <- STATISTIC/d
+
+            T2 <- STATISTIC <- n * crossprod(xdiff, solve(V, xdiff))[1, ]
+            F  <- STATISTIC <- STATISTIC/d
 
             PVALUE <- 1 - pf(STATISTIC, p, q)
             PARAMETER <- c(p, q)
             ESTIMATE = t(as.matrix(xbar))
             rownames(ESTIMATE) <- "MCD x-vector"
             METHOD <- paste(METHOD, " (Reweighted MCD Location)")
-
         } else
             stop(paste("Invalid method=",method))
 
@@ -93,16 +92,16 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
             conf.int[i,1] <- xbar[i] - sqrt(1/n*d*qf(1-alpha, p, q) * V[i,i])
             conf.int[i,2] <- xbar[i] + sqrt(1/n*d*qf(1-alpha, p, q) * V[i,i])
         }
-        dimnames(conf.int) <- list(dimnames(x)[[2]], c("Lower bound","Upper bound")) 
+        dimnames(conf.int) <- list(dimnames(x)[[2]], c("Lower bound","Upper bound"))
         attr(conf.int,"conf.level") <- conf.level
-        
+
         ## switch off the confidence intervals, since 'htest'
         ## does not know how to print them
         conf.int <- NULL
     } else {
         if(method != "c")
             stop("Robust two-sample test not yet implemeted!")
-            
+
         xbar <- colMeans(x)
         ybar <- colMeans(y)
         xdiff <- xbar - ybar                                    # the difference between the two means
@@ -112,8 +111,8 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
 
         df1 <- p
         df2 <- n1 + n2 - p - 1
-        STATISTIC <- crossprod(xdiff, solve(V, xdiff))[1,] * n1 * n2 / (n1+n2)
-        STATISTIC <- STATISTIC * (n1 + n2 - p - 1) / (n1 + n2 - 2) / p
+        T2 <- STATISTIC <- crossprod(xdiff, solve(V, xdiff))[1,] * n1 * n2 / (n1+n2)
+        F  <- STATISTIC <- STATISTIC * (n1 + n2 - p - 1) / (n1 + n2 - 2) / p
         PVALUE <- 1 - pf(STATISTIC, df1, df2)
         PARAMETER = c(df1, df2)
 
@@ -127,18 +126,21 @@ T2.test.default <- function(x, y = NULL, mu = 0, conf.level = 0.95, method=c("c"
     }
 
     names(PARAMETER) <- c("df1", "df2")
-    names(STATISTIC) <- "T^2"
+##    names(STATISTIC) <- "T^2"
+    STATISTIC <- c(T2, F)
+    names(STATISTIC) <- c("T2", "F")
+
 
     rval <- list(statistic = STATISTIC,
-            parameter = PARAMETER, 
+            parameter = PARAMETER,
             p.value = PVALUE,
-            conf.int=conf.int, 
-            estimate=ESTIMATE, 
+            conf.int=conf.int,
+            estimate=ESTIMATE,
             null.value = NULL,
-            alternative = alternative, 
-            method=METHOD, 
+            alternative = alternative,
+            method=METHOD,
             data.name=dname)
-            
+
     class(rval) <- "htest"
     return(rval)
 }
@@ -164,9 +166,9 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
     if(nlevels(g) != 2)
         stop("grouping factor must have exactly 2 levels")
 
-    xind <- which(g==levels(g)[1])        
-    yind <- which(g==levels(g)[2])        
-    
+    xind <- which(g==levels(g)[1])
+    yind <- which(g==levels(g)[2])
+
     y <- T2.test(x=mf[[response]][xind,], y=mf[[response]][yind,], ...)
     y$data.name <- DNAME
     y
@@ -185,12 +187,12 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
         stop(msg)
     }
     if(!is.vector(x) && !is.matrix(x) || is.data.frame(x)) {
-        if((!is.data.frame(x) && !is.numeric(x)) || 
+        if((!is.data.frame(x) && !is.numeric(x)) ||
         (!all(sapply(x, data.class) == "numeric")))
         stop(msg)
     }
     x <- as.matrix(x)
-    if(drop.missing){    
+    if(drop.missing){
         ## drop all rows with missing values
         na.x <- !is.finite(x %*% rep(1, ncol(x)))
         xok <- !na.x
@@ -206,8 +208,8 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
 .kappa.s <- function(alfa, p)
 {
     ## Computes the asymptotic variance for the reweighted
-    ##  MCD location estimator 
-    ##  - p is the dimension 
+    ##  MCD location estimator
+    ##  - p is the dimension
     ##  - alfa, between 1/2 and 1 is the percentage of the observations
     ##      that are used to determine the raw MCD.
 
@@ -239,8 +241,8 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
     limvarx <- .kappa.s(0.75, p)^2*2*p
     limex <- .kappa.s(0.75, p)*p
 
-    vb1 <- exp(coeffpqp2varx[2,1])/p^(coeffpqp2varx[3,1]) 
-    vb2 <- exp(coeffpqp2varx[2,2])/p^(coeffpqp2varx[3,2]) 
+    vb1 <- exp(coeffpqp2varx[2,1])/p^(coeffpqp2varx[3,1])
+    vb2 <- exp(coeffpqp2varx[2,2])/p^(coeffpqp2varx[3,2])
     vb <- c(log(vb1),log(vb2))
     va12 <- log(7*p^2)
     va22 <- log(10*p^2)
@@ -250,8 +252,8 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
             else                solve(vA,vb)
     varx <- limvarx+exp(vy[1])/(n^(-vy[2]))
 
-    eb1 <- exp(coeffpqp2ex[2,1])/p^(coeffpqp2ex[3,1]) 
-    eb2 <- exp(coeffpqp2ex[2,2])/p^(coeffpqp2ex[3,2]) 
+    eb1 <- exp(coeffpqp2ex[2,1])/p^(coeffpqp2ex[3,1])
+    eb2 <- exp(coeffpqp2ex[2,2])/p^(coeffpqp2ex[3,2])
     eb <- c(log(eb1),log(eb2))
     ea12 <- log(7*p^2)
     ea22 <- log(10*p^2)
@@ -265,11 +267,11 @@ T2.test.formula <- function(formula, data, subset, na.action, ...)
     q <- (varx/ex^2*p/2-1)^(-1)*(p+2) + 4
 
     ## When n gets large, the expression for q goes to infinity,
-    ## but is very sensitive;  no harm is done by setting q equal 
-    ## to n when the expression yields negative or extremely large values 
-    if(q > n || q < 0)      
+    ## but is very sensitive;  no harm is done by setting q equal
+    ## to n when the expression yields negative or extremely large values
+    if(q > n || q < 0)
         q <- n
-    
+
     d <- ex*(q-2)/q
     list(d=d, q=q)
 }

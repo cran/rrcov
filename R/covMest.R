@@ -37,8 +37,8 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
     method <- "M-Estimates"
 
     ## If not provided initial estimates, compute them as MVE
-    ##  Take the raw estimates and standardise the covariance 
-    ##  matrix to determinant=1 
+    ##  Take the raw estimates and standardise the covariance
+    ##  matrix to determinant=1
     if(missing(t0) || missing(S0)){
         if(missing(initcontrol))
             init <- CovMve(x)
@@ -57,16 +57,16 @@ CovMest <- function(x, r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0,
         }
     }
 
-    ## calculate the constants M and c 
+    ## calculate the constants M and c
     ## for the translated biweight function
     psix <- new("PsiBwt", n=n, p=p, r=r, alpha=arp)
     psix <- csolve(psix)
     mest <- iterM(psix, x, t0, S0, eps=eps, maxiter=maxiter)
 
     mah <- mahalanobis(x, mest$t1, mest$s)
-    crit <- determinant(mest$s, log = FALSE)$modulus[1]
+    crit <- determinant(mest$s, logarithm = FALSE)$modulus[1]
 
-    new("CovMest", call=call, cov=mest$s, center=mest$t1, n.obs=n, 
-        mah=mah, method=method, X=x, iter=mest$iter, crit=crit, 
+    new("CovMest", call=call, cov=mest$s, center=mest$t1, n.obs=n,
+        mah=mah, method=method, X=x, iter=mest$iter, crit=crit,
         wt=mest$wt, vt=mest$vt)
 }

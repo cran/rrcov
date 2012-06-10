@@ -90,7 +90,8 @@ export(isClassic,
        getSdev,
        getScores,
        getPrcomp,
-       scoreplot
+       scoreplot,
+       getRaw
 )
 
 exportClasses(Cov,
@@ -134,7 +135,12 @@ exportClasses(Cov,
               QdaRobust,
               QdaCov,
               PredictQda,
-              SummaryQda
+              SummaryQda,
+              Ulist,
+              Uvector,
+              Utable,
+              Umatrix,
+              Ufunction
 )
 
 exportMethods(isClassic,
@@ -163,5 +169,6 @@ exportMethods(isClassic,
               predict,
               screeplot,
               biplot,
-              scoreplot
+              scoreplot,
+              getRaw
 )

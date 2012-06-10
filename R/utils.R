@@ -1,6 +1,6 @@
 .isSingular <- function(mat)
 {
-##    return( - (determinant(mat, log = TRUE)$modulus[1] - 0)/ncol(mat) > 50)
+##    return( - (determinant(mat, logarithm = TRUE)$modulus[1] - 0)/ncol(mat) > 50)
     p <- ncol(mat)
     if(!is.qr(mat))
         mat <- qr(mat)
@@ -54,7 +54,7 @@ zeros <- function(n=1, p=1){
 ## Author: Martin Maechler, Date:  7 Apr 2007, 16:16
 rankMM <- function(A, tol = NULL, sv = svd(A,0,0)$d) {
     d <- dim(A)
-    stopifnot(length(d)==2, length(sv)==min(d), diff(sv) < 0)   # must be sorted decreasingly
+    stopifnot(length(d)==2, length(sv)==min(d), diff(sv) <= 0)   # must be sorted decreasingly
     if(is.null(tol))
         tol <- max(d) * .Machine$double.eps * abs(sv[1])
     else

@@ -36,8 +36,8 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ans <- list(method = "M-Estimates", call = match.call())
 
     ## If not provided initial estimates, compute them as MVE
-    ##  Take the raw estimates and standardise the covariance 
-    ##  matrix to determinant=1 
+    ##  Take the raw estimates and standardise the covariance
+    ##  matrix to determinant=1
     if(missing(t0) || missing(S0)){
         mcd <- CovMve(x)
         t0 <- mcd@raw.center
@@ -45,10 +45,10 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
         detS0 <-det(S0)
         detS02 <- detS0^(1.0/p)
         S0 <- S0/detS02
-        
+
     }
 
-    ## calculate the constants M and c 
+    ## calculate the constants M and c
     ## for the translated biweight function
     psix <- new("PsiBwt", n=n, p=p, r=r, alpha=arp)
     psix <- csolve(psix)
@@ -57,19 +57,19 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ## this was the version without OO
     ##const <- csolve.bt(n, p, r, arp)
     ##mest <- .iterM(x, t0, S0, const$c1, const$M, eps, maxiter)
-    
+
     ans$n.obs <- n
     ##ans$c1 <- const$c1
     ##ans$M <- const$M
-    
+
     ans$c1 <- psix@c1
     ans$M <- psix@M
-    
+
     ans$iter <- mest$iter
     ans$cov <- mest$s
     ans$center <- mest$t1
     ans$mah <- mahalanobis(x, mest$t1, mest$s)
-    ans$crit <- determinant(mest$s, log = FALSE)$modulus[1]
+    ans$crit <- determinant(mest$s, logarithm = FALSE)$modulus[1]
     if(cor && !is.null(ans$cov))
         cor <- cov2cor(ans$cov)
 

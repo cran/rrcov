@@ -9,17 +9,31 @@ dodata <- function(method) {
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
     cat("===================================================\n")
 
-    data(hemophilia);   show(Linda(as.factor(gr)~., data=hemophilia, method=method))
-    data(anorexia);     show(Linda(Treat~., data=anorexia, method=method))
-    data(Pima.tr);      show(Linda(type~., data=Pima.tr, method=method))
-    data(iris);         show(Linda(Species~., data=iris, method=method))
-    data(crabs);        show(Linda(sp~., data=crabs, method=method))
-    
+    cat("\nData: ", "anorexia\n");
+    data(hemophilia);
+    show(Linda(as.factor(gr)~., data=hemophilia, method=method))
     show(Linda(as.factor(gr)~., data=hemophilia))
+
+    cat("\nData: ", "anorexia\n");
+    data(anorexia);
+    show(Linda(Treat~., data=anorexia, method=method))
     show(Linda(Treat~., data=anorexia))
+
+    cat("\nData: ", "Pima\n");
+    data(Pima.tr);
+    show(Linda(type~., data=Pima.tr, method=method))
     show(Linda(type~., data=Pima.tr))
-    show(Linda(Species~., data=iris))
+
+##    cat("\nData: ", "iris\n");
+##    data(iris);
+##    show(Linda(Species~., data=iris, method=method))
+##    show(Linda(Species~., data=iris))
+
+    cat("\nData: ", "crabs\n");
+    data(crabs);
+    show(Linda(sp~., data=crabs, method=method))
     show(Linda(sp~., data=crabs))
+
     cat("===================================================\n")
 }
 

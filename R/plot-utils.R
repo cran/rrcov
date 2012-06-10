@@ -495,7 +495,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
         ymax <- ymax + ff*(ymax-ymin); #print(ff*(ymax-ymin))
         par(usr = c(xmin, xmax, ymin, ymax))
 
-        points(x,y)
+        points(x,y, ...)
         lines(e.class, col=ecol.class, lty="dashed")
         lines(e.rob, col=ecol.rob)
     }

@@ -67,6 +67,22 @@ CovRobust <- function(x, control, na.action = na.fail)
 setMethod("isClassic", "CovRobust", function(obj) FALSE)
 setMethod("isClassic", "SummaryCovRobust", function(obj) FALSE)
 setMethod("getMeth", "CovRobust", function(obj) obj@method)
+setMethod("getRaw", "CovRobust", function(obj){
+
+    if(is(obj, "CovMcd") | is(obj, "CovMve") | is(obj, "CovOgk"))
+    {
+        obj@center <- obj@raw.center
+        obj@cov <- obj@raw.cov
+        obj@mah <- obj@raw.mah
+        obj@wt <- obj@raw.wt
+    }
+    if(is(obj, "CovMcd") | is(obj, "CovMve"))
+    {
+        obj@cnp2 <- obj@raw.cnp2
+    }
+    invisible(obj)
+})
+
 ##
 ## Follow the standard methods: show, summary, plot
 ##

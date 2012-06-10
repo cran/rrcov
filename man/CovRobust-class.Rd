@@ -6,6 +6,7 @@
 \alias{getMeth,CovRobust-method}
 \alias{show,CovRobust-method}
 \alias{summary,CovRobust-method}
+\alias{getRaw,CovRobust-method}
 
 \title{Class "CovRobust" - virtual base class for robust
  estimates of multivariate location and scatter}
@@ -34,6 +35,7 @@ The derived classes can override these methods and can define new ones.}
 \item{getMeth}{\code{signature(obj = "CovRobust")}: Return the name of the particular robust method used (as a character string) }
 \item{show}{\code{signature(object = "CovRobust")}: display the object }
 \item{plot}{\code{signature(x = "CovRobust")}: plot the object }
+\item{getRaw}{\code{signature(obj = "CovRobust")}: Return the object with the reweighted estimates replaced by the raw ones (only relevant for CovMcd, CovMve and CovOgk) }
 }
 }
 \references{

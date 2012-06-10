@@ -1,7 +1,7 @@
-CovMve <- function(x, 
-                   alpha=1/2, 
-                   nsamp=500, 
-                   seed=NULL, 
+CovMve <- function(x,
+                   alpha=1/2,
+                   nsamp=500,
+                   seed=NULL,
                    trace=FALSE,
                    control)
 {
@@ -12,7 +12,7 @@ CovMve <- function(x,
     ## if a control object was supplied, take the option parameters from it,
     ## but if single parameters were passed (not defaults) they will override the
     ## control object.
-    
+
     defcontrol <- CovControlMcd()       # default control
     if(!missing(control)){
         if(alpha == defcontrol@alpha)       alpha <- control@alpha
@@ -55,7 +55,7 @@ CovMve <- function(x,
     p <- dx[2]
     h <- h.alpha.n(alpha, n, p) # h(alpha) , the size of the subsamples
     ######## h <- floor(n/2)
-    
+
     if(n <= p + 1)          # ==> floor((n+p+1)/2) > n - 1  -- not Ok
         stop(if (n <= p)    # absolute barrier!
              "n <= p -- you can't be serious!"
@@ -66,9 +66,9 @@ CovMve <- function(x,
     }
     if(h > n)
         stop("Sample size n  <  h(alpha; n,p) := size of \"good\" subsample")
-    else if(alpha > 1) 
+    else if(alpha > 1)
         stop("alpha must be <= 1")
-    
+
     ## VT::29.07.2008 - raw.cnp2 and cnp2 are vectors of size 2 and  will
     ##   contain the correction factors (concistency and finite sample)
     ##   for the raw and reweighted estimates respectively. Set them
@@ -76,24 +76,24 @@ CovMve <- function(x,
     ##   (default=FALSE), the finite sample correction factor will not
     ##   be used (neither for the raw estimates nor for the reweighted)
     ##
-    ##  The finite sample correction factors for MVE are not known, except 
+    ##  The finite sample correction factors for MVE are not known, except
     ##  for the very old cnp2=(1 + 15/(n - p))^2 (Rousseeuw&van Zomeren, 1988)
     ##  therefore will remain always 1.
     ##
-    ##  The consistancy factor for the raw covariance is 
+    ##  The consistancy factor for the raw covariance is
     ##      cf <- median(dist)/qchisq(0.5, p)
     ##
-    ## FIXME: should be 
+    ## FIXME: should be
     ##      cf <- quantile(dist, alpha)/qchisq(alpha, p)
     ##
 
     raw.cnp2 <- cnp2 <- c(1,1)
-    
+
     ##  Case: alpha==1
     ##  ...
     ##  ...
     ##  Case p == 1
-    
+
     method <- "Minimum volume ellipsoid estimator"
     mve <- .fastmve(x, h, nsamp)
 
@@ -108,7 +108,7 @@ CovMve <- function(x,
     names(calpha) <- NULL
     correct <- if(use.correction) (1 + 15/(n - p))^2 else 1.
     raw.cnp2 <- c(calpha, correct)
-    
+
     rcov <- calpha * correct * rcov
 
     ## Again consider p == 1
@@ -145,9 +145,9 @@ CovMve <- function(x,
 
         ## Check if the reweighted scatter matrix is singular and
         ##  compute distances and weights based on it
-        if( - (determinant(xcov$cov, log = TRUE)$modulus[1] - 0)/p > 50) {
+        if( - (determinant(xcov$cov, logarithm = TRUE)$modulus[1] - 0)/p > 50) {
             ## ans$singularity <- list(kind = "reweighted.MCD")
-            if(trace) 
+            if(trace)
                 cat("The reweighted MCD scatter matrix is singular.\n")
             mah <- raw.mah
         }
@@ -157,7 +157,7 @@ CovMve <- function(x,
         }
 
     ##
-    ans <- new("CovMve", 
+    ans <- new("CovMve",
                 call=xcall,
                 iter=nsamp,
                 crit=mve$scale,
@@ -178,7 +178,7 @@ CovMve <- function(x,
                 raw.cnp2=raw.cnp2,
                 cnp2=cnp2
             )
-    ans                        
+    ans
 }
 
 .fastmve <- function(x, h, nsamp)
@@ -187,27 +187,27 @@ CovMve <- function(x,
     n <- dx[1]
     p <- dx[2]
     nind <- p+1
-    
-    tmp <- .C('r_fast_mve', 
+
+    tmp <- .C('r_fast_mve',
         x = if(is.double(x)) x else as.double(x),
-        as.integer(n), 
-        as.integer(p), 
-        as.integer(nsamp), 
-        nsing = as.integer(0), 
-        ctr = as.double(rep(0,p)), 
-        cov = as.double(rep(0,p*p)), 
-        scale = as.double(0), 
-        best=as.integer(rep(0,n)), 
-        as.integer(nind), 
+        as.integer(n),
+        as.integer(p),
+        as.integer(nsamp),
+        nsing = as.integer(0),
+        ctr = as.double(rep(0,p)),
+        cov = as.double(rep(0,p*p)),
+        scale = as.double(0),
+        best=as.integer(rep(0,n)),
+        as.integer(nind),
         as.integer(h),
         as.double(qchisq(0.5, p)),
         PACKAGE="rrcov")
-        
+
     mve.cov <- matrix(tmp$cov, p, p)
-    return(list(center= tmp$ctr, 
-                cov=mve.cov, 
+    return(list(center= tmp$ctr,
+                cov=mve.cov,
                 scale=tmp$scale,
                 best=tmp$best[1:h],
-                nsamp=nsamp, 
+                nsamp=nsamp,
                 nsing = tmp$nsing))
 }

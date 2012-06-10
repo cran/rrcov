@@ -79,7 +79,7 @@ PcaGrid.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
     {
         scale <- if(scale) sd else  NULL
     }
-    out <- PCAgrid(x, k, scale=scale, ...)
+    out <- PCAgrid(x, k, scale=scale, trace=-1, ...)
 
     scores <- predict(out)
     center   <- out$center

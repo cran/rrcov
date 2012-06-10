@@ -23,6 +23,8 @@
 \alias{getMeth-methods} 
 \alias{isClassic}
 \alias{isClassic-methods} 
+\alias{getRaw}
+\alias{getRaw-methods} 
 \usage{
 getCenter(obj)
 getCov(obj)
@@ -35,6 +37,7 @@ getShape(obj)
 getFlag(obj, prob=0.975)
 getMeth(obj)
 isClassic(obj)
+getRaw(obj)
 } 
 
 \arguments{
