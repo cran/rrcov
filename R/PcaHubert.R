@@ -119,7 +119,11 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ## verify and set the input parameters: alpha, k and kmax
     ## determine h based on alpha and kmax, using the function h.alpha.n()
     ##
-    kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
+
+    ## VT::06.11.2012 - kmax <= floor(n/2) is too restrictive
+    ##    kmax <- max(min(floor(kmax), floor(n/2), Xsvd$rank),1)
+    kmax <- max(min(floor(kmax), Xsvd$rank),1)
+
     if((k <- floor(k)) < 0)
         k <- 0
     else if(k > kmax) {
@@ -199,10 +203,19 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         eigenvalues <- X.mcd.svd$d[1:k]
         loadings <- Xsvd$loadings %*% X.mcd.svd$u[,1:k]
         scores <- as.matrix(scores[,1:k])
-        if(is.list(dimnames(data)))
+        if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
+        {
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
+        } else {
+            dimnames(scores)[[1]] <- 1:n
+        }
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
+
+##        print("*** MCD ***")
+##        print(dimnames(data)[[1]])
+##        print(dimnames(scores)[[1]])
+##        print(dimnames(scores)[[2]])
 
         res <- new("PcaHubert",call=cl,
                             loadings=loadings,
@@ -375,9 +388,21 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         eigenvalues <- ee$values
         loadings <- rot %*% P6
         scores <- (X2 - repmat(X2center, n, 1)) %*% P6
-        if(is.list(dimnames(data)))
+
+
+        if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
+        {
             dimnames(scores)[[1]] <- dimnames(data)[[1]]
+        } else {
+            dimnames(scores)[[1]] <- 1:n
+        }
+        dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
+
+##        print("*** ROBPCA *** ")
+##        print(dimnames(data)[[1]])
+##        print(dimnames(scores)[[1]])
+##        print(dimnames(scores)[[2]])
 
         res <- new("PcaHubert",call=cl,
                             loadings=loadings,

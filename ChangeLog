@@ -1,9 +1,19 @@
+2013-04-28  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.3-3
+    *
+    * SRC/ds11.f: Fortran array bound check error fixed
+    *
+    * R/zzz.R: on.Load() replaced by on.Attach() to suppress a NOTE
+    *
+    * R/Pca.R: Fixed a problem in pca.scoreplot() - the ellipse was not
+    *   properly shown in case for example of PP PCA, when the scores can be correlated.
+
 2012-06-10  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.3-02
     *
-    *   R/Linda.R: Fixed a problem with array over-run in .Fortran("fsada") 
+    *   R/Linda.R: Fixed a problem with array over-run in .Fortran("fsada")
             in integer argument 14
-    *       
+    *
     *   Method getRaw() for CovMcd, CovMve and CovOgk added
     *   Union S4 classes Uvector, Umatrix, Ulist, Ufunction, Utable exported
     *       in the name space

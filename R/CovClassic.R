@@ -24,8 +24,9 @@ CovClassic <- function(x, unbiased = TRUE)
     dimn <- dimnames(x)
     n <- dx[1]
     p <- dx[2]
-    if(n < 2 * p)
-        stop("Need at least 2*(number of variables) observations ")
+
+    if(n < p)
+        stop("Need at least p=(number of variables) observations ")
 
     call = match.call()
     method = "Classical Estimator."

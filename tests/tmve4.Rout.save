@@ -1,8 +1,7 @@
 
-R Under development (unstable) (2011-08-17 r56745)
-Copyright (C) 2011 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
-Platform: i386-pc-mingw32/i386 (32-bit)
+R Under development (unstable) (2013-04-27 r62681) -- "Unsuffered Consequences"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -242,7 +241,7 @@ Type 'q()' to quit R.
 Loading required package: robustbase
 Loading required package: pcaPP
 Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.3-02)
+Scalable Robust Estimators with High Breakdown Point (version 1.3-3)
 
 > dodata()
 
@@ -500,3 +499,6 @@ V5   -509   -289   3480    854    683
 --------------------------------------------------------
 ========================================================
 > 
+> proc.time()
+   user  system elapsed 
+   0.59    0.06    0.64 

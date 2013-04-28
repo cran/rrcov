@@ -372,7 +372,7 @@ C       if (ierr .ne. 0) write(*,*) 'rlxnorma(...,tolb) failed!'
 
         subroutine rlortdir(xx,mm,nmain,dire)
         implicit double precision (a-h,o-z)
-        dimension xx(nmain,1), dire(mm)
+        dimension xx(nmain,mm), dire(mm)
         tol=1./dsqrt(dble(mm))
         mm1=mm-1
         do  k=1,mm

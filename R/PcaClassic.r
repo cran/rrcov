@@ -92,6 +92,7 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     center      <- as.vector(Xsvd$center)
     scores      <- Xsvd$scores[, 1:k, drop=FALSE]
     scale       <- Xsvd$scale
+
     if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
     {
         dimnames(scores)[[1]] <- dimnames(data)[[1]]
