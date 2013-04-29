@@ -1,6 +1,7 @@
 useDynLib(rrcov)
 importFrom(stats4, plot, summary)
 importFrom(stats, screeplot, biplot, predict)
+import(robustbase)
 
 export(CovClassic,
        Cov,

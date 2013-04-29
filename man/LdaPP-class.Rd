@@ -4,7 +4,7 @@
 \alias{predict,LdaPP-method}
 \title{Class "LdaPP" - Robust method for Linear Discriminant Analysis by Projection-pursuit}
 \description{ 
-    The class \code{LdaPP} represents an algorithms for robust linear discriminant 
+    The class \code{LdaPP} represents an algorithm for robust linear discriminant 
     analysis by projection-pursuit approach. The objects of class \code{LdaPP} contain the results
     of the robust linear discriminant analysis by projection-pursuit approach.
     

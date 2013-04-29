@@ -11,12 +11,12 @@ QdaClassic.formula <- function(formula, data, ..., subset, na.action)
     grouping <- model.response(m)
     x <- model.matrix(Terms, m)
     xint <- match("(Intercept)", colnames(x), nomatch=0)
-    if(xint > 0) 
+    if(xint > 0)
         x <- x[, -xint, drop=FALSE]
     res <- QdaClassic.default(x, grouping, ...)
 
 ##    res$terms <- Terms
-    
+
     ## fix up call to refer to the generic, but leave arg name as formula
     cl <- match.call()
     cl[[1]] <- as.name("QdaClassic")
@@ -27,15 +27,15 @@ QdaClassic.formula <- function(formula, data, ..., subset, na.action)
 ##    res$na.action <- attr(m, "na.action")
 
     res
-} 
+}
 
 
-QdaClassic.default <- function(x, 
-                 grouping, 
-                 prior = proportions, 
-                 tol = 1.0e-4, ...) 
+QdaClassic.default <- function(x,
+                 grouping,
+                 prior = proportions,
+                 tol = 1.0e-4, ...)
 {
-    if(is.null(dim(x))) 
+    if(is.null(dim(x)))
         stop("x is not a matrix")
 
     xcall <- match.call()
@@ -61,45 +61,45 @@ QdaClassic.default <- function(x,
         gx <- rep(0,0)
         for(i in 1:ng)
             gx <- c(gx, rep(i,grouping[i]))
-        grouping <- gx 
+        grouping <- gx
     }
 
     if(n != length(grouping))
         stop("nrow(x) and length(grouping) are different")
-    
+
     g <- as.factor(grouping)
     lev <- lev1 <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
 
     if(!missing(prior)) {
-        if(any(prior < 0) || round(sum(prior), 5) != 1) 
+        if(any(prior < 0) || round(sum(prior), 5) != 1)
             stop("invalid prior")
-        if(length(prior) != nlevels(g)) 
+        if(length(prior) != nlevels(g))
             stop("prior is of incorrect length")
         prior <- prior[counts > 0]
-    } 
+    }
     if(any(counts == 0)) {
         warning(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
         lev1 <- lev[counts > 0]
         g <- factor(g, levels=lev1)
         counts <- as.vector(table(g))
-    } 
-    proportions <- counts/n 
-    ng <- length(proportions) 
+    }
+    proportions <- counts/n
+    ng <- length(proportions)
     names(g) <- NULL
     names(prior) <- levels(g)
-    
+
     xcov <- .allcovClass(x, grouping)
-    
+
 ##    inv <- solve(xcov$wcov)
 ##    ldf <- xcov$means %*% inv
 ##    ldfconst <- diag(log(prior) - ldf %*% t(xcov$means)/2)
-    return (new("QdaClassic", call=xcall, prior=prior, counts=counts, 
-                 center=xcov$means, 
-                 cov=xcov$cov, 
-                 covinv=xcov$covinv, 
-                 covdet=xcov$covdet, 
-                 method="Classic QDA",
+    return (new("QdaClassic", call=xcall, prior=prior, counts=counts,
+                 center=xcov$means,
+                 cov=xcov$cov,
+                 covinv=xcov$covinv,
+                 covdet=xcov$covdet,
+                 method="Quadratic Discriminant Analysis (QDA)",
                  control=NULL,
                  X=x,
                  grp=g))
@@ -116,12 +116,12 @@ QdaClassic.default <- function(x,
     if(!is.factor(g <- grouping))
         g <- as.factor(grouping)
     lev <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
     if(any(counts == 0)) {
         stop(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
-    } 
-    ng <- length(counts/n) 
-    
+    }
+    ng <- length(counts/n)
+
     # compute group means and covariance matrices for each group
     mX <- matrix(0,ng,p)
     covX <- array(0,c(p,p,ng))
@@ -130,7 +130,7 @@ QdaClassic.default <- function(x,
     for(i in 1:ng){
         tmpc <- cov.wt(as.matrix(x[which(g == lev[i]),]))
         mX[i,] <- tmpc$center
-        covX[,,i] <- tmpc$cov  
+        covX[,,i] <- tmpc$cov
         covInv[,,i] <- solve(tmpc$cov)
         covdet[i] <- det(tmpc$cov)
     }
@@ -139,7 +139,7 @@ QdaClassic.default <- function(x,
     dimnames(covX) <- list(dimn[[2]], dimn[[2]], levels(g))
     dimnames(covInv) <- list(dimn[[2]], dimn[[2]], levels(g))
     names(covdet) <- levels(g)
-    
+
     ans <- list(call=xcall, means=mX, cov=covX, covinv=covInv, covdet=covdet)
     class(ans) <- "allcov"
     return(ans)

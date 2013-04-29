@@ -11,12 +11,12 @@ LdaClassic.formula <- function(formula, data, ..., subset, na.action)
     grouping <- model.response(m)
     x <- model.matrix(Terms, m)
     xint <- match("(Intercept)", colnames(x), nomatch=0)
-    if(xint > 0) 
+    if(xint > 0)
         x <- x[, -xint, drop=FALSE]
     res <- LdaClassic.default(x, grouping, ...)
 
 ##    res$terms <- Terms
-    
+
     ## fix up call to refer to the generic, but leave arg name as `formula'
     cl <- match.call()
     cl[[1]] <- as.name("LdaClassic")
@@ -27,15 +27,15 @@ LdaClassic.formula <- function(formula, data, ..., subset, na.action)
 ##    res$na.action <- attr(m, "na.action")
 
     res
-} 
+}
 
 
-LdaClassic.default <- function(x, 
-                 grouping, 
-                 prior = proportions, 
-                 tol = 1.0e-4, ...) 
+LdaClassic.default <- function(x,
+                 grouping,
+                 prior = proportions,
+                 tol = 1.0e-4, ...)
 {
-    if(is.null(dim(x))) 
+    if(is.null(dim(x)))
         stop("x is not a matrix")
 
     xcall <- match.call()
@@ -61,44 +61,44 @@ LdaClassic.default <- function(x,
         gx <- rep(0,0)
         for(i in 1:ng)
             gx <- c(gx, rep(i,grouping[i]))
-        grouping <- gx 
+        grouping <- gx
     }
 
     if(n != length(grouping))
         stop("nrow(x) and length(grouping) are different")
-    
+
     g <- as.factor(grouping)
     lev <- lev1 <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
 
     if(!missing(prior)) {
-        if(any(prior < 0) || round(sum(prior), 5) != 1) 
+        if(any(prior < 0) || round(sum(prior), 5) != 1)
             stop("invalid prior")
-        if(length(prior) != nlevels(g)) 
+        if(length(prior) != nlevels(g))
             stop("prior is of incorrect length")
         prior <- prior[counts > 0]
-    } 
+    }
     if(any(counts == 0)) {
         warning(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
         lev1 <- lev[counts > 0]
         g <- factor(g, levels=lev1)
         counts <- as.vector(table(g))
-    } 
-    proportions <- counts/n 
-    ng <- length(proportions) 
+    }
+    proportions <- counts/n
+    ng <- length(proportions)
     names(g) <- NULL
     names(prior) <- levels(g)
-    
+
     xcov <- .wcovClass(x, grouping)
     inv <- solve(xcov$wcov)
     ldf <- xcov$means %*% inv
     ldfconst <- diag(log(prior) - ldf %*% t(xcov$means)/2)
-    return (new("LdaClassic", call=xcall, prior=prior, counts=counts, 
-                 center=xcov$means, 
-                 cov=xcov$wcov, 
-                 ldf = ldf, 
-                 ldfconst = ldfconst, 
-                 method="Classic LDA",
+    return (new("LdaClassic", call=xcall, prior=prior, counts=counts,
+                 center=xcov$means,
+                 cov=xcov$wcov,
+                 ldf = ldf,
+                 ldfconst = ldfconst,
+                 method="Linear Discriminant Analysis (LDA)",
                  X=x,
                  grp=g))
 }
@@ -115,19 +115,19 @@ LdaClassic.default <- function(x,
     if(!is.factor(g <- grouping))
         g <- as.factor(grouping)
     lev <- levels(g)
-    counts <- as.vector(table(g)) 
+    counts <- as.vector(table(g))
     if(any(counts == 0)) {
         stop(paste("group(s)", paste(lev[counts == 0], collapse=" "),"are empty"))
-    } 
-    ng <- length(counts/n) 
-    
+    }
+    ng <- length(counts/n)
+
     # compute group means and covariance matrices for each group
     mX <- matrix(0,ng,p)
     covX <- array(0,c(p,p,ng))
     for(i in 1:ng){
         tmpc <- cov.wt(as.matrix(x[which(g == lev[i]),]))
         mX[i,] <- tmpc$center
-        covX[,,i] <- tmpc$cov  
+        covX[,,i] <- tmpc$cov
     }
 
     if(method == "A"){
@@ -143,7 +143,7 @@ LdaClassic.default <- function(x,
         tmpc <- cov.wt(x - mX[g,])
         tmpc$cov <- tmpc$cov*(n-1)/(n-ng)
         # Add tmpc$center to mX ->mB
-        wcov <- tmpc$cov    
+        wcov <- tmpc$cov
     }else if(method == "C"){
         stop("Method C not defined for classical estimates")
     }else{
@@ -152,7 +152,7 @@ LdaClassic.default <- function(x,
 
     dimnames(wcov) <- list(dimn[[2]], dimn[[2]])
     dimnames(mX) <- list(levels(g), dimn[[2]])
-    
+
     ans <- list(call=xcall, means=mX, wcov=wcov, method="MLE")
     class(ans) <- "wcov"
     return(ans)

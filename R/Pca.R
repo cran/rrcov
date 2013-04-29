@@ -106,7 +106,7 @@ setMethod("plot", signature(x="Pca", y="missing"), function(x, y="missing",
         pca.distplot(x, id.n.sd, ...)
 })
 
-myPcaPrint <- function(x, print.x=FALSE, ...) {
+myPcaPrint <- function(x, print.x=FALSE, print.loadings=FALSE, ...) {
     if(!is.null(cl <- x@call)) {
         cat("Call:\n")
         dput(cl)
@@ -114,7 +114,10 @@ myPcaPrint <- function(x, print.x=FALSE, ...) {
     }
 
     cat("Standard deviations:\n"); print(sqrt(getEigenvalues(x)), ...)
-    cat("\nLoadings:\n");          print(getLoadings(x), ...)
+    if(print.loadings)
+    {
+        cat("\nLoadings:\n");          print(getLoadings(x), ...)
+    }
 
     if (print.x) {
         cat("\nRotated variables:\n"); print(getScores(x), ...)
@@ -293,8 +296,32 @@ pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
     }
 
     x <- cbind(getScores(obj)[,i], getScores(obj)[,j])
-    ev <- c(getEigenvalues(obj)[i], getEigenvalues(obj)[j])
-    cpc <- list(center=c(0,0), cov=diag(ev), n.obs=obj@n.obs)
+
+## VT::11.06.2012
+##  Here we assumed that the scores are not correlated and
+##  used a diagonal matrix with the eigenvalues on the diagonal to draw the ellipse
+##  This is not the case with PP methods, therefore we compute the covariance of
+##  the scores, considering only the non-outliers
+##      (based on sore and orthogonal distances)
+##
+##    ev <- c(getEigenvalues(obj)[i], getEigenvalues(obj)[j])
+##    cpc <- list(center=c(0,0), cov=diag(ev), n.obs=obj@n.obs)
+
+    flag <- obj@flag
+    cpc <- cov.wt(x, wt=flag)
+
+## We need to inflate the covariance matrix with the proper size:
+##  see Maronna et al. (2006), 6.3.2, page 186
+##
+##  - multiply the covariance by quantile(di, alpha)/qchisq(alpha, 2)
+##  where alpha = h/n
+##
+##    mdx <- mahalanobis(x, cpc$center, cpc$cov)
+##    alpha <- length(flag[which(flag != 0)])/length(flag)
+##    cx <- quantile(mdx, probs=alpha)/qchisq(p=alpha, df=2)
+##    cpc$cov <- cx * cpc$cov
+
+
     rrcov:::.myellipse(x, xcov=cpc,
         xlab=paste("PC",i,sep=""),
         ylab=paste("PC",j, sep=""),
