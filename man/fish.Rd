@@ -69,7 +69,8 @@ Todorov, V. and Pires, A.M. (2007) Comparative performance of several robust
     pairs(fish[1:6],
           main="Fish Catch Data",
           pch=21,
-          bg=c("red", "green3", "blue", "yellow", "magenta", "violet", "turquoise")[unclass(fish$Species)])
+          bg=c("red", "green3", "blue", "yellow", "magenta", "violet", 
+          "turquoise")[unclass(fish$Species)])
 
 }
 \keyword{datasets}

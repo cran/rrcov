@@ -5,7 +5,7 @@ setMethod("show", "Qda", function(object){
         cat("Call:\n")
         dput(cl)
     }
-    
+
     digits = max(3, getOption("digits") - 3)
     cat("\nPrior Probabilities of Groups:\n")
     print(object@prior)
@@ -17,7 +17,7 @@ setMethod("show", "Qda", function(object){
         cat("\nGroup: ",levels(object@grp)[i], "\n")
         print(object@cov[,,i])
     }
-    
+
 #    cat("\nLinear Coeficients:\n")
 #    print(object@ldf)
 #    cat("\nConstants:\n")
@@ -41,17 +41,17 @@ setMethod("predict", "Qda", function(object, newdata){
         newdata <- object@X         # use the training sample
         ct <- TRUE                  # perform cross-validation
     }
-        
-    x <- as.matrix(newdata)
-    
-    if(ncol(x) != ncol(object@center)) 
-        stop("wrong number of variables")         
 
-    
+    x <- as.matrix(newdata)
+
+    if(ncol(x) != ncol(object@center))
+        stop("wrong number of variables")
+
+
     ret <- .mypredictQda(object@prior, levels(object@grp), object@center, object@covinv, object@covdet, x)
     if(ct)
-        ret@ct <- .confusion(object@grp, ret@classification)
-   
+        ret@ct <- mtxconfusion(object@grp, ret@classification)
+
     ret
 })
 
@@ -71,13 +71,13 @@ setMethod("predict", "Qda", function(object, newdata){
             xx[j,i] <- -0.5*xx[j,i]
         }
     }
-    
+
     for(i in 1:nrow(xx)){
         tmp <- sum(exp(xx[i,]))
         for(j in 1:ncol(xx))
             posterior[i,j] <- exp(xx[i,j])/tmp
     }
-    
+
     cl <- factor(nm[max.col(xx)], levels = lev)
     new("PredictQda", classification=cl, posterior=posterior, x = xx)
 }
@@ -90,19 +90,19 @@ setMethod("show", "PredictQda", function(object){
         acctab <- t(apply(tab, 1, function(x) x/sum(x)))
         dimnames(acctab) <- dimnames(tab)
         AER <- 1 - sum(diag(tab))/sum(tab)
-        
+
         prt <- as.matrix(round(c("Apparent error rate" = AER),4))
         colnames(prt) <- ""
         print(prt)
-        
+
         cat("\nClassification table", "\n")
         print(tab)
         cat("\nConfusion matrix", "\n")
-        print(round(acctab, 3))    
+        print(round(acctab, 3))
     }
     else
         print(object@classification)
-        
+
 ##    print(object@posterior)
 ##    print(object@x)
     invisible(object)

@@ -148,7 +148,7 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action 
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- rrcov:::.distances(x, p, res)
+    res <- pca.distances(res, x, p)
     return(res)
 }
 

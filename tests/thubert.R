@@ -215,7 +215,7 @@ test.case.1 <- function()
     cc2 <- PcaLocantore(X, k=3)
     cc3 <- PcaCov(X, k=3, cov.control=CovControlSest())
 
-    cc4 <- PcaProj(X, k=2)           # with k=3 will produce warnings in rrcov:::.distances - too small eignevalues
+    cc4 <- PcaProj(X, k=2)           # with k=3 will produce warnings in .distances - too small eignevalues
     cc5 <- PcaGrid(X, k=2)           # dito
 
     list(cc1, cc2, cc3, cc4, cc5)

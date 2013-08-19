@@ -67,7 +67,7 @@
     Except for the last algorithm, \emph{ROCKE}, all other use Tukey biweight loss function. 
     The tuning parameters used in the loss function (as determined by bdp) are 
     returned in the slots \code{cc} and \code{kp} of the result object. They can be computed 
-    by the internal function \code{rrcov:::.csolve.bw.S(bdp, p)}.
+    by the internal function \code{.csolve.bw.S(bdp, p)}.
 }
 \value{
   An S4 object of class \code{\link{CovSest-class}} which is a subclass of the

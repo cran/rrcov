@@ -112,7 +112,6 @@ gpch <- ifelse(grp == "Attic", 16, 1)
 ##
 ## Reproduce Fig. 2. from Pires and branco (2010)
 ##
-require(ellipse)
 plot(CA~MG, data=pottery, col=gcol, pch=gpch)
 
 ppc <- LdaPP(x, grp, method="class", optim=TRUE)

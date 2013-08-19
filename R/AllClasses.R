@@ -163,19 +163,19 @@ if(FALSE) {
 ##
 .vrobGK <- function(x1, x2, ...)
 {
-  (rrcov:::.mrobTau(x1+x2, ...)[2]^2 - rrcov:::.mrobTau(x1-x2, ...)[2]^2)/4.0
+  (.mrobTau(x1+x2, ...)[2]^2 - .mrobTau(x1-x2, ...)[2]^2)/4.0
 }
 
 setClass("CovControlOgk", representation(niter="numeric",
                                          beta="numeric",
-                                         mrob="Ufunction",      # mrob=rrcov:::.mrobTau
-                                         vrob="Ufunction",      # vrob=rrcov:::.vrobGK
+                                         mrob="Ufunction",      # mrob=.mrobTau
+                                         vrob="Ufunction",      # vrob=.vrobGK
                                          smrob="character",
                                          svrob="character"),
                            prototype = list(niter=2,
                                             beta=0.90,
                                             mrob=NULL,
-                                            vrob=rrcov:::.vrobGK,
+                                            vrob=.vrobGK,
                                             smrob="scaleTau2",
                                             svrob="gk",
                                             trace=FALSE,

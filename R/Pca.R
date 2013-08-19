@@ -41,10 +41,10 @@ setMethod("show", "SummaryPca", function(object){
 
 setMethod("print",     "Pca", function(x, ...) myPcaPrint(x, ...))
 setMethod("predict",   "Pca", function(object, ...){
-    stats:::predict.prcomp(getPrcomp(object), ...)
+    predict(getPrcomp(object), ...)
 })
 setMethod("screeplot", "Pca", function(x, ...){
-    stats:::screeplot.default(getPrcomp(x), ...)
+    screeplot(getPrcomp(x), ...)
 })
 
 setMethod("biplot",    "Pca", function(x, scale=1, ...){
@@ -68,7 +68,7 @@ setMethod("biplot",    "Pca", function(x, scale=1, ...){
     invisible()
 })
 
-setMethod("scoreplot", "Pca", function(x, i=1, j=2, ...){
+setMethod("scorePlot", "Pca", function(x, i=1, j=2, ...){
     pca.scoreplot(obj=x, i=i, j=j, ...)
 })
 
@@ -90,7 +90,7 @@ setMethod("scoreplot", "Pca", function(x, i=1, j=2, ...){
 ##  observations and variables of a matrix of multivariate data
 ##  on the same plot.
 ##
-## The __scoreplot__ shows a scatterplot of ith against jth score
+## The __scoreplot__ shows a scatterplot of i-th against j-th score
 ##  of the Pca object with superimposed tollerance (0.975) ellipse
 ##
 ## VT::17.06.2008
@@ -141,49 +141,52 @@ myPcaPrint <- function(x, print.x=FALSE, print.loadings=FALSE, ...) {
 ##
 ##  data -
 ##  r    - rank
-##  res  - the Pca object
+##  obj  - the Pca object
 ##
 ##  - cutoff for score distances: sqrt(qchisq(0.975, k)
-.distances <- function(data, r, res, crit=0.975) {
+pca.distances <- function(obj, data, r, crit=0.975) {
+    .distances(data, r, obj, crit)
+}
+.distances <- function(data, r, obj, crit=0.975) {
 
     ## compute the score distances and the corresponding cutoff value
     n <- nrow(data)
-    smat <- diag(res@eigenvalues, ncol=ncol(res@scores))
+    smat <- diag(obj@eigenvalues, ncol=ncol(obj@scores))
 
     ## VT::02.06.2010: it can happen that the rank of the matrix
     ##  is nk=ncol(scores), but the rank of the diagonal matrix of
     ##  eigenvalues is lower: for example if the last singular
     ##  value was 1E-7, the last eigenvalue will be sv^2=1E-14
     ##
-    nk <- min(ncol(res@scores), rankMM(smat))
-    if(nk < ncol(res@scores))
-        warning(paste("Too small eigenvalue(s): ", res@eigenvalues[ncol(res@scores)], "- the diagonal matrix of the eigenvalues cannot be inverted!"))
+    nk <- min(ncol(obj@scores), rankMM(smat))
+    if(nk < ncol(obj@scores))
+        warning(paste("Too small eigenvalue(s): ", obj@eigenvalues[ncol(obj@scores)], "- the diagonal matrix of the eigenvalues cannot be inverted!"))
 
-    res@sd <- sqrt(mahalanobis(as.matrix(res@scores[,1:nk]), rep(0, nk), diag(res@eigenvalues[1:nk], ncol=nk)))
-    res@cutoff.sd <- sqrt(qchisq(crit, res@k))
+    obj@sd <- sqrt(mahalanobis(as.matrix(obj@scores[,1:nk]), rep(0, nk), diag(obj@eigenvalues[1:nk], ncol=nk)))
+    obj@cutoff.sd <- sqrt(qchisq(crit, obj@k))
 
     ## Compute the orthogonal distances and the corresponding cutoff value
     ##  For each point this is the norm of the difference between the
     ##  centered data and the back-transformed scores
-    res@od <- apply(data - repmat(res@center, n, 1) - res@scores %*% t(res@loadings), 1, vecnorm)
-    if(is.list(dimnames(res@scores))) {
-        names(res@od) <- dimnames(res@scores)[[1]]
+    obj@od <- apply(data - repmat(obj@center, n, 1) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+    if(is.list(dimnames(obj@scores))) {
+        names(obj@od) <- dimnames(obj@scores)[[1]]
     }
 
     ## The orthogonal distances make sence only if the number of PCs is less than
     ##  the rank of the data matrix - otherwise set it to 0
-    res@cutoff.od <- 0
-    if(res@k != r) {
-        res@cutoff.od <- .crit.od(res@od, crit=crit, classic=inherits(res,"PcaClassic"))
+    obj@cutoff.od <- 0
+    if(obj@k != r) {
+        obj@cutoff.od <- .crit.od(obj@od, crit=crit, classic=inherits(obj,"PcaClassic"))
     }
 
     ## flag the observations with 1/0 if the distances are less or equal the
     ##  corresponding  cutoff values
-    res@flag <- res@sd <= res@cutoff.sd
-    if(res@cutoff.od > 0)
-        res@flag <- (res@flag & res@od <= res@cutoff.od)
+    obj@flag <- obj@sd <= obj@cutoff.sd
+    if(obj@cutoff.od > 0)
+        obj@flag <- (obj@flag & obj@od <= obj@cutoff.od)
 
-    return(res)
+    return(obj)
 }
 
 .crit.od <- function(od, crit=0.975, umcd=FALSE, quan, classic=FALSE)
@@ -195,7 +198,7 @@ myPcaPrint <- function(x, print.x=FALSE, print.loadings=FALSE, ...) {
         s <- sd(od)
     }else if(umcd)
     {
-        ms <- rrcov:::unimcd(od, quan=quan)
+        ms <- unimcd(od, quan=quan)
         t <- ms$tmcd
         s <- ms$smcd
     }else
@@ -322,7 +325,7 @@ pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
 ##    cpc$cov <- cx * cpc$cov
 
 
-    rrcov:::.myellipse(x, xcov=cpc,
+    .myellipse(x, xcov=cpc,
         xlab=paste("PC",i,sep=""),
         ylab=paste("PC",j, sep=""),
         main=main,

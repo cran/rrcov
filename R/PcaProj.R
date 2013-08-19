@@ -104,6 +104,6 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- rrcov:::.distances(x, p, res)
+    res <- pca.distances(res, x, p)
     return(res)
 }

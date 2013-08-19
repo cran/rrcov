@@ -19,7 +19,7 @@
         \item{c1}{tuning parameter of the loss function for MM-estimation 
         (depend on control parameters \code{eff} and \code{eff.shape}). 
         Can be computed by the internal function 
-        \code{rrcov:::.csolve.bw.MM(p, eff, eff.shape=TRUE)}.
+        \code{.csolve.bw.MM(p, eff, eff.shape=TRUE)}.
         For the tuning parameters of the underlying S-estimate see the slot \code{sest} and
         \code{"\linkS4class{CovSest}"}.
         }

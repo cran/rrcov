@@ -49,7 +49,7 @@ setMethod("predict", "Lda", function(object, newdata){
     ldfconst <- object@ldfconst
     ret <- .mypredictLda(object@prior, levels(object@grp), ldf, ldfconst, x)
     if(ct)
-        ret@ct <- .confusion(object@grp, ret@classification)
+        ret@ct <- mtxconfusion(object@grp, ret@classification)
 
     ret
 })

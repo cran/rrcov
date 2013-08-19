@@ -13,7 +13,8 @@
 }
 \usage{
 PcaHubert(x, ...)
-\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, maxdir=250, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
+\method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, 
+maxdir=250, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
 \method{PcaHubert}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{

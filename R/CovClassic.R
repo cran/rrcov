@@ -106,6 +106,6 @@ setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing
     }
 
     if(which == "all" || which == "screeplot") {
-        .myscreeplot(ccov=x)
+        myscreeplot(ccov=x)
     }
 }) ## end { plot("CovClassic") }

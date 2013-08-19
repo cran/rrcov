@@ -18,19 +18,23 @@
 
 vecnorm <- function(x, p=2) sum(x^p)^(1/p)
 
+##
 ## Several Matlab-like utility functions ======================================================
+##
+##
 ## Return the square root of a symetric positive definite matrix
-sqrtm <- function(a){
+sqrtm <- function(A){
     ##
     ## [E D] = eig(A); sqrtm(A) = E * sqrt(D) * E'
     ##
-    if(!is.matrix(a) || ncol(a) != nrow(a))
+    if(!is.matrix(A) || ncol(A) != nrow(A))
         stop("The matrix A must be a square matrix\n")
 
-    ee <- eigen(a)
+    ee <- eigen(A)
     if(any(ee$values < 0)) {
         stop("The matrix A must be positive definite.")
     }
+
     ee$vectors %*% diag(sqrt(ee$values)) %*% t(ee$vectors)
 }
 
@@ -76,9 +80,9 @@ rankMM <- function(A, tol = NULL, sv = svd(A,0,0)$d) {
 ##      a <- matrix(1:4,2,byrow=T)
 ##      repmat(a,2,3)
 
-repmat <- function(a, n, m) {
+repmat <- function(A, n, p) {
 
-    if(is.vector(a))    # we need a column matrix, not a vector, speaking in R terms
-        a <- t(a)
-    kronecker(matrix(1,n,m), a)
+    if(is.vector(A))    # we need a column matrix, not a vector, speaking in R terms
+        A <- t(A)
+    kronecker(matrix(1,n,p), A)
 }
