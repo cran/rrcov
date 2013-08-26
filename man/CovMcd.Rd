@@ -8,7 +8,8 @@
      Determinant) estimator.
 }
 \usage{
-CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, use.correction = TRUE, control)
+CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, 
+use.correction = TRUE, control)
 }
 \arguments{
   \item{x}{a matrix or data frame. }

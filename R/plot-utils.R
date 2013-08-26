@@ -15,6 +15,10 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
                                      pch = c(1,24)))
 
 
+myscreeplot <- function(rcov, ccov) {
+    .myscreeplot(rcov, ccov)
+}
+
 .myscreeplot <- function(rcov, ccov) {
     er <- NULL
     ec <- NULL

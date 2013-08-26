@@ -102,7 +102,7 @@ x<-matrix(c(1,2,3,7,1,2,3,7), ncol=2)
 cc <- CovOgk(x, control=new("CovControlOgk",
                             vrob=function(x1, x2, ...)
                             {
-                                r <- rrcov:::.vrobGK(x1, x2, ...)
+                                r <- .vrobGK(x1, x2, ...)
                                 if(is.na(r))
                                     r <- 0
                                 r

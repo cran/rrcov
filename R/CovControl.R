@@ -31,7 +31,7 @@ setMethod("restimate", "CovControlMest", function(obj, x, ...)
 CovControlOgk <- function (niter=2,
                            beta=0.90,
                            mrob=NULL,
-                           vrob=rrcov:::.vrobGK,
+                           vrob=.vrobGK,
                            smrob="scaleTau2",
                            svrob="gk"
                            )

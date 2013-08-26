@@ -114,6 +114,6 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- .distances(data, Xsvd$rank, res)
+    res <- pca.distances(res, data, Xsvd$rank)
     return(res)
 }

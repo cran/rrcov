@@ -247,6 +247,6 @@ setMethod("plot", signature(x="CovRobust", y="missing"),
     }
 
     if(which == "all" || which == "screeplot") {
-        .myscreeplot(ccov=ccov, rcov=x)
+        myscreeplot(ccov=ccov, rcov=x)
     }
 }) ## end { plot("CovRobust") }

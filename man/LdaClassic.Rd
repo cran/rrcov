@@ -47,7 +47,7 @@ predict(lda)@classification
 lda.MASS <- lda(Treat~., data=anorexia)
 predict(lda.MASS)$class
 
-## Compare the prediction results of MASS:::lda() and rrcov:::LdaClassic()
+## Compare the prediction results of MASS:::lda() and LdaClassic()
 all.equal(predict(lda)@classification, predict(lda.MASS)$class)
 }
 \keyword{robust}

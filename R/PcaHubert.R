@@ -421,7 +421,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     res@call <- cl
 
     ## Compute distances and flags
-    res <- .distances(data, Xsvd$rank, res)
+    res <- pca.distances(res, data, Xsvd$rank)
     return(res)
 }
 

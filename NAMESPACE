@@ -1,7 +1,9 @@
 useDynLib(rrcov)
 importFrom(stats4, plot, summary)
 importFrom(stats, screeplot, biplot, predict)
-import(robustbase)
+importFrom(methods, show)
+importFrom(mvtnorm, rmvnorm)
+import(robustbase, pcaPP)
 
 export(CovClassic,
        Cov,
@@ -34,7 +36,16 @@ export(CovClassic,
        LdaPP,
        QdaClassic,
        QdaCov,
-       pca.scoreplot
+       pca.scoreplot,
+       pca.distances,
+       myscreeplot,
+       mtxconfusion,
+       rankMM,
+       sqrtm,
+       ones,
+       zeros,
+       vecnorm,
+       repmat
 )
 
 ##S3 generics
@@ -91,8 +102,9 @@ export(isClassic,
        getSdev,
        getScores,
        getPrcomp,
-       scoreplot,
-       getRaw
+       scorePlot,
+       getRaw,
+       isSingular
 )
 
 exportClasses(Cov,
@@ -170,6 +182,7 @@ exportMethods(isClassic,
               predict,
               screeplot,
               biplot,
-              scoreplot,
-              getRaw
+              scorePlot,
+              getRaw,
+              isSingular
 )

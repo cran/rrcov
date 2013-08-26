@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2013-04-27 r62681) -- "Unsuffered Consequences"
+R Under development (unstable) (2013-08-19 r63623) -- "Unsuffered Consequences"
 Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64 (64-bit)
+Platform: i386-w64-mingw32/i386 (32-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -232,7 +232,7 @@ Type 'q()' to quit R.
 +     cc2 <- PcaLocantore(X, k=3)
 +     cc3 <- PcaCov(X, k=3, cov.control=CovControlSest())
 + 
-+     cc4 <- PcaProj(X, k=2)           # with k=3 will produce warnings in rrcov:::.distances - too small eignevalues
++     cc4 <- PcaProj(X, k=2)           # with k=3 will produce warnings in .distances - too small eignevalues
 +     cc5 <- PcaGrid(X, k=2)           # dito
 + 
 +     list(cc1, cc2, cc3, cc4, cc5)
@@ -240,9 +240,7 @@ Type 'q()' to quit R.
 > 
 > library(rrcov)
 Loading required package: robustbase
-Loading required package: pcaPP
-Loading required package: mvtnorm
-Scalable Robust Estimators with High Breakdown Point (version 1.3-3)
+Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 
 > dodata(method="hubert.mcd")
 
@@ -1315,4 +1313,4 @@ Standard deviations:
 > 
 > proc.time()
    user  system elapsed 
-   2.74    0.10    2.93 
+   2.42    0.07    2.50 

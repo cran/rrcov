@@ -119,7 +119,8 @@
     ## 
     ## Reproduce Fig 6.1 from Maronna et al. (2006), page 214
     ## 
-    cat("\nBus data: Q-Q plot of logs of distances to hyperplane (k=3) \nfrom classical and robust estimates. The line is the identity diagonal\n")
+    cat("\nBus data: Q-Q plot of logs of distances to hyperplane (k=3) 
+    \nfrom classical and robust estimates. The line is the identity diagonal\n")
     plot(sort(log(dist)), sort(log(rdist)), xlab="classical", ylab="robust")
     lines(sort(log(dist)), sort(log(dist)))
    

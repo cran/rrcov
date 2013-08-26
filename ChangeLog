@@ -1,3 +1,21 @@
+2013-08-19  Valentin Todorov  <valentin.todorov@chello.at>
+    * 1.3-4
+    *
+    * Changes, mainly to fix warnings in packages rrcovNA and rrcovHD
+    *
+    * Generic and method scoreplot changed to scorePlot to avoid 
+    *  conflict with package pls  
+    *
+    * Vignette moved to directory .\vignettes, as recommended in 
+    *   the 'Writing R Extensions' manual   
+    *
+    * NOTE "Namespace imported from by a ':::' call: ..." fixed for all
+    *   but two robustbase calls.
+    *
+    * Packages 'mvtnorm' and 'pcaPP' moved from Depends to Import and the particular
+    *   functions used are only imported (rmvnorm from 'mvtnorm' and PCAgrid 
+    *   and PCAproj from 'pcaPP')
+    *
 2013-04-28  Valentin Todorov  <valentin.todorov@chello.at>
     * 1.3-3
     *

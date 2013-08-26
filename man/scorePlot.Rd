@@ -1,9 +1,9 @@
-\name{scoreplot-methods}
+\name{scorePlot-methods}
 \docType{methods}
-\alias{scoreplot}
-\alias{scoreplot-methods}
-\alias{scoreplot,ANY-method}
-\alias{scoreplot,Pca-method}
+\alias{scorePlot}
+\alias{scorePlot-methods}
+\alias{scorePlot,ANY-method}
+\alias{scorePlot,Pca-method}
 \title{
     Score plot for Principal Components (objects of class 'Pca')
 }
@@ -11,7 +11,7 @@
   Produces a score plot from an object (derived from)  \code{\link{Pca-class}}.
 }
 \usage{
-    \S4method{scoreplot}{Pca}(x, i=1, j=2, \dots)
+    \S4method{scorePlot}{Pca}(x, i=1, j=2, \dots)
 }
 \arguments{
   \item{x}{an object of class (derived from) \code{"Pca"}.}
@@ -26,7 +26,7 @@
 \section{Methods}{
 \describe{
 
-    \item{scoreplot}{\code{signature(x = Pca)}: Plot a scatter plot of ith against jth score
+    \item{scorePlot}{\code{signature(x = Pca)}: Plot a scatter plot of ith against jth score
     of the Pca object with superimposed tollerance (0.975) ellipse. See also \code{\link{biplot}}, \code{\link{screeplot}}.}
 }}
 
@@ -45,7 +45,7 @@ data(hbk)
 pca <- PcaHubert(hbk)
 pca
 
-scoreplot(pca)
+scorePlot(pca)
 }
 \keyword{multivariate}
 \keyword{hplot}

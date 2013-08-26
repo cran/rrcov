@@ -7,7 +7,8 @@
     containing the control parameters for \code{CovOgk}
 }
 \usage{
-CovControlOgk(niter = 2, beta = 0.9, mrob = NULL, vrob = rrcov:::.vrobGK, smrob = "scaleTau2", svrob = "gk")
+CovControlOgk(niter = 2, beta = 0.9, mrob = NULL, 
+vrob = .vrobGK, smrob = "scaleTau2", svrob = "gk")
 }
 \arguments{
   \item{niter}{ number of iterations, usually 1 or 2 since iterations
