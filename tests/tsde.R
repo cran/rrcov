@@ -57,7 +57,10 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE){
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
-    library(rrcov)
+
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
 
     data(heart)
     data(starsCYG)
@@ -109,7 +112,10 @@ dogen <- function(nrep=1, eps=0.49){
 
     set.seed(1234)
 
-    library(rrcov)
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
+
     ap <- c(2, 5, 10, 20, 30)
     an <- c(100, 500, 1000, 10000, 50000)
 
@@ -193,6 +199,9 @@ whatis<-function(x){
         cat("Type: don't know\n")
 }
 
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 dodata()
 ##doexact()

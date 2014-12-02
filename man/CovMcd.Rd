@@ -8,22 +8,44 @@
      Determinant) estimator.
 }
 \usage{
-CovMcd(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, 
-use.correction = TRUE, control)
+CovMcd(x,
+       raw.only=FALSE, alpha=control@alpha, nsamp=control@nsamp,
+       scalefn=control@scalefn, maxcsteps=control@maxcsteps,
+       initHsets=NULL, save.hsets=FALSE,
+       seed=control@seed, trace=control@trace,
+       use.correction=control@use.correction,
+       control=CovControlMcd(), ...)
 }
 \arguments{
   \item{x}{a matrix or data frame. }
+  \item{raw.only}{should only the \dQuote{raw} estimate be returned.}
   \item{alpha}{numeric parameter controlling the size of the subsets
     over which the determinant is minimized, i.e., \code{alpha*n}
     observations are used for computing the determinant.  Allowed values
     are between 0.5 and 1 and the default is 0.5.}
-  \item{nsamp}{ number of subsets used for initial estimates or \code{"best"}
-    or \code{"exact"}.  Default is \code{nsamp = 500}.  For
-    \code{nsamp="best"} exhaustive enumeration is done, as long as the
+  \item{nsamp}{ number of subsets used for initial estimates or \code{"best"},
+    \code{"exact"} or \code{"deterministic"}.  Default is \code{nsamp = 500}.
+    For \code{nsamp="best"} exhaustive enumeration is done, as long as the
     number of trials does not exceed 5000. For \code{"exact"},
     exhaustive enumeration will be attempted however many samples are
     needed.  In this case a warning message will be displayed saying
-    that the computation can take a very long time.}
+    that the computation can take a very long time.
+
+    For \code{"deterministic"}, the \emph{deterministic} MCD is computed; as
+    proposed by Hubert et al. (2012) it starts from the \eqn{h} most
+    central observations of \emph{six} (deterministic) estimators.
+    }
+  \item{scalefn}{\code{\link{function}} to compute a robust scale
+    estimate or character string specifying a rule determining such a
+    function, see \code{\link{rrcov.control}}.}
+  \item{maxcsteps}{maximal number of concentration steps in the
+    deterministic MCD; should not be reached.}
+  \item{initHsets}{NULL or a \eqn{K x h} integer matrix of initial
+    subsets of observations of size \eqn{h} (specified by the indices in
+    \code{1:n}).}
+  \item{save.hsets}{(for deterministic MCD) logical indicating if the
+    initial subsets should be returned as \code{initHsets}.}
+
   \item{seed}{starting value for random generator. Default is \code{seed = NULL}}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
   \item{use.correction}{ whether to use finite sample correction factors.
@@ -33,6 +55,8 @@ use.correction = TRUE, control)
     specification. If the control object is supplied, the parameters from it
     will be used. If parameters are passed also in the invocation statement, they will
     override the corresponding elements of the control object.}
+  \item{\dots}{potential further arguments passed to \pkg{robustbase}'s
+    \code{\link[robustbase]{covMcd}}.}
 }
 \details{
   This function computes the minimum covariance determinant estimator
@@ -69,6 +93,10 @@ use.correction = TRUE, control)
   A fast algorithm for the minimum covariance determinant estimator.
   \emph{Technometrics} \bold{41}, 212--223.
 
+  M. Hubert, P. Rousseeuw and T. Verdonck (2012) A deterministic algorithm
+  for robust location and scatter.
+  \emph{Journal of Computational and Graphical Statistics} \bold{21}(3), 618--637.
+
   Pison, G., Van Aelst, S., and Willems, G. (2002),
   Small Sample Corrections for LTS and MCD,
   \emph{Metrika}, \bold{55}, 111-123.
@@ -77,7 +105,6 @@ use.correction = TRUE, control)
   An Object Oriented Framework for Robust Multivariate Analysis.
   \emph{Journal of Statistical Software}, \bold{32}(3), 1--47.
   URL \url{http://www.jstatsoft.org/v32/i03/}.
-
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
@@ -92,6 +119,8 @@ use.correction = TRUE, control)
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
 CovMcd(hbk.x)
+cD <- CovMcd(hbk.x, nsamp = "deterministic")
+summary(cD)
 
 ## the following three statements are equivalent
 c1 <- CovMcd(hbk.x, alpha = 0.75)

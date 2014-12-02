@@ -1,10 +1,10 @@
 CovOgk <- function(x, niter = 2, beta = 0.9, control)
 {
     metodo2 <- function(XX) {
-    
+
         n <- nrow(XX)
         p <- ncol(XX)
-    
+
         sigma <- apply(XX, 2, mrob)[2,]
         Y <- XX %*% diag(1/sigma)
         U <- matrix(1, p, p)
@@ -12,17 +12,17 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
             for(j in i:p) {
                 U[j, i] <- U[i, j] <- vrob(Y[,i], Y[,j])
         }
-    
+
         diag(U) <- 1
         E <- eigen(U)$vectors
         A <- diag(sigma) %*% E
         Z <- Y %*% E
-    
+
         restau <- apply(Z, 2, mrob)
         sigma <- as.vector(restau[2,])
         cov <- A %*% diag(sigma^2) %*% t(A)
         loc <- A %*% restau[1,]
-    
+
         list(cov = cov, center = loc, AA = A, ZZ = Z)
     }
 
@@ -31,10 +31,10 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
     ## If a control object was supplied, take the option parameters from it,
     ##  but if single parameters were passed (not defaults) they will override the
     ##  control object.
-    ## The functions 'mrob()' and 'vrob()' can be supplied only via the control 
-    ##  object. If no control object is passed these function will be taken 
+    ## The functions 'mrob()' and 'vrob()' can be supplied only via the control
+    ##  object. If no control object is passed these function will be taken
     ##  from the default one
-    
+
     defcontrol <- CovControlOgk()           # default control
     mrob <- defcontrol@mrob
     vrob <- defcontrol@vrob
@@ -62,18 +62,22 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
     dx <- dim(x)
     if(!length(dx))
         stop("All observations have missing values!")
+        
     dimn <- dimnames(x)
     n <- dx[1]
     p <- dx[2]
     if(p < 2)
         stop("Need at least 2 columns ")
 
+    if(n <= 0)
+        stop("All observations have missing values!")
+
     call <- match.call()
 
     ## If the user has supplied own mrob and vrob use the pure R version
     ##  with this functions. Otherwise call the C implementation
     if(!is.null(mrob)){
-        
+
         ##  iterate two times to obtain OGK2
         first <- metodo2(x)
         cov <- first$cov
@@ -85,10 +89,10 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
             center <- as.vector(first$AA %*% as.vector(second$center))
             ZZ <- second$ZZ
         }
-        
+
         dimnames(cov) <- list(dimn[[2]], dimn[[2]])
         names(center) <- dimn[[2]]
-        
+
         ##  compute distances and weights
         ##  do not invert cov to compute the distances, use the transformed data
         ##
@@ -99,9 +103,9 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
         ZZ <- sweep(ZZ, 2, musigma[1,])
         ZZ <- sweep(ZZ, 2, musigma[2,], '/')
         dist2 <- rowSums(ZZ^2)
-    
+
         cdelta <- median(dist2)/qchisq(0.5, p)
-        cov <- cdelta * cov 
+        cov <- cdelta * cov
 
         quantiel <- qchisq(beta, p)
         qq <- (quantiel * median(dist2))/qchisq(0.5, p)
@@ -112,19 +116,19 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
             stop(paste("Scale function not defined: ", smrob))
         if(!(svrob %in% c("gk", "qc")))
             stop(paste("Bivariate covariance function not defined: ", svrob))
-            
+
         storage.mode(x) <- "double"
         opw <- .Call("covOPW", x, as.integer(niter), smrob, svrob)
-        
+
         dimnames(opw$cov) <- list(dimn[[2]], dimn[[2]])
         names(opw$center) <- dimn[[2]]
-    
+
         dist2 <- opw$distances
-        
+
         cdelta <- median(dist2)/qchisq(0.5, p)
-        cov <- opw$cov <- cdelta * opw$cov 
+        cov <- opw$cov <- cdelta * opw$cov
         center <- opw$center
-        
+
         quantiel <- qchisq(beta, p)
         qq <- (quantiel * median(dist2))/qchisq(0.5, p)
         wt <- ifelse(dist2 < qq, 1, 0)
@@ -140,11 +144,11 @@ CovOgk <- function(x, niter = 2, beta = 0.9, control)
     qdelta.rew <- qchisq(sum(wt)/n, p)
     cdeltainvers.rew <- pgamma(qdelta.rew/2, p/2 + 1)/(sum(wt)/n)
     cnp2 <- 1/cdeltainvers.rew
-    
+
  ##   wcov <- cnp2 * wcov
 
     method="Orthogonalized Gnanadesikan-Kettenring Estimator"
-    ans <- new("CovOgk", 
+    ans <- new("CovOgk",
                call = call,
                iter=niter,
                crit=1,

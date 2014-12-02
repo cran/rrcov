@@ -21,12 +21,16 @@ CovClassic <- function(x, unbiased = TRUE)
     dx <- dim(x)
     if(!length(dx))
         stop("All observations have missing values!")
+
     dimn <- dimnames(x)
     n <- dx[1]
     p <- dx[2]
 
-    if(n < p)
-        stop("Need at least p=(number of variables) observations ")
+##    if(n < p)
+##        stop("Need at least p=(number of variables) observations ")
+
+    if(n <= 0)
+        stop("All observations have missing values!")
 
     call = match.call()
     method = "Classical Estimator."

@@ -83,6 +83,9 @@ c1
 summary(c1)
 plot(c1)
 
+## Deterministic MM-estmates
+CovMMest(hbk.x, control=CovControlMMest(sest=CovControlSest(method="sdet")))
+
 }
 \keyword{robust}
 \keyword{multivariate}

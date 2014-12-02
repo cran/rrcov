@@ -480,12 +480,11 @@ myscreeplot <- function(rcov, ccov) {
         ix <- which.ij(x, y, getData(obj))
         ## cat("\npanel.ellipse: ", ix$i, ix$j,"\n")
 
-        require(cluster)
         C.rr <- getCov(obj)[c(ix$i,ix$j), c(ix$i,ix$j)]
         m.rr <- getCenter(obj)[c(ix$i,ix$j)]
 
         e.class <- ellipsoidPoints(C.ls, d2.99, loc=m.ls)
-        e.rob <- ellipsoidPoints(C.rr, d2 = d2.99, loc=m.rr)
+        e.rob <- ellipsoidPoints(C.rr, d2=d2.99, loc=m.rr)
 
         xmin <- min(c(min(x), min(e.class[,1]), min(e.rob[,1])))
         xmax <- max(c(max(x), max(e.class[,1]), max(e.rob[,1])))
@@ -532,7 +531,6 @@ myscreeplot <- function(rcov, ccov) {
     labs,
     ...)
 {
-    require(lattice)
     myPanel <- function(x, y, subscripts, cutoff, id.n, ...) {
         panel.xyplot(x, y, ...)
         panel.abline(h=cutoff,lty="dashed")
@@ -591,7 +589,6 @@ myscreeplot <- function(rcov, ccov) {
     labs,
     ...)
 {
-    require(lattice)
     myPanel <- function(x, y, subscripts, cutoff, id.n, ...)
     {
         y <- sort(y, index.return=TRUE)

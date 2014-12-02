@@ -1,11 +1,14 @@
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
     domcd <- function(x, xname, nrep=1){
         n <- dim(x)[1]
         p <- dim(x)[2]
 
         mcd<-CovOgk(x)
-        
+
         xres <- sprintf("%3d %3d\n", dim(x)[1], dim(x)[2])
 
         lpad<-lname-nchar(xname)
@@ -20,12 +23,16 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         if(nbad > 0)
             print(ibad)
         cat("-------------\n")
-        show(mcd)   
+        show(mcd)
         cat("--------------------------------------------------------\n")
-    } 
+    }
 
     lname <- 20
-    library(rrcov)
+
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
+
     method <- match.arg(method)
 
     data(heart)

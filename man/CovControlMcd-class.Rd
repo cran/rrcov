@@ -19,13 +19,23 @@ or by calling the constructor-function \code{CovControlMcd}.
             over which the determinant is minimized, i.e., \code{alpha*n}
             observations are used for computing the determinant.  Allowed values
             are between 0.5 and 1 and the default is 0.5.}
-        \item{\code{nsamp}:}{ number of subsets used for initial estimates or \code{"best"}
-            or \code{"exact"}.  Default is \code{nsamp = 500}.  For
-            \code{nsamp="best"} exhaustive enumeration is done, as long as the
+        \item{nsamp}{ number of subsets used for initial estimates or \code{"best"},
+            \code{"exact"} or \code{"deterministic"}.  Default is \code{nsamp = 500}.  
+            For \code{nsamp="best"} exhaustive enumeration is done, as long as the
             number of trials does not exceed 5000. For \code{"exact"},
             exhaustive enumeration will be attempted however many samples are
             needed.  In this case a warning message will be displayed saying
-            that the computation can take a very long time.}
+            that the computation can take a very long time.
+            
+            For \code{"deterministic"}, the \emph{deterministic} MCD is computed; as
+            proposed by Hubert et al. (2012) it starts from the \eqn{h} most
+            central observations of \emph{six} (deterministic) estimators.   
+        }
+        \item{scalefn}{\code{\link{function}} to compute a robust scale
+        estimate or character string specifying a rule determining such a
+        function.}
+        \item{maxcsteps}{maximal number of concentration steps in the
+        deterministic MCD; should not be reached.}
         \item{\code{seed}:}{starting value for random generator. Default is \code{seed = NULL}}
         \item{\code{use.correction}:}{ whether to use finite sample correction factors.
             Default is \code{use.correction=TRUE}.

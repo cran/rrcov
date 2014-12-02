@@ -2,7 +2,6 @@
 \documentclass[article,shortnames,nojss]{jss}
 
 %\VignetteIndexEntry{An Object-Oriented Framework for Robust Multivariate Analysis}
-%\VignetteDepends{rrcov,robustbase,pcaPP,mvtnorm,lattice,grid}
 %\VignetteKeywords{robustness, multivariate analysis, MCD, R, statistical design patterns}
 %\VignettePackage{rrcov}
 

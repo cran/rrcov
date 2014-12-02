@@ -1,6 +1,6 @@
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMVE","MASS")){
 ##@bdescr
-## Test the function covMve() on the literature datasets: 
+## Test the function covMve() on the literature datasets:
 ##
 ## Call covMve() for all regression datasets available in rrco/robustbasev and print:
 ##  - execution time (if time == TRUE)
@@ -8,18 +8,18 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 ##  - best subsample found (if short == false)
 ##  - outliers identified (with cutoff 0.975) (if short == false)
 ##  - estimated center and covarinance matrix if full == TRUE)
-## 
+##
 ##@edescr
 ##
-##@in  nrep              : [integer] number of repetitions to use for estimating the 
+##@in  nrep              : [integer] number of repetitions to use for estimating the
 ##                                   (average) execution time
 ##@in  time              : [boolean] whether to evaluate the execution time
-##@in  short             : [boolean] whether to do short output (i.e. only the 
+##@in  short             : [boolean] whether to do short output (i.e. only the
 ##                                   objective function value). If short == FALSE,
-##                                   the best subsample and the identified outliers are 
+##                                   the best subsample and the identified outliers are
 ##                                   printed. See also the parameter full below
-##@in  full              : [boolean] whether to print the estimated cente and covariance matrix 
-##@in  method            : [character] select a method: one of (FASTMCD, MASS) 
+##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
+##@in  method            : [character] select a method: one of (FASTMCD, MASS)
 
     domve <- function(x, xname, nrep=1){
         n <- dim(x)[1]
@@ -34,7 +34,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
             mah <- mahalanobis(x, mve$center, mve$cov)
             quantiel <- qchisq(0.975, p)
             wt <- as.numeric(mah < quantiel)
-        }            
+        }
         else{
             mve <- CovMve(x, trace=FALSE)
             quan <- as.integer(mve@quan)
@@ -42,8 +42,8 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
             best <- mve@best
             wt <- mve@wt
         }
-        
-            
+
+
         if(time){
            xtime <- system.time(dorep(x, nrep, method))[1]/nrep
            xres <- sprintf("%3d %3d %3d %12.6f %10.3f\n", dim(x)[1], dim(x)[2], quan, crit, xtime)
@@ -58,7 +58,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         if(!short){
             cat("Best subsample: \n")
             print(best)
-        
+
             ibad <- which(wt == 0)
             names(ibad) <- NULL
             nbad <- length(ibad)
@@ -67,17 +67,21 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
                 print(ibad)
             if(full){
                 cat("-------------\n")
-                show(mve)   
-            } 
+                show(mve)
+            }
             cat("--------------------------------------------------------\n")
         }
-    } 
+    }
 
     options(digits = 5)
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
-    library(rrcov)
+
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
+
     method <- match.arg(method)
     if(method == "MASS")
         library(MASS)
@@ -120,17 +124,20 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMVE", "MASS")){
 
-    domve <- function(x, nrep=1){ 
+    domve <- function(x, nrep=1){
         gc()
         xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
-        xtime   
-    } 
+        xtime
+    }
 
     set.seed(1234)
 
-    library(rrcov)
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
     library(MASS)
+
     method <- match.arg(method)
 
     ap <- c(2, 5, 10, 20, 30)
@@ -148,9 +155,9 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMVE", "MASS")){
                 X <- xx$X
                 tottime <- tottime + domve(X, nrep)
             }
-        } 
+        }
     }
-    
+
     cat("=====================\n")
     cat("Total time: ", tottime*nrep, "\n")
 }
@@ -165,10 +172,10 @@ check <- function(mcd, xind){
 ##  check if mcd is robust w.r.t xind, i.e. check how many of xind
 ##  did not get zero weight
     mymatch <- xind %in% which(mcd@wt == 0)
-    length(xind) - length(which(mymatch))    
+    length(xind) - length(which(mymatch))
 }
 
-dorep <- function(x, nrep=1, method=c("FASTMVE","MASS")){ 
+dorep <- function(x, nrep=1, method=c("FASTMVE","MASS")){
 
     method <- match.arg(method)
     for(i in 1:nrep)
@@ -176,13 +183,13 @@ dorep <- function(x, nrep=1, method=c("FASTMVE","MASS")){
         cov.mve(x)
     else
         CovMve(x)
-} 
+}
 
 #### gendata() ####
-# Generates a location contaminated multivariate 
+# Generates a location contaminated multivariate
 # normal sample of n observations in p dimensions
 #    (1-eps)*Np(0,Ip) + eps*Np(m,Ip)
-# where 
+# where
 #    m = (b,b,...,b)
 # Defaults: eps=0 and b=10
 #
@@ -220,5 +227,8 @@ whatis<-function(x){
         cat("Type: don't know\n")
 }
 
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 dodata()

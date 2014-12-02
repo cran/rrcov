@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2013-08-19 r63623) -- "Unsuffered Consequences"
+R Under development (unstable) (2013-08-17 r63608) -- "Unsuffered Consequences"
 Copyright (C) 2013 The R Foundation for Statistical Computing
 Platform: i386-w64-mingw32/i386 (32-bit)
 
@@ -15,10 +15,10 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> library(rrcov)
-Loading required package: robustbase
-Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
-
+> ## VT::15.09.2013 - this will render the output independent
+> ##  from the version of the package
+> suppressPackageStartupMessages(library(rrcov))
+> 
 > library(MASS)
 > dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
 +     domest <- function(x, xname, nrep = 1) {
@@ -42,7 +42,7 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 +         if(nbad > 0)
 +             print(ibad)
 +         cat("-------------\n")
-+         show(mm)   
++         show(mm)
 +         cat("--------------------------------------------------------\n")
 +     }
 + 
@@ -50,7 +50,7 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 +     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 + 
 +     lname <- 20
-+  
++ 
 +     data(heart)
 +     data(starsCYG)
 +     data(phosphor)
@@ -87,9 +87,9 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 + }
 > 
 > #   generate contaminated data using the function gendata with different
-> #   number of outliers and check if the M-estimate breaks - i.e. the 
-> #   largest eigenvalue is larger than e.g. 5. 
-> #   For n=50 and p=10 and d=5 the M-estimate can break for number of 
+> #   number of outliers and check if the M-estimate breaks - i.e. the
+> #   largest eigenvalue is larger than e.g. 5.
+> #   For n=50 and p=10 and d=5 the M-estimate can break for number of
 > #   outliers grater than 20.
 > dogen <- function(){
 +     eig <- vector("numeric",26)
@@ -98,7 +98,7 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 +         mm <- CovMest(gg$x, t0=gg$tgood, S0=gg$sgood, arp=0.001)
 +         eig[i+1] <- ev <- getEvals(mm)[1]
 +         # cat(i, ev, "\n")
-+         
++ 
 +         stopifnot(ev < 5 || i > 20)
 +     }
 +     # plot(0:25, eig, type="l", xlab="Number of outliers", ylab="Largest Eigenvalue")
@@ -111,16 +111,16 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 > #   - if eps >= 1, it is the number of outliers
 > # - use the center and cov of the good data as good start
 > # - use the center and the cov of all data as a bad start
-> #   If using a good  start, the M-estimate must iterate to 
+> #   If using a good  start, the M-estimate must iterate to
 > #   the good solution: the largest eigenvalue is less then e.g. 5
 > #
 > gendata <- function(n=50, p=10, eps=0, d=5.0){
 + 
 +     if(eps < 0 || eps > 0.5 && eps < 1.0 || eps > 0.5*n)
 +         stop("eps is out of range")
-+         
++ 
 +     library(MASS)
-+     
++ 
 +     x <- mvrnorm(n, rep(0,p), diag(p))
 +     bad <- vector("numeric")
 +     nbad = if(eps < 1) eps*n else eps
@@ -130,7 +130,7 @@ Scalable Robust Estimators with High Breakdown Point (version 1.3-4)
 +     }
 +     cov1 <- cov.wt(x)
 +     cov2 <- if(nbad <= 0) cov1 else cov.wt(x[-bad,])
-+     
++ 
 +     list(x=x, bad=sort(bad), tgood=cov2$center, sgood=cov2$cov, tbad=cov1$center, sbad=cov1$cov)
 + }
 > 
@@ -379,4 +379,4 @@ V5   -759   -431   5196   1276   1020
 > 
 > proc.time()
    user  system elapsed 
-   1.20    0.12    1.31 
+   0.68    0.10    0.79 

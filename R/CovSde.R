@@ -59,11 +59,14 @@ CovSde <- function(x,
 
     if(nsamp != 0)
         nsamp <- max(1000, nsamp)
+    nsamp <- min(nsamp, .Machine$integer.max)
 
     if(missing(maxres))
         maxres <- 2 * nsamp
     else if(!is.numeric(maxres))
         stop(sQuote("maxres"), " is not a positive integer")
+    maxres <- min(maxres, .Machine$integer.max)
+
     tune <- sqrt(qchisq(tune, p))
 
     if(n <= p + 1)
@@ -100,7 +103,6 @@ CovSde <- function(x,
 ##        icent <- 0
 ##    }
 ##
-
     sdlist <- .Fortran("rlds",
                       n = as.integer(n),
                       p = as.integer(p),

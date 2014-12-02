@@ -17,7 +17,9 @@ void selectwr(int *array, int size, int nchoices);
 void reverse(int *a, int n);
 void resample(int *array, int n, int k);
 
-void covp(double **a, int n, int p, int *id, int np, double *t, double ** cov);
+void covp(double **x, int *n, int *p, int *indices, int *nind, 
+   	  double *mean, double **cov, double *det, int *rank); 
+void covpold(double **a, int n, int p, int *id, int np, double *t, double ** cov);
 void covar(double **a, int n, int p, double *t, double ** cov);
 void covwt(double **a, int n, int p, double *wts, double *t, double **cov);
 double mymed(int n, double *x);
@@ -199,7 +201,7 @@ void sest(double *X,
 {
     int i, j, ntry, ires, ind, iter, ibest;
     Rboolean singular, conv = 0;
-    int n = *nn, p = *pp;
+    int n = *nn, p = *pp, nind = *pp+1, rank;
     int best_r = *bbest_r;
     double kp = *kkp, c1 = *cc1;
     double det;
@@ -259,8 +261,10 @@ void sest(double *X,
 	    }
 
 	    resample(b_i, n, p+1);
-	    covp(x, n, p, b_i, p+1, tmp, tmp_mat);	    
-	    singular = mtxdet(tmp_mat, p, &det);
+	    //covp(x, n, p, b_i, p+1, tmp, tmp_mat);
+	    //singular = mtxdet(tmp_mat, p, &det);
+            covp(x, &n, &p, b_i, &nind, tmp, tmp_mat, &det, &rank); 
+	    singular = rank < p;
 //  	    REprintf("\n%d: Singular=%d, LOGDET= %lf\n", ires, singular, det);
 	}
 
@@ -301,6 +305,10 @@ void sest(double *X,
 		        best_sigmas[ind*p*p+i*p+j] = sigma[i][j];
 	    	}
 		maxind(best_scales, &s_worst, best_r);
+  	    	
+//		REprintf("\n%d: Best_r=%d, Scale= %lf20.16\n", ires, best_r, s_test);
+//		disp_mat(sigma, p, p);
+
 	    }
         } else
         {
@@ -425,6 +433,7 @@ int refine_s(double **x, int n, int p, double *init_mu, double **init_sigma, dou
  	scaledpsi(rdis, sc, n, cc, weights);
 	covwt(x, n, p, weights, mu_1, sigma_1);
 	singular = mtxdet(sigma_1, p, &det);
+//  	REprintf("\n------Singular=%d, LOGDET= %lf\n", singular, det);
 
 	if(singular)
 	{
@@ -460,7 +469,7 @@ int refine_s(double **x, int n, int p, double *init_mu, double **init_sigma, dou
  * of the data matrix a[n][p] with n rows and p columns. The subsample is 
  * given by the vector id with length p.
  */ 
-void covp(double **a, int n, int p, int *id, int np, double *t, double ** cov)
+void covpold(double **a, int n, int p, int *id, int np, double *t, double ** cov)
 {
     int i, j, k;
     for(j=0; j<p; j++)
@@ -493,16 +502,79 @@ void covp(double **a, int n, int p, int *id, int np, double *t, double ** cov)
 }
 
 /*
+ * Compute the location vector and covariance matrix of a subsample
+ * of the data matrix a[n][p] with n rows and p columns.
+ * The covariance is computed using QR decomposition. The subsample is
+ * given by the vector indices with length nind. Return the mean and cov[][].
+ * Compute the rank and if full rank, compute the determinant.
+ */
+void covp(double **x, int *n, int *p, int *indices, int *nind, 
+		double *mean, double **cov, double *det, int *rank)
+{
+int i, j, k;
+int pp = *p, nnind = *nind;
+double tol = 1e-7, s=0;
+
+double *cx = (double *) R_alloc(pp*pp, sizeof(double));		
+double *xw = (double *) R_alloc(nnind*pp, sizeof(double));		
+double *qraux = (double *) R_alloc(pp, sizeof(double));		
+double *work = (double *) R_alloc(2*pp, sizeof(double));		
+int *pivot = (int *) R_alloc(pp, sizeof(int));
+
+   // compute the mean, put submatrix into xw, center its columns
+   for(j=0; j<pp; j++) 
+   {
+      mean[j] = 0.0;
+      for(i=0; i<nnind; i++) 
+         mean[j] += (xw[i+j*nnind] = x[indices[i]][j]) / (double) nnind;
+	 for(i=0; i<nnind; i++) 
+	    xw[i+j*nnind] -= mean[j];
+   }
+
+   // QR decomposition of the submatrix
+   F77_CALL(dqrdc2)(xw, nind, nind, p, &tol, rank, qraux, pivot, work);
+
+   // build the cov matrix of the subsample using the QR decomp
+   for(i=0; i<pp; i++)
+      for(j=i; j<pp; j++) 
+      {
+         s = 0;
+	 for(k=0; k<=i; k++) 
+	    s += xw[k + j*nnind] * xw[k + i*nnind];
+	 cx[j + i*pp] = cx[i + j*pp] = (s / (double) (nnind - 1));
+      }
+
+   for(i=0; i<pp; i++)
+      for(j = 0; j < pp; j++)
+      cov[i][j] = cx[i + pp*j];
+
+   /* if full rank, compute det of cov matrix */
+   /* det^2 = (nind-1)^p * det(cov matrix) */
+   if(*rank == pp) 
+   { 
+      *det = 1.0;
+      for(j=0; j<pp; j++)
+         *det += log(fabs(xw[j + nnind*j]));
+   } else
+	*det = log(0); 
+}
+
+
+
+/*
  * Compute the location vector and covariance matrix of a 
  * data matrix a[n][p] with n rows and p columns.
  */ 
 void covar(double **a, int n, int p, double *t, double ** cov)
 {
     int i;	
+    double det;
+    int rank;
     int *id = (int *)Calloc(n, int);
     for(i=0; i<n; i++)
 	id[i] = i;
-    covp(a, n, p, id, n, t, cov);
+    //covp(a, n, p, id, n, t, cov);
+    covp(a, &n, &p, id, &n, t, cov, &det, &rank); 
     Free(id);
 }
 

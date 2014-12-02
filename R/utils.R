@@ -39,38 +39,14 @@ sqrtm <- function(A){
 }
 
 ## Return an n by p matrix of ones
-ones <- function(n=1, p=1){
-    matrix(1, nrow=n, ncol=p)
-}
+##ones <- function(n=1, p=1){
+##    matrix(1, nrow=n, ncol=p)
+##}
 
 ## Return an n by p matrix of zeros
-zeros <- function(n=1, p=1){
-    matrix(0, nrow=n, ncol=p)
-}
-
-## Purpose: rank of a matrix ``as Matlab''
-## ----------------------------------------------------------------------
-## Arguments:  A: a numerical matrix, maybe non-square
-##           tol: numerical tolerance (compared to singular values)
-##            sv: vector of non-increasing singular values of A
-##                (pass as argument if already known)
-## ----------------------------------------------------------------------
-## Author: Martin Maechler, Date:  7 Apr 2007, 16:16
-rankMM <- function(A, tol = NULL, sv = svd(A,0,0)$d) {
-    d <- dim(A)
-    stopifnot(length(d)==2, length(sv)==min(d), diff(sv) <= 0)   # must be sorted decreasingly
-    if(is.null(tol))
-        tol <- max(d) * .Machine$double.eps * abs(sv[1])
-    else
-        stopifnot(is.numeric(tol), tol >= 0)
-    sum(sv >= tol)
-}
-
-
-####    rankM <- function(A){
-####        qr(A)$rank
-####    }
-
+##zeros <- function(n=1, p=1){
+##    matrix(0, nrow=n, ncol=p)
+##}
 
 ##  <Matlab>
 ##      a=[1 2 ; 3 4];
@@ -79,10 +55,15 @@ rankMM <- function(A, tol = NULL, sv = svd(A,0,0)$d) {
 ##  <R>
 ##      a <- matrix(1:4,2,byrow=T)
 ##      repmat(a,2,3)
+##
+##
+##  a <- 1:4; n=10
+##  matrix(rep(a, times=n), nrow=n, byrow=TRUE)
+##
 
-repmat <- function(A, n, p) {
-
-    if(is.vector(A))    # we need a column matrix, not a vector, speaking in R terms
-        A <- t(A)
-    kronecker(matrix(1,n,p), A)
-}
+##repmat <- function(A, n, p) {
+##
+##    if(is.vector(A))    # we need a column matrix, not a vector, speaking in R terms
+##        A <- t(A)
+##    kronecker(matrix(1,n,p), A)
+##}

@@ -15,7 +15,6 @@
 \alias{isClassic,Cov-method}
 \alias{plot}
 \alias{plot,Cov,missing-method}
-\alias{print,Cov-method}
 \alias{show,Cov-method}
 \alias{summary,Cov-method}
 \alias{Uvector-class}

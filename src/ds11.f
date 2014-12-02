@@ -134,6 +134,8 @@ C      CALL DBLEPR('EXIT rlweights: wi=',-1,w,n)
 
 C      CALL INTPR('ENTER rlprocess',-1,0,0) 
 
+      CALL RCHKUSR()
+
       ierr=0
       if(np.gt.1) then
          call rlvectora(n,np,x,a,ind,wk,icent,ierr)

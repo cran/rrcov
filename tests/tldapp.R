@@ -1,5 +1,8 @@
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
 library(MASS)
+
 dodata <- function(method) {
 
     options(digits = 5)

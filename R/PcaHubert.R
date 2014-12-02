@@ -104,7 +104,9 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ## ___Step 1___: Reduce the data space to the affine subspace spanned by the n observations
     ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach -
     ##  the decomposition is based on computing the eignevalues and eigenvectors of(X-m)(X-m)'
-    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
+
+##    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
+    Xsvd <- classPC(data, scale=scale, signflip=signflip)
 
     if(Xsvd$rank == 0)
         stop("All data points collapse!")
@@ -172,7 +174,11 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             h <- h.alpha.n(alpha, n, k)
     }
 
-    X <- Xsvd$scores
+##    VT::30.10.2014 - classSVD and kernelEVD are simplified and
+##      moved to robustbase, furthermore replaced by classPC:
+##      no more return scores
+##    X <- Xsvd$scores
+    X <- scale(data, center=Xsvd$center, scale=Xsvd$scale) %*% Xsvd$loadings
     center <- Xsvd$center
     rot <- Xsvd$loadings
 
@@ -197,7 +203,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         X.mcd <- CovMcd(as.data.frame(X), alpha=alpha)
         X.mcd.svd <- svd(getCov(X.mcd))
-        scores <- (X - repmat(getCenter(X.mcd), nrow(X), 1)) %*% X.mcd.svd$u
+##        scores <- (X - repmat(getCenter(X.mcd), nrow(X), 1)) %*% X.mcd.svd$u
+        scores <- (X - matrix(rep(getCenter(X.mcd), times=nrow(X)), nrow=nrow(X), byrow=TRUE)) %*% X.mcd.svd$u
 
         center <- as.vector(center + getCenter(X.mcd) %*% t(rot))
         eigenvalues <- X.mcd.svd$d[1:k]
@@ -211,11 +218,6 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         }
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
-
-##        print("*** MCD ***")
-##        print(dimnames(data)[[1]])
-##        print(dimnames(scores)[[1]])
-##        print(dimnames(scores)[[2]])
 
         res <- new("PcaHubert",call=cl,
                             loadings=loadings,
@@ -252,7 +254,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         A <- diag(1/Bnormr) %*% B               # A[m x ncol(X)]
 
         Y <- X %*% t(A)                         # n x m - projections of the n points on each of the m directions
-        Z <- zeros(n, m)                        # n x m - to collect the outlyingness of each point on each direction
+        Z <- matrix(0,n, m)                     # n x m - to collect the outlyingness of each point on each direction
         for(i in 1:m) {
             umcd <- unimcd(Y[,i], quan=h)       # one-dimensional MCD: tmcd and smcd
 
@@ -267,7 +269,9 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
         Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
-        Xh.svd <- classSVD(Xh)
+
+##        Xh.svd <- classSVD(Xh)
+        Xh.svd <- classPC(Xh)
         kmax <- min(Xh.svd$rank, kmax)
         if(trace)
             cat("\nEigenvalues: ", Xh.svd$eigenvalues, "\n")
@@ -303,21 +307,27 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             ## Xh.svd is roughly half of these in Xsvd
             k <- min(Xh.svd$rank, k)
 
-            XRc <- X - repmat(Xh.svd$center, n, 1)
+##            XRc <- X - repmat(Xh.svd$center, n, 1)
+            XRc <- X - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)
+
             Xtilde <- XRc %*% Xh.svd$loadings[,1:k] %*% t(Xh.svd$loadings[,1:k])
             Rdiff <- XRc - Xtilde
             odh <- apply(Rdiff, 1, vecnorm)
             umcd <- unimcd(odh^(2/3), h)
             cutoffodh <- sqrt(qnorm(0.975, umcd$tmcd, umcd$smcd)^3)
             indexset <- (odh <= cutoffodh)
-            Xh.svd <- classSVD(X[indexset,])
+
+##            Xh.svd <- classSVD(X[indexset,])
+            Xh.svd <- classPC(X[indexset,])
             k <- min(Xh.svd$rank, k)
         }
 
         ## Project the data points on the subspace spanned by the first k0 eigenvectors
         center <- center + Xh.svd$center %*% t(rot)
         rot <- rot %*% Xh.svd$loadings
-        X2 <- (X - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
+#        X2 <- (X - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
+        X2 <- (X - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)) %*% Xh.svd$loadings
+
         X2 <- as.matrix(X2[ ,1:k])
         rot <- as.matrix(rot[ ,1:k])
 
@@ -334,12 +344,16 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             if(trace)
                 cat("\nIter=",j, " h=", h, " k=", k, " obj=", oldobj, "\n")
             Xh <- X2[order(mah)[1:h], ]
-            Xh.svd <- classSVD(as.matrix(Xh))
+
+##            Xh.svd <- classSVD(as.matrix(Xh))
+            Xh.svd <- classPC(as.matrix(Xh))
             obj <- prod(Xh.svd$eigenvalues)
-            X2 <- (X2 - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
+#            X2 <- (X2 - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
+            X2 <- (X2 - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)) %*% Xh.svd$loadings
+
             center <- center + Xh.svd$center %*% t(rot)
             rot <- rot %*% Xh.svd$loadings
-            mah <- mahalanobis(X2, center=zeros(1, ncol(X2)), cov=diag(Xh.svd$eigenvalues, nrow=length(Xh.svd$eigenvalues)))
+            mah <- mahalanobis(X2, center=matrix(0,1, ncol(X2)), cov=diag(Xh.svd$eigenvalues, nrow=length(Xh.svd$eigenvalues)))
             if(Xh.svd$rank == k & abs(oldobj - obj) < 1.E-12)
                 break
 
@@ -372,7 +386,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             mah <- mah/consistencyfactor
             weights <- ifelse(mah <= qchisq(0.975, k), TRUE, FALSE)
 
-##          VT::27.08.2010 - not necessary, cov.wt is doing it ptoperly
+##          VT::27.08.2010 - not necessary, cov.wt is doing it properly
 ##            wcov <- .wcov(X2, weights)
             wcov <- cov.wt(x=X2, wt=weights, method="ML")
             X2center <- wcov$center
@@ -387,8 +401,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         center <- as.vector(center + X2center %*% t(rot))
         eigenvalues <- ee$values
         loadings <- rot %*% P6
-        scores <- (X2 - repmat(X2center, n, 1)) %*% P6
-
+##        scores <- (X2 - repmat(X2center, n, 1)) %*% P6
+        scores <- (X2 - matrix(rep(X2center, times=n), nrow=n, byrow=TRUE)) %*% P6
 
         if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
         {
@@ -398,11 +412,6 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         }
         dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
         dimnames(scores)[[2]] <- as.list(paste("PC", seq_len(ncol(scores)), sep = ""))
-
-##        print("*** ROBPCA *** ")
-##        print(dimnames(data)[[1]])
-##        print(dimnames(scores)[[1]])
-##        print(dimnames(scores)[[2]])
 
         res <- new("PcaHubert",call=cl,
                             loadings=loadings,
@@ -479,7 +488,7 @@ extradir <- function(data, ndirect, all=TRUE){
                 n <- nrow(data)
                 p <- ncol(data)
                 r <- 1
-                B2 <- zeros(ndirect, p)
+                B2 <- matrix(0,ndirect, p)
                 seed <- 0
                 while(r <= ndirect) {
                     sseed <- randomset(n, 2, seed)
@@ -489,7 +498,7 @@ extradir <- function(data, ndirect, all=TRUE){
                 }
         } else
         {
-                B2 <- zeros(ndirect, ncol(data))
+                B2 <- matrix(0,ndirect, ncol(data))
                 for(r in 1:ndirect) {
                     smpl <- sample(1:nrow(data), 2)                 # choose a random pair of points
                     B2[r,] <- data[smpl[1], ] - data[smpl[2], ]     # calculate the random direction based on these points

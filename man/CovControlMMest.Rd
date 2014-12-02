@@ -44,12 +44,15 @@ A \code{CovControlSest} object.
 \author{Valentin Todorov \email{valentin.todorov@chello.at}}
 %\seealso{}
 \examples{
-    ## the following two statements are equivalent
-    ctrl1 <- new("CovControlSest", bdp=0.4)
-    ctrl2 <- CovControlSest(bdp=0.4)
+   ## the following two statements are equivalent
+    ctrl1 <- new("CovControlMMest", bdp=0.25)
+    ctrl2 <- CovControlMMest(bdp=0.25)
 
     data(hbk)
-    CovSest(hbk, control=ctrl1)
+    CovMMest(hbk, control=ctrl1)
+    
+    
+    
 }
 \keyword{classes}
 \keyword{robust}

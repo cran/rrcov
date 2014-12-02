@@ -1,7 +1,7 @@
 ### R code from vignette source 'rrcov.Rnw'
 
 ###################################################
-### code chunk number 1: rrcov.Rnw:472-474
+### code chunk number 1: rrcov.Rnw:471-473
 ###################################################
 ## set the prompt to "R> " and the continuation to "+ "
 options(prompt="R> ", continue="+ ")
@@ -68,7 +68,7 @@ est
 
 
 ###################################################
-### code chunk number 7: rrcov.Rnw:1020-1021
+### code chunk number 7: rrcov.Rnw:1019-1020
 ###################################################
 set.seed(1234)
 

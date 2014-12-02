@@ -38,7 +38,18 @@ seed = NULL, trace = FALSE, control)
     override the corresponding elements of the control object.}
 }
 
-%\details{}
+\details{
+The projection based Stahel-Donoho estimator posses very good statistical properties, 
+but it can be very slow if the number of variables is too large. It is recommended to use
+this estimator if \code{n <= 1000} and \code{p<=10} or \code{n <= 5000} and \code{p<=5}.
+The number of subsamples required is calculated to provide a breakdown point of 
+\code{eps} with probability \code{prob} and can reach values larger than 
+the larger integer value - in such case it is limited to \code{.Machine$integer.max}.
+Of course you could provide \code{nsamp} in the call, i.e. \code{nsamp=1000} but 
+this will not guarantee the required breakdown point of th eestimator.
+For larger data sets it is better to use \code{\link{CovMcd}} or \code{\link{CovOgk}}. 
+If you use \code{\link{CovRobust}}, the estimator will be selected automatically 
+according on the size of the data set.}
 \value{
   An S4 object of class \code{\link{CovSde-class}} which is a subclass of the
   virtual class \code{\link{CovRobust-class}}.

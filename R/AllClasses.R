@@ -13,7 +13,7 @@ setClass("PsiBwt", representation(M = "numeric"),
 setClassUnion("Uvector", c("vector", "NULL"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
 setClassUnion("Ulist", c("list", "NULL"))
-setClassUnion("Ufunction", c("function", "NULL"))
+setClassUnion("Ufunction", c("function", "character", "NULL"))
 setClassUnion("Utable", c("table", "NULL"))
 
 ## This is a virtual base class for control objects. Each robust
@@ -84,7 +84,10 @@ setClass("CovMve", representation(alpha = "numeric",
                                   raw.cnp2 = "numeric",
                                   cnp2 = "numeric"),
                     contains="CovRobust")
-setClass("CovSest", representation(cc = "numeric",
+setClass("CovSest", representation(iBest = "numeric",
+                                   nsteps = "Uvector",
+                                   initHsets = "Umatrix",
+                                   cc = "numeric",
                                    kp = "numeric"),
                     contains="CovRobust")
 
@@ -98,10 +101,14 @@ setClass("CovMMest", representation(c1 ="numeric",
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
                                           nsamp="numeric",
+                                          scalefn="Ufunction",
+                                          maxcsteps="numeric",
                                           seed="Uvector",
                                           use.correction="logical"),
                            prototype = list(alpha=0.5,
                                           nsamp=500,
+                                          scalefn=NULL,
+                                          maxcsteps=200,
                                           seed=NULL,
                                           trace=FALSE,
                                           tolSolve=1e-14,

@@ -1,4 +1,4 @@
-dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert", "hubert.mcd", "locantore", "cov")){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert", "hubert.mcd", "locantore", "cov", "classic")){
 ## Test the function PcaHubert() on the literature datasets:
 ##
 ## Call PcaHubert() for all regression datasets available in
@@ -21,6 +21,8 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
             pca <- PcaLocantore(x)
         else if(method == "cov")
             pca <- PcaCov(x)
+        else if(method == "classic")
+            pca <- PcaClassic(x)
         else
             stop("Undefined PCA method: ", method)
 
@@ -58,22 +60,13 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
-    library(rrcov)
 
-    data(heart)
-    data(starsCYG)
-    data(phosphor)
-    data(stackloss)
-    data(coleman)
-    data(salinity)
-    data(wood)
-
-    data(hbk)
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
 
     data(Animals, package = "MASS")
     brain <- Animals[c(1:24, 26:25, 27:28),]
-    data(milk)
-    data(bushfire)
 
     tmp <- sys.call()
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
@@ -86,7 +79,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
     dopca(stack.x, data(stackloss), nrep)
     dopca(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
     dopca(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
-    dopca(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+##    dopca(data.matrix(subset(wood, select = -y)), data(wood), nrep)       # differences between the architectures
     dopca(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
 
 ##    dopca(brain, "Animals", nrep)
@@ -106,8 +99,11 @@ dogen <- function(nrep=1, eps=0.49, method=c("hubert", "hubert.mcd", "locantore"
 
     set.seed(1234)
 
-    library(rrcov)
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
     library(MASS)
+
     method <- match.arg(method)
 
     ap <- c(2, 5, 10, 20, 30)
@@ -221,9 +217,14 @@ test.case.1 <- function()
     list(cc1, cc2, cc3, cc4, cc5)
 }
 
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
+dodata(method="classic")
 dodata(method="hubert.mcd")
 dodata(method="hubert")
+
 ##dodata(method="locantore")
 ##dodata(method="cov")
 test.case.1()

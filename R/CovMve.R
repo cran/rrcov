@@ -99,7 +99,7 @@ CovMve <- function(x,
 
     ## Compute the consistency correction factor for the raw MCD
     ##  (see calfa in Croux and Haesbroeck)
-    ## calpha <- MCDcons(p, h/n)    ## VT::19.3.2007
+    ## calpha <- .MCDcons(p, h/n)    ## VT::19.3.2007
     mvecov <- cov.wt(x[mve$best,])
     rcenter <- mvecov$center
     rcov <- mvecov$cov
@@ -132,7 +132,7 @@ CovMve <- function(x,
             cdelta.rew <- 1
             correct.rew <- 1
         }else {
-            cdelta.rew <- robustbase:::MCDcons(p, sum.w/n) ## VT::: 19.07.2008
+            cdelta.rew <- .MCDcons(p, sum.w/n) ## VT::: 19.07.2008
             correct.rew <- if(use.correction) 1 else 1.
             cnp2 <- c(cdelta.rew, correct.rew)
         }

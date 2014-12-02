@@ -2,6 +2,8 @@ useDynLib(rrcov)
 importFrom(stats4, plot, summary)
 importFrom(stats, screeplot, biplot, predict)
 importFrom(methods, show)
+importFrom(lattice, xyplot, panel.xyplot, panel.abline, ltext)
+importFrom(cluster, ellipsoidPoints)
 importFrom(mvtnorm, rmvnorm)
 import(robustbase, pcaPP)
 
@@ -40,12 +42,8 @@ export(CovClassic,
        pca.distances,
        myscreeplot,
        mtxconfusion,
-       rankMM,
        sqrtm,
-       ones,
-       zeros,
-       vecnorm,
-       repmat
+       vecnorm
 )
 
 ##S3 generics
@@ -178,7 +176,6 @@ exportMethods(isClassic,
               getSdev,
               getScores,
               getPrcomp,
-              print,
               predict,
               screeplot,
               biplot,

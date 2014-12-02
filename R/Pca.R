@@ -39,7 +39,8 @@ setMethod("show", "SummaryPca", function(object){
     invisible(object)
 })
 
-setMethod("print",     "Pca", function(x, ...) myPcaPrint(x, ...))
+## setMethod("print",     "Pca", function(x, ...) myPcaPrint(x, ...))
+
 setMethod("predict",   "Pca", function(object, ...){
     predict(getPrcomp(object), ...)
 })
@@ -125,17 +126,6 @@ myPcaPrint <- function(x, print.x=FALSE, print.loadings=FALSE, ...) {
     invisible(x)
 }
 
-## Flip the signs of the loadings
-##  - comment from Stephan Milborrow
-##
-.signflip <- function(loadings)
-{
-    if(!is.matrix(loadings))
-        loadings <- as.matrix(loadings)
-    apply(loadings, 2, function(x) if(x[which.max(abs(x))] < 0) -x else x)
-}
-
-
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
 ##
@@ -168,7 +158,9 @@ pca.distances <- function(obj, data, r, crit=0.975) {
     ## Compute the orthogonal distances and the corresponding cutoff value
     ##  For each point this is the norm of the difference between the
     ##  centered data and the back-transformed scores
-    obj@od <- apply(data - repmat(obj@center, n, 1) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+##    obj@od <- apply(data - repmat(obj@center, n, 1) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+    obj@od <- apply(data - matrix(rep(obj@center, times=n), nrow=n, byrow=TRUE) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+
     if(is.list(dimnames(obj@scores))) {
         names(obj@od) <- dimnames(obj@scores)[[1]]
     }
@@ -210,7 +202,62 @@ pca.distances <- function(obj, data, r, crit=0.975) {
     cv
 }
 
-## VT::15.06.2010 - Aded scaling and flipping of the loadings
+## Flip the signs of the loadings
+##  - comment from Stephan Milborrow
+##
+.signflip <- function(loadings)
+{
+    if(!is.matrix(loadings))
+        loadings <- as.matrix(loadings)
+    apply(loadings, 2, function(x) if(x[which.max(abs(x))] < 0) -x else x)
+}
+
+##' @title Compute Classical Principal Components via SVD or Eigen
+##' @param x a numeric matrix
+##' @param scale logical
+##' @param signflip
+##' @param via.svd logical indicating if the SVE
+##' @return a list
+##' @author Valentin Todorov; efficiency tweaks by Martin Maechler
+classPC <- function(x, scale=FALSE, signflip=TRUE, via.svd = n > p)
+{
+    if(!is.numeric(x) || !is.matrix(x))
+        stop("'x' must be a numeric matrix")
+    else if((n <- nrow(x)) <= 1)
+        stop("The sample size must be greater than 1 for svd")
+    p <- ncol(x)
+    center <- colMeans(x)
+    x <- scale(x, center=center, scale=scale)
+    ##   -----
+    if(isTRUE(scale))
+        scale <- attr(x, "scaled:scale")
+
+    if(via.svd) {
+        svd <- svd(x/sqrt(n-1), nu=0)
+        rank <- rankMM(x, sv=svd$d)
+        loadings <- svd$v[,1:rank]
+        eigenvalues <- (svd$d[1:rank])^2 ## FIXME: here .^2; later sqrt(.)
+    } else { ## n <= p; was "kernelEVD"
+        e <- eigen(tcrossprod(x)/(n-1), symmetric=TRUE)
+        tolerance <- n * max(e$values) * .Machine$double.eps
+        rank <- sum(e$values > tolerance)
+        ii <- seq_len(rank)
+        eigenvalues <- e$values[ii]
+        ## MM{FIXME (efficiency)}:
+        loadings <- t((x/sqrt(n-1))) %*% e$vectors[,1:rank] %*% diag(1/sqrt(eigenvalues))
+    }
+
+    ## VT::15.06.2010 - signflip: flip the sign of the loadings
+    if(signflip)
+        loadings <- .signflip(loadings)
+
+    list(loadings=loadings,
+         ## scores = x %*% loadings,
+         eigenvalues=eigenvalues,
+         rank=rank, center=center, scale=scale)
+}
+
+## VT::15.06.2010 - Added scaling and flipping of the loadings
 ##
 classSVD <- function(x, scale=FALSE, signflip=TRUE){
     if(!is.numeric(x) || !is.matrix(x))
@@ -243,12 +290,11 @@ classSVD <- function(x, scale=FALSE, signflip=TRUE){
          scores=scores,
          eigenvalues=eigenvalues,
          rank=rank,
-         x=x,
          center=center,
          scale=scale)
 }
 
-## VT::15.06.2010 - Aded scaling and flipping of the loadings
+## VT::15.06.2010 - Added scaling and flipping of the loadings
 ##
 kernelEVD <- function(x, scale=FALSE, signflip=TRUE){
     if(!is.numeric(x) || !is.matrix(x))
@@ -283,7 +329,6 @@ kernelEVD <- function(x, scale=FALSE, signflip=TRUE){
                     scores=scores,
                     eigenvalues=eigenvalues,
                     rank=rank,
-                    x=x,
                     center=center,
                     scale=scale)
     }

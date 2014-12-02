@@ -1,7 +1,6 @@
 ## TO DO
 ##
-##   - 'best' and 'exact' options for nsamp, as in CovMcd
-##   - start reimplementing parts of the S-FAST algorithm in C
+##   - 'best', 'exact' and 'deterministic' options for nsamp, as in CovMcd
 ##
 CovSest <- function(x,
                     bdp=0.5,
@@ -12,7 +11,10 @@ CovSest <- function(x,
                     seed=NULL,
                     trace=FALSE,
                     tolSolve=1e-14,
-                    method=c("sfast", "surreal", "bisquare", "rocke", "suser"),
+                    scalefn,
+                    maxisteps=200,
+                    initHsets = NULL, save.hsets = FALSE,
+                    method=c("sfast", "surreal", "bisquare", "rocke", "suser", "sdet"),
                     control,
                     t0,
                     S0,
@@ -87,11 +89,17 @@ CovSest <- function(x,
     if(trace)
         cat("\nFAST-S...: bdp, p, cc, kp=", bdp, p, cc, kp, "\n")
 
+    if(missing(scalefn) || is.null(scalefn))
+    {
+        scalefn <- if(n <= 1000) Qn else scaleTau2
+    }
+
     mm <- if(method == "sfast")         ..CSloc(x, nsamp=nsamp, kp=kp, cc=cc, trace=trace)
           else if(method == "suser")    ..fastSloc(x, nsamp=nsamp, kp=kp, cc=cc, trace=trace)
           else if(method == "surreal")  ..covSURREAL(x, nsamp=nsamp, kp=kp, c1=cc, trace=trace, tol.inv=tolSolve)
           else if(method == "bisquare") ..covSBic(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol, trace=trace)
-          else                          ..covSRocke(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol, trace=trace)
+          else if(method == "rocke")    ..covSRocke(x, arp, eps, maxiter, t0, S0, nsamp, seed, initcontrol, trace=trace)
+          else                          ..detSloc(x, hsets.init=initHsets, save.hsets=save.hsets, scalefn=scalefn, kp=kp, cc=cc, trace=trace)
 
     ans <- new("CovSest",
                call = xcall,
@@ -100,10 +108,19 @@ CovSest <- function(x,
                cov=mm$cov,
                center=mm$center,
                n.obs=n,
+               iBest=0,
                cc=mm$cc,
                kp=mm$kp,
                X = as.matrix(x),
                method=mm$method)
+
+    if(method == "sdet")
+    {
+        ans@iBest <- mm$iBest
+        ans@nsteps <- mm$hset.csteps
+        if(save.hsets)
+            ans@initHsets <- mm$initHsets
+    }
     ans
 }
 

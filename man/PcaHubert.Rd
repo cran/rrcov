@@ -159,13 +159,13 @@ yield the robust principal components.
     pca2 <- PcaHubert(hbk, k=2)  
     plot(pca2)                   # PCA diagnostic plot (or outlier map)
     
-## Use the standard plots available for for prcomp and princomp
+## Use the standard plots available for prcomp and princomp
     screeplot(pca)    
     biplot(pca)    
     
 ## Restore the covraiance matrix     
     py <- PcaHubert(hbk)
-    cov.1 <- py@loadings %*% diag(py@eigenvalues) %*% t(py@loadings)
+    cov.1 <- py@loadings \%*\% diag(py@eigenvalues) \%*\% t(py@loadings)
     cov.1    
 }
 \keyword{robust}

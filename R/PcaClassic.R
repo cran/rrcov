@@ -54,7 +54,8 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     n <- nrow(data)
     p <- ncol(data)
 
-    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
+##    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
+    Xsvd <- classPC(data, scale=scale, signflip=signflip)
     if(Xsvd$rank == 0) {
         stop("All data points collapse!")
     }
@@ -90,7 +91,13 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
     loadings    <- Xsvd$loadings[, 1:k, drop=FALSE]
     eigenvalues <- as.vector(Xsvd$eigenvalues[1:k])
     center      <- as.vector(Xsvd$center)
-    scores      <- Xsvd$scores[, 1:k, drop=FALSE]
+
+##    VT::30.10.2014 - kernelEVD is simplified and moved to robustbase:
+##      no more returns scores
+##    scores      <- Xsvd$scores[, 1:k, drop=FALSE]
+    scores <- scale(data, Xsvd$center, Xsvd$scale) %*% Xsvd$loadings
+    scores <- scores[, 1:k, drop=FALSE]
+
     scale       <- Xsvd$scale
 
     if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))

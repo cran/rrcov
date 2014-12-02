@@ -17,6 +17,11 @@
         \item{\code{iter}, \code{crit}, \code{wt}:}{from the
             \code{"\linkS4class{CovRobust}"} class.
         }
+        \item{\code{iBest}, \code{nsteps}, \code{initHsets}:}{parameters for 
+        deterministic S-estimator (the best initial subset, number of concentration 
+        steps to convergence for each of the initial subsets, and the computed 
+        initial subsets, respectively).
+        }
         \item{\code{cc}, \code{kp}}{tuning parameters used in Tukey biweight 
         loss function, as determined by bdp. Can be computed by the internal function 
         \code{.csolve.bw.S(bdp, p)}.

@@ -1,7 +1,11 @@
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 library(MASS)
+
 dodata <- function(nrep = 1, time = FALSE, full = TRUE, method) {
-    doest <- function(x, xname, nrep = 1, method=c("sfast", "surreal", "bisquare", "rocke", "suser", "MM")) {
+    doest <- function(x, xname, nrep = 1, method=c("sfast", "surreal", "bisquare", "rocke", "suser", "MM", "sdet")) {
 
         method <- match.arg(method)
 
@@ -145,6 +149,7 @@ pad.right <- function(z, pads)
 
 ## -- now do it:
 dodata(method="sfast")
+dodata(method="sdet")
 ##dodata(method="suser")
 ##dodata(method="surreal")
 dodata(method="bisquare")

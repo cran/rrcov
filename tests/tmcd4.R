@@ -1,5 +1,5 @@
 ## Test the exact fit property of CovMcd
-doexact <- function(){
+doexactfit <- function(){
     exact <-function(seed=1234){
     	
 	set.seed(seed)
@@ -19,7 +19,7 @@ doexact <- function(){
     print(CovMcd(exact()))
 }
 
-dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS", "deterministic", "exact")){
 ##@bdescr
 ## Test the function covMcd() on the literature datasets:
 ##
@@ -42,7 +42,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 ##@in  full              : [boolean] whether to print the estimated cente and covariance matrix
 ##@in  method            : [character] select a method: one of (FASTMCD, MASS)
 
-    domcd <- function(x, xname, nrep=1){
+    doest <- function(x, xname, nrep=1){
         n <- dim(x)[1]
         p <- dim(x)[2]
         if(method == "MASS"){
@@ -50,14 +50,13 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
             quan <- as.integer(floor((n + p + 1)/2))   #default: floor((n+p+1)/2)
         }
         else{
-            mcd<-CovMcd(x, trace=FALSE)
+            mcd <- if(method=="deterministic") CovMcd(x, nsamp="deterministic", trace=FALSE)
+                   else if(method=="exact")    CovMcd(x, nsamp="exact", trace=FALSE)
+                   else                        CovMcd(x, trace=FALSE)
             quan <- as.integer(mcd@quan)
         }
 
-        if(method == "MASS")
-            crit <- mcd@crit
-        else
-            crit <- log(mcd@crit)
+        crit <- mcd@crit
 
         if(time){
            xtime <- system.time(dorep(x, nrep, method))[1]/nrep
@@ -71,14 +70,19 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
         if(!short){
             cat("Best subsample: \n")
-            print(mcd@best)
+            if(length(mcd@best) > 150)
+                cat("Too long... \n")
+            else
+                print(mcd@best)
 
             ibad <- which(mcd@wt==0)
             names(ibad) <- NULL
             nbad <- length(ibad)
             cat("Outliers: ",nbad,"\n")
-            if(nbad > 0)
+            if(nbad > 0 & nbad < 150)
                 print(ibad)
+            else
+                cat("Too many to print ... \n")
             if(full){
                 cat("-------------\n")
                 show(mcd)
@@ -91,50 +95,93 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
-    library(rrcov)
+
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
+
     method <- match.arg(method)
     if(method == "MASS")
         library(MASS)
 
-
-    data(heart)
-    data(starsCYG)
-    data(phosphor)
-    data(stackloss)
-    data(coleman)
-    data(salinity)
-    data(wood)
-
-    data(hbk)
-
     data(Animals, package = "MASS")
     brain <- Animals[c(1:24, 26:25, 27:28),]
-    data(milk)
-    data(bushfire)
+
+    data(fish)
+    data(pottery)
+    data(rice)
+    data(un86)
+    data(wages)
 
     tmp <- sys.call()
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 
     cat("Data Set               n   p  Half LOG(obj)        Time\n")
     cat("========================================================\n")
-    domcd(heart[, 1:2], data(heart), nrep)
-    domcd(starsCYG, data(starsCYG), nrep)
-    domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
-    domcd(stack.x, data(stackloss), nrep)
-    domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
-    domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
-    domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
-    domcd(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
 
-    domcd(brain, "Animals", nrep)
-    domcd(milk, data(milk), nrep)
-    domcd(bushfire, data(bushfire), nrep)
+    if(method=="exact")
+    {
+        ## oonly small data sets
+        doest(heart[, 1:2], data(heart), nrep)
+        doest(starsCYG, data(starsCYG), nrep)
+        doest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
+        doest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
+        doest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
+        doest(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+        doest(brain, "Animals", nrep)
+        doest(lactic, data(lactic), nrep)
+        doest(pension, data(pension), nrep)
+        doest(data.matrix(subset(vaso, select = -Y)), data(vaso), nrep)
+        doest(stack.x, data(stackloss), nrep)
+        doest(pilot, data(pilot), nrep)
+    } else
+    {
+        doest(heart[, 1:2], data(heart), nrep)
+        doest(starsCYG, data(starsCYG), nrep)
+        doest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
+        doest(stack.x, data(stackloss), nrep)
+        doest(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
+        doest(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
+        doest(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+        doest(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
+
+        doest(brain, "Animals", nrep)
+##        doest(milk, data(milk), nrep)                 # difference between 386 and x64
+        doest(bushfire, data(bushfire), nrep)
+
+        doest(lactic, data(lactic), nrep)
+        doest(pension, data(pension), nrep)
+##        doest(pilot, data(pilot), nrep)               # difference between 386 and x64
+
+        doest(radarImage, data(radarImage), nrep)
+        doest(NOxEmissions, data(NOxEmissions), nrep)
+
+        doest(data.matrix(subset(vaso, select = -Y)), data(vaso), nrep)
+        doest(data.matrix(subset(wagnerGrowth, select = -Period)), data(wagnerGrowth), nrep)
+
+        doest(data.matrix(subset(fish, select = -Species)), data(fish), nrep)
+        doest(data.matrix(subset(pottery, select = -origin)), data(pottery), nrep)
+        doest(rice, data(rice), nrep)
+        doest(un86, data(un86), nrep)
+
+        doest(wages, data(wages), nrep)
+
+        ## from package 'datasets'
+        doest(airquality[,1:4], data(airquality), nrep)
+        doest(attitude, data(attitude), nrep)
+        doest(attenu, data(attenu), nrep)
+        doest(USJudgeRatings, data(USJudgeRatings), nrep)
+        doest(USArrests, data(USArrests), nrep)
+        doest(longley, data(longley), nrep)
+        doest(Loblolly, data(Loblolly), nrep)
+        doest(quakes[,1:4], data(quakes), nrep)
+    }
     cat("========================================================\n")
 }
 
 dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
 
-    domcd <- function(x, nrep=1){
+    doest <- function(x, nrep=1){
         gc()
         xtime <- system.time(dorep(x, nrep, method))[1]/nrep
         cat(sprintf("%6d %3d %10.2f\n", dim(x)[1], dim(x)[2], xtime))
@@ -143,7 +190,10 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
 
     set.seed(1234)
 
-    library(rrcov)
+    ## VT::15.09.2013 - this will render the output independent
+    ##  from the version of the package
+    suppressPackageStartupMessages(library(rrcov))
+
     library(MASS)
     method <- match.arg(method)
 
@@ -160,7 +210,7 @@ dogen <- function(nrep=1, eps=0.49, method=c("FASTMCD", "MASS")){
             if(5*p <= n){
                 xx <- gendata(n, p, eps)
                 X <- xx$X
-                tottime <- tottime + domcd(X, nrep)
+                tottime <- tottime + doest(X, nrep)
             }
         }
     }
@@ -234,6 +284,11 @@ whatis<-function(x){
         cat("Type: don't know\n")
 }
 
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 dodata()
-##doexact()
+dodata(method="deterministic")
+dodata(method="exact")
+##doexactfit()

@@ -1,4 +1,7 @@
-library(rrcov)
+## VT::15.09.2013 - this will render the output independent
+##  from the version of the package
+suppressPackageStartupMessages(library(rrcov))
+
 library(MASS)
 dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
     domest <- function(x, xname, nrep = 1) {
@@ -22,7 +25,7 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
         if(nbad > 0)
             print(ibad)
         cat("-------------\n")
-        show(mm)   
+        show(mm)
         cat("--------------------------------------------------------\n")
     }
 
@@ -30,7 +33,7 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
     set.seed(101) # <<-- sub-sampling algorithm now based on R's RNG and seed
 
     lname <- 20
- 
+
     data(heart)
     data(starsCYG)
     data(phosphor)
@@ -67,9 +70,9 @@ dodata <- function(nrep = 1, time = FALSE, full = TRUE) {
 }
 
 #   generate contaminated data using the function gendata with different
-#   number of outliers and check if the M-estimate breaks - i.e. the 
-#   largest eigenvalue is larger than e.g. 5. 
-#   For n=50 and p=10 and d=5 the M-estimate can break for number of 
+#   number of outliers and check if the M-estimate breaks - i.e. the
+#   largest eigenvalue is larger than e.g. 5.
+#   For n=50 and p=10 and d=5 the M-estimate can break for number of
 #   outliers grater than 20.
 dogen <- function(){
     eig <- vector("numeric",26)
@@ -78,7 +81,7 @@ dogen <- function(){
         mm <- CovMest(gg$x, t0=gg$tgood, S0=gg$sgood, arp=0.001)
         eig[i+1] <- ev <- getEvals(mm)[1]
         # cat(i, ev, "\n")
-        
+
         stopifnot(ev < 5 || i > 20)
     }
     # plot(0:25, eig, type="l", xlab="Number of outliers", ylab="Largest Eigenvalue")
@@ -91,16 +94,16 @@ dogen <- function(){
 #   - if eps >= 1, it is the number of outliers
 # - use the center and cov of the good data as good start
 # - use the center and the cov of all data as a bad start
-#   If using a good  start, the M-estimate must iterate to 
+#   If using a good  start, the M-estimate must iterate to
 #   the good solution: the largest eigenvalue is less then e.g. 5
 #
 gendata <- function(n=50, p=10, eps=0, d=5.0){
 
     if(eps < 0 || eps > 0.5 && eps < 1.0 || eps > 0.5*n)
         stop("eps is out of range")
-        
+
     library(MASS)
-    
+
     x <- mvrnorm(n, rep(0,p), diag(p))
     bad <- vector("numeric")
     nbad = if(eps < 1) eps*n else eps
@@ -110,7 +113,7 @@ gendata <- function(n=50, p=10, eps=0, d=5.0){
     }
     cov1 <- cov.wt(x)
     cov2 <- if(nbad <= 0) cov1 else cov.wt(x[-bad,])
-    
+
     list(x=x, bad=sort(bad), tgood=cov2$center, sgood=cov2$cov, tbad=cov1$center, sbad=cov1$cov)
 }
 

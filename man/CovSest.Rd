@@ -12,7 +12,8 @@
 \usage{
     CovSest(x, bdp = 0.5, arp = 0.1, eps = 1e-5, maxiter = 120,
         nsamp = 500, seed = NULL, trace = FALSE, tolSolve = 1e-14,
-        method = c("sfast", "surreal", "bisquare", "rocke", "suser"), control,
+        scalefn, maxisteps=200, initHsets = NULL, save.hsets = FALSE,
+        method = c("sfast", "surreal", "bisquare", "rocke", "suser", "sdet"), control,
         t0, S0, initcontrol)
 }
 \arguments{
@@ -43,9 +44,24 @@
   \item{tolSolve}{numeric tolerance to be used for inversion
     (\code{\link{solve}}) of the covariance matrix in
     \code{\link{mahalanobis}}.}
+  \item{scalefn}{\code{\link{function}} to compute a robust scale
+    estimate or character string specifying a rule determining such a
+    function. Used for computing the "deterministic" S-estimates (\code{method="sdet"}).
+    If \code{scalefn} is missing or is \code{NULL}, 
+    the function is selected depending on the data 
+    set size, following the recomendation of Hubert et al. (2012) - 
+    \code{\link[robustbase]{Qn}} if \code{n <= 1000} and \code{\link[robustbase]{scaleTau2}} otherwise.}
+  \item{maxisteps}{maximal number of concentration steps in the
+    deterministic S-estimates; should not be reached.}
+  \item{initHsets}{NULL or a \eqn{K x n} integer matrix of initial
+    subsets of observations of size (specified by the indices in
+    \code{1:n}).}
+  \item{save.hsets}{(for deterministic S-estimates) logical indicating if the
+    initial subsets should be returned as \code{initHsets}.}
   \item{method}{ Which algorithm to use: 'sfast'=C implementation of FAST-S, 'surreal'=SURREAL, 
   'bisquare', 'rocke'. The method 'suser' currently calls the R implementation of FAST-S 
-  but in the future will allow the user to supply own \code{rho} function.}
+  but in the future will allow the user to supply own \code{rho} function.
+  The method 'sdet' invokes the deterministic algorihm of Hubert et al. (2012).}
   \item{control}{ a control object (S4) of class \code{\link{CovControlSest-class}}
     containing estimation options - same as these provided in the fucntion
     specification. If the control object is supplied, the parameters from it
@@ -74,6 +90,15 @@
   virtual class \code{\link{CovRobust-class}}.
 }
 \references{
+
+  M. Hubert, P. Rousseeuw and T. Verdonck (2012) A deterministic algorithm 
+  for robust location and scatter.
+  \emph{Journal of Computational and Graphical Statistics} \bold{21}(3), 618--637.
+
+  M. Hubert, P. Rousseeuw, D. Vanpaemel and T. Verdonck (2015) 
+  The DetS and DetMM estimators for multivariate location and scatter.
+  \emph{Computational Statistics and Data Analysis} \bold{81}, 64--75.
+
   H.P. Lopuhaä (1989) On the Relation between S-estimators and M-estimators of
   Multivariate Location and Covariance.
   \emph{Annals of Statistics} \bold{17} 1662--1683.
@@ -106,7 +131,15 @@ Kristel Joossens, K.U. Leuven, Belgium and Ella Roelant, Ghent University, Belgi
 library(rrcov)
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
-CovSest(hbk.x)
+cc <- CovSest(hbk.x)
+cc
+
+## summry and different types of plots
+summary(cc)                         
+plot(cc)                            
+plot(cc, which="dd")
+plot(cc, which="pairs")
+plot(cc, which="xydist")
 
 ## the following four statements are equivalent
 c0 <- CovSest(hbk.x)
@@ -133,6 +166,9 @@ cr
 cr <- CovSest(hbk.x, method="rocke")
 cr
 
+## Use Deterministic estimation
+cr <- CovSest(hbk.x, method="sdet")
+cr
 
 }
 \keyword{robust}

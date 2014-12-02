@@ -91,7 +91,7 @@ setMethod("show", "CovRobust", function(object){
     print(object@call)
     cat("-> Method: ", object@method, "\n")
     if(is.list(object@singularity))
-        cat(strwrap(robustbase:::singularityMsg(object@singularity, object@n.obs)), sep ="\n")
+        cat(strwrap(.MCDsingularityMsg(object@singularity, object@n.obs)), sep ="\n")
 
     digits = max(3, getOption("digits") - 3)
     cat("\nRobust Estimate of Location: \n")

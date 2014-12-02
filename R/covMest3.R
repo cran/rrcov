@@ -1,5 +1,6 @@
 covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, control, t0, S0)
 {
+    .Deprecated(new="CovMest")
 
     ## Analize and validate the input parameters ...
 
@@ -69,7 +70,7 @@ covMest <- function(x, cor=FALSE,  r = 0.45, arp = 0.05, eps=1e-3, maxiter=120, 
     ans$cov <- mest$s
     ans$center <- mest$t1
     ans$mah <- mahalanobis(x, mest$t1, mest$s)
-    ans$crit <- determinant(mest$s, logarithm = FALSE)$modulus[1]
+    ans$crit <- determinant(mest$s, logarithm = TRUE)$modulus[1]
     if(cor && !is.null(ans$cov))
         cor <- cov2cor(ans$cov)
 

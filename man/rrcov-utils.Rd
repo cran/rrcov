@@ -1,4 +1,4 @@
-\name{rwiot-utils}
+\name{rrcov-utils}
 \title{Different utility functions to be used in rrcov and packages depending on rrcov}
 
 \alias{myscreeplot}      % plots screeplots for two covariance matrices 
@@ -8,20 +8,18 @@
 %% MATLAB-like functions
 %%
 \alias{sqrtm}            % returns the square root of a symetric positive definite matrix
-\alias{ones}             % returns a nxp matrix filled with ones 
-\alias{zeros}            % returns a nxp matrix filled with zeros
+%\alias{ones}             % returns a nxp matrix filled with ones 
+%\alias{zeros}            % returns a nxp matrix filled with zeros
 \alias{vecnorm}          % returns the norm of a vector
-\alias{rankMM}           % returns the rank of the matrix
-\alias{repmat}           % replicates a matrix
+%\alias{repmat}           % replicates a matrix
 
 \usage{
     myscreeplot(rcov, ccov)
     mtxconfusion(actual, predicted, prior = NULL, printit=FALSE)
     sqrtm(A)
-    rankMM(A, tol = NULL, sv = svd(A, 0, 0)$d)
-    ones(n=1, p=1)
-    zeros(n=1, p=1)
-    repmat(A, n, p)
+%    ones(n=1, p=1)
+%    zeros(n=1, p=1)
+%    repmat(A, n, p)
 }
 
 \arguments{

@@ -102,19 +102,5 @@ covMest(x, cor=FALSE, r = 0.45, arp = 0.05, eps=1e-3,
 \seealso{
   \code{\link[robustbase]{covMcd}}
 }
-\examples{
-data(hbk)
-hbk.x <- data.matrix(hbk[, 1:3])
-covMest(hbk.x)
-
-## the following three statements are equivalent
-c0 <- covMest(hbk.x)
-c1 <- covMest(hbk.x, r = 0.45)
-c2 <- covMest(hbk.x, control = rrcov.control(r = 0.45))
-## direct specification overrides control one:
-c3 <- covMest(hbk.x, r = 0.45,
-             control = rrcov.control(r=0.25))
-c1
-}
 \keyword{robust}
 \keyword{multivariate}
