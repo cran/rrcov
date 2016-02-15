@@ -273,6 +273,7 @@ setClass("Pca", representation(call = "language",
                               od = "Uvector",
                               cutoff.sd = "numeric",
                               cutoff.od = "numeric",
+                              crit.pca.distances = "numeric",
                               flag = "Uvector",
                               n.obs = "numeric",
                               "VIRTUAL"))

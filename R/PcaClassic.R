@@ -43,7 +43,8 @@ PcaClassic.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE, trace=FALSE, ...)
+PcaClassic.default <- function(x, k=ncol(x), kmax=ncol(x),
+    scale=FALSE, signflip=TRUE, crit.pca.distances=0.975, trace=FALSE, ...)
 {
     cl <- match.call()
 
@@ -77,12 +78,33 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
         k <- kmax
     }
+
     if(k != 0)
         k <- min(k, ncol(data))
     else {
-        k <- min(kmax, ncol(data))
+##        k <- min(kmax, ncol(data))
+##        if(trace)
+##            cat("The number of principal components is set to ", k, ".\n", sep="")
+
+        ## Find the number of PC 'k'
+        ## Use the test l_k/l_1 >= 10.E-3, i.e. the ratio of
+        ## the k-th eigenvalue to the first eigenvalue (sorted decreasingly) is larger than
+        ## 10.E/3 and the fraction of the cumulative dispersion is larger or equal 80%
+        ##
+        test <- which(Xsvd$eigenvalues/Xsvd$eigenvalues[1] <= 1.E-3)
+        k <- if(length(test) != 0)  min(min(Xsvd$rank, test[1]), kmax)
+             else                   min(Xsvd$rank, kmax)
+
+        cumulative <- cumsum(Xsvd$eigenvalues[1:k])/sum(Xsvd$eigenvalues)
+        if(cumulative[k] > 0.8) {
+            k <- which(cumulative >= 0.8)[1]
+        }
+
         if(trace)
-            cat("The number of principal components is set to ", k, ".\n", sep="")
+            cat("\n k, kmax, rank, p: ", k, kmax, Xsvd$rank, ncol(data), "\n")
+        if(trace)
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
+
     }
 
     if(trace)
@@ -121,6 +143,6 @@ PcaClassic.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, signflip=TRUE,
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- pca.distances(res, data, Xsvd$rank)
+    res <- pca.distances(res, data, Xsvd$rank, crit.pca.distances)
     return(res)
 }

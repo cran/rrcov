@@ -14,7 +14,7 @@
 \usage{
 PcaHubert(x, ...)
 \method{PcaHubert}{default}(x, k = 0, kmax = 10, alpha = 0.75, mcd = TRUE, 
-maxdir=250, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
+maxdir=250, scale = FALSE, signflip = TRUE, crit.pca.distances = 0.975, trace=FALSE, \dots)
 \method{PcaHubert}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -63,6 +63,8 @@ maxdir=250, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
   Default is \code{scale = FALSE}}
   \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
   ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
+  \item{crit.pca.distances}{criterion to use for computing the cutoff 
+    values for the orthogonal and score distances. Default is 0.975.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{

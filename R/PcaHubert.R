@@ -43,7 +43,8 @@ PcaHubert.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
+PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
+    scale=FALSE, signflip=TRUE, crit.pca.distances=0.975, trace=FALSE, ...)
 {
 ## k    -   Number of principal components to compute. If \code{k} is missing,
 ##              or \code{k = 0}, the algorithm itself will determine the number of
@@ -191,21 +192,38 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         if(trace)
             cat("\nApplying MCD.\n")
 
-        ## If k was not specified, set it equal to the number of columns in X
+        X.mcd <- CovMcd(as.data.frame(X), alpha=alpha)
+        X.mcd.svd <- svd(getCov(X.mcd))
+
+        rank <- ncol(X)     ## The covariance matrix is not singular
+        ev <- X.mcd.svd$d
+
+        ## VT::11.28.2015: Choose the number of components k (if not specified)
+        ##
+        ## Use the test l_k/l_1 >= 10.E-3, i.e. the ratio of
+        ## the k-th eigenvalue to the first eigenvalue (sorted decreasingly) is larger than
+        ## 10.E/3 and the fraction of the cumulative dispersion is larger or equal 80%
         ##
         if(k != 0)
             k <- min(k, ncol(X))
-        else {
-            k <- ncol(X)
+        else
+        {
+            test <- which(ev/ev[1] <= 1.E-3)
+            k <- if(length(test) != 0)  min(min(rank, test[1]), kmax)
+                 else                   min(rank, kmax)
+
+            cumulative <- cumsum(ev[1:k])/sum(ev)
+            if(cumulative[k] > 0.8) {
+                k <- which(cumulative >= 0.8)[1]
+            }
+
+            if(trace)
+                cat("\n k, kmax, rank, p: ", k, kmax, rank, p, "\n")
             if(trace)
                 cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
         }
 
-        X.mcd <- CovMcd(as.data.frame(X), alpha=alpha)
-        X.mcd.svd <- svd(getCov(X.mcd))
-##        scores <- (X - repmat(getCenter(X.mcd), nrow(X), 1)) %*% X.mcd.svd$u
         scores <- (X - matrix(rep(getCenter(X.mcd), times=nrow(X)), nrow=nrow(X), byrow=TRUE)) %*% X.mcd.svd$u
-
         center <- as.vector(center + getCenter(X.mcd) %*% t(rot))
         eigenvalues <- X.mcd.svd$d[1:k]
         loadings <- Xsvd$loadings %*% X.mcd.svd$u[,1:k]
@@ -430,7 +448,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     res@call <- cl
 
     ## Compute distances and flags
-    res <- pca.distances(res, data, Xsvd$rank)
+    res <- pca.distances(res, data, Xsvd$rank, crit.pca.distances)
     return(res)
 }
 

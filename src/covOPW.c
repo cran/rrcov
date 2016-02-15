@@ -78,11 +78,13 @@ SEXP covOPW(SEXP SX, SEXP Siter, SEXP SscaleFun, SEXP SrcovFun)
   dwork2 = (double*) R_alloc((size_t) n, sizeof(double));
   dwork3 = (double*) R_alloc((size_t) imax2(n, lwork), sizeof(double));
   diagT = (double*) R_alloc((size_t) p, sizeof(double));
-  offdiagT = (double*) R_alloc((size_t) (p-1), sizeof(double));
+  offdiagT = (double*) R_alloc((size_t) p, sizeof(double));
   tau = (double*) R_alloc((size_t) (p-1), sizeof(double));
   gamma = (double*) R_alloc((size_t) p, sizeof(double));
   isuppz = (int*) R_alloc((size_t) (2*p), sizeof(int));
   iwork = (int*) R_alloc((size_t) liwork, sizeof(int));
+
+
 
   for(k = 0; k < iter; k++) {
 
@@ -102,6 +104,8 @@ SEXP covOPW(SEXP SX, SEXP Siter, SEXP SscaleFun, SEXP SrcovFun)
       for(j = 0; j < i; j++)
         U[i+((2*p-j-1)*j)/2] = rcovfn(n, Z+i*n, Z+j*n, scalefn, dwork1, dwork2, dwork3);
 
+/*	Rprintf("\n %d (%d): %d, %d, %d, %d %d %d \n", k, iter, n, p, np, pp, lwork, liwork);
+*/
     F77_CALL(dsptrd)(&CHARL, &p, U, diagT, offdiagT, tau, &info);
     F77_CALL(dstegr)(&CHARV, &CHARA, &p, diagT, offdiagT, &mu, &mu, &i,
                      &i, &DZERO, &j, gamma, A[k], &p, isuppz, dwork3,

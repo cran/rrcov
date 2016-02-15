@@ -44,7 +44,8 @@ PcaLocantore.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action = na.fail, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
+PcaLocantore.default <- function(x, k=ncol(x), kmax=ncol(x), delta = 0.001, na.action = na.fail,
+    scale=FALSE, signflip=TRUE, crit.pca.distances=0.975, trace=FALSE, ...)
 {
 
     cl <- match.call()
@@ -66,13 +67,17 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action 
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
         k <- kmax
     }
+
     if(k != 0)
         k <- min(k, ncol(data))
-    else {
-        k <- min(kmax, ncol(data))
-        if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
-    }
+##
+##    VT::28.11.2015
+##    else: will be set by PcaClassic
+##    else {
+##        k <- min(kmax, ncol(data))
+##        if(trace)
+##            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
+##    }
 ######################################################################
 
     ## VT::15.06.2010: introduce 'scale' parameter (instead of 'corr' in this case)
@@ -148,7 +153,7 @@ PcaLocantore.default <- function(x, k=0, kmax=ncol(x), delta = 0.001, na.action 
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- pca.distances(res, x, p)
+    res <- pca.distances(res, x, p, crit.pca.distances)
     return(res)
 }
 

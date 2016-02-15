@@ -14,7 +14,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
         n <- dim(x)[1]
         p <- dim(x)[2]
         if(method == "hubert.mcd")
-            pca <- PcaHubert(x)
+            pca <- PcaHubert(x, k=p)
         else if(method == "hubert")
             pca <- PcaHubert(x, mcd=FALSE)
         else if(method == "locantore")

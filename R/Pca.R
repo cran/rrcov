@@ -48,8 +48,11 @@ setMethod("screeplot", "Pca", function(x, ...){
     screeplot(getPrcomp(x), ...)
 })
 
-setMethod("biplot",    "Pca", function(x, scale=1, ...){
-    choices = 1L:2
+setMethod("biplot",    "Pca", function(x, choices=1L:2L, scale=1, ...){
+
+    if(length(getEigenvalues(x)) < 2)
+        stop("Need at least two components for biplot.")
+
     lam <- sqrt(getEigenvalues(x)[choices])
     scores <- getScores(x)
     n <- NROW(scores)
@@ -129,15 +132,21 @@ myPcaPrint <- function(x, print.x=FALSE, print.loadings=FALSE, ...) {
 ## Internal function to calculate the score and orthogonal distances and the
 ##  appropriate cutoff values for identifying outlying observations
 ##
+##  obj  - the Pca object
 ##  data -
 ##  r    - rank
-##  obj  - the Pca object
+##  crit - criterion for computing cutoff for SD and OD
 ##
-##  - cutoff for score distances: sqrt(qchisq(0.975, k)
+##  - cutoff for score distances: sqrt(qchisq(crit, k)
+##  - cutoff for orthogonal distances: Box (1954)
+##
 pca.distances <- function(obj, data, r, crit=0.975) {
     .distances(data, r, obj, crit)
 }
 .distances <- function(data, r, obj, crit=0.975) {
+
+    ## remember the criterion, could be changed by the user
+    obj@crit.pca.distances <- crit
 
     ## compute the score distances and the corresponding cutoff value
     n <- nrow(data)
@@ -528,12 +537,12 @@ label.dd <- function(x, y, id.n.sd=3, id.n.od=3, off=0.02){
     op <- par(pty = "s")
     if(!is.null(main))
         op <- c(op, par(mar = par("mar")+c(0,0,1,0)))
-    plot(x, type = "n", xlim = xlim, ylim = ylim, col = col[1L],
+    plot(x, type = "n", xlim = xlim, ylim = ylim, col = col[[1L]],
          xlab = xlab, ylab = ylab, sub = sub, main = main, ...)
-    text(x, xlabs, cex = cex[1L], col = col[1L], ...)
+    text(x, xlabs, cex = cex[1L], col = col[[1L]], ...)
     par(new = TRUE)
     plot(y, axes = FALSE, type = "n", xlim = xlim*ratio, ylim = ylim*ratio,
-     xlab = "", ylab = "", col = col[1L], ...)
+     xlab = "", ylab = "", col = col[[1L]], ...)
 
 ##    axis(3, col = col[2L], ...)
 ##    axis(4, col = col[2L], ...)
@@ -542,8 +551,8 @@ label.dd <- function(x, y, id.n.sd=3, id.n.od=3, off=0.02){
     axis(4, col = pcol, ...)
     box(col = pcol)
 
-    text(y, labels=ylabs, cex = cex[2L], col = col[2L], ...)
+    text(y, labels=ylabs, cex = cex[2L], col = col[[2L]], ...)
     if(var.axes)
-    arrows(0, 0, y[,1L] * 0.8, y[,2L] * 0.8, col = col[2L], length=arrow.len)
+    arrows(0, 0, y[,1L] * 0.8, y[,2L] * 0.8, col = col[[2L]], length=arrow.len)
     invisible()
 }

@@ -8,7 +8,8 @@
 }
 \usage{
     PcaGrid(x, ...)
-    \method{PcaGrid}{default}(x, k = 0, kmax = ncol(x), scale=FALSE, na.action = na.fail, trace=FALSE, \dots)
+    \method{PcaGrid}{default}(x, k = 0, kmax = ncol(x), 
+        scale=FALSE, na.action = na.fail, crit.pca.distances = 0.975, trace=FALSE, \dots)
     \method{PcaGrid}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -27,9 +28,7 @@
   \item{x}{a numeric matrix (or data frame) which provides
     the data for the principal components analysis.}
   \item{k}{number of principal components to compute. If \code{k} is missing, 
-    or \code{k = 0}, the algorithm itself will determine the number of 
-    components by finding such \code{k} that \eqn{l_k/l_1 >= 10.E-3} and 
-    \eqn{\Sigma_{j=1}^k l_j/\Sigma_{j=1}^r l_j >= 0.8}. 
+    or \code{k = 0}, it is set to the number of columns of the data. 
     It is preferable to investigate the scree plot in order to choose the number 
     of components and then run again. Default is \code{k=0}. }
   \item{kmax}{maximal number of principal components to compute.
@@ -43,6 +42,8 @@
   the number of columns of \code{x}. The value is passed to the underlying function
   and the result returned is stored in the \code{scale} slot. 
   Default is \code{scale = FALSE}}
+  \item{crit.pca.distances}{criterion to use for computing the cutoff values 
+    for the orthogonal and score distances. Default is 0.975.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
@@ -82,7 +83,7 @@ is a generic function with "formula" and "default" methods. For details see \cod
     biplot(pc)
     
     # now we want to compare the results with the non-robust principal components
-    pc <- PcaClassic(x)
+    pc <- PcaClassic(x, k=3)
     # again, a biplot for comparision:
     biplot(pc)
 }

@@ -40,7 +40,9 @@ PcaCov.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), na.action = na.fail, scale=FALSE, signflip=TRUE, trace=FALSE, ...)
+PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlMcd(),
+    scale=FALSE, signflip=TRUE, crit.pca.distances=0.975,
+    trace=FALSE, ...)
 {
 
     cl <- match.call()
@@ -65,13 +67,6 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), 
         warning(paste("The number of principal components k = ", k, " is larger then kmax = ", kmax, "; k is set to ", kmax,".", sep=""))
         k <- kmax
     }
-    if(k != 0)
-        k <- min(k, p)
-    else {
-        k <- min(kmax, p)
-        if(trace)
-            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
-    }
 ######################################################################
 
     ## VT::27.08.2010: introduce 'scale' parameter; return the scale in the value object
@@ -91,7 +86,38 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), 
 ##        covmat$cor <- getCorr(covx)
 ##    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
 
-    out <- princomp(covmat=covmat, na.action=na.action)
+    out <- princomp(covmat=covmat)
+
+## VT::11.28.2015: Choose the number of components k (if not specified)
+##      (see mail of Klaus Nordhausen from 19.11.2015: the help says that the algorithm defines k)
+##      before it was just k <- min(kmax, p), i.e. k=rank(X)
+    if(k != 0)
+        k <- min(k, p)
+    else
+    {
+#        k <- min(kmax, p)
+        ##
+        ## Find the number of PC 'k'
+        ## Use the test l_k/l_1 >= 10.E-3, i.e. the ratio of
+        ## the k-th eigenvalue to the first eigenvalue (sorted decreasingly) is larger than
+        ## 10.E/3 and the fraction of the cumulative dispersion is larger or equal 80%
+        ##
+        rk <- min(n, p)
+        ev <- out$sdev^2
+        test <- which(ev/ev[1] <= 1.E-3)
+        k <- if(length(test) != 0)  min(min(rk, test[1]), kmax)
+             else                   min(rk, kmax)
+
+        cumulative <- cumsum(ev[1:k])/sum(ev)
+        if(cumulative[k] > 0.8) {
+            k <- which(cumulative >= 0.8)[1]
+        }
+        if(trace)
+            cat("\n k, kmax, rank, p: ", k, kmax, rk, p, "\n")
+        if(trace)
+            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
+    }
+
     center   <- getCenter(covx)
     scale    <- myscale
     sdev     <- out$sdev
@@ -126,6 +152,6 @@ PcaCov.default <- function(x, k=0, kmax=ncol(x), cov.control = CovControlMcd(), 
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- pca.distances(res, x, p)
+    res <- pca.distances(res, x, p, crit.pca.distances)
     return(res)
 }

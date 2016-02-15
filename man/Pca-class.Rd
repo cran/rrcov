@@ -45,6 +45,7 @@ Component Analisys methods
     than cutoff.sd or whose orthogonal distance is larger than cutoff.od can be considered 
     as outliers and receive a flag equal to zero.
     The regular observations receive a flag 1 }
+    \item{crit.pca.distances}{criterion to use for computing the cutoff values for the orthogonal and score distances. Default is 0.975.}
     \item{\code{n.obs}:}{Object of class \code{"numeric"} the number of observations }
   }
 }

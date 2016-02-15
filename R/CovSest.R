@@ -1096,7 +1096,7 @@ disesca <- function(x, mu, v, alpha, delta)
     {
         dis1 <- dis*(detv^p2)
         v1 <- v*(detv^p3)
-        sig <- escala(p,dis1,alpha,delta)$sig
+        sig <- escala(p, dis1, alpha, delta)$sig
     }
     out <- list(dis=dis1, sig=sig, flag=fg, v=v1)
     return(out)
@@ -1115,14 +1115,16 @@ escala <- function(p, dis, alpha, delta)
     sig <- median(dis)
     a <- sig/100
     ff <- fespro(a, p, dis, alpha, delta)
-    while(ff<0) {
+    while(ff < 0) 
+    {
         a <- a/10
         ff <- fespro(a, p, dis, alpha, delta)
     }
 
     b <- sig*10
     ff <- fespro(b, p, dis, alpha, delta)
-    while(ff>0) {
+    while(ff>0) 
+    {
         b <- b*10
         ff <- fespro(b, p, dis, alpha, delta)
     }
@@ -1168,7 +1170,7 @@ gradien <- function(x, mu1, v1, mu0, v0, sig0, dis0, sig1, dis1, alpha)
 
 
 
-descen1 <- function(x,mu,v,alpha,sig0, dis0)
+descen1 <- function(x, mu, v, alpha, sig0, dis0)
 {
     ##  one step of reweighted
     dimx <- dim(x)
@@ -1177,11 +1179,11 @@ descen1 <- function(x,mu,v,alpha,sig0, dis0)
     p2 <- -(1/p)
     delta <- 0.5*(1-p/n)
     daux  <- dis0/sig0
-    w <- w.rk2(daux,p,alpha)
-    w.v <- w%*%matrix(1,1,p)
-    mui <- colSums(w.v*x)/sum(w)
-    xc <- x- (matrix(1,n,1)%*%mui)
-    va <- t(xc)%*%(xc*w.v)
+    w <- w.rk2(daux, p, alpha)
+    w.v <- w %*% matrix(1,1,p)
+    mui <- colSums(w.v * x)/sum(w)
+    xc <- x- (matrix(1,n,1) %*% mui)
+    va <- t(xc) %*% (xc*w.v)
     disi.res <- disesca(x,mui,va,alpha,delta)
     if(disi.res$flag)
     {
@@ -1194,7 +1196,7 @@ descen1 <- function(x,mu,v,alpha,sig0, dis0)
     deti<-disi.res$det
     vi <- disi.res$v
 
-    ans <- list(mui=mui,vi=vi,sig=sigi,dis=disi,flag=flagi)
+    ans <- list(mui=mui, vi=vi, sig=sigi, dis=disi, flag=flagi)
     return(ans)
 }
 
@@ -1237,11 +1239,17 @@ mahalanobisfl <- function(x, center, cov, tol=1.e-12)
 ##################################################################################
 
     ##  main routine for .iter.rocke()
+    if(trace)
+    {
+        cat("\nWhich initial t0 and S0 are we using: \n")
+        print(mu)
+        print(v)
+    }
     dimx <- dim(x)
     n <- dimx[1]
     p <- dimx[2]
     delta <- 0.5*(1-p/n)
-    dis.res <- disesca (x,mu,v,alpha,delta)
+    dis.res <- disesca (x, mu, v, alpha, delta)
     vmin <- v
     mumin <- mu
     sigmin <- dis.res$sig
@@ -1257,8 +1265,14 @@ mahalanobisfl <- function(x, center, cov, tol=1.e-12)
         dis1 <- des1$dis
         sig1 <- des1$sig
         decre1 <- (sigmin-sig1)/sigmin
-        if(decre1 <= tol) {
-            grad <- gradien(x,mu1,v1,mumin,vmin,sigmin, dismin, sig1,dis1,alpha)
+        if(trace)
+        {
+            cat("\nit, decre1:",it,decre1, "\n")
+            print(des1)
+        }
+        if(decre1 <= tol) 
+        {
+            grad <- gradien(x, mu1, v1, mumin, vmin, sigmin, dismin, sig1, dis1, alpha)
             mu2 <- grad$mu
             v2 <- grad$v
             sig2 <- grad$sig
@@ -1278,7 +1292,9 @@ mahalanobisfl <- function(x, center, cov, tol=1.e-12)
                 sigmin <- sig2
             }
         }
-        if(decre1 > tol) {
+        
+        if(decre1 > tol) 
+        {
             decre <- decre1
             mumin <- mu1
             vmin <- v1

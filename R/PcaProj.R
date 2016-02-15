@@ -40,7 +40,8 @@ PcaProj.formula <- function (formula, data = NULL, subset, na.action, ...)
     res
 }
 
-PcaProj.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fail, trace=FALSE, ...)
+PcaProj.default <- function(x, k=0, kmax=ncol(x),
+    scale=FALSE, na.action = na.fail, crit.pca.distances=0.975, trace=FALSE, ...)
 {
 
     cl <- match.call()
@@ -104,6 +105,6 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x), scale=FALSE, na.action = na.fa
                             n.obs=n)
 
     ## Compute distances and flags
-    res <- pca.distances(res, x, p)
+    res <- pca.distances(res, x, p, crit.pca.distances)
     return(res)
 }

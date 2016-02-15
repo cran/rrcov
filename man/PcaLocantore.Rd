@@ -13,8 +13,9 @@ that this method has very good performance.
 }
 \usage{
 PcaLocantore(x, ...)
-\method{PcaLocantore}{default}(x, k = 0, kmax = ncol(x), delta = 0.001, 
-    na.action = na.fail, scale = FALSE, signflip = TRUE, trace=FALSE, \dots)
+\method{PcaLocantore}{default}(x, k = ncol(x), kmax = ncol(x), delta = 0.001, 
+    na.action = na.fail, scale = FALSE, signflip = TRUE, 
+    crit.pca.distances = 0.975, trace=FALSE, \dots)
 \method{PcaLocantore}{formula}(formula, data = NULL, subset, na.action, \dots)
 }
 \arguments{
@@ -37,24 +38,30 @@ PcaLocantore(x, ...)
     components by finding such \code{k} that \eqn{l_k/l_1 >= 10.E-3} and 
     \eqn{\Sigma_{j=1}^k l_j/\Sigma_{j=1}^r l_j >= 0.8}. 
     It is preferable to investigate the scree plot in order to choose the number 
-    of components and then run again. Default is \code{k=0}. }
+    of components and then run again. Default is \code{k=ncol(x)}. }
   \item{kmax}{maximal number of principal components to compute.
     Default is \code{kmax=10}. If \code{k} is provided, \code{kmax} 
     does not need to be specified, unless \code{k} is larger than 10.}
   \item{delta}{an accuracy parameter}
   \item{scale}{a logical value indicating whether the variables should be 
   scaled to have unit variance (only possible if there are no constant 
-  variables). As a scale function \code{mad} is used but alternatively, a vector of length equal 
+  variables). As a scale function \code{mad} is used but alternatively, 
+  a vector of length equal 
   the number of columns of x can be supplied. The value is passed to 
   scale and the result of the scaling is stored in the \code{scale} slot. 
   Default is \code{scale = FALSE}}
-  \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
-  ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
+  \item{signflip}{a logical value indicating wheather to try to solve 
+    the sign indeterminancy of the loadings -   ad hoc approach setting 
+    the maximum element in a singular vector to be positive. Default is 
+    \code{signflip = FALSE}}
+  \item{crit.pca.distances}{criterion to use for computing the cutoff 
+  values for the orthogonal and score distances. Default is 0.975.}
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
 }
 \details{
-\code{PcaLocantore}, serving as a constructor for objects of class \code{\link{PcaLocantore-class}} 
-is a generic function with "formula" and "default" methods. For details see the relevant references.
+\code{PcaLocantore}, serving as a constructor for objects of class 
+\code{\link{PcaLocantore-class}} is a generic function with "formula" 
+and "default" methods. For details see the relevant references.
 }
 \value{
   An S4 object of class \code{\link{PcaLocantore-class}} which is a subclass of the 
@@ -64,9 +71,11 @@ is a generic function with "formula" and "default" methods. For details see the 
     N. Locantore, J. Marron, D. Simpson, N. Tripoli, J. Zhang and K. Cohen K. (1999), 
     Robust principal components for functional data. Test, 8, 1-28.
 
-    R. Maronna, D. Martin and V. Yohai (2006), Robust Statistics: Theory and Methods. Wiley, New York.
+    R. Maronna, D. Martin and V. Yohai (2006), Robust Statistics: 
+    Theory and Methods. Wiley, New York.
 
-    R. Maronna (2005). Principal components and orthogonal regression based on robust scales. Technometrics, 47, 264-273.    
+    R. Maronna (2005). Principal components and orthogonal regression based 
+    on robust scales. Technometrics, 47, 264-273.    
     
   Todorov V & Filzmoser P (2009),
   An Object Oriented Framework for Robust Multivariate Analysis.

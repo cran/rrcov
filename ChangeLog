@@ -1,11 +1,35 @@
+2016-02-10  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.3-10
+    *
+    * R/CovSest.r: additional trace for Rocke S-estimates
+    * R/Pca.R, Allclasses.R, etc.: Add the quantile cut-off for computing the OD and SD distances in PCA as a parameter
+    * R/PcaCov.R, etc.: Automatic selection of components with k=0
+    *
+    *
+2015-11-28  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.3-9
+    *
+    * 2015-07-07
+    * R/Pca.R, man/biplot.rd: The missing parameter choices= added to biplot()
+    *
+    * R/PcaXxx.R, man/PcaXxx.rd: added a parameter crit.pca.distances to be used
+    *   for computing the score and orthogonal distances. This parameter is stored
+    *   in the Pca-class object
+    *
+    * R/PcaXxx.R, man/PcaXxx.rd (except Grid and Proj): selection of number of
+    *   components fixed, see Help.
+    *
+
 2014-11-23  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.3-7
     *
-    * src/sest.c: fixed an issue (reported by Stefan van Aelst) 
+    * src/sest.c: fixed an issue (reported by Stefan van Aelst)
     *   in computing S-estimates, related to improper
     *   calculation of the rank of a matrix with q()
-    *  
+    *
 2014-11-05  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.3-6

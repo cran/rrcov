@@ -11,10 +11,11 @@
   Produces a biplot from an object (derived from)  \code{\link{Pca-class}}.
 }
 \usage{
-    \S4method{biplot}{Pca}(x, scale=1, \dots)
+    \S4method{biplot}{Pca}(x, choices=1L:2L, scale=1, \dots)
 }
 \arguments{
   \item{x}{an object of class (derived from) \code{"Pca"}.}
+  \item{choices}{length 2 vector specifying the components to plot. Only the default is a biplot in the strict sense.}
   \item{scale}{
     The variables are scaled by \code{lambda ^ scale} and the
     observations are scaled by \code{lambda ^ (1-scale)} where
@@ -49,7 +50,7 @@
 }
 \examples{
 require(graphics)
-biplot(PcaClassic(USArrests))
+biplot(PcaClassic(USArrests, k=2))
 }
 \keyword{multivariate}
 \keyword{hplot}

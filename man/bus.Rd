@@ -41,7 +41,8 @@
 \source{
     Hettich, S. and Bay, S.D. (1999), The UCI KDD Archive,
     Irvine, CA:University of California, Department of Information and Computer Science,
-    \url{http://kdd.ics.uci.edu}
+%%    \url{http://kdd.ics.uci.edu}
+    'http://kdd.ics.uci.edu'
 }
 \references{
     Maronna, R., Martin, D. and Yohai, V., (2006). Robust Statistics: Theory and Methods. Wiley, New York.
