@@ -76,7 +76,7 @@ mtxconfusion <- function(actual, predicted, prior = NULL, printit=FALSE) {
         ll <- if(is(obj, "LdaClassic")) {
                 LdaClassic(X[-i,], grouping=grp[-i])
             } else if(is(obj, "Linda")){
-                Linda(X[-i,], grouping=grp[-i], method=method)
+                Linda(X[-i,], grouping=grp[-i], method=method, l1med=obj@l1med)
             } else if(is(obj, "QdaClassic")){
                 QdaClassic(X[-i,], grouping=grp[-i])
             } else if(is(obj, "QdaCov")){

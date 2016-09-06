@@ -862,7 +862,12 @@ void scaledpsi(double *u, double scale, int n, double cc, double *w)
     {
 	w[i] = 0;
 	t = u[i]/scale;
-	if(fabs(t <= cc))
+//
+//	VT::25.08.2016 - warnung reported by Duncan Murdoch
+//		for 1.4.1
+//		
+//	if(fabs(t <= cc))
+	if(fabs(t) <= cc)
 	{
 	    t = 1 - t*t/cc/cc;
 	    w[i] = t * t;

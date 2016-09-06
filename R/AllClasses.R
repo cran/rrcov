@@ -324,7 +324,10 @@ setClass("PredictLda", representation(classification = "factor",
                                       ct="Utable"))
 
 
-setClass("Linda", contains="LdaRobust")
+setClass("Linda", representation(
+                   l1med = "logical"),
+                   contains="LdaRobust")
+                   
 setClass("LdaPP", representation(
                    raw.ldf = "matrix",
                    raw.ldfconst = "vector"),

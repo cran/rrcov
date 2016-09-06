@@ -24,6 +24,7 @@ Objects can be created by calls of the form \code{new("Linda", ...)} but the
     \item{\code{method}:}{a character string giving the estimation method used}
     \item{\code{X}:}{the training data set (same as the input parameter x of the constructor function)}
     \item{\code{grp}:}{grouping variable:  a factor specifying the class for each observation.}   
+    \item{\code{l1med}:}{wheather L1 median was used to compute group means.}   
   }
 }
 \section{Extends}{

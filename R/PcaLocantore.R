@@ -70,28 +70,44 @@ PcaLocantore.default <- function(x, k=ncol(x), kmax=ncol(x), delta = 0.001, na.a
 
     if(k != 0)
         k <- min(k, ncol(data))
-##
-##    VT::28.11.2015
-##    else: will be set by PcaClassic
-##    else {
-##        k <- min(kmax, ncol(data))
-##        if(trace)
-##            cat("The number of principal components is defined by the algorithm. It is set to ", k,".\n", sep="")
-##    }
+
 ######################################################################
 
-    ## VT::15.06.2010: introduce 'scale' parameter (instead of 'corr' in this case)
-    ##  return the scale in the value object
+    ## VT::4.08.2016
+    ##  if scale = TRUE, scale with mad, otherwise scale can be a vector
+    ##      of length p, or a function
+    ##  use the undocumented function doScale() from robustbase
     ##
-    sc = vector('numeric', p) + 1
-    if(scale == TRUE)
+    if(is.logical(scale))
+        scale <- if(scale) mad else NULL
+    if(!is.null(scale))
     {
-        sc = apply(data, 2, "mad")
-        for(i in 1:p) {
-            data[, i] = data[, i]/sc[i]
-        }
+        x.scaled <- doScale(x, center=NULL, scale=scale)
+        sc <- x.scaled$scale
+        data <- x.scaled$x
+    }else
+    {
+        sc <- vector('numeric', p) + 1
+        data <- x
     }
 
+##    if(is.logical(scale))
+##    {
+##        if(scale)
+##        {
+##            sc <- apply(x, 2L, sd)
+##            data <- sweep(data, 2L, sc, "/", check.margin=FALSE)
+##        }
+##    }
+##    else if(is.numeric(scale) && length(scale) == p)
+##    {
+##        data <- sweep(data, 2L, scale, "/", check.margin = FALSE)
+##        sc <- scale
+##    }
+##    else stop("length of 'scale' must equal the number of columns of 'x'")
+##    attr(data, "scaled:scale") <- sc
+
+    ## Center with the spatial median and project on the sphere
     spa = spatial.median(data, delta)
     mu = spa$mu
     ep = spa$ep
@@ -107,16 +123,17 @@ PcaLocantore.default <- function(x, k=ncol(x), kmax=ncol(x), delta = 0.001, na.a
         }
     }
 
-    ##out = princomp(y, scores = TRUE, cor = FALSE, na.action=na.action, subset = TRUE)
     ## no scaling - we have already scaled with MAD
     out = PcaClassic(y, k=k, kmax=kmax, scale=FALSE, signflip=signflip, ...)
 
     k <- out@k
-    scores = data %*% out@loadings
+    scores = y %*% out@loadings             # these are (slightly) diferent from the scores returned by PcaClassic
+                                            #   because PcaClassic will center by the mean the already centered data
+    # use these scores to compute the standard deviations (mad)
     sdev = apply(scores, 2, "mad")
     names2 = names(sdev)
-    orsdev = order(sdev)
-    orsdev = rev(orsdev)
+    orsdev = order(sdev)            # sort the sdevs (although almost always they will be sorted)
+    orsdev = rev(orsdev)            # use them to sort the laodings, etc.
     sdev  = sdev[orsdev]
     scores  = scores[,orsdev, drop=FALSE]
     loadings = out@loadings[,orsdev, drop=FALSE]
@@ -125,9 +142,12 @@ PcaLocantore.default <- function(x, k=ncol(x), kmax=ncol(x), delta = 0.001, na.a
     dimnames(scores)[[2]]=names2
     dimnames(loadings)[[2]]=names2
 
+    ## scale is a vector of 1s with length p (if FALSE), a vector with column mad (if TRUE) or
+    ##      any other vector with length p (posibly computed by doScale())
     scale       <- sc
-    center      <- as.vector(mu)
-    scores      <- scores[, 1:k, drop=FALSE]
+    center      <- doScale(t(as.vector(mu)), center=NULL, scale=1/scale)$x      # rescale back to the original data
+    scores      <- doScale(x, center, scale)$x %*% loadings                     # compute the scores
+    scores      <- scores[, 1:k, drop=FALSE]                                    # select only fist k 
     loadings    <- loadings[, 1:k, drop=FALSE]
     eigenvalues <- (sdev^2)[1:k]
 

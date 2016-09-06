@@ -77,7 +77,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method=c("hubert"
     dopca(starsCYG, data(starsCYG), nrep)
     dopca(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
     dopca(stack.x, data(stackloss), nrep)
-    dopca(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
+##    dopca(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep) # differences between the architectures	
     dopca(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
 ##    dopca(data.matrix(subset(wood, select = -y)), data(wood), nrep)       # differences between the architectures
     dopca(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
@@ -217,6 +217,47 @@ test.case.1 <- function()
     list(cc1, cc2, cc3, cc4, cc5)
 }
 
+#################################################################
+##  VT::05.08.2016
+##  bug report from Matthieu Lesnoff <matthieu.lesnoff@gmail.com>
+##
+test.case.2 <- function()
+{
+    do.test.case.2 <- function(z)
+    {
+        if(missing(z))
+        {
+            set.seed(12345678)
+            n <- 5
+            z <- data.frame(v1 = rnorm(n), v2 = rnorm(n), v3 = rnorm(n))
+            z
+        }
+
+        fm <- PcaLocantore(z, k = 2, scale = TRUE)
+        fm@scale
+        apply(z, MARGIN = 2, FUN = mad)
+        scale(z, center = fm@center, scale = fm@scale)
+
+        T <- fm@scores
+        P <- fm@loadings
+        E <- scale(z, center = fm@center, scale = fm@scale) - T %*% t(P)
+        d2 <- apply(E^2, MARGIN = 1, FUN = sum)
+##        print(sqrt(d2)); print(fm@od)
+        print(ret <- all.equal(sqrt(d2), fm@od))
+
+        ret
+    }
+    do.test.case.2()
+    do.test.case.2(phosphor)
+    do.test.case.2(stackloss)
+    do.test.case.2(salinity)
+    do.test.case.2(hbk)
+    do.test.case.2(milk)
+    do.test.case.2(bushfire)
+    data(rice); do.test.case.2(rice)
+    data(un86); do.test.case.2(un86)
+}
+
 ## VT::15.09.2013 - this will render the output independent
 ##  from the version of the package
 suppressPackageStartupMessages(library(rrcov))
@@ -228,3 +269,4 @@ dodata(method="hubert")
 ##dodata(method="locantore")
 ##dodata(method="cov")
 test.case.1()
+test.case.2()

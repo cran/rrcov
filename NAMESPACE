@@ -14,7 +14,7 @@ importFrom("stats", ".getXlevels", "cor", "cov", "cov.wt", "cov2cor",
          "median", "model.matrix", "model.response", "na.fail",
          "pchisq", "pf", "pgamma", "pnorm", "princomp", "qchisq",
          "qf", "qnorm", "quantile", "rnorm", "runif", "sd", "terms",
-         "uniroot", "var")
+         "uniroot", "var", "setNames")
 importFrom("utils", "combn")
 import(robustbase, pcaPP)
 

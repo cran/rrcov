@@ -12,7 +12,7 @@ Linda(x, ...)
 
 \method{Linda}{default}(x, grouping, prior = proportions, tol = 1.0e-4,
                  method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
-                 alpha=0.5, trace=FALSE, ...)
+                 alpha=0.5, l1med=FALSE, trace=FALSE, ...)
 }
 \arguments{
   \item{x}{a matrix or data frame containing the explanatory variables (training set). }
@@ -25,7 +25,10 @@ Linda(x, ...)
     determinant is minimized, i.e. alpha*n observations are used for
     computing the determinant. Allowed values are between 0.5 and 1
     and the default is 0.5.}
-  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}}
+  \item{l1med}{whether to use L1 median (space median) instead of MCD to compute
+    the group means locations in order to center the data in methods \code{mcdB} and \code{mcdC}. 
+    useful in case of groups with small size. Default is \code{l1med = FALSE}.}
+  \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}
   \item{\dots}{arguments passed to or from other methods}
 }
 \details{
@@ -79,6 +82,24 @@ grp <- anorexia[,1]
 grp <- as.factor(grp)
 x <- anorexia[,2:3]
 Linda(x, grp, method="fsa")
+
+## Do DA with Linda and method mcdB or mcdC, when some classes
+## have very few observations. Use L1 median instead of MCD
+##  to compute the group means (l1med=TRUE).
+
+data(fish)
+
+# remove observation #14 containing missing value
+fish <- fish[-14,]
+
+# The height and width are calculated as percentages 
+#   of the third length variable
+fish[,5] <- fish[,5]*fish[,4]/100
+fish[,6] <- fish[,6]*fish[,4]/100
+
+table(fish$Species) 
+Linda(Species~., data=fish, l1med=TRUE)
+Linda(Species~., data=fish, method="mcdC", l1med=TRUE)
 
 }
 \keyword{robust}

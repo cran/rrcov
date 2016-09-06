@@ -55,12 +55,13 @@ maxdir=250, scale = FALSE, signflip = TRUE, crit.pca.distances = 0.975, trace=FA
     outlyingness of the data points. Default is \code{maxdir=250}. If the number \code{n}
     of observations is small all possible \code{n*(n-1)/2} pairs of observations 
     are taken to generate the directions.}
-  \item{scale}{a logical value indicating whether the variables should be 
-  scaled to have unit variance (only possible if there are no constant 
-  variables). As a scale function \code{mad} is used but alternatively, a vector of length equal 
-  the number of columns of x can be supplied. The value is passed to 
-  scale and the result of the scaling is stored in the \code{scale} slot. 
-  Default is \code{scale = FALSE}}
+  \item{scale}{a value indicating whether and how the variables should be scaled. 
+    If \code{scale=FALSE} (default) or \code{scale=NULL} no scaling is 
+    performed (a vector of 1s is returned in the scale slot). If \code{scale=TRUE}
+    the data are scaled to have unit variance. Alternatively it can be a function 
+    like \code{sd} or \code{mad} or a vector of length equal the number of columns 
+    of \code{x}. The value is passed to the underlying function and the result 
+    returned is stored in the scale slot. Default is \code{scale=FALSE}.}
   \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
   ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
   \item{crit.pca.distances}{criterion to use for computing the cutoff 

@@ -106,17 +106,14 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
     ##  Apply svd() to the mean-centered data matrix. If n > p we use the kernel approach -
     ##  the decomposition is based on computing the eignevalues and eigenvectors of(X-m)(X-m)'
 
-##    Xsvd <- kernelEVD(data, scale=scale, signflip=signflip)
-    Xsvd <- classPC(data, scale=scale, signflip=signflip)
+    Xsvd <- .classPC(data, scale=scale, signflip=signflip, scores=TRUE)
 
     if(Xsvd$rank == 0)
         stop("All data points collapse!")
 
     ## VT::27.08.2010: introduce 'scale' parameter; return the scale in the value object
     ##
-    myscale = vector('numeric', p) + 1
-    if(scale)
-        myscale <- Xsvd$scale
+    myscale = if(is.logical(scale) && !scale) vector('numeric', p) + 1 else  Xsvd$scale
 
     ##
     ## verify and set the input parameters: alpha, k and kmax
@@ -175,11 +172,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             h <- h.alpha.n(alpha, n, k)
     }
 
-##    VT::30.10.2014 - classSVD and kernelEVD are simplified and
-##      moved to robustbase, furthermore replaced by classPC:
-##      no more return scores
-##    X <- Xsvd$scores
-    X <- scale(data, center=Xsvd$center, scale=Xsvd$scale) %*% Xsvd$loadings
+    X <- Xsvd$scores
     center <- Xsvd$center
     rot <- Xsvd$loadings
 
@@ -224,7 +217,13 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         }
 
         scores <- (X - matrix(rep(getCenter(X.mcd), times=nrow(X)), nrow=nrow(X), byrow=TRUE)) %*% X.mcd.svd$u
-        center <- as.vector(center + getCenter(X.mcd) %*% t(rot))
+
+        ##  VT::19.08.2016: we need also to rescale back the MCD center,
+        ##  before adding it to the original center
+##        center <- as.vector(center + getCenter(X.mcd) %*% t(rot))
+        center <- as.vector(center + sweep(getCenter(X.mcd) %*% t(rot), 2, myscale, "*"))
+
+
         eigenvalues <- X.mcd.svd$d[1:k]
         loadings <- Xsvd$loadings %*% X.mcd.svd$u[,1:k]
         scores <- as.matrix(scores[,1:k])
@@ -287,9 +286,7 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
 
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
         Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
-
-##        Xh.svd <- classSVD(Xh)
-        Xh.svd <- classPC(Xh)
+        Xh.svd <- .classPC(Xh)
         kmax <- min(Xh.svd$rank, kmax)
         if(trace)
             cat("\nEigenvalues: ", Xh.svd$eigenvalues, "\n")
@@ -320,12 +317,13 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         ## perform extra reweighting step
         if(k != Xsvd$rank)
         {
+            if(trace)
+                cat("\nPerform extra reweighting step (k != rank)", k)
             ## VT::27.08.2010 - bug report from Stephen Milborrow: if n is small relative to p
             ## k can be < Xsvd$rank but larger than Xh.svd$rank - the number of observations in
             ## Xh.svd is roughly half of these in Xsvd
             k <- min(Xh.svd$rank, k)
 
-##            XRc <- X - repmat(Xh.svd$center, n, 1)
             XRc <- X - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)
 
             Xtilde <- XRc %*% Xh.svd$loadings[,1:k] %*% t(Xh.svd$loadings[,1:k])
@@ -335,15 +333,19 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             cutoffodh <- sqrt(qnorm(0.975, umcd$tmcd, umcd$smcd)^3)
             indexset <- (odh <= cutoffodh)
 
-##            Xh.svd <- classSVD(X[indexset,])
-            Xh.svd <- classPC(X[indexset,])
+            Xh.svd <- .classPC(X[indexset,])
             k <- min(Xh.svd$rank, k)
+            if(trace)
+                cat("\nPerform extra reweighting step (k != rank)", k)
         }
 
         ## Project the data points on the subspace spanned by the first k0 eigenvectors
-        center <- center + Xh.svd$center %*% t(rot)
+
+        ##  VT::19.08.2016: we need also to rescale back the MCD center,
+        ##  before adding it to the original center
+##        center <- center + Xh.svd$center %*% t(rot)
+        center <- center + sweep(Xh.svd$center %*% t(rot), 2, myscale, "*")
         rot <- rot %*% Xh.svd$loadings
-#        X2 <- (X - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
         X2 <- (X - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)) %*% Xh.svd$loadings
 
         X2 <- as.matrix(X2[ ,1:k])
@@ -362,14 +364,15 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
             if(trace)
                 cat("\nIter=",j, " h=", h, " k=", k, " obj=", oldobj, "\n")
             Xh <- X2[order(mah)[1:h], ]
-
-##            Xh.svd <- classSVD(as.matrix(Xh))
-            Xh.svd <- classPC(as.matrix(Xh))
+            Xh.svd <- .classPC(as.matrix(Xh))
             obj <- prod(Xh.svd$eigenvalues)
-#            X2 <- (X2 - repmat(Xh.svd$center, n, 1)) %*% Xh.svd$loadings
             X2 <- (X2 - matrix(rep(Xh.svd$center, times=n), nrow=n, byrow=TRUE)) %*% Xh.svd$loadings
 
-            center <- center + Xh.svd$center %*% t(rot)
+            ##  VT::19.08.2016: we need also to rescale back the MCD center,
+            ##  before adding it to the original center
+##            center <- center + Xh.svd$center %*% t(rot)
+            center <- center + sweep(Xh.svd$center %*% t(rot), 2, myscale, "*")
+
             rot <- rot %*% Xh.svd$loadings
             mah <- mahalanobis(X2, center=matrix(0,1, ncol(X2)), cov=diag(Xh.svd$eigenvalues, nrow=length(Xh.svd$eigenvalues)))
             if(Xh.svd$rank == k & abs(oldobj - obj) < 1.E-12)
@@ -416,11 +419,18 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         ee <- eigen(X2cov)
         P6 <- ee$vectors
 
-        center <- as.vector(center + X2center %*% t(rot))
+        ##  VT::19.08.2016: we need also to rescale back the MCD center,
+        ##  before adding it to the original center
+##        center <- as.vector(center + X2center %*% t(rot))
+        center <- as.vector(center + sweep(X2center %*% t(rot), 2, myscale, "*"))
+
         eigenvalues <- ee$values
         loadings <- rot %*% P6
-##        scores <- (X2 - repmat(X2center, n, 1)) %*% P6
+##        if(signflip)
+##            loadings <- .signflip(loadings)
+
         scores <- (X2 - matrix(rep(X2center, times=n), nrow=n, byrow=TRUE)) %*% P6
+##        scores <- doScale(data, center, myscale)$x %*% loadings
 
         if(is.list(dimnames(data)) && !is.null(dimnames(data)[[1]]))
         {

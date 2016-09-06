@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2015-11-28 r69714) -- "Unsuffered Consequences"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R Under development (unstable) (2016-08-12 r71089) -- "Unsuffered Consequences"
+Copyright (C) 2016 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -94,7 +94,7 @@ Type 'q()' to quit R.
 +     dopca(starsCYG, data(starsCYG), nrep)
 +     dopca(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
 +     dopca(stack.x, data(stackloss), nrep)
-+     dopca(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
++ ##    dopca(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep) # differences between the architectures	
 +     dopca(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
 + ##    dopca(data.matrix(subset(wood, select = -y)), data(wood), nrep)       # differences between the architectures
 +     dopca(data.matrix(subset(hbk,  select = -Y)),data(hbk), nrep)
@@ -232,6 +232,47 @@ Type 'q()' to quit R.
 +     cc5 <- PcaGrid(X, k=2)           # dito
 + 
 +     list(cc1, cc2, cc3, cc4, cc5)
++ }
+> 
+> #################################################################
+> ##  VT::05.08.2016
+> ##  bug report from Matthieu Lesnoff <matthieu.lesnoff@gmail.com>
+> ##
+> test.case.2 <- function()
++ {
++     do.test.case.2 <- function(z)
++     {
++         if(missing(z))
++         {
++             set.seed(12345678)
++             n <- 5
++             z <- data.frame(v1 = rnorm(n), v2 = rnorm(n), v3 = rnorm(n))
++             z
++         }
++ 
++         fm <- PcaLocantore(z, k = 2, scale = TRUE)
++         fm@scale
++         apply(z, MARGIN = 2, FUN = mad)
++         scale(z, center = fm@center, scale = fm@scale)
++ 
++         T <- fm@scores
++         P <- fm@loadings
++         E <- scale(z, center = fm@center, scale = fm@scale) - T %*% t(P)
++         d2 <- apply(E^2, MARGIN = 1, FUN = sum)
++ ##        print(sqrt(d2)); print(fm@od)
++         print(ret <- all.equal(sqrt(d2), fm@od))
++ 
++         ret
++     }
++     do.test.case.2()
++     do.test.case.2(phosphor)
++     do.test.case.2(stackloss)
++     do.test.case.2(salinity)
++     do.test.case.2(hbk)
++     do.test.case.2(milk)
++     do.test.case.2(bushfire)
++     data(rice); do.test.case.2(rice)
++     data(un86); do.test.case.2(un86)
 + }
 > 
 > ## VT::15.09.2013 - this will render the output independent
@@ -380,36 +421,6 @@ PcaClassic(x = x)
 
 Standard deviations:
 [1] 9.9788 4.4251 1.8986
-----------------------------------------------------------
-coleman               20   5   5   737.134992    26.751097
-Scores: 
-        PC1      PC2        PC3        PC4       PC5
-1  -10.2155  7.63795  1.2297268  0.8228904  0.128639
-2  -24.3629 -7.82042 -0.0189861  0.3589590 -0.486461
-3   29.6150  0.19754  0.5240457 -0.0682531  0.102071
-4   26.7388  3.17223  0.3458497 -0.0063001  0.220387
-5   -9.8084  6.48307 -0.0172846  0.2847930  0.097186
-6    4.6373  1.43676 -3.6525497 -0.0338350  0.145540
-7   37.6449 -2.03386 -0.2139700 -0.2629839 -0.235617
-8  -16.4797  1.78975 -0.1733631 -0.2191101 -0.118218
-9   25.0073 -0.85759  1.5373433  0.0630336 -0.343157
-10 -30.4155  6.57441  2.5077938 -0.7408074 -0.135449
-11 -32.2306 -6.57445 -1.0801082 -0.2716586  0.138330
-12 -18.1801  3.37518 -1.6630285  0.1273262 -0.471610
-13 -24.8493  9.60482 -1.2053995 -0.3393601  0.076932
-14  -9.9289 -1.07153  0.8238307 -0.1749533  0.132531
-15 -33.7639 -9.29198  0.8908432  0.0323439  0.143056
-16  28.5410 -1.28420 -0.0011291  0.3374910  0.065001
-17   1.5086 -0.97827  0.1524052  0.7991716  0.075374
-18 -27.3617 -6.07471  0.2249405 -0.1072939  0.387396
-19  46.8462 -2.48474  0.4252299 -0.2586518  0.192932
-20  37.0574 -1.79996 -0.6361899 -0.3428013 -0.114865
--------------
-Call:
-PcaClassic(x = x)
-
-Standard deviations:
-[1] 27.15023  5.17215  1.28746  0.38032  0.23444
 ----------------------------------------------------------
 salinity              28   3   3    11.410736     7.075409
 Scores: 
@@ -910,36 +921,6 @@ PcaHubert(x = x, k = p)
 Standard deviations:
 [1] 9.5268 4.7114 2.3614
 ----------------------------------------------------------
-coleman               20   5   5  1201.362085    42.100650
-Scores: 
-          PC1       PC2       PC3       PC4       PC5
-1  -11.507348  -8.24331 -1.582081 -0.319939 -0.096756
-2  -25.912027   6.95133  0.055543 -0.512926  0.320355
-3   28.192291  -0.17570 -0.256924  0.142303 -0.043547
-4   25.363509  -3.20069 -0.196988  0.151274 -0.166301
-5  -11.126959  -7.11003 -0.222055 -0.062499 -0.091740
-6    3.209312  -1.93026  3.599440 -0.477988 -0.664430
-7   36.179848   2.16614  0.639240  0.021547  0.184158
-8  -17.873721  -2.52432  0.120212  0.247178  0.220276
-9   23.575196   0.83163 -1.239558  0.030699  0.481805
-10 -31.709630  -7.45023 -2.589113  1.282600  0.892227
-11 -33.764727   5.55741  1.084416  0.153376 -0.186254
-12 -19.559023  -4.18062  1.478952 -0.415606  0.227937
-13 -26.121854 -10.49638  0.890350  0.398805  0.014876
-14 -11.363729   0.46688 -0.768527  0.398275  0.081852
-15 -35.328687   8.29894 -0.844620  0.166810 -0.014213
-16  27.089906   1.26862  0.200679 -0.351348 -0.234584
-17   0.067003   0.52713 -0.238063 -0.662814 -0.311768
-18 -28.879698   5.16948 -0.220763  0.300903 -0.279769
-19  45.376646   2.78132  0.052929  0.241419 -0.143623
-20  35.593374   1.91217  1.047257  0.072543  0.037295
--------------
-Call:
-PcaHubert(x = x, k = p)
-
-Standard deviations:
-[1] 34.66067  6.48850  1.02200  0.39986  0.27346
-----------------------------------------------------------
 salinity              28   3   3    14.598180     5.145994
 Scores: 
         PC1      PC2         PC3
@@ -1439,36 +1420,6 @@ PcaHubert(x = x, mcd = FALSE)
 Standard deviations:
 [1] 9.6278 4.7637
 ----------------------------------------------------------
-coleman               20   5   1   727.753504           NA
-Scores: 
-        PC1
-1  -11.0254
-2  -23.3034
-3   29.3963
-4   26.1973
-5  -10.4884
-6    4.4413
-7   37.6290
-8  -16.5763
-9   24.9400
-10 -30.9693
-11 -31.2615
-12 -18.4481
-13 -25.7884
-14  -9.7398
-15 -32.4722
-16  28.4995
-17   1.6109
-18 -26.4820
-19  46.8216
-20  37.0186
--------------
-Call:
-PcaHubert(x = x, mcd = FALSE)
-
-Standard deviations:
-[1] 26.977
-----------------------------------------------------------
 salinity              28   3   2     9.897101     7.246198
 Scores: 
          PC1      PC2
@@ -1753,7 +1704,7 @@ Call:
 PcaLocantore(x = X, k = 3)
 
 Standard deviations:
-[1] 2.21798 0.69106 0.35360
+[1] 0.83848 0.28124 0.12430
 
 [[3]]
 Call:
@@ -1776,7 +1727,18 @@ PcaGrid(x = X, k = 2)
 Standard deviations:
 [1] 2.1725 1.1006
 
+> test.case.2()
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
 > 
 > proc.time()
    user  system elapsed 
-   1.31    0.14    1.45 
+   1.38    0.15    1.52 

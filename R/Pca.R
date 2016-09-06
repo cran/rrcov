@@ -168,7 +168,11 @@ pca.distances <- function(obj, data, r, crit=0.975) {
     ##  For each point this is the norm of the difference between the
     ##  centered data and the back-transformed scores
 ##    obj@od <- apply(data - repmat(obj@center, n, 1) - obj@scores %*% t(obj@loadings), 1, vecnorm)
-    obj@od <- apply(data - matrix(rep(obj@center, times=n), nrow=n, byrow=TRUE) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+
+##  VT::21.06.2016 - the data we get here is the original data - neither centered nor scaled.
+##      - center and scale the data
+##    obj@od <- apply(data - matrix(rep(obj@center, times=n), nrow=n, byrow=TRUE) - obj@scores %*% t(obj@loadings), 1, vecnorm)
+    obj@od <- apply(scale(data, obj@center, obj@scale) - obj@scores %*% t(obj@loadings), 1, vecnorm)
 
     if(is.list(dimnames(obj@scores))) {
         names(obj@od) <- dimnames(obj@scores)[[1]]
@@ -221,51 +225,61 @@ pca.distances <- function(obj, data, r, crit=0.975) {
     apply(loadings, 2, function(x) if(x[which.max(abs(x))] < 0) -x else x)
 }
 
-##' @title Compute Classical Principal Components via SVD or Eigen
-##' @param x a numeric matrix
-##' @param scale logical
-##' @param signflip
-##' @param via.svd logical indicating if the SVE
-##' @return a list
-##' @author Valentin Todorov; efficiency tweaks by Martin Maechler
-classPC <- function(x, scale=FALSE, signflip=TRUE, via.svd = n > p)
+## This is from MM in robustbase, but I want to change it and
+##  therefore took a copy. Later will update in 'robustbase'
+##  I want to use not 'scale()', but doScale to which i can pass also
+##   a function.
+.classPC <- function(x, scale=FALSE, center=TRUE,
+		    signflip=TRUE, via.svd = n > p, scores=FALSE)
 {
     if(!is.numeric(x) || !is.matrix(x))
-        stop("'x' must be a numeric matrix")
+	stop("'x' must be a numeric matrix")
     else if((n <- nrow(x)) <= 1)
-        stop("The sample size must be greater than 1 for svd")
+	stop("The sample size must be greater than 1 for svd")
     p <- ncol(x)
-    center <- colMeans(x)
-    x <- scale(x, center=center, scale=scale)
-    ##   -----
-    if(isTRUE(scale))
-        scale <- attr(x, "scaled:scale")
+
+    if(is.logical(scale))
+        scale <- if(scale) sd else vector('numeric', p) + 1
+    else if(is.null(scale))
+        scale <- vector('numeric', p) + 1
+    if(is.logical(center))
+        center <- if(center) mean else vector('numeric', p)
+    else if(is.null(center))
+        center <- vector('numeric', p)
+
+    x.scaled <- doScale(x, center=center, scale=scale)
+    x <- x.scaled$x
+    center <- x.scaled$center
+    scale <- x.scaled$scale
 
     if(via.svd) {
-        svd <- svd(x/sqrt(n-1), nu=0)
-        rank <- rankMM(x, sv=svd$d)
-        loadings <- svd$v[,1:rank]
-        eigenvalues <- (svd$d[1:rank])^2 ## FIXME: here .^2; later sqrt(.)
+	svd <- svd(x, nu=0)
+	rank <- rankMM(x, sv=svd$d)
+	loadings <- svd$v[,1:rank]
+	eigenvalues <- (svd$d[1:rank])^2 /(n-1) ## FIXME: here .^2; later sqrt(.)
     } else { ## n <= p; was "kernelEVD"
-        e <- eigen(tcrossprod(x)/(n-1), symmetric=TRUE)
-        tolerance <- n * max(e$values) * .Machine$double.eps
-        rank <- sum(e$values > tolerance)
-        ii <- seq_len(rank)
-        eigenvalues <- e$values[ii]
-        ## MM{FIXME (efficiency)}:
-        loadings <- t((x/sqrt(n-1))) %*% e$vectors[,1:rank] %*% diag(1/sqrt(eigenvalues))
+	e <- eigen(tcrossprod(x), symmetric=TRUE)
+        evs <- e$values
+	tolerance <- n * max(evs) * .Machine$double.eps
+	rank <- sum(evs > tolerance)
+        evs <- evs[ii <- seq_len(rank)]
+	eigenvalues <- evs / (n-1)
+	## MM speedup, was:  crossprod(..) %*% diag(1/sqrt(evs))
+	loadings <- crossprod(x, e$vectors[,ii]) * rep(1/sqrt(evs), each=p)
     }
 
     ## VT::15.06.2010 - signflip: flip the sign of the loadings
     if(signflip)
-        loadings <- .signflip(loadings)
+	loadings <- .signflip(loadings)
 
-    list(loadings=loadings,
-         ## scores = x %*% loadings,
-         eigenvalues=eigenvalues,
-         rank=rank, center=center, scale=scale)
+    list(rank=rank, eigenvalues=eigenvalues, loadings=loadings,
+	 scores = if(scores) x %*% loadings,
+	 center=center, scale=scale)
 }
 
+##  VT::19.08.2016
+##  classSVD and kernelEVD are no more used - see .classPC
+##
 ## VT::15.06.2010 - Added scaling and flipping of the loadings
 ##
 classSVD <- function(x, scale=FALSE, signflip=TRUE){

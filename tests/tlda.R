@@ -37,6 +37,24 @@ dodata <- function(method) {
     show(Linda(sp~., data=crabs, method=method))
     show(Linda(sp~., data=crabs))
 
+    cat("\nData: ", "fish\n")
+    data(fish)
+    # remove observation #14 containing missing value
+    fish <- fish[-14,]
+
+    # The height and width are calculated as percentages
+    #   of the third length variable
+    fish[,5] <- fish[,5]*fish[,4]/100
+    fish[,6] <- fish[,6]*fish[,4]/100
+
+    ## There is one class with only 6 observations (p=6). Normally
+    ##  Linda will fails, therefore use l1med=TRUE.
+    ##  This works only for methods mcdB and mcdC
+
+    table(fish$Species)
+    if(method != "mcdA")
+        show(Linda(Species~., data=fish, method=method, l1med=TRUE))
+
     cat("===================================================\n")
 }
 

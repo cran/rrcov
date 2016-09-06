@@ -35,6 +35,7 @@ Linda.default <- function(x,
                  tol = 1.0e-4,
                  method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
                  alpha=0.5,
+                 l1med=FALSE,
                  trace=FALSE, ...)
 {
     if(is.null(dim(x)))
@@ -99,9 +100,9 @@ Linda.default <- function(x,
     } else if(method == "mcdA"){
         xcov <- .wcovMcd(x, grouping, method="A", alpha=alpha)
     } else if(method == "mcd" || method == "mcdB"){
-        xcov <- .wcovMcd(x, grouping, method="B", alpha=alpha)
+        xcov <- .wcovMcd(x, grouping, method="B", alpha=alpha, l1med=l1med)
     } else if(method == "mcdC"){
-        xcov <- .wcovMcd(x, grouping, method="C", alpha=alpha)
+        xcov <- .wcovMcd(x, grouping, method="C", alpha=alpha, l1med=l1med)
     } else {
         stop(paste("Unknown method called: ", method))
     }
@@ -123,11 +124,11 @@ Linda.default <- function(x,
     }
     return (new("Linda", call=xcall, prior=prior, counts=counts,
                  center=xcov$means, cov=xcov$wcov, ldf = ldf, ldfconst = ldfconst,
-                 method=method, X=x, grp=g))
+                 method=method, l1med=l1med, X=x, grp=g))
 }
 
 
-.wcovMcd <- function(x, grouping, method = c("A", "B", "C"), alpha=0.5){
+.wcovMcd <- function(x, grouping, method = c("A", "B", "C"), alpha=0.5, l1med=FALSE){
     xcall <- match.call()
     method <- match.arg(method)
     x <- as.matrix(x)
@@ -151,16 +152,24 @@ Linda.default <- function(x,
     raw.mX <- matrix(0,ng,p)
     raw.covX <- array(0,c(p,p,ng))
     raw.sumwt <- array(0,ng)
-    for(i in 1:ng){
-        mcd <- CovMcd(x[which(g == lev[i]),], alpha=alpha)
-        mX[i,] <- getCenter(mcd)
-        sumwt[i] <- sum(mcd@wt)
-        covX[,,i] <- getCov(mcd) * sumwt[i]
-        raw.mX[i,] <- mcd@raw.center
-        raw.sumwt[i] <- length(mcd@best)
-        raw.covX[,,i] <- mcd@raw.cov * raw.sumwt[i]
-    }
 
+    if(method == "A" | !l1med)
+    {
+        for(i in 1:ng){
+            mcd <- CovMcd(x[which(g == lev[i]),], alpha=alpha)
+            mX[i,] <- getCenter(mcd)
+            sumwt[i] <- sum(mcd@wt)
+            covX[,,i] <- getCov(mcd) * sumwt[i]
+            raw.mX[i,] <- mcd@raw.center
+            raw.sumwt[i] <- length(mcd@best)
+            raw.covX[,,i] <- mcd@raw.cov * raw.sumwt[i]
+        }
+    } else
+    {
+        for(i in 1:ng){
+            mX[i,] <- l1median(x[which(g == lev[i]),])
+        }
+    }
     if(method == "A"){
         #Method A: pool the covariance matrices
         wcov <- matrix(0,p,p)

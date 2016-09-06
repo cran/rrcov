@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2013-08-17 r63608) -- "Unsuffered Consequences"
-Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: i386-w64-mingw32/i386 (32-bit)
+R Under development (unstable) (2015-06-04 r68474) -- "Unsuffered Consequences"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -53,6 +53,24 @@ Type 'q()' to quit R.
 +     data(crabs);
 +     show(Linda(sp~., data=crabs, method=method))
 +     show(Linda(sp~., data=crabs))
++ 
++     cat("\nData: ", "fish\n")
++     data(fish)
++     # remove observation #14 containing missing value
++     fish <- fish[-14,]
++ 
++     # The height and width are calculated as percentages
++     #   of the third length variable
++     fish[,5] <- fish[,5]*fish[,4]/100
++     fish[,6] <- fish[,6]*fish[,4]/100
++ 
++     ## There is one class with only 6 observations (p=6). Normally
++     ##  Linda will fails, therefore use l1med=TRUE.
++     ##  This works only for methods mcdB and mcdC
++ 
++     table(fish$Species)
++     if(method != "mcdA")
++         show(Linda(Species~., data=fish, method=method, l1med=TRUE))
 + 
 +     cat("===================================================\n")
 + }
@@ -295,6 +313,8 @@ O 11.897 -3.4273 18.696 10.6644 4.5095 -12.4745 11.668398
 Constants:
        B        O 
  -61.394 -122.544 
+
+Data:  fish
 ===================================================
 > dodata(method="mcdB")
 
@@ -532,6 +552,47 @@ O 18.846 -3.4189 17.5549 13.412  1.57777 -10.56970 12.7429
 Constants:
        B        O 
  -67.603 -127.601 
+
+Data:  fish
+Call:
+Linda(Species ~ ., data = fish, method = method, l1med = TRUE)
+
+Prior Probabilities of Groups:
+       1        2        3        4        5        6        7 
+0.215190 0.037975 0.126582 0.069620 0.088608 0.107595 0.354430 
+
+Group means:
+    Weight Length1 Length2 Length3  Height  Width
+1 594.9580  29.845  32.587  37.763 15.1020 5.2163
+2 425.5876  26.441  28.936  31.829  9.3804 5.2849
+3 128.0054  19.816  21.395  23.905  6.2220 3.5102
+4 126.4961  18.729  20.434  22.970  9.2122 3.0949
+5  -8.4908  10.466  11.025  12.249  1.9219 1.1531
+6 491.5095  39.244  41.767  44.745  6.5569 4.3735
+7 187.5288  21.923  23.908  25.353  6.4131 3.9114
+
+Within-groups Covariance Matrix:
+           Weight  Length1  Length2  Length3   Height    Width
+Weight  10204.459 310.7587 327.3793 348.8665 112.9819 64.94400
+Length1   310.759  12.5919  13.1895  13.9939   4.1164  2.25133
+Length2   327.379  13.1895  13.8666  14.7367   4.3709  2.37961
+Length3   348.867  13.9939  14.7367  15.7227   4.6987  2.54963
+Height    112.982   4.1164   4.3709   4.6987   1.6872  0.79190
+Width      64.944   2.2513   2.3796   2.5496   0.7919  0.50671
+
+Linear Coeficients:
+     Weight   Length1 Length2  Length3     Height     Width
+1 -0.105946   6.25703 -53.489  46.9217  12.885440  -8.96892
+2 -0.160717 -17.36894  10.769   8.6806   0.298861  13.47856
+3 -0.203216  -2.67233 -11.434  17.1603  -0.289566  12.64851
+4 -0.231988   0.56922  -9.411   9.4474  13.542998   8.80590
+5 -0.097378   1.76356 -12.692  14.5110  -4.231514   0.12472
+6 -0.034351 -25.92424  12.351  26.4035 -25.101076 -23.41558
+7 -0.212472 -21.97138  37.056 -11.5407  -0.086813  16.75266
+
+Constants:
+       1        2        3        4        5        6        7 
+-151.729  -70.420  -66.673  -81.678  -26.973 -200.252  -69.431 
 ===================================================
 > dodata(method="mcdC")
 
@@ -769,9 +830,50 @@ O 18.846 -3.4189 17.5549 13.412  1.57777 -10.56970 12.7429
 Constants:
        B        O 
  -67.603 -127.601 
+
+Data:  fish
+Call:
+Linda(Species ~ ., data = fish, method = method, l1med = TRUE)
+
+Prior Probabilities of Groups:
+       1        2        3        4        5        6        7 
+0.215190 0.037975 0.126582 0.069620 0.088608 0.107595 0.354430 
+
+Group means:
+    Weight Length1 Length2 Length3  Height  Width
+1 611.3333  30.433  33.150  38.478 15.1987 5.3846
+2 282.0000  24.433  26.833  29.600  8.4346 4.3926
+3 150.5000  20.300  21.944  24.531  6.5338 3.5796
+4 154.8182  18.727  20.345  22.791  8.9624 3.2207
+5   9.7417  10.883  11.467  12.592  2.0939 1.2346
+6 511.0000  41.067  43.667  46.567  7.2990 4.5505
+7 160.5000  21.166  23.128  24.534  6.2186 3.7232
+
+Within-groups Covariance Matrix:
+          Weight  Length1  Length2  Length3   Height    Width
+Weight  5333.365 180.1857 191.6118 204.0220 64.83535 34.12357
+Length1  180.186   7.7146   8.1015   8.5884  2.48895  1.31447
+Length2  191.612   8.1015   8.5413   9.0678  2.65487  1.39694
+Length3  204.022   8.5884   9.0678   9.6657  2.85367  1.49827
+Height    64.835   2.4889   2.6549   2.8537  1.00610  0.45862
+Width     34.124   1.3145   1.3969   1.4983  0.45862  0.26970
+
+Linear Coeficients:
+    Weight   Length1   Length2 Length3    Height    Width
+1 -0.20613  -0.74105 -76.69662  79.108  21.50605 -29.1269
+2 -0.41933 -44.01989  35.56060  15.666   1.15317  10.7097
+3 -0.41359 -23.42915   4.76687  25.707   0.05177  12.2029
+4 -0.45379 -13.71272   6.95367   9.728  22.70242   7.5264
+5 -0.21589 -11.83851   0.58069  18.841  -6.44170  -7.1272
+6 -0.21410 -61.82831  40.09544  47.418 -39.79116 -58.1356
+7 -0.48253 -48.48758  75.80753 -19.605   1.28496  25.2546
+
+Constants:
+       1        2        3        4        5        6        7 
+-262.970 -143.711 -122.762 -134.584  -47.754 -379.965 -136.330 
 ===================================================
 > #dodata(method="fsa")
 > 
 > proc.time()
    user  system elapsed 
-   1.85    0.01    1.85 
+   1.96    0.07    2.06 

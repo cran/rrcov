@@ -42,13 +42,16 @@ PcaCov(x, ...)
   a \code{\link{CovControl-class}} object. 
   The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}. 
   If \code{cov.control=NULL} is specified, the classical estimates will be used by calling \code{\link{CovClassic}}}.
-  \item{scale}{a logical value indicating whether the variables should be 
-  scaled to have unit variance (only possible if there are no constant 
-  variables). As a scale function \code{mad} is used but alternatively, a vector of length equal 
-  the number of columns of x can be supplied. The value is passed to 
-  scale and the result of the scaling is stored in the \code{scale} slot. 
-  Default is \code{scale = FALSE}}
-  \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
+    \item{scale}{a value indicating whether and how the variables should be scaled
+    to have unit variance (only possible if there are no constant 
+    variables). If \code{scale=FALSE} (default) or \code{scale=NULL} no scaling is 
+    performed (a vector of 1s is returned in the scale slot). If \code{scale=TRUE}
+    the data are scaled by the estimator used to compute the covariance matrix 
+    (\code{MCD} by default). Alternatively it can be a function 
+    like \code{sd} or \code{Qn} or a vector of length equal the number of columns 
+    of \code{x}. The value is passed to the underlying function and the result 
+    returned is stored in the scale slot. Default is \code{scale=FALSE}.}
+    \item{signflip}{a logical value indicating wheather to try to solve the sign indeterminancy of the loadings -   
   ad hoc approach setting the maximum element in a singular vector to be positive. Default is \code{signflip = FALSE}}
   
   \item{crit.pca.distances}{criterion to use for computing the cutoff values for the orthogonal and score distances. Default is 0.975.}

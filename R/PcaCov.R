@@ -57,9 +57,7 @@ PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlM
     if(n < p)
         stop("'PcaCov' can only be used with more units than variables")
 
-    ##
     ## verify and set the input parameters: k and kmax
-    ##
     kmax <- max(min(floor(kmax), rankMM(x)),1)
     if((k <- floor(k)) < 0)
         k <- 0
@@ -69,24 +67,27 @@ PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlM
     }
 ######################################################################
 
-    ## VT::27.08.2010: introduce 'scale' parameter; return the scale in the value object
     ##
-    myscale = vector('numeric', p) + 1
-    data <- scale(data, center=FALSE, scale=scale)
-    mxx <- attr(data, "scaled:scale")
-    if(!is.null(mxx))
-        myscale <- mxx
-
+    ## VT::05.08.2016
+    ## If scale is TRUE/FALSE, this will be handled by .xpc()
+    ##  otherwise call the undocumented function doScale() from robustbase -
+    ##  it will behave properly and scale can be a vector or a function
+    if(is.null(scale))
+        scale <- vector('numeric', p) + 1
+    else if(!is.logical(scale))
+    {
+        data <- doScale(data, center=NULL, scale=scale)
+        scale <- data$scale
+        data=data$x
+    }
 
     ## VT::30.09.2009 - add the option for classic covariance estimates - if cov.control = NULL
     covx <- if(!is.null(cov.control)) restimate(cov.control, data) else Cov(data)
     covmat <- list(cov=getCov(covx), center=getCenter(covx), n.obs=covx@n.obs)
 
-##    if(corr)
-##        covmat$cor <- getCorr(covx)
-##    out <- princomp(cor=corr, covmat=covmat, na.action=na.action)
-
-    out <- princomp(covmat=covmat)
+    ## VT::05.06.2016  -the call to princomp() replaced by an internal function
+    ##  it will habdle the case scale=TRUE and will return also the proper scores
+    out <- .xpc(x, covmat=covmat, scale=scale, signflip=signflip)
 
 ## VT::11.28.2015: Choose the number of components k (if not specified)
 ##      (see mail of Klaus Nordhausen from 19.11.2015: the help says that the algorithm defines k)
@@ -119,24 +120,19 @@ PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlM
     }
 
     center   <- getCenter(covx)
-    scale    <- myscale
+    scale    <- out$scale
     sdev     <- out$sdev
     loadings <- out$loadings[, 1:k, drop=FALSE]
     eigenvalues  <- (sdev^2)[1:k]
-
-    ## VT::27.08.2010 - signflip: flip the sign of the loadings
-    if(signflip)
-        loadings <- .signflip(loadings)
-
-    scores   <- scale(data, center, scale) %*% loadings
-    scores   <- scores[, 1:k, drop=FALSE]
+    scores   <- out$scores[, 1:k, drop=FALSE]
 
 ######################################################################
     names(eigenvalues) <- NULL
-    if(is.list(dimnames(data)))
+    if(is.list(dimnames(x)))
     {
-        rownames(scores) <- rownames(data)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
-    }
+        rownames(scores) <- rownames(x)  # dimnames(scores)[[1]] <- dimnames(data)[[1]]
+    }else
+        dimnames(scores)[[1]] <- 1:n
     dimnames(scores)[[2]] <- paste("PC", seq_len(ncol(scores)), sep = "")
     dimnames(loadings) <- list(colnames(data), paste("PC", seq_len(ncol(loadings)), sep = ""))
 
@@ -146,7 +142,7 @@ PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlM
                             loadings=loadings,
                             eigenvalues=eigenvalues,
                             center=center,
-                            scale=myscale,
+                            scale=scale,
                             scores=scores,
                             k=k,
                             n.obs=n)
@@ -154,4 +150,62 @@ PcaCov.default <- function(x, k=ncol(x), kmax=ncol(x), cov.control = CovControlM
     ## Compute distances and flags
     res <- pca.distances(res, x, p, crit.pca.distances)
     return(res)
+}
+
+## A simplified version of princomp()
+.xpc <- function (x, covmat, scale=FALSE, signflip=FALSE)
+{
+    ## x is always available and covmat is always a list
+    ## scores is always TRUE (therefore we need x)
+    ##
+    if (any(is.na(match(c("cov", "n.obs"), names(covmat)))))
+        stop("'covmat' is not a valid covariance list")
+    cv <- covmat$cov
+    n.obs <- covmat$n.obs
+    cen <- covmat$center
+
+    if(!is.numeric(cv))
+        stop("PCA applies only to numerical variables")
+    cor <- FALSE
+    if(is.logical(scale))
+    {
+        if(scale)
+        {
+            cor <- TRUE
+            sds <- sqrt(diag(cv))
+            if(any(sds == 0))
+                stop("cannot use 'cor = TRUE' with a constant variable")
+            cv <- cv/(sds %o% sds)
+        }
+    }
+
+    edc <- eigen(cv, symmetric = TRUE)
+    ev <- edc$values
+    if(any(neg <- ev < 0))
+    {
+        if(any(ev[neg] < -9 * .Machine$double.eps * ev[1L]))
+            stop("covariance matrix is not non-negative definite")
+        else
+            ev[neg] <- 0
+    }
+
+    if(signflip)
+        edc$vectors <- .signflip(edc$vectors)
+
+    cn <- paste0("PC", 1L:ncol(cv))
+    names(ev) <- cn
+    dimnames(edc$vectors) <- list(dimnames(x)[[2L]], cn)
+    sdev <- sqrt(ev)
+
+    sc <- setNames(if(cor) sds
+                   else if(!is.logical(scale)) scale
+                   else rep.int(1, ncol(cv)), colnames(cv))
+    scr <- as.matrix(doScale(x, center=cen, scale=sc)$x) %*% edc$vectors
+    dimnames(scr) <- list(dimnames(x)[[1L]], cn)
+
+    edc <- list(sdev=sdev, loadings=structure(edc$vectors, class="loadings"),
+        center=cen, scale=sc, n.obs=n.obs, scores=scr)
+
+    class(edc) <- "princomp"
+    edc
 }

@@ -1,3 +1,30 @@
+2016-09-03  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.4-3
+    * DESCRIPTION (Version): 1.4-2
+    *
+    * src/sest.c: Warning reported by Duncan Murdoch:   if(fabs(t <= cc))
+    *
+2016-08-19  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.4-1
+    *
+    * R/Pca.R, PcaCov.R, PcaHubert.R, PcaLocantore.R, PcaClasic.R:
+    *   fixed a bug when scale != FALSE.
+    *   Now scale can be also a function or a vector with length p.
+    *
+2016-08-05  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.4-0
+    *
+    * R/PcaCov.R, Pca.R: fixed a bug when scale != FALSE; the call to princomp()
+    *   replaced by an internal function (simplified princomp())
+    *
+    * R/Pca.R: fixed a bug when scale != FALSE - computing OD .distances()
+    *
+    * R/Linda.R: added argument l1med=FALSE - if set to TRUE, the L1 median
+    * will be used for centering the data in mcdB and mcdC methods
+    *
 2016-02-10  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.3-10
