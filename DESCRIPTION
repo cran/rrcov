@@ -1,6 +1,6 @@
 Package: rrcov
-Version: 1.4-3
-Date: 2016-09-03
+Version: 1.4-4
+Date: 2018-05-20
 Title: Scalable Robust Estimators with High Breakdown Point
 Author: Valentin Todorov <valentin.todorov@chello.at>
 Description: Robust Location and Scatter Estimation and Robust
@@ -12,6 +12,6 @@ Suggests: grid, mclust, MASS, ellipse
 LazyLoad: yes
 License: GPL (>= 2)
 Repository: CRAN
-Packaged: 2016-09-05 22:49:02 UTC; Share
+Packaged: 2018-05-21 22:00:33 UTC; Share
 NeedsCompilation: yes
-Date/Publication: 2016-09-06 08:03:44
+Date/Publication: 2018-05-24 08:32:53 UTC

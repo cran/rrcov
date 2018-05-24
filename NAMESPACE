@@ -1,4 +1,4 @@
-useDynLib(rrcov)
+useDynLib(rrcov, .registration=TRUE)
 importFrom(stats4, plot, summary)
 importFrom(methods, show)
 importFrom(lattice, xyplot, panel.xyplot, panel.abline, ltext)

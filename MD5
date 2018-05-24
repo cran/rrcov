@@ -1,6 +1,6 @@
-afbf9f3553243862b4131a8c7ea63d74 *ChangeLog
-d00acd629084da00b25657b13c0020c9 *DESCRIPTION
-6cf32d584d52e2498848acb648195298 *NAMESPACE
+5f23f9373b7b93d511574fdcc1288169 *ChangeLog
+fcde9facf4b420b81ec5467b755af2b8 *DESCRIPTION
+a52fc2851d0fa1038a38c57559794932 *NAMESPACE
 7b81f775dd0653ccbabce7fa94244dff *R/AllClasses.R
 2621b703a070a9cd1b9ca2b755e763d4 *R/AllGenerics.R
 ab083088a5a411c2e310688462997267 *R/Cov.R
@@ -39,7 +39,7 @@ f88a696be375dd2d8be16934413cee18 *R/plot-utils.R
 dcebffecd8cbf489cede75c6813eabed *R/psifun.R
 0dcf0c533220e562a7b3e0a961ed6f02 *R/utils.R
 5752f99eceda48e21d5743fe05c7c9b6 *R/zzz.R
-aaa31bfe7730aa557004e3ae48e0270d *build/vignette.rds
+86916824a62ec21b76348aee369930a3 *build/vignette.rds
 dc91e66b24be42e13e05e3350738de29 *data/Appalachia.rda
 256379df09041b35cf1a53bed3e12508 *data/Cascades.rda
 eb7908cee2761979204dfe7d874024d6 *data/OsloTransect.rda
@@ -62,7 +62,7 @@ ce8cc65f5ce8e9aedf1ac45c3f408022 *inst/bm/bm_mcd.m
 3f9ec6b75cdbdee68324fe6907a0214d *inst/bm/bmmcd.S
 b2eb01e397409f5b1d217839dd4ec1d6 *inst/doc/rrcov.R
 eb78be65e20ab7018971138a4a16b868 *inst/doc/rrcov.Rnw
-1c70601b5f346e9a157e4b2413ef3736 *inst/doc/rrcov.pdf
+fe6de1321ac94409263f30e51557e090 *inst/doc/rrcov.pdf
 f8797fb11a1081c4cab7610a31a36540 *man/Appalachia.Rd
 00f1a7e08ed0c0b4d9e033edde7696e9 *man/Cascades.Rd
 ea3270717d98ab23f80fd65fa5057c93 *man/Cov-class.Rd
@@ -166,6 +166,7 @@ eac4382f7dd2ec1ccf389af98314f557 *src/R-rng4ftn.c
 1b8952950f86d526b7e849e28e644f36 *src/ds11.f
 c1e732bb49768c40a41f3d196ed921d2 *src/fast-mve.c
 ccf4857d53fdada76dfd725ef84d9683 *src/fsada.f
+c6d3916e13986bd0e2bc0ea73bf278a3 *src/rrcov_init.c
 b4aaedc4fce50b5ec8b420c789ff6c1a *src/sest.c
 7419e0464766f3df3ff9edf8a1e1dd60 *tests/thubert.R
 e14d7ca64ef552d3072845347609dd51 *tests/thubert.Rout.save
@@ -193,5 +194,5 @@ d61b698be02405589908a619da0d94fa *vignettes/CovModel.pdf
 e1819cded497f38e9876caa0459050e6 *vignettes/DAModel.pdf
 dec446e0ee4dd1b225ed4acdde0db212 *vignettes/PcaModel.pdf
 d946e97b6973ed43e19342116c303508 *vignettes/Structure.pdf
-99c33b83773924a6bc89a9aa25ab4e0a *vignettes/mybiblio.bib
+ee7105297f444b994c3eab45e42de035 *vignettes/mybiblio.bib
 eb78be65e20ab7018971138a4a16b868 *vignettes/rrcov.Rnw
