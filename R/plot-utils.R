@@ -461,11 +461,12 @@ myscreeplot <- function(rcov, ccov) {
         txt  <- paste(prefix, txt, sep="")
         rtxt <- format(c(rr, 0.123456789), digits=digits)[1]
         rtxt <- paste(rprefix, rtxt, sep="")
-        txt  <- paste("(", txt, ")", sep="")
-
+        txt  <- if(isClassic(obj)) txt else paste0("(", txt, ")")   # parentheses around the classical correlation
+                                                                    # only if the object is a robust one
         cex  <- ff/strwidth(txt)
         text(0.5, 0.3, txt, cex = cex, col=ecol.class)
-        text(0.5, 0.5, rtxt, cex = cex, col=ecol.rob)
+        if(!isClassic(obj))
+            text(0.5, 0.5, rtxt, cex = cex, col=ecol.rob)
     }
 
     panel.ellipse <- function(x, y, ...)
@@ -500,7 +501,8 @@ myscreeplot <- function(rcov, ccov) {
 
         points(x,y, ...)
         lines(e.class, col=ecol.class, lty="dashed")
-        lines(e.rob, col=ecol.rob)
+        if(!isClassic(obj))
+            lines(e.rob, col=ecol.rob)
     }
 
     ## get the data
@@ -556,9 +558,17 @@ myscreeplot <- function(rcov, ccov) {
     if(missing(labs) || is.null(labs))
         labs <- 1:length(getDistance(obj))
 
+    ## VT::12.11.2018 - In case of MRCD we can use also classic regularized estimate
     dd1 <- sqrt(getDistance(obj))                   # robust distances
-    vv  <- cov.wt(X)
-    dd2 <- sqrt(mahalanobis(X,vv$center,vv$cov))    # classical distances
+    if(inherits(obj, "CovMrcd"))
+    {
+        vv <- CovMrcd(X, alpha=1)                   # classical REGULARIZED center and covariance
+        dd2 <- sqrt(getDistance(vv))                # classical distances
+    } else
+    {
+        vv  <- cov.wt(X)
+        dd2 <- sqrt(mahalanobis(X,vv$center,vv$cov))    # classical distances
+    }
     dd  <- c(dd1, dd2)                               # a vector with both robust and classical distances
 
     ind <- c(1:n, 1:n)                              # 1, 2, ..., n, 1, 2, ...n      -
@@ -617,9 +627,17 @@ myscreeplot <- function(rcov, ccov) {
     if(missing(labs) || is.null(labs))
         labs <- 1:length(getDistance(obj))
 
+    ## VT::12.11.2018 - In case of MRCD we can use also classic regularized estimate
     dd1 <- sqrt(getDistance(obj))                   # robust distances
-    vv  <- cov.wt(X)                                # classical center and covariance
-    dd2 <- sqrt(mahalanobis(X,vv$center,vv$cov))    # classical Mahalanobis distances
+    if(inherits(obj, "CovMrcd"))
+    {
+        vv  <- CovMrcd(X, alpha=1)                  # classical REGULARIZED center and covariance
+        dd2 <- sqrt(getDistance(obj))               # classical Mahalanobis distances
+    } else
+    {
+        vv  <- cov.wt(X)                                # classical center and covariance
+        dd2 <- sqrt(mahalanobis(X,vv$center,vv$cov))    # classical Mahalanobis distances
+    }
     dd  <- c(dd1, dd2)                              # a vector with both robust and classical distances
 
     qq <- sqrt(qchisq(((1:n)-1/3)/(n+1/3), p))

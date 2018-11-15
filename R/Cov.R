@@ -1,3 +1,7 @@
+setMethod("names", "Cov", function(x) slotNames(x))
+setMethod("$", "Cov",  function(x, name) slot(x, name))
+##  setMethod("$<-", "Cov",  function(x, name, value) {slot(x, name) <- value; slot(x, name)} )
+
 setMethod("isClassic", "Cov", function(obj) TRUE)
 setMethod("isSingular", "Cov", function(obj) .isSingular(getCov(obj)))
 

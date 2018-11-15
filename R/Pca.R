@@ -1,3 +1,6 @@
+setMethod("names", "Pca", function(x) slotNames(x))
+setMethod("$", c("Pca"),  function(x, name) slot(x, name))
+
 setMethod("getCenter", "Pca", function(obj) obj@center)
 setMethod("getScale", "Pca", function(obj) obj@scale)
 setMethod("getLoadings", "Pca", function(obj) obj@loadings)

@@ -1,13 +1,29 @@
+2018-11-14  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.4-7
+    * DESCRIPTION (Version): 1.4-6
+    *
+    *   R/CovMrcd.R, CovControlMrcd.R: added Minimum Regularized Covariance
+    *       Determinant estimator (MRCD) (Boudt et al. 2018)
+    *
+    *   data/octane.rda, man/octane.Rd - octane data set added
+    *   data/olitos.rda, man/olitos.Rd - olitos data set moved from package rrcovHD
+    *   data/diabetes.rda, man/diabetes.Rd - diabetes data added
+    *
+    *   R/CovClassic.R, plot-utils.R: make the 'pairs' plot also
+    *       available for classical covariance matrix
+    *
+
 2018-05-20  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.4-4
     *
-    *   vignettes/mybiblio.bib: Fixed issue with building 
+    *   vignettes/mybiblio.bib: Fixed issue with building
     *	    the vignette: non-ascii symbols in .bib
     *       (see mail from K. Hornik from 14.05.2018)
     *	src/rrcov_init.c: Registeration of native routines
     *
-        
+
 2016-09-03  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.4-3

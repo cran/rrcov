@@ -171,12 +171,21 @@ setMethod("plot", signature(x="CovRobust", y="missing"),
             stop(sQuote("id.n")," must be in {1,..,",n,"}")
     }
 
-    ccov <- CovClassic(data)
-    md <- rd <- NULL
-    if(!isSingular(ccov))
+    ## VT::12.11.2018 - In case of MRCD we can use also classic regularized estimate
+    if(inherits(x, "CovMrcd"))
+    {
+        ccov <- CovMrcd(data, alpha=1)
         md <- sqrt(getDistance(ccov))
-    if(!isSingular(x))
         rd <- sqrt(getDistance(x))
+    } else
+    {
+        ccov <- CovClassic(data)
+        md <- rd <- NULL
+        if(!isSingular(ccov))
+            md <- sqrt(getDistance(ccov))
+        if(!isSingular(x))
+            rd <- sqrt(getDistance(x))
+    }
 
     which <- match.arg(which)
     op <- if (ask) par(ask = TRUE) else list()

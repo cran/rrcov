@@ -14,6 +14,8 @@
 \alias{getQuan}
 \alias{getScale,methods}
 \alias{getScale}
+\alias{names,Pca-method}
+\alias{$,Pca-method}
 
 \title{ Accessor methods to the essential slots of Pca and its subclasses}
 \description{

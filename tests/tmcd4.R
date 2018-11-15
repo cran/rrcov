@@ -19,11 +19,11 @@ doexactfit <- function(){
     print(CovMcd(exact()))
 }
 
-dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS", "deterministic", "exact")){
+dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS", "deterministic", "exact", "MRCD")){
 ##@bdescr
 ## Test the function covMcd() on the literature datasets:
 ##
-## Call covMcd() for all regression datasets available in rrcov and print:
+## Call CovMcd() for all regression datasets available in rrcov and print:
 ##  - execution time (if time == TRUE)
 ##  - objective fucntion
 ##  - best subsample found (if short == false)
@@ -52,6 +52,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         else{
             mcd <- if(method=="deterministic") CovMcd(x, nsamp="deterministic", trace=FALSE)
                    else if(method=="exact")    CovMcd(x, nsamp="exact", trace=FALSE)
+                   else if(method=="MRCD")     CovMrcd(x, trace=FALSE)
                    else                        CovMcd(x, trace=FALSE)
             quan <- as.integer(mcd@quan)
         }
@@ -121,7 +122,7 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
 
     if(method=="exact")
     {
-        ## oonly small data sets
+        ## only small data sets
         doest(heart[, 1:2], data(heart), nrep)
         doest(starsCYG, data(starsCYG), nrep)
         doest(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
@@ -153,8 +154,11 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
         doest(pension, data(pension), nrep)
 ##        doest(pilot, data(pilot), nrep)               # difference between 386 and x64
 
-        doest(radarImage, data(radarImage), nrep)
-        doest(NOxEmissions, data(NOxEmissions), nrep)
+        if(method != "MRCD")        # these two are quite slow for MRCD, especially the second one
+        {
+            doest(radarImage, data(radarImage), nrep)
+            doest(NOxEmissions, data(NOxEmissions), nrep)
+        }
 
         doest(data.matrix(subset(vaso, select = -Y)), data(vaso), nrep)
         doest(data.matrix(subset(wagnerGrowth, select = -Period)), data(wagnerGrowth), nrep)
@@ -232,14 +236,19 @@ check <- function(mcd, xind){
     length(xind) - length(which(mymatch))
 }
 
-dorep <- function(x, nrep=1, method=c("FASTMCD","MASS")){
+dorep <- function(x, nrep=1, method=c("FASTMCD","MASS", "deterministic", "exact", "MRCD")){
 
     method <- match.arg(method)
     for(i in 1:nrep)
     if(method == "MASS")
         cov.mcd(x)
     else
-        CovMcd(x)
+    {
+        if(method=="deterministic") CovMcd(x, nsamp="deterministic", trace=FALSE)
+                   else if(method=="exact")    CovMcd(x, nsamp="exact", trace=FALSE)
+                   else if(method=="MRCD")     CovMrcd(x, trace=FALSE)
+                   else                        CovMcd(x, trace=FALSE)
+    }
 }
 
 #### gendata() ####
@@ -291,4 +300,5 @@ suppressPackageStartupMessages(library(rrcov))
 dodata()
 dodata(method="deterministic")
 dodata(method="exact")
+dodata(method="MRCD")
 ##doexactfit()

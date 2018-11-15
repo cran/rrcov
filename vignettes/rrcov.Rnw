@@ -1884,18 +1884,18 @@ uses all slots and methods defined there). The function
 the class. It can  be called either by providing a data frame or
 matrix and a grouping variable (factor) or a formula specifying the
 model to be used. Let us consider the following simple example with
-the data set \code{diabetes} from package \pkg{mclust}: the grouping
-variable is \code{diabetes$class} and all remaining variables are the
-explanatory variables. The code
+the data set \code{diabetes}: the grouping
+variable is \code{group} and the
+explanatory variables are \code{insulin}, \code{glucose} and \code{sspg}. The code
 \begin{Scode}
-R> x <- diabetes[,-1]
-R> grpvar <- diabetes$class
+R> x <- diabetes[, c("insulin", "glucose", "sspg")]
+R> grpvar <- diabetes$group
 R> LdaClassic(x, grpvar)
 \end{Scode}
 can be rewritten as (and is equivalent to) the following code using
 the formula interface:
 \begin{Scode}
-R> LdaClassic(class ~ ., data = diabetes)
+R> LdaClassic(group~insulin+glucose+sspg, data = diabetes)
 \end{Scode}
 
 The function \code{LdaClassic()} performs standard linear
@@ -2068,20 +2068,11 @@ focused on three primary variables and the 145 individuals were
 classified initially on the basis of their plasma glucose levels
 into three groups: normal subjects, chemical diabetes and overt
 diabetes. This data set was also analyzed by \citet*{hawkins:97} in
-the context of robust linear discriminant analysis. The data set
-is available in several \proglang{R} packages: \code{diabetes} in package
-\pkg{mclust} \citep{mclust}, \code{chemdiab} in package \pkg{locfit} \citep{locfit} and
-\code{diabetes.dat} in \pkg{Rfwdmv} \citep{Rfwdmv}. We are going to use the one
-from \pkg{mclust} in which the value of the second variable,
-$insulin$, on the 104th observation, is 45 while for the other data
-sets this value is 455 (note that 45 is more
-likely to be an outlier in this variable than 455).
+the context of robust linear discriminant analysis.
 
-
-We start with bringing the data set \code{diabetes} from package
-\pkg{mclust} into the workspace by typing
+We start with bringing the data set \code{diabetes} into the workspace by typing
 <<lda-prelim>>=
-data("diabetes", package="mclust")
+data("diabetes")
 @
 Using the package \pkg{lattice} \citep{Sarkar:2008} we produce a three dimensional
 cloud plot of the data (Figure~\ref{lda-cloud}).
@@ -2092,7 +2083,8 @@ library("lattice")    # load the graphical library
 sup.sym <- trellis.par.get("superpose.symbol")
 sup.sym$pch <- c(1,2,3,4,5)
 trellis.par.set("superpose.symbol", sup.sym)
-cloud.plt <- cloud(insulin ~ glucose + sspg, groups = class, data = diabetes, auto.key=TRUE)
+cloud.plt <- cloud(insulin ~ glucose + sspg, 
+    groups = group, data = diabetes, auto.key=TRUE)
 @
 \begin{center}
 \begin{figure}[h!]
@@ -2112,7 +2104,7 @@ the linear discriminant functions together with the corresponding constants.
 The prior probabilities (either provided by the user or estimated as
 a proportion of the groups) are also presented.
 << lda-classic>>=
-lda <- LdaClassic(class~., data=diabetes)
+lda <- LdaClassic(group~insulin+glucose+sspg, data=diabetes)
 lda
 @
 Now the \code{predict()} method can be used on the \code{Lda} object
@@ -2131,7 +2123,7 @@ the internal convenience function \code{rrcov:::.AER()}
 we can calculate and print the apparent error rate
 (which now is equal to 0.1103 and is lower than the obtained with the classical LDA 0.1310).
 << lda-robust>>=
-rlda <- Linda(class~., data=diabetes)
+rlda <- Linda(group~insulin+glucose+sspg, data=diabetes)
 rlda
 
 rlda.predict <- predict(rlda)
@@ -2143,7 +2135,7 @@ method ``MCD-B'' described above).
 We could choose the method by providing the \code{method}
 parameter to the function \code{Linda()}. For example the following call
 \begin{Scode}
-R> rlda <- Linda(class ~ ., data = diabetes, method = "fsa")
+R> rlda <- Linda(group~insulin+glucose+sspg, data = diabetes, method = "fsa")
 \end{Scode}
 will use the \citet*{hawkins:97} \textit{feasible solution algorithm} method.
 
@@ -2153,7 +2145,7 @@ data set differ substantially and we can expect improved results if quadratic
 discriminant analysis is used. Robust quadratic discriminant analysis is
 performed by the function \code{QdaCov()} which will return an object of class \code{QdaCov}.
 << qda-robust>>=
-rqda <- QdaCov(class~., data=diabetes)
+rqda <- QdaCov(group~insulin+glucose+sspg, data=diabetes)
 rqda
 rqda.predict <- predict(rqda)
 cat("\nApparent error rate: ", round(rrcov:::.AER(rqda.predict@ct),4))

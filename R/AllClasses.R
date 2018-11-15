@@ -11,6 +11,7 @@ setClass("PsiBwt", representation(M = "numeric"),
 ##  of slots which will be computed on demand, like the
 ##  mahalanobis/robust distances
 setClassUnion("Uvector", c("vector", "NULL"))
+setClassUnion("Unumeric", c("numeric", "NULL"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
 setClassUnion("Ulist", c("list", "NULL"))
 setClassUnion("Ufunction", c("function", "character", "NULL"))
@@ -68,6 +69,15 @@ setClass("CovMcd", representation(alpha = "numeric",
                                   cnp2 = "numeric"),
                     contains="CovRobust")
 
+setClass("CovMrcd", representation(alpha = "numeric",
+                                  quan = "numeric",
+                                  best = "Uvector",
+                                  cnp2 = "numeric",
+                                  icov = "matrix",
+                                  rho = "numeric",
+                                  target="matrix"),
+                    contains="CovRobust")
+
 setClass("CovOgk", representation(raw.cov = "matrix",
                                   raw.center = "vector",
                                   raw.mah = "Uvector",
@@ -113,6 +123,23 @@ setClass("CovControlMcd", representation(alpha="numeric",
                                           trace=FALSE,
                                           tolSolve=1e-14,
                                           use.correction=TRUE),
+                           contains="CovControl")
+
+## Control parameters for CovMrcd
+setClass("CovControlMrcd", representation(alpha="numeric",
+                                          h="Unumeric",
+                                          maxcsteps="numeric",
+                                          rho="Unumeric",
+                                          target = "character",
+                                          maxcond = "numeric"),
+                           prototype = list(alpha=0.5,
+                                          h=NULL,
+                                          maxcsteps=200,
+                                          rho=NULL,
+                                          target="identity",
+                                          maxcond=50,
+                                          trace=FALSE,
+                                          tolSolve=1e-14),
                            contains="CovControl")
 
 ## Control parameters for CovMest
@@ -327,7 +354,7 @@ setClass("PredictLda", representation(classification = "factor",
 setClass("Linda", representation(
                    l1med = "logical"),
                    contains="LdaRobust")
-                   
+
 setClass("LdaPP", representation(
                    raw.ldf = "matrix",
                    raw.ldfconst = "vector"),

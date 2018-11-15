@@ -26,6 +26,8 @@ dodata <- function(method) {
 
 ## Commented out - still to slow
 ##dodata(method="huber")
-dodata(method="mad")
 ##dodata(method="sest")
-dodata(method="class")
+
+## VT::14.11.2018 - Commented out: too slow
+##  dodata(method="mad")
+##  dodata(method="class")

@@ -47,7 +47,7 @@ CovClassic <- function(x, unbiased = TRUE)
 ## VT::17.06.2008
 ##setMethod("plot", "CovClassic", function(x, y="missing",
 setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing",
-                                which=c("all", "distance", "qqchi2", "tolEllipsePlot", "screeplot"),
+                                which=c("all", "distance", "qqchi2", "tolEllipsePlot", "screeplot", "pairs"),
                                 ask = (which=="all" && dev.interactive(TRUE)),
                                 cutoff,
                                 id.n,
@@ -85,7 +85,8 @@ setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing
             stop(sQuote("id.n")," must be in {1,..,",n,"}")
     }
 
-    md <- sqrt(getDistance(x))
+    ccov <- x
+    rd <- md <- sqrt(getDistance(x))
     which <- match.arg(which)
 
     op <- if (ask) par(ask = TRUE) else list()
@@ -107,6 +108,18 @@ setMethod("plot", signature(x="CovClassic", y="missing"), function(x, y="missing
             .tolellipse(ccov = x, cutoff=cutoff, id.n=id.n, tol=tol, ...)
         else if(which != "all")
             warning("Warning: For tolerance ellipses the dimension must be 2!")
+    }
+
+    if(which == "tolEllipsePlot" || which == "pairs") {
+        if(which == "tolEllipsePlot" & length(dim(data)) >= 2 && dim(data)[2] == 2){
+            if(!is.null(rd)){
+                .tolellipse(rcov=x, cutoff=cutoff, id.n=id.n, tol=tol, ...)
+            }
+        }else if(length(dim(data)) >= 2 && dim(data)[2] <= 10)
+        {
+            .rrpairs(x, ...)
+        }else if(which != "all")
+            warning("Warning: For tolerance ellipses the dimension must be less than 10!")
     }
 
     if(which == "all" || which == "screeplot") {

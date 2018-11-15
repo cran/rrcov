@@ -19,6 +19,27 @@ setMethod("restimate", "CovControlMcd", function(obj, x, ...)
     CovMcd(x, control = obj, ...)
 )
 
+CovControlMrcd <- function (alpha=0.5,
+                           h=NULL,
+                           maxcsteps=200,
+                           rho=NULL,
+                           target=c("identity", "equicorrelation"),
+                           maxcond=50,
+                           trace=FALSE)
+{
+    new("CovControlMrcd", alpha = alpha,
+                         h=h,
+                         maxcsteps=maxcsteps,
+                         rho=rho,
+                         target=match.arg(target),
+                         maxcond=maxcond,
+                         trace = trace)
+}
+
+setMethod("restimate", "CovControlMrcd", function(obj, x, ...)
+    CovMrcd(x, control = obj, ...)
+)
+
 CovControlMest <- function (r = 0.45,
                             arp = 0.05,
                             eps=1e-3,

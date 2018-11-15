@@ -1,6 +1,8 @@
 useDynLib(rrcov, .registration=TRUE)
 importFrom(stats4, plot, summary)
 importFrom(methods, show)
+importFrom("methods", "slot", "slotNames")
+importFrom("methods", "is", "new")
 importFrom(lattice, xyplot, panel.xyplot, panel.abline, ltext)
 importFrom(cluster, ellipsoidPoints)
 importFrom(mvtnorm, rmvnorm)
@@ -8,7 +10,6 @@ importFrom("grDevices", "dev.interactive", "palette")
 importFrom("graphics", "abline", "arrows", "axis", "box", "hist",
          "legend", "lines", "pairs", "par", "points", "rect",
          "strwidth", "text", "title")
-importFrom("methods", "is", "new")
 importFrom("stats", ".getXlevels", "cor", "cov", "cov.wt", "cov2cor",
          "dchisq", "density", "dnorm", "ecdf", "mad", "mahalanobis",
          "median", "model.matrix", "model.response", "na.fail",
@@ -22,6 +23,8 @@ export(CovClassic,
        Cov,
        CovRobust,
        CovMcd,
+       CovMrcd,
+       CovMrcd,
        CovMest,
        CovOgk,
        CovMve,
@@ -29,6 +32,7 @@ export(CovClassic,
        CovSde,
        CovMMest,
        CovControlMcd,
+       CovControlMrcd,
        CovControlMest,
        CovControlOgk,
        CovControlMve,
@@ -128,6 +132,7 @@ exportClasses(Cov,
               CovMMest,
               CovControl,
               CovControlMcd,
+              CovControlMrcd,
               CovControlMest,
               CovControlOgk,
               CovControlMve,
@@ -192,5 +197,6 @@ exportMethods(isClassic,
               biplot,
               scorePlot,
               getRaw,
-              isSingular
+              isSingular,
+              names
 )

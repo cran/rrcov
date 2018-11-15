@@ -25,6 +25,11 @@
 \alias{isClassic-methods} 
 \alias{getRaw}
 \alias{getRaw-methods} 
+\alias{names}
+\alias{names-methods} 
+\alias{names,Cov-method}
+\alias{$-methods}
+\alias{$,Cov-method}
 \usage{
 getCenter(obj)
 getCov(obj)
