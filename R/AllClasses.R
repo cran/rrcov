@@ -12,6 +12,7 @@ setClass("PsiBwt", representation(M = "numeric"),
 ##  mahalanobis/robust distances
 setClassUnion("Uvector", c("vector", "NULL"))
 setClassUnion("Unumeric", c("numeric", "NULL"))
+setClassUnion("Cnumeric", c("numeric", "character"))
 setClassUnion("Umatrix", c("matrix", "NULL"))
 setClassUnion("Ulist", c("list", "NULL"))
 setClassUnion("Ufunction", c("function", "character", "NULL"))
@@ -110,7 +111,7 @@ setClass("CovMMest", representation(c1 ="numeric",
 
 ## Control parameters for CovMcd
 setClass("CovControlMcd", representation(alpha="numeric",
-                                          nsamp="numeric",
+                                          nsamp="Cnumeric",
                                           scalefn="Ufunction",
                                           maxcsteps="numeric",
                                           seed="Uvector",

@@ -22,7 +22,7 @@ vrob = .vrobGK, smrob = "scaleTau2", svrob = "gk")
   \item{vrob}{ function for computing robust estimate
     of covariance between two random vectors - one could use the function
     proposed by Gnanadesikan and Kettenring (1972), see
-    \code{\link[robustbase]{covGK}()}. The C version of this function defined
+    \code{\link[robustbase]{covOGK}()}. The C version of this function defined
     by \code{svrob} is the default.
   }
   \item{smrob}{ a string indicating the name of the function for computing

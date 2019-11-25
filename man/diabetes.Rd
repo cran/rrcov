@@ -2,13 +2,10 @@
 \alias{diabetes}
 \docType{data}
 
-\title{Diabetes data}
+\title{Reaven and Miller diabetes data}
 
 \description{
 The data set contains five measurements made on 145 non-obese adult patients classified into three groups.
-
-Reaven and Miller (1979) examined the relationship between chemical
-subclinical and overt nonketotic diabetes in 145 non-obese adult subjects.
 
 The three primary variables are glucose intolerance (area under the straight
 line connecting glucose levels), insulin response to oral glucose (area under
@@ -35,10 +32,8 @@ data(diabetes)
 \item{glucose}{area under plasma glucose curve after a three hour oral glucose tolerance test (OGTT).}
 \item{insulin}{area under plasma insulin curve after a three hour oral glucose tolerance test (OGTT).}
 \item{sspg}{Steady state plasma glucose, a measure of insulin resistance.}
-\item{group}{the type of diabetes: a factor with levels \code{normal}, \code{chemical} and \code{overt}.}
+\item{group}{the type of diabetes: a factor with levels \code{normal}, \code{chemical} and \code{overt}.}}
 }
-}
-
 \source{
 Reaven, G. M. and Miller, R. G. (1979). An attempt to define the nature of chemical diabetes using a multidimensional analysis. \emph{Diabetologia} 16, 17--24.
 Andrews, D. F. and Herzberg, A. M. (1985). \emph{Data: A Collection of Problems from Many Fields for the Student and Research Worker}, Springer-Verlag, Ch. 36.
@@ -47,17 +42,18 @@ Andrews, D. F. and Herzberg, A. M. (1985). \emph{Data: A Collection of Problems 
 \references{
 Reaven, G. M. and Miller, R. G. (1979). An attempt to define the nature of chemical diabetes using a multidimensional analysis. \emph{Diabetologia} 16, 17--24.
 
-Friedman, H. P. and Rubin, J. (1967). On some invariant criteria for grouping data. \emph{Journal of the American Statistical Association} \bold{62}, 1159--1178.
+Friedman, H. P. and Rubin, J. (1967). On some invariant criteria for grouping
+data. \emph{Journal of the American Statistical Association} \bold{62}, 1159--1178.
 
-Hawkins, D. M. and McLachlan, G. J., 1997. High-breakdown linear discriminant analysis. \emph{Journal of the American Statistical Association} \bold{92} (437), 136--143.
+Hawkins, D. M. and McLachlan, G. J., 1997. High-breakdown linear
+discriminant analysis. \emph{Journal of the American Statistical
+Association} \bold{92} (437), 136--143.
 }
 
 \examples{
 data(diabetes)
-cc <- Linda(group~insulin+glucose+sspg, data=diabetes)
-cc
-pr <- predict(cc)
-tt <- mtxconfusion(cc@grp, pr@classification, printit=TRUE)
+(cc <- Linda(group~insulin+glucose+sspg, data=diabetes))
+(pr <- predict(cc))
 }
 
 \keyword{datasets}

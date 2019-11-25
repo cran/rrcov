@@ -368,8 +368,7 @@ library("lattice")    # load the graphical library
 sup.sym <- trellis.par.get("superpose.symbol")
 sup.sym$pch <- c(1,2,3,4,5)
 trellis.par.set("superpose.symbol", sup.sym)
-cloud.plt <- cloud(insulin ~ glucose + sspg, 
-    groups = group, data = diabetes, auto.key=TRUE)
+cloud.plt <- cloud(insulin ~ glucose + sspg, groups = group, data = diabetes, auto.key=TRUE)
 
 
 ###################################################
@@ -381,7 +380,7 @@ print(cloud.plt)
 ###################################################
 ### code chunk number 25: lda-classic
 ###################################################
-lda <- LdaClassic(group~insulin+glucose+sspg, data=diabetes)
+lda <- LdaClassic(group~glucose+insulin+sspg, data=diabetes)
 lda
 
 
@@ -394,7 +393,7 @@ predict(lda)
 ###################################################
 ### code chunk number 27: lda-robust
 ###################################################
-rlda <- Linda(group~insulin+glucose+sspg, data=diabetes)
+rlda <- Linda(group~glucose+insulin+sspg, data=diabetes)
 rlda
 
 rlda.predict <- predict(rlda)
@@ -404,7 +403,7 @@ cat("\nApparent error rate: ", round(rrcov:::.AER(rlda.predict@ct),4))
 ###################################################
 ### code chunk number 28: qda-robust
 ###################################################
-rqda <- QdaCov(group~insulin+glucose+sspg, data=diabetes)
+rqda <- QdaCov(group~glucose+insulin+sspg, data=diabetes)
 rqda
 rqda.predict <- predict(rqda)
 cat("\nApparent error rate: ", round(rrcov:::.AER(rqda.predict@ct),4))

@@ -1,3 +1,18 @@
+2019-11-20  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.4-9
+    * DESCRIPTION (Version): 1.4-8
+    *
+    * - Added data set \code{diabetes}; data set \code{soil} from package \code{rrcovHD} moved here.
+    * - Linear and quadratic discriminant analysis can use the MRCD estimates.
+    * - Fixed an issue with CovControlMcd(nsamp="deterministic") - this would not work, 
+    *       because nsamp was defined in the class definition as "numeric". Now it is 
+    *       "Cnumeric" - union of "character" and "numeric'.
+    * - Corrected the code for Minimum Regularized Covariance Determinant estimator (MRCD) -
+    *       \code{CovMrcd()} - the step of adjusting the eignevalues in r6pack() is excluded
+    *       now because it has no effect when n > p.   
+    *
+    
 2018-11-14  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.4-7
@@ -8,7 +23,6 @@
     *
     *   data/octane.rda, man/octane.Rd - octane data set added
     *   data/olitos.rda, man/olitos.Rd - olitos data set moved from package rrcovHD
-    *   data/diabetes.rda, man/diabetes.Rd - diabetes data added
     *
     *   R/CovClassic.R, plot-utils.R: make the 'pairs' plot also
     *       available for classical covariance matrix
@@ -21,7 +35,7 @@
     *   vignettes/mybiblio.bib: Fixed issue with building
     *	    the vignette: non-ascii symbols in .bib
     *       (see mail from K. Hornik from 14.05.2018)
-    *	src/rrcov_init.c: Registeration of native routines
+    *	src/rrcov_init.c: Registration of native routines
     *
 
 2016-09-03  Valentin Todorov  <valentin.todorov@chello.at>

@@ -14,8 +14,6 @@ of 4 observations classified as "probably Attic" and the remaining 9 as "probabl
 }
 \usage{
 data(pottery)
-pottery
-pottery.test
 }
 \format{
   Two data frames with 27 an 13 observations on the following 7 variables.

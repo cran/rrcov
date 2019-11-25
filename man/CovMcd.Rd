@@ -113,7 +113,7 @@ CovMcd(x,
 %    will be deprecated i.e. is going to be made obsolete in future versions.
 %}
 \seealso{
-  \code{\link[MASS]{cov.mcd}} from package \pkg{MASS}
+  \code{\link[MASS]{cov.rob}} from package \pkg{MASS}
 }
 \examples{
 data(hbk)

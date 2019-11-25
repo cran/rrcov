@@ -89,7 +89,7 @@ CovMve(x, alpha = 1/2, nsamp = 500, seed = NULL, trace = FALSE, control)
 Matias Salibian-Barrera \email{matias@stat.ubc.ca}
 }
 \seealso{
-  \code{\link[MASS]{cov.mve}} from package \pkg{MASS}
+  \code{\link[MASS]{cov.rob}} from package \pkg{MASS}
 }
 \examples{
 data(hbk)

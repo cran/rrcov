@@ -25,12 +25,12 @@
 #'
 .detmrcd <- function(x, h=NULL, alpha=.75, rho=NULL,
             maxcond=50, minscale=0.001, target=0, maxcsteps = 200,
-            hsets.init=NULL, save.hsets=missing(hsets.init), full.h = save.hsets,
+            hsets.init=NULL, save.hsets=missing(hsets.init),
             trace=FALSE)
 {
 ## NOTES: VT
 ##
-##  - X use r6pack from robustbase
+##  - use r6pack from robustbase
 ##  - X check subset #5 - something is wrong there
 ##  - X mX is not back transformed to compensate the SVD rescaling
 ##      ==> the distances returned by MWRCD are different from
@@ -50,12 +50,11 @@
 ##' @title Robust Distance based observation orderings based on robust "Six pack"
 ##' @param x  n x p data matrix
 ##' @param h  integer
-##' @param full.h full (length n) ordering or only the first h?
 ##' @param scaled is 'x' is already scaled?  otherwise, apply doScale(x, median, scalefn)
 ##' @param scalefn function to compute a robust univariate scale.
-##' @return a h' x 6 matrix of indices from 1:n; if(full.h) h' = n else h' = h
-r6pack <- function(x, h, full.h, scaled=TRUE,
-                   scalefn = Qn)
+##' @return a h' x 6 matrix of indices from 1:n
+r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
+                   scaled=TRUE, scalefn = Qn)
 {
     ## As the considered initial estimators Sk may have very
     ## inaccurate eigenvalues, we try to 'improve' them by applying
@@ -69,11 +68,12 @@ r6pack <- function(x, h, full.h, scaled=TRUE,
         n <- d[1]
         stopifnot(h <= n)
         lambda <- doScale(data %*% P, center=median, scale=scalefn)$scale
-        sqrtcov    <- P %*% (lambda * t(P)) ## == P %*% diag(lambda) %*% t(P)
-        sqrtinvcov <- P %*% (t(P) / lambda) ## == P %*% diag(1/lambda) %*% t(P)
-	estloc <- colMedians(data %*% sqrtinvcov) %*% sqrtcov
+        sqrtcov    <- P %*% (lambda * t(P))         ## == P %*% diag(lambda) %*% t(P)
+        sqrtinvcov <- P %*% (t(P) / lambda)         ## == P %*% diag(1/lambda) %*% t(P)
+        estloc <- colMedians(data %*% sqrtinvcov) %*% sqrtcov
         centeredx <- (data - rep(estloc, each=n)) %*% P
-	sort.list(mahalanobisD(centeredx, FALSE, lambda))[1:h]# , partial = 1:h
+
+        sort.list(mahalanobisD(centeredx, FALSE, lambda))[1:h]# , partial = 1:h
     }
 
     ##
@@ -166,27 +166,36 @@ r6pack <- function(x, h, full.h, scaled=TRUE,
     P <- ogkscatter(x, scalefn, only.P = TRUE)
     hsets[,6] <- initset(x, scalefn=scalefn, P=P, h=h)
 
-    ## Now combine the six pack :
-    if(full.h) hsetsN <- matrix(integer(), n, nsets)
-    for(k in 1:nsets) ## sort each of the h-subsets in *increasing* Mah.distances
+    ##  No need of this code in MRCD.
+    ##  Instead of computing Mah. distances and sorting, just return hsets.
+    ##
+    ## Now combine the six pack:
+    ret <- if(adjust.eignevalues)
     {
-        xk <- x[hsets[,k], , drop=FALSE]
-	    svd <- classPC(xk, signflip=FALSE) # [P,T,L,r,centerX,meanvct] = classSVD(xk)
-
-        ## VT::15.10.2018 - we do not need this check, because we are using r6pack
-        ##  also for MRCD. Comment it out , maybe should move it to detmcd: FIXME
-        ##  if(svd$rank < p) ## FIXME: " return("exactfit")  "
-        ##      stop('More than half of the observations lie on a hyperplane.')
-
-        score <- (x - rep(svd$center, each=n)) %*% svd$loadings
-        ord <- order(mahalanobisD(score, FALSE, sqrt(abs(svd$eigenvalues))))
         if(full.h)
-            hsetsN[,k] <- ord
-        else hsets[,k] <- ord[1:h]
-    }
-    ## return
-    if(full.h) hsetsN else hsets
-} ## {r6pack}
+            hsetsN <- matrix(integer(), n, nsets)
+        for(k in 1:nsets) ## sort each of the h-subsets in *increasing* Mah.distances
+        {
+            xk <- x[hsets[,k], , drop=FALSE]
+    	    svd <- classPC(xk, signflip=FALSE) # [P,T,L,r,centerX,meanvct] = classSVD(xk)
+
+            ## VT::15.10.2018 - we do not need this check, because we are using r6pack
+            ##  also for MRCD. Comment it out , maybe should move it to detmcd: FIXME
+            ##  if(svd$rank < p) ## FIXME: " return("exactfit")  "
+            ##      stop('More than half of the observations lie on a hyperplane.')
+
+            score <- (x - rep(svd$center, each=n)) %*% svd$loadings
+            ord <- order(mahalanobisD(score, FALSE, sqrt(abs(svd$eigenvalues))))
+            if(full.h)
+                hsetsN[,k] <- ord
+            else hsets[,k] <- ord[1:h]
+        }
+
+        if(full.h) hsetsN else hsets
+    } else hsets
+
+    ret
+}
 
 # return target correlation matrix with given structure
 # input:
@@ -203,8 +212,7 @@ r6pack <- function(x, h, full.h, scaled=TRUE,
 
     if(target == 0){
         R <- I
-    }
-    else if(target == 1) {
+    } else if(target == 1) {
 ##        cortmp <- cor.fk(t(mX))       # from pcaPP
 ##        cortmp <- cor(t(mX), method="kendal")
         cortmp <- cor(t(mX), method="spearman")
@@ -432,15 +440,13 @@ eigenEQ <- function(T)
 
     ## Assume that 'hsets.init' already contains h-subsets: the first h observations each
     if(is.null(hsets.init)) {
-	   hsets.init <- r6pack(x=t(mX), h=h, full.h=full.h, scaled=FALSE, scalefn=Qn)
+	   hsets.init <- r6pack(x=t(mX), h=h, full.h=FALSE, adjust.eignevalues=FALSE, scaled=FALSE, scalefn=Qn)
 	   dh <- dim(hsets.init)
     } else { ## user specified, (even just *one* vector):
 	   if(is.vector(hsets.init)) hsets.init <- as.matrix(hsets.init)
 	   dh <- dim(hsets.init)
 	   if(dh[1] < h || dh[2] < 1)
 	       stop("'hsets.init' must be a  h' x L  matrix (h' >= h) of observation indices")
-	   if(full.h && dh[1] != n)
-	       warning("'full.h' is true, but 'hsets.init' has less than n rows")
 	   if(min(hsets.init) < 1 || max(hsets.init) > n)
 	       stop("'hsets.init' must be in {1,2,...,n}; n = ", n)
     }

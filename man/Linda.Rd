@@ -11,8 +11,8 @@
 Linda(x, ...)
 
 \method{Linda}{default}(x, grouping, prior = proportions, tol = 1.0e-4,
-                 method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
-                 alpha=0.5, l1med=FALSE, trace=FALSE, ...)
+                 method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa", "mrcd", "ogk"),
+                 alpha=0.5, l1med=FALSE, cov.control, trace=FALSE, ...)
 }
 \arguments{
   \item{x}{a matrix or data frame containing the explanatory variables (training set). }
@@ -28,6 +28,10 @@ Linda(x, ...)
   \item{l1med}{whether to use L1 median (space median) instead of MCD to compute
     the group means locations in order to center the data in methods \code{mcdB} and \code{mcdC}. 
     useful in case of groups with small size. Default is \code{l1med = FALSE}.}
+  \item{cov.control}{specifies which covariance estimator to use by providing 
+    a \code{\link{CovControl-class}} object. 
+    The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}. 
+    If \code{cov.control=NULL} is specified, the classical estimates will be used by calling \code{\link{CovClassic}}}.
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}
   \item{\dots}{arguments passed to or from other methods}
 }
@@ -47,7 +51,7 @@ Linda(x, ...)
     Todorov, V. and Pires, A.M. (2007) Comparative Performance of Several Robust
         Linear Discriminant Analysis Methods.
         \emph{REVSTAT Statistical Journal}, \bold{5}, p 63--83.
-        URL \url{www.ine.pt/revstat/pdf/rs070104.pdf}.
+        URL \url{http://www.ine.pt/revstat/pdf/rs070104.pdf}.
 
     Todorov V and Filzmoser P (2009),
       An Object Oriented Framework for Robust Multivariate Analysis.
@@ -56,8 +60,7 @@ Linda(x, ...)
 }
 \author{ Valentin Todorov \email{valentin.todorov@chello.at}
 }
-\section{Warning }{Still an experimental version!}
-\seealso{  \code{\link[rrcov]{CovMcd}} }
+\seealso{  \code{\link[rrcov]{CovMcd}}, \code{\link[rrcov]{CovMrcd}}  }
 \examples{
 ## Example anorexia
 library(MASS)

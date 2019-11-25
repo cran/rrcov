@@ -85,21 +85,20 @@ CovMrcd(x,
   URL \url{http://www.jstatsoft.org/v32/i03/}.
 }
 \author{ 
-Kris Boudt, Peter Rousseeuw, Steven Vanduffel and Tim Verdonk. 
+Kris Boudt, Peter Rousseeuw, Steven Vanduffel and Tim Verdonk. . Improved by Joachim Schreurs and Iwein Vranckx.
 Adapted for \pkg{rrcov} by Valentin Todorov \email{valentin.todorov@chello.at}
 }
 \seealso{
   \code{\link{CovMcd}}
 }
 \examples{
-## The result will be identical to MCD
+## The result will be similar to MCD
 data(hbk)
 hbk.x <- data.matrix(hbk[, 1:3])
 c0 <- CovMcd(hbk.x, alpha=0.75, use.correction=FALSE)
 cc <- CovMrcd(hbk.x, alpha=0.75)
 all.equal(c0$best, cc$best)
 all.equal(c0$raw.center, cc$center)
-all.equal(c0$raw.cov/c0$raw.cnp2[1], cc$cov/cc$cnp2)
 
 summary(cc)
 

@@ -9,8 +9,6 @@ CovMrcd <- function(x,
                    trace=control@trace,
                    control=CovControlMrcd())
 {
-##    target <- match.arg(target)
-
     if(is.data.frame(x))
         x <- data.matrix(x, rownames.force=FALSE)
     else if (!is.matrix(x))

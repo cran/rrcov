@@ -33,9 +33,10 @@ Linda.default <- function(x,
                  grouping,
                  prior = proportions,
                  tol = 1.0e-4,
-                 method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa"),
+                 method = c("mcd", "mcdA", "mcdB", "mcdC", "fsa", "mrcd", "ogk"),
                  alpha=0.5,
                  l1med=FALSE,
+                 cov.control,
                  trace=FALSE, ...)
 {
     if(is.null(dim(x)))
@@ -93,16 +94,30 @@ Linda.default <- function(x,
     names(g) <- NULL
     names(prior) <- levels(g)
 
+    if(missing(cov.control))
+        cov.control <- if(method == "mrcd") CovControlMrcd(alpha=alpha) else if(method == "ogk") CovControlOgk() else CovControlMcd(alpha=alpha)
+
+    if(method == "mcdC" && !inherits(cov.control, "CovControlMcd"))
+        stop("Method 'C' is defined only for MCD estimates!")
+
+    if(method == "mcdA" && !inherits(cov.control, "CovControlMcd"))
+        stop("Method 'A' is defined only for MCD estimates!")
+
+    if(method == "mrcd" && !inherits(cov.control, "CovControlMrcd"))
+        stop("Method 'mrcd' is defined only for MRCD estimates!")
+    if(method == "ogk" && !inherits(cov.control, "CovControlOgk"))
+        stop("Method 'ogk' is defined only for OGK estimates!")
+
     if(method == "fsa"){
         if(nrow(x) > 5000 | ncol(x) > 100)
             stop("Method 'fsa' can handle at most 5000 cases and 100 variables!")
         xcov <- .wcovMwcd(x, grouping, alpha=alpha, trace=trace)
     } else if(method == "mcdA"){
-        xcov <- .wcovMcd(x, grouping, method="A", alpha=alpha)
-    } else if(method == "mcd" || method == "mcdB"){
-        xcov <- .wcovMcd(x, grouping, method="B", alpha=alpha, l1med=l1med)
+        xcov <- .wcovMcd(x, grouping, method="A", cov.control=cov.control)
+    } else if(method == "mcd" || method == "mrcd" || method == "mcdB" || method == "ogk"){
+        xcov <- .wcovMcd(x, grouping, method="B", l1med=l1med, cov.control=cov.control)
     } else if(method == "mcdC"){
-        xcov <- .wcovMcd(x, grouping, method="C", alpha=alpha, l1med=l1med)
+        xcov <- .wcovMcd(x, grouping, method="C", l1med=l1med, cov.control=cov.control)
     } else {
         stop(paste("Unknown method called: ", method))
     }
@@ -128,7 +143,7 @@ Linda.default <- function(x,
 }
 
 
-.wcovMcd <- function(x, grouping, method = c("A", "B", "C"), alpha=0.5, l1med=FALSE){
+.wcovMcd <- function(x, grouping, method = c("A", "B", "C"), alpha=0.5, l1med=FALSE, cov.control){
     xcall <- match.call()
     method <- match.arg(method)
     x <- as.matrix(x)
@@ -156,13 +171,16 @@ Linda.default <- function(x,
     if(method == "A" | !l1med)
     {
         for(i in 1:ng){
-            mcd <- CovMcd(x[which(g == lev[i]),], alpha=alpha)
+            mcd <- if(!is.null(cov.control)) restimate(cov.control, x[which(g == lev[i]),]) else Cov(x[which(g == lev[i]),])
             mX[i,] <- getCenter(mcd)
-            sumwt[i] <- sum(mcd@wt)
-            covX[,,i] <- getCov(mcd) * sumwt[i]
-            raw.mX[i,] <- mcd@raw.center
-            raw.sumwt[i] <- length(mcd@best)
-            raw.covX[,,i] <- mcd@raw.cov * raw.sumwt[i]
+            if(inherits(mcd, "CovMcd"))
+            {
+                sumwt[i] <- sum(mcd@wt)
+                covX[,,i] <- getCov(mcd) * sumwt[i]
+                raw.mX[i,] <- mcd@raw.center
+                raw.sumwt[i] <- length(mcd@best)
+                raw.covX[,,i] <- mcd@raw.cov * raw.sumwt[i]
+            }
         }
     } else
     {
@@ -193,13 +211,21 @@ Linda.default <- function(x,
         #Method B: center the data and compute the covariance matrix
         #of the centered data
 
-        mcd <- CovMcd(x - mX[g,], alpha=alpha)
+        mcd <- if(!is.null(cov.control)) restimate(cov.control, x - mX[g,]) else Cov(x - mX[g,])
         final.xcov <- list(wcov=getCov(mcd), means=t(t(mX)+getCenter(mcd)))
 
-        wcov <- mcd@raw.cov
-        mX <- t(t(mX)+mcd@raw.center)
-        mah <- mcd@raw.mah
-        weights <- mcd@raw.wt
+        if(inherits(mcd, "CovMcd"))
+        {
+            wcov <- mcd@raw.cov
+            mX <- t(t(mX)+mcd@raw.center)
+            mah <- mcd@raw.mah
+            weights <- mcd@raw.wt
+        }else
+        {
+            wcov <- getCov(mcd)
+            mX <- t(t(mX)+getCenter(mcd))
+            mah <- weights <- NULL
+        }
 
         method <- "mcd-B"
     }else if(method == "C"){
@@ -210,7 +236,7 @@ Linda.default <- function(x,
         ##
         ## Center the data and compute the means and covariance matrix
         ## of the centered data as in Method B
-        mcd <- CovMcd(x - mX[g,], alpha=alpha)
+        mcd <- restimate(cov.control, x - mX[g,])
 
         ## compute the group means as the means of these observations which are in
         ##  mcd@best, i.e. in case of two groups, if H=best

@@ -85,7 +85,7 @@ setMethod("restimate", "CovControlMve", function(obj, x, ...)
 
 
 ## Moved to AllClassess - should precede the definition of class CovMMest,
-## sinse used in the prototype
+## since used in the prototype
 ##
 ##CovControlSest <- function (bdp=0.5,
 ##                            arp=0.1,
