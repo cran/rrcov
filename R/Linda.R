@@ -95,7 +95,10 @@ Linda.default <- function(x,
     names(prior) <- levels(g)
 
     if(missing(cov.control))
-        cov.control <- if(method == "mrcd") CovControlMrcd(alpha=alpha) else if(method == "ogk") CovControlOgk() else CovControlMcd(alpha=alpha)
+        cov.control <- if(method == "mrcd") CovControlMrcd(alpha=alpha)
+                       else if(method == "ogk") CovControlOgk()
+                       else if(method %in% c("mcd", "mcdA", "mcdB", "mcdC")) CovControlMcd(alpha=alpha)
+                       else NULL
 
     if(method == "mcdC" && !inherits(cov.control, "CovControlMcd"))
         stop("Method 'C' is defined only for MCD estimates!")
@@ -105,8 +108,14 @@ Linda.default <- function(x,
 
     if(method == "mrcd" && !inherits(cov.control, "CovControlMrcd"))
         stop("Method 'mrcd' is defined only for MRCD estimates!")
+
     if(method == "ogk" && !inherits(cov.control, "CovControlOgk"))
         stop("Method 'ogk' is defined only for OGK estimates!")
+
+    if(inherits(cov.control, "CovControlMrcd"))
+        method <- "mrcd"
+    if(inherits(cov.control, "CovControlOgk"))
+        method <- "ogk"
 
     if(method == "fsa"){
         if(nrow(x) > 5000 | ncol(x) > 100)
@@ -122,13 +131,19 @@ Linda.default <- function(x,
         stop(paste("Unknown method called: ", method))
     }
 
-    inv <- solve(xcov$wcov)
+    ##  VT::27.11.2019
+    ##  inv <- solve(xcov$wcov)
+    inv <- if(!is.null(xcov$winv)) xcov$winv
+           else if(!.isSingular(xcov$wcov))  solve(xcov$wcov)
+           else .pinv(xcov$wcov)
+
     ldf <- xcov$means %*% inv
     ldfconst <- diag(log(prior) - ldf %*% t(xcov$means)/2)
     if(!is.null(xcov$raw.means) && !is.null(xcov$raw.wcov)){
         raw.means <- xcov$raw.means
         raw.wcov <- xcov$raw.wcov
-        inv <- solve(raw.wcov)
+        ## inv <- solve(raw.wcov)
+        inv <- if(!.isSingular(raw.wcov))  solve(raw.wcov) else .pinv(raw.wcov)
         raw.ldf <- raw.means %*% inv
         raw.ldfconst <- diag(log(prior) - raw.ldf %*% t(raw.means)/2)
     }else{
@@ -139,7 +154,8 @@ Linda.default <- function(x,
     }
     return (new("Linda", call=xcall, prior=prior, counts=counts,
                  center=xcov$means, cov=xcov$wcov, ldf = ldf, ldfconst = ldfconst,
-                 method=method, l1med=l1med, X=x, grp=g))
+                 method=method, l1med=l1med, X=x, grp=g,
+                 covobj=xcov$covobj, control=cov.control))
 }
 
 
@@ -195,7 +211,7 @@ Linda.default <- function(x,
             wcov <- wcov + covX[,,i]
         }
         wcov <- wcov/(sum(sumwt)-ng)
-        final.xcov <- list(wcov=wcov, means=mX)
+        final.xcov <- list(wcov=wcov, means=mX, covobj=NULL)
 
         ## pool the raw estimates
         wcov <- matrix(0,p,p)
@@ -212,7 +228,8 @@ Linda.default <- function(x,
         #of the centered data
 
         mcd <- if(!is.null(cov.control)) restimate(cov.control, x - mX[g,]) else Cov(x - mX[g,])
-        final.xcov <- list(wcov=getCov(mcd), means=t(t(mX)+getCenter(mcd)))
+        winv <- if("icov" %in% slotNames(mcd)) mcd@icov else NULL
+        final.xcov <- list(wcov=getCov(mcd), winv=winv, means=t(t(mX)+getCenter(mcd)), covobj=mcd)
 
         if(inherits(mcd, "CovMcd"))
         {
@@ -262,8 +279,10 @@ Linda.default <- function(x,
     dimnames(final.xcov$wcov) <- list(dimn[[2]], dimn[[2]])
     dimnames(final.xcov$means) <- list(levels(g), dimn[[2]])
 
-    ans <- list(call=xcall, means=final.xcov$means, wcov=final.xcov$wcov, method=method,
-                raw.means=mX, raw.wcov=wcov, raw.mah=mah, raw.wt=weights)
+    ans <- list(call=xcall, means=final.xcov$means, wcov=final.xcov$wcov, winv=final.xcov$winv,
+                method=method,
+                raw.means=mX, raw.wcov=wcov, raw.mah=mah, raw.wt=weights,
+                covobj=final.xcov$covobj)
 
     class(ans) <- "wcov"
     return(ans)
@@ -372,7 +391,7 @@ Linda.default <- function(x,
 
     ans <- list(call=xcall,
                 raw.means=xmean, raw.wcov=xcov, raw.mah=mah, raw.wt=weights,
-                means=final.cov$means, wcov=final.cov$wcov)
+                means=final.cov$means, wcov=final.cov$wcov, covobj=NULL)
     class(ans) <- "wcov"
     return(ans)
 }

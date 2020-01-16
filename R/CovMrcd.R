@@ -37,11 +37,6 @@ CovMrcd <- function(x,
     ans$cov <- mcd$initcovariance
     ans$center <- as.vector(mcd$initmean)
 
-    if(!is.null(nms <- dimn[[2]])) {
-        dimnames(ans$cov) <- list(nms, nms)
-        names(ans$center) <- nms
-    }
-
     ans$n.obs <- n
     ans$best <- sort(as.vector(mcd$best))
     ans$alpha <- alpha
@@ -60,6 +55,12 @@ CovMrcd <- function(x,
 
     ans <- c(ans, mcd[c("calpha", "iBest","n.csteps", if(save.hsets) "initHsets", "icov","rho", "target")])
     class(ans) <- "mcd"
+
+    if(!is.null(nms <- dimn[[2]])) {
+        dimnames(ans$cov) <- list(nms, nms)
+        dimnames(ans$icov) <- list(nms, nms)
+        names(ans$center) <- nms
+    }
 
     new("CovMrcd",
         call= ans$call,

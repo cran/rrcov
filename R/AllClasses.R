@@ -42,6 +42,8 @@ setClass("Cov", representation(call = "language",
                               "VIRTUAL"),
                  prototype=list(det=-1))
 
+setClassUnion("UCov", c("Cov", "NULL"))
+
 setClass("SummaryCov", representation(covobj = "Cov",
                               evals = "vector"))
 
@@ -337,6 +339,8 @@ setClass("Lda", representation(call = "language",
                                method = "character",
                                X = "Umatrix",
                                grp = "factor",
+                               covobj  = "UCov",
+                               control  = "UCovControl",
                                "VIRTUAL"))
 
 setClass("SummaryLda", representation(ldaobj = "Lda"))

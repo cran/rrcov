@@ -2,6 +2,11 @@
 ##  from the version of the package
 suppressPackageStartupMessages(library(rrcov))
 
+## VT::14.01.2020
+##  On some platforms minor differences are shown - use
+        ## IGNORE_RDIFF_BEGIN
+        ## IGNORE_RDIFF_END
+
 dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
     domcd <- function(x, xname, nrep=1){
         n <- dim(x)[1]
@@ -56,12 +61,16 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
     cat("Data Set               n   p  Half LOG(obj)        Time\n")
     cat("========================================================\n")
     domcd(heart[, 1:2], data(heart), nrep)
+## IGNORE_RDIFF_BEGIN
     domcd(starsCYG,data(starsCYG), nrep)
+## IGNORE_RDIFF_END
     domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
     domcd(stack.x,data(stackloss), nrep)
     domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
     domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
+## IGNORE_RDIFF_BEGIN
     domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+## IGNORE_RDIFF_END
     domcd(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 
     domcd(brain, "Animals", nrep)

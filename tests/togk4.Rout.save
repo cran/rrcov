@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2013-08-17 r63608) -- "Unsuffered Consequences"
-Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: i386-w64-mingw32/i386 (32-bit)
+R Under development (unstable) (2020-01-08 r77640) -- "Unsuffered Consequences"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -18,6 +18,11 @@ Type 'q()' to quit R.
 > ## VT::15.09.2013 - this will render the output independent
 > ##  from the version of the package
 > suppressPackageStartupMessages(library(rrcov))
+> 
+> ## VT::14.01.2020
+> ##  On some platforms minor differences are shown - use
+>         ## IGNORE_RDIFF_BEGIN
+>         ## IGNORE_RDIFF_END
 > 
 > dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTMCD","MASS")){
 +     domcd <- function(x, xname, nrep=1){
@@ -73,12 +78,16 @@ Type 'q()' to quit R.
 +     cat("Data Set               n   p  Half LOG(obj)        Time\n")
 +     cat("========================================================\n")
 +     domcd(heart[, 1:2], data(heart), nrep)
++ ## IGNORE_RDIFF_BEGIN
 +     domcd(starsCYG,data(starsCYG), nrep)
++ ## IGNORE_RDIFF_END
 +     domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
 +     domcd(stack.x,data(stackloss), nrep)
 +     domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
 +     domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
++ ## IGNORE_RDIFF_BEGIN
 +     domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
++ ## IGNORE_RDIFF_END
 +     domcd(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 + 
 +     domcd(brain, "Animals", nrep)
@@ -327,4 +336,4 @@ V5   -252.2   -155.9   1615.4    418.6    329.2
 > 
 > proc.time()
    user  system elapsed 
-   0.46    0.03    0.48 
+   0.82    0.24    1.06 

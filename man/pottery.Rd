@@ -71,13 +71,12 @@ plot(mcd, which="tolEllipsePlot", class=TRUE, col=gcol, pch=gpch)
 ## Perform classical LDA and plot the data, 0.975 tolerance ellipses
 ##  and LDA separation line
 ##
-require(ellipse)
 x <- pottery[,c("MG", "CA")]
 grp <- pottery$origin
 lda <- LdaClassic(x, grp)
 lda
-e1 <- ellipse(lda@cov, centre=lda@center[1,])
-e2 <- ellipse(lda@cov, centre=lda@center[2,])
+e1 <- getEllipse(loc=lda@center[1,], cov=lda@cov)
+e2 <- getEllipse(loc=lda@center[2,], cov=lda@cov)
 
 plot(CA~MG, data=pottery, col=gcol, pch=gpch,
     xlim=c(min(MG,e1[,1], e2[,1]), max(MG,e1[,1], e2[,1])),
@@ -94,7 +93,6 @@ lines(e2, type="l", col=col[2])
 ## Perform robust (MCD) LDA and plot data, classical and
 ##  robust separation line
 ##
-require(ellipse)
 plot(CA~MG, data=pottery, col=gcol, pch=gpch)
 lda <- LdaClassic(x, grp)
 ab <- lda@ldf[1,] - lda@ldf[2,]

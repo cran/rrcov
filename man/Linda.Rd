@@ -30,8 +30,10 @@ Linda(x, ...)
     useful in case of groups with small size. Default is \code{l1med = FALSE}.}
   \item{cov.control}{specifies which covariance estimator to use by providing 
     a \code{\link{CovControl-class}} object. 
-    The default is \code{\link{CovControlMcd-class}} which will indirectly call \code{\link{CovMcd}}. 
-    If \code{cov.control=NULL} is specified, the classical estimates will be used by calling \code{\link{CovClassic}}}.
+    The default is \code{\link{CovControlMcd-class}} which will 
+    indirectly call \code{\link{CovMcd}}. 
+    If \code{cov.control=NULL} is specified, the classical estimates 
+    will be used by calling \code{\link{CovClassic}}}.
   \item{trace}{whether to print intermediate results. Default is \code{trace = FALSE}.}
   \item{\dots}{arguments passed to or from other methods}
 }

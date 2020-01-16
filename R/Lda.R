@@ -71,7 +71,7 @@ setMethod("predict", "Lda", function(object, newdata){
             posterior[i,j] <- exp(xx[i,j])/tmp
     }
 
-    cl <- factor(nm[max.col(xx)], levels = lev)
+    cl <- factor(nm[max.col(xx, "first")], levels = lev)
     new("PredictLda", classification=cl, posterior=posterior, x = xx)
 }
 

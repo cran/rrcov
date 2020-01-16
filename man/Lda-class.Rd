@@ -24,7 +24,12 @@
     \item{\code{method}:}{a character string giving the estimation method used}
     \item{\code{X}:}{the training data set (same as the input parameter x of the constructor function)}
     \item{\code{grp}:}{grouping variable:  a factor specifying the class for each observation.}   
-   
+    \item{\code{covobj}:}{object of class \code{"Cov"} containing the estimate 
+        of the common covariance matrix of the centered data. It is not NULL 
+        only in case of method "B".} 
+    \item{\code{control}:}{object of class \code{"CovControl"} specifying which estimate 
+    and with what estimation options to use for the group means and common covariance 
+    (or \code{NULL} for classical linear discriminant analysis)}   
   }
 }
 \section{Methods}{

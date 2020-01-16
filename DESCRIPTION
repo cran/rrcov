@@ -1,7 +1,7 @@
 Package: rrcov
-Version: 1.4-9
-Date: 2019-11-20
-VersionNote: Released 1.4-7 on 2018-11-15 on CRAN
+Version: 1.5-2
+Date: 2020-01-14
+VersionNote: Released 1.4-9 on 2019-11-25 on CRAN
 Title: Scalable Robust Estimators with High Breakdown Point
 Author: Valentin Todorov <valentin.todorov@chello.at>
 Description: Robust Location and Scatter Estimation and Robust
@@ -15,11 +15,11 @@ Description: Robust Location and Scatter Estimation and Robust
         Boudt et al. (2019) <doi:10.1007/s11222-019-09869-x>.
 Maintainer: Valentin Todorov <valentin.todorov@chello.at>
 Depends: R (>= 2.10), robustbase (>= 0.92.1), methods
-Imports: stats, stats4, mvtnorm, lattice, cluster, pcaPP
-Suggests: grid, MASS, ellipse
+Imports: stats, stats4, mvtnorm, lattice, pcaPP
+Suggests: grid, MASS
 LazyLoad: yes
 License: GPL (>= 2)
 Repository: CRAN
-Packaged: 2019-11-20 11:09:05 UTC; todorovv
+Packaged: 2020-01-14 16:21:56 UTC; todorovv
 NeedsCompilation: yes
-Date/Publication: 2019-11-25 10:00:02 UTC
+Date/Publication: 2020-01-16 18:40:06 UTC

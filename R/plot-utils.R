@@ -1,3 +1,61 @@
+######
+##  VT::14.01.2020
+##
+##
+##  roxygen2::roxygenise("C:/projects/statproj/R/rrcov")
+##
+#' Calculates the points for drawing a confidence ellipsoid
+#'
+#' @description A simple function to calculate the points of
+#'   a confidence ellipsoid, by default \code{dist=qchisq(0.975, 2)}
+#' @param loc location vector
+#' @param cov a \code{pXp} covariance matrix
+#' @param crit the confidence level, default is \code{crit=0.975}
+#' @return  A matrix with two columns containing the calculated points.
+#'
+#' @examples
+#'
+#' data(hbk)
+#' cc <- cov.wt(hbk)
+#' e1 <- getEllipse(loc=cc$center[1:2], cov=cc$cov[1:2,1:2])
+#' e2 <- getEllipse(loc=cc$center[1:2], cov=cc$cov[1:2,1:2], crit=0.99)
+#' plot(X2~X1, data=hbk,
+#'     xlim=c(min(X1, e1[,1], e2[,1]), max(X1,e1[,1], e2[,1])),
+#'     ylim=c(min(X2, e1[,2], e2[,2]), max(X2,e1[,2], e2[,2])))
+#' lines(e1, type="l", lty=1, col="red")
+#' lines(e2, type="l", lty=2, col="blue")
+#' legend("topleft", legend=c(0.975, 0.99), lty=1:2, col=c("red", "blue"))
+#'
+#' @export
+#' @author Valentin Todorov, \email{valentin.todorov@@chello.at}
+#'
+getEllipse <- function(loc=c(0, 0), cov=matrix(c(1,0,0,1), ncol=2), crit=0.975) {
+    ## A simple function to calculate the points of a confidence ellipsoid,
+    ##  by default \code{dist=qchisq(0.975, 2)}
+    ## input: data set location and covariance estimate, cutoff
+
+    if (length(d <- dim(cov)) != 2 || (p <- d[1]) != d[2])
+        stop("'cov' must be p x p  cov-matrix defining an ellipsoid")
+
+    dist <- sqrt(qchisq(crit, p))
+    A <- solve(cov)
+    eA <- eigen(A)
+    ev <- eA$values
+
+    lambda1 <- max(ev)
+    lambda2 <- min(ev)
+    eigvect <- eA$vectors[, order(ev)[2]]
+
+    z <- seq(0, 2 * pi, by = 0.01)
+    z1 <- dist/sqrt(lambda1) * cos(z)
+    z2 <- dist/sqrt(lambda2) * sin(z)
+    alfa <- atan(eigvect[2]/eigvect[1])
+    r <- matrix(c(cos(alfa),  - sin(alfa), sin(alfa), cos(alfa)), ncol = 2)
+    z <- t(t(cbind(z1, z2) %*% r) + loc)    #   xmin <- min(x, z[, 1])
+
+    z
+}
+
 ## Internal class defining a default legend parameters to be used
 ##  in plots with both robust and classical lines in the same panel
 ##  (e.g. scree plot, tolerance ellipses)
@@ -173,28 +231,6 @@ myscreeplot <- function(rcov, ccov) {
     ...)
 {
 
-## MM: This is nothing else but a version  cluster::ellipsoidPoints() !! -- FIXME
-    ellips <- function(loc, cov) {
-        ## calculates a 97,5% ellipsoid
-        ## input: data set, location and covariance estimate, cutoff
-
-        dist <- sqrt(qchisq(0.975, 2))
-        A <- solve(cov)
-        eA <- eigen(A)
-        ev <- eA$values
-        lambda1 <- max(ev)
-        lambda2 <- min(ev)
-        eigvect <- eA$vectors[, order(ev)[2]]
-        z <- seq(0, 2 * pi, by = 0.01)
-        z1 <- dist/sqrt(lambda1) * cos(z)
-        z2 <- dist/sqrt(lambda2) * sin(z)
-        alfa <- atan(eigvect[2]/eigvect[1])
-        r <- matrix(c(cos(alfa),  - sin(alfa), sin(alfa), cos(alfa)), ncol = 2)
-        z <- t(t(cbind(z1, z2) %*% r) + loc)    #   xmin <- min(x, z[, 1])
-
-        z
-    }
-
     leg <- new(".Legend")
 
     if(missing(rcov) || is.null(rcov)){
@@ -216,7 +252,7 @@ myscreeplot <- function(rcov, ccov) {
     r.loc <- getCenter(rcov)
     if(length(r.loc) == 0 ||  length(r.cov) == 0)
         stop("Invalid 'rcov' object: attributes center and cov missing!")
-    z1 <- ellips(loc = r.loc, cov = r.cov)
+    z1 <- getEllipse(loc = r.loc, cov = r.cov)
     rd <- sqrt(getDistance(rcov))
     x1 <- c(min(data[, 1], z1[, 1]), max(data[,1],z1[,1]))
     y1 <- c(min(data[, 2], z1[, 2]), max(data[,2],z1[,2]))
@@ -228,7 +264,7 @@ myscreeplot <- function(rcov, ccov) {
         if(length(c.loc) == 0 ||  length(c.cov) == 0)
             stop("Invalid 'ccov' object: attributes center and cov missing!")
         classic <- TRUE
-        z2 <- ellips(loc = c.loc, cov = c.cov)
+        z2 <- getEllipse(loc=c.loc, cov=c.cov)
         md <- sqrt(getDistance(ccov))
         x1 <- c(min(data[, 1], z1[, 1], z2[, 1]), max(data[,1],z1[,1], z2[,1]))
         y1 <- c(min(data[, 2], z1[, 2], z2[, 2]), max(data[,2],z1[,2], z2[,2]))
@@ -293,22 +329,6 @@ myscreeplot <- function(rcov, ccov) {
     xlim,
     ylim)
 {
-    ellips <- function(loc, cov) {
-        dist <- sqrt(qchisq(0.975, 2))
-        A <- solve(cov)
-        eA <- eigen(A)
-        ev <- eA$values
-        lambda1 <- max(ev)
-        lambda2 <- min(ev)
-        eigvect <- eA$vectors[, order(ev)[2]]
-        z <- seq(0, 2 * pi, by = 0.01)
-        z1 <- dist/sqrt(lambda1) * cos(z)
-        z2 <- dist/sqrt(lambda2) * sin(z)
-        alfa <- atan(eigvect[2]/eigvect[1])
-        r <- matrix(c(cos(alfa), -sin(alfa), sin(alfa), cos(alfa)),
-            ncol = 2)
-        t(loc + t(cbind(z1, z2) %*% r))
-    }
     if (is.data.frame(x))
         x <- data.matrix(x)
     if (!is.matrix(x) || !is.numeric(x))
@@ -334,8 +354,8 @@ myscreeplot <- function(rcov, ccov) {
     }
 
     xM <- colMeans(x)
-    z1 <- ellips(loc = xM, cov = n/(n - 1) * cov.wt(x)$cov)
-    z2 <- ellips(loc = x.loc, cov = x.cov)
+    z1 <- getEllipse(loc=xM, cov=n/(n - 1) * cov.wt(x)$cov)
+    z2 <- getEllipse(loc=x.loc, cov=x.cov)
     ## VT::09.06.200
     ## if no need of the classic ellipse - set it to the robust one
     ## otherwise the xlim and ylim will be set to fit both ellipses
@@ -476,7 +496,6 @@ myscreeplot <- function(rcov, ccov) {
         X <- cbind(x,y)
         C.ls <- cov(X)
         m.ls <- colMeans(X)
-        d2.99 <- qchisq(0.975, df = 2)
 
         ix <- which.ij(x, y, getData(obj))
         ## cat("\npanel.ellipse: ", ix$i, ix$j,"\n")
@@ -484,8 +503,8 @@ myscreeplot <- function(rcov, ccov) {
         C.rr <- getCov(obj)[c(ix$i,ix$j), c(ix$i,ix$j)]
         m.rr <- getCenter(obj)[c(ix$i,ix$j)]
 
-        e.class <- ellipsoidPoints(C.ls, d2.99, loc=m.ls)
-        e.rob <- ellipsoidPoints(C.rr, d2=d2.99, loc=m.rr)
+        e.class <- getEllipse(loc=m.ls, cov=C.ls, crit=0.975)
+        e.rob <- getEllipse(loc=m.rr, cov=C.rr, crit=0.975)
 
         xmin <- min(c(min(x), min(e.class[,1]), min(e.rob[,1])))
         xmax <- max(c(max(x), max(e.class[,1]), max(e.rob[,1])))

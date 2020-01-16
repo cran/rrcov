@@ -90,7 +90,9 @@ LdaClassic.default <- function(x,
     names(prior) <- levels(g)
 
     xcov <- .wcovClass(x, grouping)
-    inv <- solve(xcov$wcov)
+    ##  VT::27.11.2019
+    ##  inv <- solve(xcov$wcov)
+    inv <- if(!.isSingular(xcov$wcov))  solve(xcov$wcov) else .pinv(xcov$wcov)
     ldf <- xcov$means %*% inv
     ldfconst <- diag(log(prior) - ldf %*% t(xcov$means)/2)
     return (new("LdaClassic", call=xcall, prior=prior, counts=counts,

@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2019-10-19 r77318) -- "Unsuffered Consequences"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R Under development (unstable) (2020-01-08 r77640) -- "Unsuffered Consequences"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,6 +20,11 @@ Type 'q()' to quit R.
 > suppressPackageStartupMessages(library(rrcov))
 > library(MASS)
 > 
+> ## VT::14.01.2020
+> ##  On some platforms minor differences are shown - use
+>         ## IGNORE_RDIFF_BEGIN
+>         ## IGNORE_RDIFF_END
+> 
 > dodata <- function(method) {
 + 
 +     options(digits = 5)
@@ -29,28 +34,31 @@ Type 'q()' to quit R.
 +     cat("\nCall: ", deparse(substitute(tmp)),"\n")
 +     cat("===================================================\n")
 + 
-+     cat("\nData: ", "hemophilia\n");
-+     data(hemophilia);
-+     show(rlda<- Linda(as.factor(gr)~., data=hemophilia, method=method))
++     cat("\nData: ", "hemophilia\n")
++     data(hemophilia)
++     show(rlda <- Linda(as.factor(gr)~., data=hemophilia, method=method))
 +     show(predict(rlda))
 + 
-+     cat("\nData: ", "anorexia\n");
-+     data(anorexia);
++     cat("\nData: ", "anorexia\n")
++     data(anorexia)
 +     show(rlda <- Linda(Treat~., data=anorexia, method=method))
 +     show(predict(rlda))
 + 
-+     cat("\nData: ", "Pima\n");
-+     data(Pima.tr);
++     cat("\nData: ", "Pima\n")
++     data(Pima.tr)
 +     show(rlda <- Linda(type~., data=Pima.tr, method=method))
 +     show(predict(rlda))
 + 
-+     cat("\nData: ", "Forest soils\n");
++     cat("\nData: ", "Forest soils\n")
 +     data(soil)
 +     soil1983 <- soil[soil$D == 0, -2]       # only 1983, remove column D (always 0)
++ 
++     ## IGNORE_RDIFF_BEGIN
 +     show(rlda <- Linda(F~., data=soil1983, method=method))
++     ## IGNORE_RDIFF_END
 +     show(predict(rlda))
 + 
-+     cat("\nData: ", "Raven and Miller diabetes data\n");
++     cat("\nData: ", "Raven and Miller diabetes data\n")
 +     data(diabetes)
 +     show(rlda <- Linda(group~insulin+glucose+sspg, data=diabetes, method=method))
 +     show(predict(rlda))
@@ -63,8 +71,8 @@ Type 'q()' to quit R.
 +         show(predict(rlda))
 +     }
 + 
-+     cat("\nData: ", "crabs\n");
-+     data(crabs);
++     cat("\nData: ", "crabs\n")
++     data(crabs)
 +     show(rlda <- Linda(sp~., data=crabs, method=method))
 +     show(predict(rlda))
 + 
@@ -84,7 +92,9 @@ Type 'q()' to quit R.
 +     table(fish$Species)
 +     if(method != "mcdA")
 +     {
++         ## IGNORE_RDIFF_BEGIN
 +         show(rlda <- Linda(Species~., data=fish, method=method, l1med=TRUE))
++         ## IGNORE_RDIFF_END
 +         show(predict(rlda))
 +     }
 + 
@@ -97,7 +107,9 @@ Type 'q()' to quit R.
 +     data(olitos)
 +     if(method != "mcdA")
 +     {
++         ## IGNORE_RDIFF_BEGIN
 +         show(rlda <- Linda(grp~., data=olitos, method=method, l1med=TRUE))
++         ## IGNORE_RDIFF_END
 +         show(predict(rlda))
 +     }
 + 
@@ -1045,24 +1057,24 @@ Linear Coeficients:
 Constants:
        1        2        3        4 
 -2617094 -2619257 -2620690 -2621479 
-                         
-Apparent error rate 0.675
+                        
+Apparent error rate 0.15
 
 Classification table 
       Predicted
 Actual  1  2  3  4
-     1 18 11 14  7
-     2  7  5  6  7
-     3  9  6 10  9
-     4  3  2  0  6
+     1 44  1  4  1
+     2  2 23  0  0
+     3  6  1 26  1
+     4  1  1  0  9
 
 Confusion matrix 
       Predicted
 Actual     1     2     3     4
-     1 0.360 0.220 0.280 0.140
-     2 0.280 0.200 0.240 0.280
-     3 0.265 0.176 0.294 0.265
-     4 0.273 0.182 0.000 0.545
+     1 0.880 0.020 0.080 0.020
+     2 0.080 0.920 0.000 0.000
+     3 0.176 0.029 0.765 0.029
+     4 0.091 0.091 0.000 0.818
 ===================================================
 > dodata(method="mcdC")
 
@@ -1139,20 +1151,20 @@ Constants:
     CBT    Cont      FT 
 -230.85 -226.60 -274.53 
                           
-Apparent error rate 0.4444
+Apparent error rate 0.4583
 
 Classification table 
       Predicted
 Actual CBT Cont FT
   CBT   16    5  8
-  Cont  13   11  2
+  Cont  14   10  2
   FT     0    4 13
 
 Confusion matrix 
       Predicted
 Actual   CBT  Cont    FT
   CBT  0.552 0.172 0.276
-  Cont 0.500 0.423 0.077
+  Cont 0.538 0.385 0.077
   FT   0.000 0.235 0.765
 
 Data:  Pima
@@ -1676,23 +1688,23 @@ Constants:
          1          2          3          4 
 -140244417 -140239143 -140246342 -140217059 
                           
-Apparent error rate 0.7333
+Apparent error rate 0.1667
 
 Classification table 
       Predicted
 Actual  1  2  3  4
-     1 15 16  8 11
-     2  6  6  6  7
-     3  9  8  8  9
-     4  3  3  2  3
+     1 44  1  2  3
+     2  2 22  0  1
+     3  5  2 25  2
+     4  1  1  0  9
 
 Confusion matrix 
       Predicted
 Actual     1     2     3     4
-     1 0.300 0.320 0.160 0.220
-     2 0.240 0.240 0.240 0.280
-     3 0.265 0.235 0.235 0.265
-     4 0.273 0.273 0.182 0.273
+     1 0.880 0.020 0.040 0.060
+     2 0.080 0.880 0.000 0.040
+     3 0.147 0.059 0.735 0.059
+     4 0.091 0.091 0.000 0.818
 ===================================================
 > dodata(method="mrcd")
 
@@ -2311,16 +2323,16 @@ Apparent error rate 0.125
 Classification table 
       Predicted
 Actual  1  2  3  4
-     1 45  2  3  0
-     2  2 22  1  0
+     1 44  2  3  1
+     2  1 23  1  0
      3  4  1 27  2
      4  0  0  0 11
 
 Confusion matrix 
       Predicted
 Actual     1     2     3     4
-     1 0.900 0.040 0.060 0.000
-     2 0.080 0.880 0.040 0.000
+     1 0.880 0.040 0.060 0.020
+     2 0.040 0.920 0.040 0.000
      3 0.118 0.029 0.794 0.059
      4 0.000 0.000 0.000 1.000
 ===================================================
@@ -2935,27 +2947,27 @@ Linear Coeficients:
 Constants:
       1       2       3       4 
 -359903 -359646 -358448 -359870 
-                          
-Apparent error rate 0.1167
+                       
+Apparent error rate 0.1
 
 Classification table 
       Predicted
 Actual  1  2  3  4
-     1 43  3  3  1
-     2  1 24  0  0
-     3  4  1 28  1
+     1 45  2  2  1
+     2  0 25  0  0
+     3  4  1 27  2
      4  0  0  0 11
 
 Confusion matrix 
       Predicted
 Actual     1     2     3     4
-     1 0.860 0.060 0.060 0.020
-     2 0.040 0.960 0.000 0.000
-     3 0.118 0.029 0.824 0.029
+     1 0.900 0.040 0.040 0.020
+     2 0.000 1.000 0.000 0.000
+     3 0.118 0.029 0.794 0.059
      4 0.000 0.000 0.000 1.000
 ===================================================
 > #dodata(method="fsa")
 > 
 > proc.time()
    user  system elapsed 
-   3.51    0.43    3.93 
+   4.39    0.78    5.38 

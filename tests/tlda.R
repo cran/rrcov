@@ -3,6 +3,11 @@
 suppressPackageStartupMessages(library(rrcov))
 library(MASS)
 
+## VT::14.01.2020
+##  On some platforms minor differences are shown - use
+        ## IGNORE_RDIFF_BEGIN
+        ## IGNORE_RDIFF_END
+
 dodata <- function(method) {
 
     options(digits = 5)
@@ -12,28 +17,31 @@ dodata <- function(method) {
     cat("\nCall: ", deparse(substitute(tmp)),"\n")
     cat("===================================================\n")
 
-    cat("\nData: ", "hemophilia\n");
-    data(hemophilia);
-    show(rlda<- Linda(as.factor(gr)~., data=hemophilia, method=method))
+    cat("\nData: ", "hemophilia\n")
+    data(hemophilia)
+    show(rlda <- Linda(as.factor(gr)~., data=hemophilia, method=method))
     show(predict(rlda))
 
-    cat("\nData: ", "anorexia\n");
-    data(anorexia);
+    cat("\nData: ", "anorexia\n")
+    data(anorexia)
     show(rlda <- Linda(Treat~., data=anorexia, method=method))
     show(predict(rlda))
 
-    cat("\nData: ", "Pima\n");
-    data(Pima.tr);
+    cat("\nData: ", "Pima\n")
+    data(Pima.tr)
     show(rlda <- Linda(type~., data=Pima.tr, method=method))
     show(predict(rlda))
 
-    cat("\nData: ", "Forest soils\n");
+    cat("\nData: ", "Forest soils\n")
     data(soil)
     soil1983 <- soil[soil$D == 0, -2]       # only 1983, remove column D (always 0)
+
+    ## IGNORE_RDIFF_BEGIN
     show(rlda <- Linda(F~., data=soil1983, method=method))
+    ## IGNORE_RDIFF_END
     show(predict(rlda))
 
-    cat("\nData: ", "Raven and Miller diabetes data\n");
+    cat("\nData: ", "Raven and Miller diabetes data\n")
     data(diabetes)
     show(rlda <- Linda(group~insulin+glucose+sspg, data=diabetes, method=method))
     show(predict(rlda))
@@ -46,8 +54,8 @@ dodata <- function(method) {
         show(predict(rlda))
     }
 
-    cat("\nData: ", "crabs\n");
-    data(crabs);
+    cat("\nData: ", "crabs\n")
+    data(crabs)
     show(rlda <- Linda(sp~., data=crabs, method=method))
     show(predict(rlda))
 
@@ -67,7 +75,9 @@ dodata <- function(method) {
     table(fish$Species)
     if(method != "mcdA")
     {
+        ## IGNORE_RDIFF_BEGIN
         show(rlda <- Linda(Species~., data=fish, method=method, l1med=TRUE))
+        ## IGNORE_RDIFF_END
         show(predict(rlda))
     }
 
@@ -80,7 +90,9 @@ dodata <- function(method) {
     data(olitos)
     if(method != "mcdA")
     {
+        ## IGNORE_RDIFF_BEGIN
         show(rlda <- Linda(grp~., data=olitos, method=method, l1med=TRUE))
+        ## IGNORE_RDIFF_END
         show(predict(rlda))
     }
 

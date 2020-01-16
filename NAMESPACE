@@ -4,7 +4,6 @@ importFrom(methods, show)
 importFrom("methods", "slot", "slotNames")
 importFrom("methods", "is", "new")
 importFrom(lattice, xyplot, panel.xyplot, panel.abline, ltext)
-importFrom(cluster, ellipsoidPoints)
 importFrom(mvtnorm, rmvnorm)
 importFrom("grDevices", "dev.interactive", "palette")
 importFrom("graphics", "abline", "arrows", "axis", "box", "hist",
@@ -58,7 +57,8 @@ export(CovClassic,
        myscreeplot,
        mtxconfusion,
        sqrtm,
-       vecnorm
+       vecnorm,
+       getEllipse
 )
 
 ##S3 generics

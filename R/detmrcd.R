@@ -1,31 +1,31 @@
-#' @title Compute the Minimum Regularized Covariance Determinant (MRCD) estimator
-#' @references Paper available at: http://dx.doi.org/10.2139/ssrn.2905259.
-#' @param x a numerical matrix. The columns represent variables, and rows represent observations.
-#' @param alpha the proportion of the contamination (between 0.5 and 1)
-#' @param h the size of the subset (between ceiling(n/2) and n)
-#' @param initHsets NULL or a K x h integer matrix of initial subsets of observations
-#'     of size h (specified by the indices in 1:n). If provided, then the initial
-#'     shape estimates are not calculated.
-#' @param save.hsets
-#' @param maxcsteps maximum number of generalized C-steps for each initial subset (default 200)
-#' @param maxcond maximum condition number allowed (see step 3.4 in algorithm 1) (default 50)
-#' @param minscale minimum scale allowed (default 0.001)
-#' @param target = c("identity", "equicorrelation"). Structure of the robust
-#'     positive definite target matrix: (default) "identity": target matrix is
-#'     diagonal matrix with robustly estimated univariate scales on the diagonal or
-#'     "equicorrelation": non-diagonal target matrix that incorporates an
-#'     equicorrelation structure (see (17) in paper)
-#' @param trace
-#' @return A list with the following elements:
-#' \describe{
-#' \item{icov}{inverse of the covariance matrix}
-#' \item{rho}{regularization parameter}
-#' \item{target}{the target matrix used}
-#' }
-#'
+## @title Compute the Minimum Regularized Covariance Determinant (MRCD) estimator
+## @references Paper available at: http://dx.doi.org/10.2139/ssrn.2905259.
+## @param x a numerical matrix. The columns represent variables, and rows represent observations.
+## @param alpha the proportion of the contamination (between 0.5 and 1)
+## @param h the size of the subset (between ceiling(n/2) and n)
+## @param initHsets NULL or a K x h integer matrix of initial subsets of observations
+##     of size h (specified by the indices in 1:n). If provided, then the initial
+##     shape estimates are not calculated.
+## @param save.hsets
+## @param maxcsteps maximum number of generalized C-steps for each initial subset (default 200)
+## @param maxcond maximum condition number allowed (see step 3.4 in algorithm 1) (default 50)
+## @param minscale minimum scale allowed (default 0.001)
+## @param target = c("identity", "equicorrelation"). Structure of the robust
+##     positive definite target matrix: (default) "identity": target matrix is
+##     diagonal matrix with robustly estimated univariate scales on the diagonal or
+##     "equicorrelation": non-diagonal target matrix that incorporates an
+##     equicorrelation structure (see (17) in paper)
+## @param trace
+## @return A list with the following elements:
+## \describe{
+## \item{icov}{inverse of the covariance matrix}
+## \item{rho}{regularization parameter}
+## \item{target}{the target matrix used}
+## }
+##
 .detmrcd <- function(x, h=NULL, alpha=.75, rho=NULL,
             maxcond=50, minscale=0.001, target=0, maxcsteps = 200,
-            hsets.init=NULL, save.hsets=missing(hsets.init),
+            hsets.init=NULL, save.hsets=missing(hsets.init), full.h = save.hsets,
             trace=FALSE)
 {
 ## NOTES: VT
@@ -47,14 +47,14 @@
 ##  - X No SVD if the target matrix is the Identity; if equicorrelation, the eigenvectors are a helmert matrix
 ##----------------------------------------------------------------
 
-##' @title Robust Distance based observation orderings based on robust "Six pack"
-##' @param x  n x p data matrix
-##' @param h  integer
-##' @param scaled is 'x' is already scaled?  otherwise, apply doScale(x, median, scalefn)
-##' @param scalefn function to compute a robust univariate scale.
-##' @return a h' x 6 matrix of indices from 1:n
-r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
-                   scaled=TRUE, scalefn = Qn)
+## @title Robust Distance based observation orderings based on robust "Six pack"
+## @param x  n x p data matrix
+## @param h  integer
+## @param full.h full (length n) ordering or only the first h?
+## @param scaled is 'x' is already scaled?  otherwise, apply doScale(x, median, scalefn)
+## @param scalefn function to compute a robust univariate scale.
+## @return a h' x 6 matrix of indices from 1:n; if(full.h) h' = n else h' = h
+r6pack <- function(x, h, full.h, adjust.eignevalues=TRUE, scaled=TRUE, scalefn=Qn)
 {
     ## As the considered initial estimators Sk may have very
     ## inaccurate eigenvalues, we try to 'improve' them by applying
@@ -68,12 +68,11 @@ r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
         n <- d[1]
         stopifnot(h <= n)
         lambda <- doScale(data %*% P, center=median, scale=scalefn)$scale
-        sqrtcov    <- P %*% (lambda * t(P))         ## == P %*% diag(lambda) %*% t(P)
-        sqrtinvcov <- P %*% (t(P) / lambda)         ## == P %*% diag(1/lambda) %*% t(P)
-        estloc <- colMedians(data %*% sqrtinvcov) %*% sqrtcov
+        sqrtcov    <- P %*% (lambda * t(P)) ## == P %*% diag(lambda) %*% t(P)
+        sqrtinvcov <- P %*% (t(P) / lambda) ## == P %*% diag(1/lambda) %*% t(P)
+	estloc <- colMedians(data %*% sqrtinvcov) %*% sqrtcov
         centeredx <- (data - rep(estloc, each=n)) %*% P
-
-        sort.list(mahalanobisD(centeredx, FALSE, lambda))[1:h]# , partial = 1:h
+	sort.list(mahalanobisD(centeredx, FALSE, lambda))[1:h]# , partial = 1:h
     }
 
     ##
@@ -100,8 +99,9 @@ r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
 
         ## now done above: U <- lower.tri(U) * U + t(U)    #    U <- tril(U, -1) + t(U)
         P <- eigen(U, symmetric=TRUE)$vectors
-	if(only.P)
-	    return(P)
+    	if(only.P)
+    	    return(P)
+
         ## else :
         Z <- Y %*% t(P)
         sigz <- apply(Z, 2, scalefn)
@@ -163,43 +163,42 @@ r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
     hsets[,5] <- initset(x, scalefn=scalefn, P=P, h=h)
 
     ## 6. Raw OGK estimate for scatter
-    P <- ogkscatter(x, scalefn, only.P = TRUE)
+    P <- ogkscatter(x, scalefn, only.P=TRUE)
     hsets[,6] <- initset(x, scalefn=scalefn, P=P, h=h)
 
-    ##  No need of this code in MRCD.
-    ##  Instead of computing Mah. distances and sorting, just return hsets.
+    ## VT::15.11.2019
+    ##  No need of the code below in MRCD.
+    ##  Instead of computing md and sorting, just return hsets.
     ##
-    ## Now combine the six pack:
-    ret <- if(adjust.eignevalues)
+    if(!adjust.eignevalues)
+        return (hsets)
+
+    ## Now combine the six pack :
+    if(full.h) hsetsN <- matrix(integer(), n, nsets)
+    for(k in 1:nsets) ## sort each of the h-subsets in *increasing* Mah.distances
     {
+        xk <- x[hsets[,k], , drop=FALSE]
+	    svd <- classPC(xk, signflip=FALSE) # [P,T,L,r,centerX,meanvct] = classSVD(xk)
+
+        ## VT::15.10.2018 - we do not need this check, because we are using r6pack
+        ##  also for MRCD. Comment it out , maybe should move it to detmcd: FIXME
+        ##  if(svd$rank < p) ## FIXME: " return("exactfit")  "
+        ##      stop('More than half of the observations lie on a hyperplane.')
+
+        score <- (x - rep(svd$center, each=n)) %*% svd$loadings
+        ord <- order(mahalanobisD(score, FALSE, sqrt(abs(svd$eigenvalues))))
         if(full.h)
-            hsetsN <- matrix(integer(), n, nsets)
-        for(k in 1:nsets) ## sort each of the h-subsets in *increasing* Mah.distances
-        {
-            xk <- x[hsets[,k], , drop=FALSE]
-    	    svd <- classPC(xk, signflip=FALSE) # [P,T,L,r,centerX,meanvct] = classSVD(xk)
+            hsetsN[,k] <- ord
+        else hsets[,k] <- ord[1:h]
+    }
 
-            ## VT::15.10.2018 - we do not need this check, because we are using r6pack
-            ##  also for MRCD. Comment it out , maybe should move it to detmcd: FIXME
-            ##  if(svd$rank < p) ## FIXME: " return("exactfit")  "
-            ##      stop('More than half of the observations lie on a hyperplane.')
-
-            score <- (x - rep(svd$center, each=n)) %*% svd$loadings
-            ord <- order(mahalanobisD(score, FALSE, sqrt(abs(svd$eigenvalues))))
-            if(full.h)
-                hsetsN[,k] <- ord
-            else hsets[,k] <- ord[1:h]
-        }
-
-        if(full.h) hsetsN else hsets
-    } else hsets
-
-    ret
+    ## return
+    if(full.h) hsetsN else hsets
 }
 
-# return target correlation matrix with given structure
+# Return target correlation matrix with given structure
 # input:
-#   mX: the p by T matrix of the data
+#   mX: the p by n matrix of the data
 #   target: structure of the robust positive definite target matrix (default=1)
 #           0: identity matrix
 #           1: non-diagonal matrix with an equicorrelation structure (see (17) in paper)
@@ -213,8 +212,8 @@ r6pack <- function(x, h, full.h, adjust.eignevalues=FALSE,
     if(target == 0){
         R <- I
     } else if(target == 1) {
-##        cortmp <- cor.fk(t(mX))       # from pcaPP
-##        cortmp <- cor(t(mX), method="kendal")
+##        cortmp <- cor.fk(t(mX))                   # from pcaPP
+##        cortmp <- cor(t(mX), method="kendal")     # very slow
         cortmp <- cor(t(mX), method="spearman")
         cortmp <- sin(1/2 * pi * cortmp)
         constcor <- mean(cortmp[upper.tri(cortmp, diag=FALSE)])
@@ -296,7 +295,7 @@ eigenEQ <- function(T)
 # input:
 #   rho: the regularization parameter
 #   mT: the target matrix
-#	  nu: the scaling factor multiplied with (1-rho)
+#	nu: the scaling factor multiplied with (1-rho)
 #   mU: the scaled data
 # output:
 #	  the inverse of the covariance matrix
@@ -313,6 +312,7 @@ eigenEQ <- function(T)
     imR = 1/(1-constcor) * (I - constcor/(1 + (p-1) * constcor) * J)
     imB = (rho)^(-1) * imD %*% imR %*% imD
     Temp <- base::chol2inv(base::chol(diag(pp[2]) + nu * (t(mU) %*% (imB %*% mU))))
+
     return(imB - (imB%*%mU) %*% (nu * Temp) %*% (t(mU)%*%imB))
 }
 
@@ -439,6 +439,7 @@ eigenEQ <- function(T)
     ## 3.3 Determine subsets with lowest Mahalanobis distance
 
     ## Assume that 'hsets.init' already contains h-subsets: the first h observations each
+    ## VT::15.11.2019 - added adjust.eignevalues=FALSE, this will set automatically full.h=FALSE
     if(is.null(hsets.init)) {
 	   hsets.init <- r6pack(x=t(mX), h=h, full.h=FALSE, adjust.eignevalues=FALSE, scaled=FALSE, scalefn=Qn)
 	   dh <- dim(hsets.init)
@@ -447,12 +448,13 @@ eigenEQ <- function(T)
 	   dh <- dim(hsets.init)
 	   if(dh[1] < h || dh[2] < 1)
 	       stop("'hsets.init' must be a  h' x L  matrix (h' >= h) of observation indices")
+	   if(full.h && dh[1] != n)
+	       warning("'full.h' is true, but 'hsets.init' has less than n rows")
 	   if(min(hsets.init) < 1 || max(hsets.init) > n)
 	       stop("'hsets.init' must be in {1,2,...,n}; n = ", n)
     }
 
     hsets.init <- hsets.init[1:h, ]
-##    scfac <- .MCDcons(p, alpha)
     scfac <- .MCDcons(p, h/n)           # for consistency with MCD
 
     ## 3.4 Determine smallest value of rho_i for each subset

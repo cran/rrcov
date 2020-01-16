@@ -17,7 +17,7 @@
     }
   }
 }
-\section{CHANGES in rrcov VERSION 1.4-8 (2019-11-15)}{
+\section{CHANGES in rrcov VERSION 1.4-9 (2019-11-25)}{
   \subsection{NEW FEATURES}{
     \itemize{
       \item  Added data set \code{diabetes}; data set \code{soil} from package \code{rrcovHD} moved here.
@@ -31,6 +31,25 @@
       \item Corrected the code for Minimum Regularized Covariance Determinant estimator (MRCD) - 
         \code{CovMrcd()} - the step of adjusting the eignevalues in r6pack() is excluded 
         now because it has no effect when n > p.
+    }
+  }
+}
+\section{CHANGES in rrcov VERSION 1.5-2 (2020-01-14)}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item  Added parameter 'control' to Linda - to select the robust location and 
+        covariance estimator to use in LDA. Now any estimator derived from class 'Cov'
+        can be used, even such that are not in 'rrcov'. Return this parameter in the 
+        returned S4 object.
+      \item Linda returns now the location and covariance estimator used as 'covobj'. This
+        is useful for controlling cross-validation, for example.
+      \item Linda and LdaClassic use generalized inverse if the common covariance matrix is singular.
+    }
+  }
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item Fixed an issue the 'predict' function.
+      \item Removed the dependence on packages 'cluster' and 'ellipse'.
     }
   }
 }
