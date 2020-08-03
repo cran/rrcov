@@ -34,6 +34,10 @@ CovMve <- function(x,
 
     ##   Options "best" and "exact" for nsamp
     ##   nsamp will be further analized in the wrapper .fastmcd()
+    ## VT::31.07.2020 - fix an old bug - MVA cannot handle nsamp="best" or "exact"
+
+    if(!missing(nsamp) && !is.numeric(nsamp))
+        stop("Number of trials nsamp must be a positive number!")
     if(!missing(nsamp) && is.numeric(nsamp) && nsamp <= 0)
         stop("Invalid number of trials nsamp = ",nsamp, "!")
 

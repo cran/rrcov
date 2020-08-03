@@ -36,8 +36,11 @@ dodata <- function(method) {
     data(soil)
     soil1983 <- soil[soil$D == 0, -2]       # only 1983, remove column D (always 0)
 
+    ## This will not work within the function, of course
+    ##  - comment it out
     ## IGNORE_RDIFF_BEGIN
-    show(rlda <- Linda(F~., data=soil1983, method=method))
+    rlda <- Linda(F~., data=soil1983, method=method)
+    ##  show(rlda)
     ## IGNORE_RDIFF_END
     show(predict(rlda))
 
@@ -76,7 +79,8 @@ dodata <- function(method) {
     if(method != "mcdA")
     {
         ## IGNORE_RDIFF_BEGIN
-        show(rlda <- Linda(Species~., data=fish, method=method, l1med=TRUE))
+        rlda <- Linda(Species~., data=fish, method=method, l1med=TRUE)
+        ## show(rlda)
         ## IGNORE_RDIFF_END
         show(predict(rlda))
     }
@@ -91,7 +95,8 @@ dodata <- function(method) {
     if(method != "mcdA")
     {
         ## IGNORE_RDIFF_BEGIN
-        show(rlda <- Linda(grp~., data=olitos, method=method, l1med=TRUE))
+        rlda <- Linda(grp~., data=olitos, method=method, l1med=TRUE)
+        ## show(rlda)
         ## IGNORE_RDIFF_END
         show(predict(rlda))
     }

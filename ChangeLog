@@ -1,11 +1,23 @@
+2020-07-31  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.5-5
+    *
+    * R/PcaHubert.R - PcaHubert will crash if X is 1-dimensional and mcd=FALSE: fixed
+    * R/PcaProj.R - fixed a problem with wrong scores (reported by Matthieu Lesnoff <matthieu.lesnoff@gmail.com>)
+    * R/CovMve.R, CovSest.R - fixed a problem with nsamp="exact" or nsamp="best" 
+    *       (reported by Claudio Agostinelli) - these functions, differently from CovMcd, 
+    *       should not take non-numeric 'nsamp'
+    * tests/tlda.R, togk4.R: fixed 'noLD' issues in tlda.R and okg4.R
+    *
+
 2020-01-14  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.5-2
     *
     * R/getEllipse.R - Removed the dependence on packages 'cluster' and 'ellipse'
-    * R/Linda - added parameter 'control' to select the robust location and 
+    * R/Linda - added parameter 'control' to select the robust location and
     *   covariance estimator to use in LDA. Now any estimator derived from class 'Cov'
-    *   can be used, even such that are not in 'rrcov'. Return this parameter in the 
+    *   can be used, even such that are not in 'rrcov'. Return this parameter in the
     *   returned S4 object.
     *
     * R/Linda - return the location and covariance estimator used as 'covobj'. This
@@ -13,10 +25,10 @@
     *
     * R/Lda.R - fixed an issue in predict function
     *
-    * R/LdaClassic, R/Linda - use generalized inverse if the common covariance 
+    * R/LdaClassic, R/Linda - use generalized inverse if the common covariance
     *   matrix is singular.
     *
-    
+
 2019-11-25  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.4-9

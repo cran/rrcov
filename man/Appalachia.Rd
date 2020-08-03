@@ -32,10 +32,8 @@ site are regarded as a point in three dimensional space.
 }
 \references{
     Neykov, N.M., Neytchev, P.N., Van Gelder, P.H.A.J.M. and Todorov V. (2007),
-    Robust detection of discordant sites in regional frequency analysis,
-    \emph{Water Resources Research}, 43, W06417, 
-    doi:10.1029/2006WR005322, 
-    \url{http://www.agu.org/pubs/crossref/2007/2006WR005322.shtml}
+        Robust detection of discordant sites in regional frequency analysis,
+        \emph{Water Resources Research}, 43, W06417, doi:10.1029/2006WR005322
 }
 \examples{
     data(Appalachia)

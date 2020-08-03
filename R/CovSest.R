@@ -50,6 +50,11 @@ CovSest <- function(x,
         assign(".Random.seed", seed, envir=.GlobalEnv)
     }
 
+    if(!missing(nsamp) && !is.numeric(nsamp))
+        stop("Number of trials nsamp must be a positive number!")
+    if(!missing(nsamp) && is.numeric(nsamp) && nsamp <= 0)
+        stop("Invalid number of trials nsamp = ",nsamp, "!")
+
     if(is.data.frame(x))
         x <- data.matrix(x)
     else if (!is.matrix(x))
@@ -1115,7 +1120,7 @@ escala <- function(p, dis, alpha, delta)
     sig <- median(dis)
     a <- sig/100
     ff <- fespro(a, p, dis, alpha, delta)
-    while(ff < 0) 
+    while(ff < 0)
     {
         a <- a/10
         ff <- fespro(a, p, dis, alpha, delta)
@@ -1123,7 +1128,7 @@ escala <- function(p, dis, alpha, delta)
 
     b <- sig*10
     ff <- fespro(b, p, dis, alpha, delta)
-    while(ff>0) 
+    while(ff>0)
     {
         b <- b*10
         ff <- fespro(b, p, dis, alpha, delta)
@@ -1270,7 +1275,7 @@ mahalanobisfl <- function(x, center, cov, tol=1.e-12)
             cat("\nit, decre1:",it,decre1, "\n")
             print(des1)
         }
-        if(decre1 <= tol) 
+        if(decre1 <= tol)
         {
             grad <- gradien(x, mu1, v1, mumin, vmin, sigmin, dismin, sig1, dis1, alpha)
             mu2 <- grad$mu
@@ -1292,8 +1297,8 @@ mahalanobisfl <- function(x, center, cov, tol=1.e-12)
                 sigmin <- sig2
             }
         }
-        
-        if(decre1 > tol) 
+
+        if(decre1 > tol)
         {
             decre <- decre1
             mumin <- mu1

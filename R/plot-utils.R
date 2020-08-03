@@ -69,7 +69,7 @@ setClass(".Legend", representation( leg = "logical",        # whether to draw a 
                                      pos = "topright",
                                      txt = c("robust", "classical"),
                                      col = c("red", "blue"),
-                                     lty = c("solid", "dotted"),
+                                     lty = c("solid", "solid"),
                                      pch = c(1,24)))
 
 
@@ -169,7 +169,7 @@ myscreeplot <- function(rcov, ccov) {
 
 .qqplot <- function(x, p, cutoff, classic=FALSE, id.n,
     main=eval(substitute(expression(paste(chi^2, " QQ-Plot")))),
-    xlab=eval(substitute(expression(paste("Sqrt of the quantiles of the ", chi^2, " distribution")))),
+    xlab=eval(substitute(expression(paste("Sqrt of the quantiles of the ", chi[p]^2, " distribution")), list(p=p))),
     ylab=paste(if(classic) "Mahalanobis" else "Robust", "distance"),
     labs=1:length(x),
     ...)
@@ -227,7 +227,7 @@ myscreeplot <- function(rcov, ccov) {
     main = "Tolerance ellipse (97.5%)",
     xlab = "",
     ylab = "",
-    labs,
+    labs, legend.position="bottomright",
     ...)
 {
 
@@ -303,7 +303,7 @@ myscreeplot <- function(rcov, ccov) {
     if(classic){
         points(z2, type = "l", lty=leg@lty[2], col=leg@col[2])
         if(leg@leg)
-            legend("bottomright", leg@txt, pch=leg@pch, lty=leg@lty, col=leg@col)
+            legend(legend.position, leg@txt, pch=leg@pch, lty=leg@lty, col=leg@col)
     }
 
     invisible()
@@ -612,7 +612,7 @@ myscreeplot <- function(rcov, ccov) {
 ##
 .xyqqchi2 <- function(obj, cutoff,
     main=eval(substitute(expression(paste(chi^2, " QQ-Plot")))),
-    xlab=eval(substitute(expression(paste("Sqrt of the quantiles of the ", chi^2, " distribution")))),
+    xlab=eval(substitute(expression(paste("Sqrt of the quantiles of the ", chi[p]^2, " distribution")), list(p=p))),
     ylab="Mahalanobis distance",
     col="darkred",
     labs,

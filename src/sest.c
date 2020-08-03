@@ -521,15 +521,17 @@ double *qraux = (double *) R_alloc(pp, sizeof(double));
 double *work = (double *) R_alloc(2*pp, sizeof(double));		
 int *pivot = (int *) R_alloc(pp, sizeof(int));
 
-   // compute the mean, put submatrix into xw, center its columns
-   for(j=0; j<pp; j++) 
-   {
-      mean[j] = 0.0;
-      for(i=0; i<nnind; i++) 
-         mean[j] += (xw[i+j*nnind] = x[indices[i]][j]) / (double) nnind;
-	 for(i=0; i<nnind; i++) 
-	    xw[i+j*nnind] -= mean[j];
-   }
+    // compute the mean, put submatrix into xw, center its columns
+    for(j=0; j<pp; j++) 
+    {
+        mean[j] = 0.0;
+        for(i=0; i<nnind; i++) {
+            mean[j] += (xw[i+j*nnind] = x[indices[i]][j]) / (double) nnind;
+        }
+        for(i=0; i<nnind; i++) {
+            xw[i+j*nnind] -= mean[j];
+        }
+    }
 
    // QR decomposition of the submatrix
    F77_CALL(dqrdc2)(xw, nind, nind, p, &tol, rank, qraux, pivot, work);

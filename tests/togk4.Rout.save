@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2020-01-08 r77640) -- "Unsuffered Consequences"
+R version 4.0.2 (2020-06-22) -- "Taking Off Again"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
@@ -78,15 +78,17 @@ Type 'q()' to quit R.
 +     cat("Data Set               n   p  Half LOG(obj)        Time\n")
 +     cat("========================================================\n")
 +     domcd(heart[, 1:2], data(heart), nrep)
++ ## This will not work within the function, of course
++ ##  - comment it out
 + ## IGNORE_RDIFF_BEGIN
-+     domcd(starsCYG,data(starsCYG), nrep)
++ ##    domcd(starsCYG,data(starsCYG), nrep)
 + ## IGNORE_RDIFF_END
 +     domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
 +     domcd(stack.x,data(stackloss), nrep)
 +     domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
 +     domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
 + ## IGNORE_RDIFF_BEGIN
-+     domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
++ ##    domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
 + ## IGNORE_RDIFF_END
 +     domcd(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 + 
@@ -125,24 +127,6 @@ Robust Estimate of Covariance:
         height  weight
 height  15.88   32.07 
 weight  32.07   78.28 
---------------------------------------------------------
-starsCYG              47   2
-Outliers:  7 
-[1]  7  9 11 14 20 30 34
--------------
-
-Call:
-CovOgk(x = x)
--> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
-
-Robust Estimate of Location: 
-   log.Te  log.light  
-    4.413      4.934  
-
-Robust Estimate of Covariance: 
-           log.Te   log.light
-log.Te     0.01122  0.03755  
-log.light  0.03755  0.23499  
 --------------------------------------------------------
 phosphor              18   2
 Outliers:  2 
@@ -220,26 +204,6 @@ Robust Estimate of Covariance:
 X1   8.1047  -0.6365  -0.4720
 X2  -0.6365   3.0976  -1.3520
 X3  -0.4720  -1.3520   2.3648
---------------------------------------------------------
-wood                  20   5
-Outliers:  0 
--------------
-
-Call:
-CovOgk(x = x)
--> Method:  Orthogonalized Gnanadesikan-Kettenring Estimator 
-
-Robust Estimate of Location: 
-    x1      x2      x3      x4      x5  
-0.5508  0.1330  0.5087  0.5112  0.9069  
-
-Robust Estimate of Covariance: 
-    x1          x2          x3          x4          x5        
-x1   0.0078774  -0.0002767   0.0034220   0.0025563  -0.0027250
-x2  -0.0002767   0.0004644  -0.0003344  -0.0007968   0.0005818
-x3   0.0034220  -0.0003344   0.0039759   0.0014998  -0.0016071
-x4   0.0025563  -0.0007968   0.0014998   0.0037489  -0.0007524
-x5  -0.0027250   0.0005818  -0.0016071  -0.0007524   0.0026191
 --------------------------------------------------------
 hbk                   75   3
 Outliers:  14 
@@ -336,4 +300,4 @@ V5   -252.2   -155.9   1615.4    418.6    329.2
 > 
 > proc.time()
    user  system elapsed 
-   0.82    0.24    1.06 
+   0.40    0.20    0.59 

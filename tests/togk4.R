@@ -61,15 +61,17 @@ dodata <- function(nrep=1, time=FALSE, short=FALSE, full=TRUE, method = c("FASTM
     cat("Data Set               n   p  Half LOG(obj)        Time\n")
     cat("========================================================\n")
     domcd(heart[, 1:2], data(heart), nrep)
+## This will not work within the function, of course
+##  - comment it out
 ## IGNORE_RDIFF_BEGIN
-    domcd(starsCYG,data(starsCYG), nrep)
+##    domcd(starsCYG,data(starsCYG), nrep)
 ## IGNORE_RDIFF_END
     domcd(data.matrix(subset(phosphor, select = -plant)), data(phosphor), nrep)
     domcd(stack.x,data(stackloss), nrep)
     domcd(data.matrix(subset(coleman, select = -Y)), data(coleman), nrep)
     domcd(data.matrix(subset(salinity, select = -Y)), data(salinity), nrep)
 ## IGNORE_RDIFF_BEGIN
-    domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
+##    domcd(data.matrix(subset(wood, select = -y)), data(wood), nrep)
 ## IGNORE_RDIFF_END
     domcd(data.matrix(subset(hbk,  select = -Y)), data(hbk), nrep)
 

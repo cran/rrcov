@@ -285,7 +285,8 @@ PcaHubert.default <- function(x, k=0, kmax=10, alpha=0.75, mcd=TRUE, maxdir=250,
         }
 
         H0 <- order(apply(Z, 1, max))           # n x 1 - the outlyingnesses of all n points
-        Xh <- X[H0[1:h], ]                      # the h data points with smallest outlyingness
+        Xh <- X[H0[1:h],,drop=FALSE]            # the h data points with smallest outlyingness.
+                                                # VT::24.04.2020 Keep Xh as a mtrix, otherwise .classPC will not work.
         Xh.svd <- .classPC(Xh)
         kmax <- min(Xh.svd$rank, kmax)
         if(trace)

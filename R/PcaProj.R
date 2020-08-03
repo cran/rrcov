@@ -78,12 +78,16 @@ PcaProj.default <- function(x, k=0, kmax=ncol(x),
     }
     out <- PCAproj(x, k, scale=scale, ...)
 
-    scores <- predict(out)
     center   <- out$center
     scale <- out$scale
     sdev     <- out$sdev
-    scores   <- as.matrix(scores[, 1:k])
     loadings <- as.matrix(out$loadings[, 1:k])
+
+## VT::31.07.2020
+##    scores <- predict(out)
+##    scores   <- as.matrix(scores[, 1:k])
+    scores <- (x- matrix(rep(center, nrow(x)), nrow = nrow(x), byrow = TRUE)) %*% loadings
+
     eigenvalues  <- (sdev^2)[1:k]
 
 ######################################################################
