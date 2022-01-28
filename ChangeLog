@@ -1,10 +1,26 @@
-2021-08-31  Valentin Todorov  <valentin.todorov@chello.at>
+2022-01-28  Valentin Todorov  <valentin.todorov@chello.at>
+    *
+    * DESCRIPTION (Version): 1.6-1
+    *
+    * data/fruit.rda - data set added
+    *
+    * man/*.Rd - URLs replaced by DOI to fix for the migration of the www.jstatsoft.org
+    *   to a new editorial system (see mail from Achim Zeileis from 06.10.2021)
+    *
+    * R/Pca*.R - fixed a problem when showing the percentage of explained variance in
+    *   summary() of all PCA functions when k is chosen to be less than the number of variables in the
+    *   input data matrix (k < p). The returned object contains now additionally
+    *   the rank of the input matrix, the original eigenvalues (of all variables)
+    *   and the original total variance, if available.
+
+2021-09-15  Valentin Todorov  <valentin.todorov@chello.at>
     *
     * DESCRIPTION (Version): 1.6-0
     *
     * R/PcaHubert.R - option for adjusted outlyingness for skewed data added
     * data/machines.rda - data set Computer Hardware added
-    * Fixed some URLs, particularly the reference to https.javasoft.org
+    * data/wolves.rda - data set 'wolves' added
+    * Fixed some URLs, particularly the reference to javasoft.org
 
 2020-08-03  Valentin Todorov  <valentin.todorov@chello.at>
     *
