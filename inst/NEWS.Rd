@@ -4,6 +4,20 @@
 \title{News for \R Package \pkg{rrcov}}
 \encoding{UTF-8}
 
+\section{CHANGES in rrcov VERSION 1.6-2 (2022-02-08)}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item Examples for PCA/adjustment for skewed data and PCA/percentage of explained 
+        variance added
+    }
+  }
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item minor differences in tests for PcaProj() on some platforms fixed
+      \item scoreplot() corrected to show the labels of the samples
+    }
+  }
+}  
 \section{CHANGES in rrcov VERSION 1.6-1 (2022-01-21)}{
   \subsection{NEW FEATURES}{
     \itemize{

@@ -439,7 +439,7 @@ pca.screeplot <- function (obj, k, type = c("barplot", "lines"), main = deparse1
 
 ## Score plot of the Pca object 'obj' - scatterplot of ith against jth score
 ##  with superimposed tollerance (0.975) ellipse
-pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
+pca.scoreplot <- function(obj, i=1, j=2, main, id.n, ...)
 {
     if(missing(main))
     {
@@ -447,6 +447,7 @@ pca.scoreplot <- function(obj, i=1, j=2, main, id.n=0, ...)
     }
 
     x <- cbind(getScores(obj)[,i], getScores(obj)[,j])
+    rownames(x) <- rownames(getScores(obj))
 
 ## VT::11.06.2012
 ##  Here we assumed that the scores are not correlated and
