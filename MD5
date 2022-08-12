@@ -1,5 +1,5 @@
-4203ee525bcf39408291b2b07800b25d *ChangeLog
-0fbc10b095838918517fce056715640c *DESCRIPTION
+cf04ee57b9642c42f2cb076c672b48dd *ChangeLog
+367e267bb5d9cf16ec86a8d01ed687f0 *DESCRIPTION
 84dca738d8b4ed74142a7351ff9a1626 *NAMESPACE
 a5da21cf03d6ad22f67d4fb0261f41c7 *R/AllClasses.R
 2621b703a070a9cd1b9ca2b755e763d4 *R/AllGenerics.R
@@ -9,7 +9,7 @@ a251d2fd0a1a2832a49eb128ae24783f *R/CovControl.R
 d5213b624b9c2424aa706d1600a87c34 *R/CovMMest.R
 f67189295e5bc982dc78ccfa6655e443 *R/CovMcd.R
 7e71f38495389ced9e788151c196fe4a *R/CovMest.R
-0bfe6fd9084c3f46acd7d80fd1f6aaad *R/CovMrcd.R
+24e335ce7170f61f9c456fad3f744a1d *R/CovMrcd.R
 e77a9543db99d9d22930bafdee807235 *R/CovMve.R
 e37a6bf70cfc6570731adafd7a6e8105 *R/CovOgk.R
 0c633130bb04693e28191981e929f732 *R/CovRobust.R
@@ -35,10 +35,10 @@ e5f1209f07d34ae6d8177ba5b6dad274 *R/adjoutlyingness.R
 2dc89d15454adf96bdf3091bc436bf17 *R/covMest3.R
 64fe6f0d948e281b7047b4921786b59c *R/da-utils.R
 effb21158f4a2d4190b092c9ec7926ff *R/datadoc.R
-263546b6a3665cdf2429448df23c4851 *R/detmrcd.R
+ee34aa24acbea965c1571f08b648e2e6 *R/detmrcd.R
 0c36abbd8796244b63400966be36ccd2 *R/dets.R
 649f519e49932382f68de71ef9cbe6ba *R/donostah.R
-2e9c5a036c54e986060d79884106ba0c *R/plot-utils.R
+03d5bb631fccd98a7cdbdcc260883bcf *R/plot-utils.R
 6731799ffde9689f52b53bd45a8273c2 *R/psibwt.R
 dcebffecd8cbf489cede75c6813eabed *R/psifun.R
 3762b8071c38856c5fba22f1f17797f3 *R/transform.R
@@ -60,7 +60,7 @@ ccfdf058b434e49cfbb1d69c5cfe8963 *data/lmom32.rda
 d4027e6cd66bd11161989d46c3d74ebd *data/lmom33.rda
 49eea475b476923d4a66ea70cd7e95f2 *data/machines.rda
 f2ac7f3bf472488088ed20953ccc3bb8 *data/maryo.rda
-a3c5321cf5fd527833ce119ae2163122 *data/octane.rda
+d8c1ce6d4be1022e83a602debe26b245 *data/octane.rda
 49bbffac2af5abef15a9d95d6c08d947 *data/olitos.rda
 8e528b87f7d71f04f293971ffef26746 *data/pottery.rda
 6f25f2e7278d09ef67b6fd66f60ecd11 *data/rice.rda
@@ -70,10 +70,10 @@ e8dab5fc59e5a96bc53f1f3c8844a123 *data/soil.rda
 163d5030a52a34200451f8477e8c0b08 *data/wages.rda
 c4bd761dd723d488af89d6aeed09fac7 *data/wolves.rda
 370aa51f7863a0879c13767b12fced43 *inst/Citation
-41fd473d39ca59fd8b4de31a8b60f85c *inst/NEWS.Rd
+4f4d83acb53ffde8fce731b92b459716 *inst/NEWS.Rd
 0cd7cf2b0f3e787248341b7eb7415973 *inst/doc/rrcov.R
 58ccdfd29ee1d1c42b759226e480a68c *inst/doc/rrcov.Rnw
-32eeb9a891b11e6d6cb6ca7c44120d2e *inst/doc/rrcov.pdf
+1b7a55086124fec4471a38dd0a4f9c57 *inst/doc/rrcov.pdf
 0f5844b638361c83e2a90f4605d3c0a9 *inst/examples/bm/bm_lts.m
 ce8cc65f5ce8e9aedf1ac45c3f408022 *inst/examples/bm/bm_mcd.m
 1cb5f88839eb05cd065e67c2c3415252 *inst/examples/bm/bmlts.S
@@ -110,7 +110,7 @@ dbc90d791abd2e2a16a082298c67ae1e *man/CovMMest.Rd
 2e28e365c4458ee542464332218c9888 *man/CovMest-class.Rd
 12a1bf2929d5c6bfbb0be9165ead3239 *man/CovMest.Rd
 9272f3a1749cceb86e9564bdf9198bb1 *man/CovMrcd-class.Rd
-b52f70d03bc961e6d8089416fae87dfe *man/CovMrcd.Rd
+c24bed4d64080da408cf15aae3bdba71 *man/CovMrcd.Rd
 f8c07601d416cb832593ff23fdbb4f0e *man/CovMve-class.Rd
 3d08cc01b0b33f2a2cf2e2d60a9fe330 *man/CovMve.Rd
 74fa12162b533780e3154c77c81c52d6 *man/CovOgk-class.Rd
@@ -138,7 +138,7 @@ c39efdd75a3a88862c732ea05804d44a *man/PcaCov.Rd
 e4eb620d45a17cd84f9cc68b4ddd3b8d *man/PcaGrid-class.Rd
 411b1bf34738638be025872a9d0307c3 *man/PcaGrid.Rd
 ccafc00dc22f7b56f2d976a9d87dd788 *man/PcaHubert-class.Rd
-d041721e8d71a0dbced504ec02fa8c11 *man/PcaHubert.Rd
+1c27285a11374f85a15263e9f2994803 *man/PcaHubert.Rd
 4419fe72923a2533ef9855706e89dd2c *man/PcaLocantore-class.Rd
 bef33fe1ed5ffab3e392d26c45fe7fc7 *man/PcaLocantore.Rd
 2559c419e5edc2e8afc3eb458fc3e0b5 *man/PcaProj-class.Rd
@@ -176,7 +176,7 @@ db0e5e9ff9798192bf162c122f29ef33 *man/lmom32.Rd
 e95c14bf85f44bfb576e46b9f9a27a44 *man/lmom33.Rd
 c3f9bd2e6f1f1736a1571f997a93ed55 *man/machines.Rd
 deb2edecbfed78502752bbf1dcd6bb5a *man/maryo.Rd
-93b3d8c62a7190909c7decb1b1b1aa9c *man/octane.Rd
+45853d13f16564752a3f1bb0c3c95c9a *man/octane.Rd
 06670e7a6424ba39012a590e33eb558d *man/olitos.Rd
 74108a3ecbc7c30ee05cdb9daa0b83e2 *man/pca.distances.Rd
 b75f05115c5aac9d9c4cd6c10ee5dc4b *man/pca.scoreplot.Rd
@@ -193,7 +193,7 @@ eb63b71a6c9c04e97c9cc44251aa48e6 *man/wolves.Rd
 74b17745ec11d7cf47a08e77b52e9101 *src/Makevars
 eac4382f7dd2ec1ccf389af98314f557 *src/R-rng4ftn.c
 46b3fa031d3b2d9a2df4fd3a87777443 *src/covOPW.c
-beb672572512b4ece9036ab39d2626aa *src/ds11.f
+b2cae38d6ec19ed5dd70463c95f24712 *src/ds11.f
 c1e732bb49768c40a41f3d196ed921d2 *src/fast-mve.c
 ae91b83d20a949858323584499960c90 *src/fsada.f
 c6d3916e13986bd0e2bc0ea73bf278a3 *src/rrcov_init.c
