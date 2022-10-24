@@ -1,5 +1,5 @@
-cf04ee57b9642c42f2cb076c672b48dd *ChangeLog
-367e267bb5d9cf16ec86a8d01ed687f0 *DESCRIPTION
+d37a3b6b5f0b444d3b4af115eb739205 *ChangeLog
+19a0a9fe605b3d8c8214f00d5f1af5ed *DESCRIPTION
 84dca738d8b4ed74142a7351ff9a1626 *NAMESPACE
 a5da21cf03d6ad22f67d4fb0261f41c7 *R/AllClasses.R
 2621b703a070a9cd1b9ca2b755e763d4 *R/AllGenerics.R
@@ -44,9 +44,8 @@ dcebffecd8cbf489cede75c6813eabed *R/psifun.R
 3762b8071c38856c5fba22f1f17797f3 *R/transform.R
 bd6c4b899751d5a2e3c456fec562af91 *R/utils.R
 5752f99eceda48e21d5743fe05c7c9b6 *R/zzz.R
-cbf61c94551141805858423d428557ce *README.md
+340b9973dc16ad6d577e5c1b8f1a92d3 *README.md
 f01682ffd9d5582c0d3b8a226f3c2b16 *build/partial.rdb
-ff9960c8d17a8880a65fdca062b483c7 *build/vignette.rds
 f1dc43a3d1fcb5b9df7c4f8af90dd7f8 *data/Appalachia.rda
 60f88b5d7bc4e8d0aa3a9a00732aca0b *data/Cascades.rda
 8fd637debe6aa060b3db906703516345 *data/OsloTransect.rda
@@ -70,14 +69,14 @@ e8dab5fc59e5a96bc53f1f3c8844a123 *data/soil.rda
 163d5030a52a34200451f8477e8c0b08 *data/wages.rda
 c4bd761dd723d488af89d6aeed09fac7 *data/wolves.rda
 370aa51f7863a0879c13767b12fced43 *inst/Citation
-4f4d83acb53ffde8fce731b92b459716 *inst/NEWS.Rd
+3ab5c6ed58c3d07d01e42158a33f45e3 *inst/NEWS.Rd
 0cd7cf2b0f3e787248341b7eb7415973 *inst/doc/rrcov.R
 58ccdfd29ee1d1c42b759226e480a68c *inst/doc/rrcov.Rnw
 1b7a55086124fec4471a38dd0a4f9c57 *inst/doc/rrcov.pdf
 0f5844b638361c83e2a90f4605d3c0a9 *inst/examples/bm/bm_lts.m
 ce8cc65f5ce8e9aedf1ac45c3f408022 *inst/examples/bm/bm_mcd.m
 1cb5f88839eb05cd065e67c2c3415252 *inst/examples/bm/bmlts.S
-3f9ec6b75cdbdee68324fe6907a0214d *inst/examples/bm/bmmcd.S
+d5434aafe6a71ce65a76e5918a93a285 *inst/examples/bm/bmmcd.S
 4ee881c81dccd445a43467f85790c906 *inst/examples/ex-pca-explained-variance.R
 d04da52fb42f9911ff7d5c7f71ce9f01 *inst/examples/ex-pca-skew.R
 bca57369758f8b9957e41b4114c5797b *inst/examples/test-ellipse.R
@@ -196,7 +195,7 @@ eac4382f7dd2ec1ccf389af98314f557 *src/R-rng4ftn.c
 b2cae38d6ec19ed5dd70463c95f24712 *src/ds11.f
 c1e732bb49768c40a41f3d196ed921d2 *src/fast-mve.c
 ae91b83d20a949858323584499960c90 *src/fsada.f
-c6d3916e13986bd0e2bc0ea73bf278a3 *src/rrcov_init.c
+a3fdb50ee8aedfd14275e1cc871cf36a *src/rrcov_init.c
 ff85fbb3251f152021ad1adab2c37007 *src/sest.c
 2b6ccf6cdeb6c31ab10e8da35b06c5bd *tests/thubert.R
 84accbe761e3b7e649fc961f7e388e40 *tests/thubert.Rout.save
