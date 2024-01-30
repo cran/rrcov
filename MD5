@@ -1,5 +1,5 @@
-d662bf80582a0075f622b59d405f97a7 *ChangeLog
-8988a493ef22b9e6f1638c2d0005c9ca *DESCRIPTION
+bca79e4668427f949830ddd1df5cb6b8 *ChangeLog
+16c3ce6ed760b474acd989c1080b88cc *DESCRIPTION
 84dca738d8b4ed74142a7351ff9a1626 *NAMESPACE
 a5da21cf03d6ad22f67d4fb0261f41c7 *R/AllClasses.R
 2621b703a070a9cd1b9ca2b755e763d4 *R/AllGenerics.R
@@ -47,6 +47,7 @@ bd6c4b899751d5a2e3c456fec562af91 *R/utils.R
 733dbfee701f19827e32d56dfc2208b8 *README.md
 181b5ac5a69bd3e3e542680739e88fd5 *build/partial.rdb
 107e870ce5cb9675c0376db69266a6a0 *data/Appalachia.rda
+19178f4568c1720dfe96eaaff472fb7d *data/Cars.rda
 a8563c9e6fd666df3141732de412473c *data/Cascades.rda
 17a6013c19c48f79f7042f8abd047652 *data/OsloTransect.rda
 d18632bcec2af356a337eb0ca718fe4f *data/bus.rda
@@ -70,7 +71,7 @@ a8bb6eb29fcb87b533ed10a6e7c0a914 *data/un86.rda
 50aadfda23d26594bf423ac6e615b546 *data/wages.rda
 2e1fae4aa3d659f0dfa188657fc1ce2c *data/wolves.rda
 278f3e507b3bdf4849f2a0cde6289d5d *inst/Citation
-0bbc317e464f84b639f3637fa6ca5d0a *inst/NEWS.Rd
+fb07d96da608c0c6b2ff577a4f53f03c *inst/NEWS.Rd
 0cd7cf2b0f3e787248341b7eb7415973 *inst/doc/rrcov.R
 58ccdfd29ee1d1c42b759226e480a68c *inst/doc/rrcov.Rnw
 1b7a55086124fec4471a38dd0a4f9c57 *inst/doc/rrcov.pdf
@@ -82,6 +83,7 @@ d5434aafe6a71ce65a76e5918a93a285 *inst/examples/bm/bmmcd.S
 d04da52fb42f9911ff7d5c7f71ce9f01 *inst/examples/ex-pca-skew.R
 bca57369758f8b9957e41b4114c5797b *inst/examples/test-ellipse.R
 a0901c5ebf120b3a340374f70481839d *man/Appalachia.Rd
+86e971b493f5a520073d6cfe2740849e *man/Cars.Rd
 5c54f00c5b70324f7f27d5aee624b7db *man/Cascades.Rd
 26b00a9b7a386bc688562ab2dc63517a *man/Cov-class.Rd
 2c6ec3817bf5cf49ba984f482e2f5b05 *man/CovClassic-class.Rd
@@ -165,7 +167,7 @@ d58dc6ce4cedaf8b7d01e975f31c2c17 *man/bushmiss.Rd
 e173a1c4b9a309cd285ddab43d056067 *man/covMest-deprecated.Rd
 91d4309d9e5dea44a745e12c508c3e0b *man/diabetes.Rd
 7d2eb1cde344729acf65313b4c7825f8 *man/estimate-methods.Rd
-7322ab3422db504f857740fc27581836 *man/fish.Rd
+ecc669659029d7112a7faa0d98c35565 *man/fish.Rd
 046b6360e3f3e898093523bf259f8f0a *man/fruit.Rd
 88285f8bf5c759de3cb014ee5ca89a45 *man/getCenter-methods.Rd
 002c9b22248244f92d7cc3b0cc7d720e *man/getEllipse.Rd
@@ -184,7 +186,7 @@ b75f05115c5aac9d9c4cd6c10ee5dc4b *man/pca.scoreplot.Rd
 aac6d52c9f15aa0bce14fe38eaa2a95b *man/plot-methods.Rd
 151be8e11289e21dcfd0a4f1b74800b6 *man/pottery.Rd
 3f586ec9a2ad87757bd9ef8d0399303d *man/rice.Rd
-1e98c02d000874c986e78b9c00412cb4 *man/rrcov-utils.Rd
+91ba7fb3f3ff22dd0e655789f65ef6ca *man/rrcov-utils.Rd
 fe6e17df1f5d0e88e34643a97ed36809 *man/salmon.Rd
 6d71ebe0454733f9a4d833f0493909b8 *man/scorePlot.Rd
 7444d705777158155f3388c7d0e99bf1 *man/soil.Rd
