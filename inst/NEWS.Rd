@@ -4,6 +4,15 @@
 \title{News for \R Package \pkg{rrcov}}
 \encoding{UTF-8}
 
+\section{CHANGES in rrcov VERSION 1.7-6 (2024-08-17)}{
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item R/plot-utils - a bug fixed in function .rrpairs()
+      \item man/*: Correct Rd file(s) with Rd \link{} targets missing package anchors
+      \item src/sest.cpp: Calloc() and Free() replaced by R_Calloc() and R_Free()
+    }
+  }
+}  
 \section{CHANGES in rrcov VERSION 1.7-5 (2024-01-30)}{
   \subsection{NEW FEATURES}{
     \itemize{
